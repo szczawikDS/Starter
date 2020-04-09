@@ -291,6 +291,7 @@ type
     pnlMini: TPanel;
     imMini: TImage;
     chShowAI: TCheckBox;
+    actRemoveTrain: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbScenariosClick(Sender: TObject);
@@ -360,11 +361,16 @@ type
     procedure chRefAmbientTempClick(Sender: TObject);
     procedure lbTexturesMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure actRemoveTrainUpdate(Sender: TObject);
+    procedure actRemoveTrainExecute(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
     SelVehicle : Integer;
     SelectTex : Boolean;
+
+    procedure WMHotKey(var Msg: TWMHotKey); message WM_HOTKEY;
+
     procedure OtworzZalacznik(Sender: TObject);
     procedure DrawTrain(const Train: TTrain);
     procedure RunSimulator;
@@ -392,6 +398,7 @@ type
     procedure AdaptMiniSize;
     procedure EmptyTexData;
     procedure SetItemDesc(const Trainset: TTrain);
+    procedure RemoveVehicle;
     { Private declarations }
   public
     { Public declarations }
@@ -668,12 +675,35 @@ begin
   actRemoveFromDepot.Enabled := lbDepot.ItemIndex >= 0;
 end;
 
-procedure TMain.actRemoveVehicleExecute(Sender: TObject);
+procedure TMain.actRemoveTrainExecute(Sender: TObject);
+begin
+  while Train.Vehicles.Count > 0 do
+    RemoveVehicle;
+
+  if SelList = slSCN then
+    SetItemDesc(Train)
+  else
+    lbDepot.Items[lbDepot.ItemIndex] := PrepareTrainsetDesc(Train);
+
+  DrawTrain(Train);
+end;
+
+procedure TMain.RemoveVehicle;
 begin
   Train.Vehicles.Extract(Train.Vehicles[SelVehicle]);
 
-  if SelVehicle > Train.Vehicles.Count-1  then
-    Dec(SelVehicle);
+    if SelVehicle > Train.Vehicles.Count-1  then
+      Dec(SelVehicle);
+end;
+
+procedure TMain.actRemoveTrainUpdate(Sender: TObject);
+begin
+  actRemoveTrain.Enabled := Train.Vehicles.Count > 0;
+end;
+
+procedure TMain.actRemoveVehicleExecute(Sender: TObject);
+begin
+  RemoveVehicle;
 
   if SelList = slSCN then
     SetItemDesc(Train)
@@ -816,7 +846,7 @@ begin
   JPG := TJPEGImage.Create;
   Bmp := TBitmap.Create;
   try
-    FoundFiles := FindFirst(Main.DIR + '\textures\logo\*.jpg',faAnyFile,SR);
+    FoundFiles := FindFirst(Self.DIR + '\textures\logo\*.jpg',faAnyFile,SR);
     while (FoundFiles = 0) do
     begin
       if (SR.Name <> '.') and (SR.Name <> '..') then
@@ -826,11 +856,11 @@ begin
     end;
     FindClose(SR);
 
-    JPG.LoadFromFile(Main.DIR + '\textures\logo\' + FilesList[Random(FilesList.Count)]);
+    JPG.LoadFromFile(Self.DIR + '\textures\logo\' + FilesList[Random(FilesList.Count)]);
 
     Bmp.PixelFormat := pf32bit;
     Bmp.Assign(JPG);
-    Bmp.SaveToFile(Main.DIR + '\textures\logo.bmp');
+    Bmp.SaveToFile(Self.DIR + '\textures\logo.bmp');
   finally
     JPG.Free;
     BMP.Free;
@@ -1165,11 +1195,14 @@ procedure TMain.FormCreate(Sender: TObject);
 var
   i : Integer;
 begin
-  //DIR := ExtractFilePath(ParamStr(0));
-  DIR := 'G:\MaSzyna\MaSzyna2001beta\';
+  DIR := ExtractFilePath(ParamStr(0));
+  //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
   //DIR := 'G:\MaSzyna\MaSzyna pliki\';
+
+  RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
+  RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
 
   RemoveOldVersion;
 
@@ -1221,13 +1254,13 @@ begin
   begin
     sbTrain.Height := 84;
     MiniFactor := 2;
-    Main.Height := Main.Height + 30;
+    Self.Height := Self.Height + 30;
   end
   else
   begin
     sbTrain.Height := 54;
     MiniFactor := 1;
-    Main.Height := Main.Height - 30;
+    Self.Height := Self.Height - 30;
   end;
   if SCN <> nil then
     DrawTrain(Train);
@@ -1251,6 +1284,8 @@ end;
 
 procedure TMain.FormDestroy(Sender: TObject);
 begin
+  UnRegisterHotKey(Handle, 0);
+
   Scenarios.Free;
   Textures.Free;
   Physics.Free;
@@ -1374,6 +1409,7 @@ begin
   Mark.Width  := (Sender as TImage).Width + 2;
   Mark.Height := (Sender as TImage).Height + 3;
   SelVehicle := (Sender as TImage).Tag;
+  imMini.Picture.Bitmap := (Sender as TImage).Picture.Bitmap;
 
   Vehicle := Train.Vehicles[SelVehicle];
 
@@ -1682,6 +1718,13 @@ begin
   Scenarios[lbScenarios.ItemIndex].Config := Config;
 end;
 
+procedure TMain.WMHotKey(var Msg: TWMHotKey);
+begin
+  if Msg.HotKey = VK_DELETE then btnRemoveVehicle.Click
+  else
+  if Msg.HotKey = VK_INSERT then btnAddVehicle.Click;
+end;
+
 function TMain.PaintVehicle(const Tex:TTexture; const ModelID:Integer=0):TBitmap;
 begin
   result := TBitmap.Create;
@@ -1701,6 +1744,8 @@ begin
   if result.Empty then
     if FileExists(DIR + 'textures\mini\other.bmp') then
       result.LoadFromFile(DIR + '\textures\mini\other.bmp');
+
+  imMini.Picture.Bitmap := result;
 end;
 
 procedure TMain.pmTrainsetsPopup(Sender: TObject);
@@ -1908,7 +1953,7 @@ begin
   Index := lbTextures.ItemAtPos(Point,True);
 
   if Index >= 0 then
-    imMini.Picture.Bitmap.Assign(PaintVehicle(lbTextures.Items.Objects[Index] as TTexture));
+    PaintVehicle(lbTextures.Items.Objects[Index] as TTexture);
 end;
 
 procedure TMain.miCopyToClipboardClick(Sender: TObject);

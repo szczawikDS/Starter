@@ -277,7 +277,7 @@ object Main: TMain
       Top = 3
       Width = 130
       Height = 13
-      Caption = 'Wersja 2.7.0 (06.04.2020)'
+      Caption = 'Wersja 2.8.0 (09.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -3278,13 +3278,11 @@ object Main: TMain
     end
     object actAddVehicle: TAction
       Caption = 'Dodaj pojazd'
-      ShortCut = 16429
       OnExecute = actAddVehicleExecute
       OnUpdate = actAddVehicleUpdate
     end
     object actRemoveVehicle: TAction
       Caption = 'Usu'#324' pojazd'
-      ShortCut = 16430
       OnExecute = actRemoveVehicleExecute
       OnUpdate = actRemoveVehicleUpdate
     end
@@ -3340,6 +3338,12 @@ object Main: TMain
       Caption = 'EZT'
       OnExecute = actCouplerEZTExecute
       OnUpdate = actCouplerEZTUpdate
+    end
+    object actRemoveTrain: TAction
+      Caption = 'Usu'#324' poci'#261'g'
+      ShortCut = 16430
+      OnExecute = actRemoveTrainExecute
+      OnUpdate = actRemoveTrainUpdate
     end
   end
 end

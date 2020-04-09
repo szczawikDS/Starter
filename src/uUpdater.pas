@@ -19,7 +19,7 @@ type
     function Ask(const Text: string): Boolean;
   public
     const
-      AppVersion = 10;
+      AppVersion = 11;
       procedure CheckUpdate;
   end;
 
@@ -58,7 +58,7 @@ begin
     Application.ProcessMessages;
 
     UpdateFile := TStringList.Create;
-    UpdateFile.Text := HTTP.Get('http://www.szczawik.net/maszyna/version2.txt');
+    UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/version2.txt');
 
     if TryStrToInt(UpdateFile[0],Version) then
     begin
