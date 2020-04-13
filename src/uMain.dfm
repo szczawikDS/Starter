@@ -3,10 +3,10 @@ object Main: TMain
   Top = 0
   Caption = 'Starter'
   ClientHeight = 627
-  ClientWidth = 822
+  ClientWidth = 834
   Color = clBtnFace
   Constraints.MinHeight = 666
-  Constraints.MinWidth = 838
+  Constraints.MinWidth = 850
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -23,17 +23,23 @@ object Main: TMain
     AlignWithMargins = True
     Left = 3
     Top = 582
-    Width = 816
+    Width = 828
     Height = 42
     Action = actStart
     Align = alBottom
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 0
   end
   object pnlMenu: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 816
+    Width = 828
     Height = 46
     Align = alTop
     BevelOuter = bvNone
@@ -41,7 +47,7 @@ object Main: TMain
     TabOrder = 1
     object imFacebook: TImage
       AlignWithMargins = True
-      Left = 642
+      Left = 654
       Top = 3
       Width = 40
       Height = 40
@@ -138,7 +144,7 @@ object Main: TMain
     end
     object imMaszyna: TImage
       AlignWithMargins = True
-      Left = 688
+      Left = 700
       Top = 3
       Width = 125
       Height = 40
@@ -277,7 +283,7 @@ object Main: TMain
       Top = 3
       Width = 130
       Height = 13
-      Caption = 'Wersja 2.8.0 (09.04.2020)'
+      Caption = 'Wersja 3.0.0 (13.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -332,7 +338,7 @@ object Main: TMain
   object pnlMain: TPanel
     Left = 0
     Top = 52
-    Width = 822
+    Width = 834
     Height = 443
     Align = alClient
     BevelOuter = bvNone
@@ -341,7 +347,7 @@ object Main: TMain
     object Pages: TPageControl
       Left = 0
       Top = 0
-      Width = 822
+      Width = 834
       Height = 443
       ActivePage = tsStart
       Align = alClient
@@ -364,7 +370,7 @@ object Main: TMain
         object Panel2: TPanel
           Left = 230
           Top = 0
-          Width = 584
+          Width = 596
           Height = 412
           Align = alClient
           BevelOuter = bvNone
@@ -373,7 +379,7 @@ object Main: TMain
           object Label32: TLabel
             Left = 0
             Top = 0
-            Width = 584
+            Width = 596
             Height = 16
             Align = alTop
             Alignment = taCenter
@@ -389,7 +395,7 @@ object Main: TMain
           object pcMissions: TPageControl
             Left = 0
             Top = 109
-            Width = 584
+            Width = 596
             Height = 303
             ActivePage = tsDescription
             Align = alClient
@@ -401,7 +407,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 180
-                Width = 570
+                Width = 582
                 Height = 89
                 Align = alClient
                 ReadOnly = True
@@ -411,14 +417,14 @@ object Main: TMain
               object pnlScenariusze: TPanel
                 Left = 0
                 Top = 0
-                Width = 576
+                Width = 588
                 Height = 177
                 Align = alTop
                 ShowCaption = False
                 TabOrder = 1
                 object imScenario: TImage
                   AlignWithMargins = True
-                  Left = 347
+                  Left = 359
                   Top = 4
                   Width = 225
                   Height = 169
@@ -429,7 +435,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 4
                   Top = 4
-                  Width = 337
+                  Width = 349
                   Height = 169
                   Align = alClient
                   ReadOnly = True
@@ -445,7 +451,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 570
+                Width = 582
                 Height = 240
                 Align = alClient
                 Font.Charset = DEFAULT_CHARSET
@@ -461,7 +467,7 @@ object Main: TMain
               object pnlAboutTrain: TPanel
                 Left = 0
                 Top = 246
-                Width = 576
+                Width = 588
                 Height = 26
                 Align = alBottom
                 BevelOuter = bvNone
@@ -527,7 +533,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 570
+                Width = 582
                 Height = 266
                 Align = alClient
                 BevelInner = bvNone
@@ -536,71 +542,364 @@ object Main: TMain
                 TabOrder = 0
               end
             end
-            object tsOptions: TTabSheet
-              Caption = 'Ustawienia scenariusza'
+            object tsWeather: TTabSheet
+              Caption = 'Pogoda'
               ImageIndex = 3
-              object Label44: TLabel
+              object pnlDay: TPanel
+                AlignWithMargins = True
                 Left = 3
-                Top = 16
-                Width = 79
-                Height = 16
-                Caption = 'Dzie'#324' w roku:'
-              end
-              object lbDay: TLabel
-                Left = 165
-                Top = 58
-                Width = 7
-                Height = 16
-                Caption = '1'
-              end
-              object Label46: TLabel
-                Left = 3
-                Top = 96
-                Width = 80
-                Height = 16
-                Caption = 'Temperatura:'
-              end
-              object lbTemperature: TLabel
-                Left = 165
-                Top = 114
-                Width = 14
-                Height = 16
-                Caption = '15'
+                Top = 49
+                Width = 582
+                Height = 27
+                Margins.Bottom = 10
+                Align = alTop
+                BevelOuter = bvNone
+                ShowCaption = False
+                TabOrder = 0
+                object lbDay: TLabel
+                  AlignWithMargins = True
+                  Left = 114
+                  Top = 0
+                  Width = 21
+                  Height = 27
+                  Margins.Top = 0
+                  Align = alClient
+                  Alignment = taCenter
+                  AutoSize = False
+                  Caption = '1'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -13
+                  Font.Name = 'Tahoma'
+                  Font.Style = []
+                  ParentFont = False
+                  Layout = tlCenter
+                end
+                object btnSpring: TButton
+                  Left = 138
+                  Top = 0
+                  Width = 111
+                  Height = 27
+                  Action = actSpring
+                  Align = alRight
+                  TabOrder = 0
+                end
+                object btnSummer: TButton
+                  Left = 249
+                  Top = 0
+                  Width = 111
+                  Height = 27
+                  Action = actSummer
+                  Align = alRight
+                  TabOrder = 1
+                end
+                object btnAutumn: TButton
+                  Left = 360
+                  Top = 0
+                  Width = 111
+                  Height = 27
+                  Action = actAutumn
+                  Align = alRight
+                  TabOrder = 2
+                end
+                object Button1: TButton
+                  Left = 471
+                  Top = 0
+                  Width = 111
+                  Height = 27
+                  Action = actWinter
+                  Align = alRight
+                  TabOrder = 3
+                end
+                object btnCurrentDate: TButton
+                  Left = 0
+                  Top = 0
+                  Width = 111
+                  Height = 27
+                  Action = actCurrentDate
+                  Align = alLeft
+                  TabOrder = 4
+                end
               end
               object tbDay: TTrackBar
-                Left = 25
-                Top = 58
-                Width = 134
+                Left = 0
+                Top = 22
+                Width = 588
                 Height = 24
+                Margins.Bottom = 0
+                Align = alTop
                 Max = 365
                 Min = 1
                 Position = 1
-                TabOrder = 0
-                TickMarks = tmBoth
-                TickStyle = tsNone
-                OnChange = tbDayChange
-              end
-              object chCurrentDate: TCheckBox
-                Left = 25
-                Top = 35
-                Width = 134
-                Height = 17
-                Caption = 'Aktualna data'
                 TabOrder = 1
-                OnClick = chCurrentDateClick
-              end
-              object tbTemperature: TTrackBar
-                Left = 25
-                Top = 115
-                Width = 134
-                Height = 24
-                Max = 45
-                Min = -15
-                Position = 15
-                TabOrder = 2
                 TickMarks = tmBoth
                 TickStyle = tsNone
-                OnChange = tbTemperatureChange
+                OnChange = ConfigChange
+              end
+              object Panel27: TPanel
+                Left = 0
+                Top = 86
+                Width = 588
+                Height = 186
+                Align = alClient
+                BevelOuter = bvNone
+                Caption = 'Panel27'
+                ShowCaption = False
+                TabOrder = 2
+                object Panel23: TPanel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 3
+                  Width = 318
+                  Height = 173
+                  Margins.Bottom = 10
+                  Align = alLeft
+                  BevelOuter = bvNone
+                  ShowCaption = False
+                  TabOrder = 0
+                  object tbTemperature: TTrackBar
+                    Left = 0
+                    Top = 27
+                    Width = 318
+                    Height = 24
+                    Align = alTop
+                    Max = 45
+                    Min = -15
+                    Position = 15
+                    TabOrder = 0
+                    TickMarks = tmBoth
+                    TickStyle = tsNone
+                    OnChange = ConfigChange
+                  end
+                  object tbFog: TTrackBar
+                    Left = 0
+                    Top = 78
+                    Width = 318
+                    Height = 24
+                    Align = alTop
+                    Max = 2500
+                    Min = 10
+                    Position = 2000
+                    TabOrder = 1
+                    TickMarks = tmBoth
+                    TickStyle = tsNone
+                    OnChange = ConfigChange
+                  end
+                  object pnlVisibility: TPanel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 54
+                    Width = 312
+                    Height = 24
+                    Margins.Bottom = 0
+                    Align = alTop
+                    BevelOuter = bvNone
+                    Caption = 'Widoczno'#347#263
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -13
+                    Font.Name = 'Tahoma'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                    TabOrder = 2
+                    object lbFogNo: TLabel
+                      Left = 0
+                      Top = 0
+                      Width = 34
+                      Height = 24
+                      Align = alLeft
+                      Caption = 'Dobra'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWindowText
+                      Font.Height = -13
+                      Font.Name = 'Tahoma'
+                      Font.Style = []
+                      ParentFont = False
+                      Layout = tlBottom
+                    end
+                    object lbFog: TLabel
+                      Left = 236
+                      Top = 0
+                      Width = 76
+                      Height = 24
+                      Align = alRight
+                      Alignment = taCenter
+                      AutoSize = False
+                      Caption = 'Mg'#322'a'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWindowText
+                      Font.Height = -13
+                      Font.Name = 'Tahoma'
+                      Font.Style = []
+                      ParentFont = False
+                      Layout = tlBottom
+                    end
+                  end
+                  object pnlLabelTemperature: TPanel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 3
+                    Width = 312
+                    Height = 24
+                    Margins.Bottom = 0
+                    Align = alTop
+                    BevelOuter = bvNone
+                    Caption = 'Temperatura'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -13
+                    Font.Name = 'Tahoma'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                    TabOrder = 3
+                    object lbTemperature: TLabel
+                      Left = 0
+                      Top = 0
+                      Width = 137
+                      Height = 24
+                      Align = alLeft
+                      Alignment = taCenter
+                      AutoSize = False
+                      Caption = '15'#176'C'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWindowText
+                      Font.Height = -13
+                      Font.Name = 'Tahoma'
+                      Font.Style = []
+                      ParentFont = False
+                      Layout = tlBottom
+                    end
+                  end
+                end
+                object pnlOvercast: TPanel
+                  AlignWithMargins = True
+                  Left = 327
+                  Top = 3
+                  Width = 254
+                  Height = 180
+                  Align = alLeft
+                  BevelOuter = bvNone
+                  ShowCaption = False
+                  TabOrder = 1
+                  object lbCloudy: TLabel
+                    Left = 0
+                    Top = 0
+                    Width = 254
+                    Height = 16
+                    Align = alTop
+                    Alignment = taCenter
+                    Caption = 'Zachmurzenie / opady'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -13
+                    Font.Name = 'Tahoma'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                    Layout = tlCenter
+                  end
+                  object tbOvercast: TTrackBar
+                    Left = 0
+                    Top = 16
+                    Width = 254
+                    Height = 24
+                    Align = alTop
+                    Max = 20
+                    TabOrder = 0
+                    TickMarks = tmBoth
+                    TickStyle = tsNone
+                    OnChange = ConfigChange
+                  end
+                  object Panel24: TPanel
+                    Left = 0
+                    Top = 40
+                    Width = 120
+                    Height = 140
+                    Align = alLeft
+                    BevelOuter = bvNone
+                    ShowCaption = False
+                    TabOrder = 1
+                    object btnCloudless: TButton
+                      Left = 0
+                      Top = 0
+                      Width = 120
+                      Height = 23
+                      Action = actCloudless
+                      Align = alTop
+                      TabOrder = 0
+                    end
+                    object Button2: TButton
+                      Left = 0
+                      Top = 23
+                      Width = 120
+                      Height = 24
+                      Action = actPartlyCloudy
+                      Align = alTop
+                      TabOrder = 1
+                    end
+                    object btnCloudy: TButton
+                      Left = 0
+                      Top = 47
+                      Width = 120
+                      Height = 26
+                      Action = actCloudy
+                      Align = alTop
+                      TabOrder = 2
+                    end
+                    object pnlFullCloudy: TButton
+                      Left = 0
+                      Top = 73
+                      Width = 120
+                      Height = 24
+                      Action = actFullCloudy
+                      Align = alTop
+                      TabOrder = 3
+                    end
+                  end
+                  object Panel28: TPanel
+                    Left = 120
+                    Top = 40
+                    Width = 134
+                    Height = 140
+                    Align = alClient
+                    BevelOuter = bvNone
+                    ShowCaption = False
+                    TabOrder = 2
+                    object btnSmallRain: TButton
+                      Left = 0
+                      Top = 0
+                      Width = 134
+                      Height = 23
+                      Action = actLittleRain
+                      Align = alTop
+                      TabOrder = 0
+                    end
+                    object btnBigRain: TButton
+                      Left = 0
+                      Top = 23
+                      Width = 134
+                      Height = 24
+                      Action = actBigRain
+                      Align = alTop
+                      TabOrder = 1
+                    end
+                  end
+                end
+              end
+              object pnlLabelDay: TPanel
+                Left = 0
+                Top = 0
+                Width = 588
+                Height = 22
+                Align = alTop
+                BevelOuter = bvNone
+                Caption = 'Dzie'#324' w roku'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                TabOrder = 3
               end
             end
           end
@@ -608,7 +907,7 @@ object Main: TMain
             AlignWithMargins = True
             Left = 3
             Top = 19
-            Width = 578
+            Width = 590
             Height = 87
             Align = alTop
             PopupMenu = pmTrainsets
@@ -623,7 +922,7 @@ object Main: TMain
         object pnlDepot: TPanel
           Left = 0
           Top = 0
-          Width = 814
+          Width = 826
           Height = 412
           Align = alClient
           BevelOuter = bvNone
@@ -632,7 +931,7 @@ object Main: TMain
           object pnlDepotTop: TPanel
             Left = 0
             Top = 0
-            Width = 814
+            Width = 826
             Height = 236
             Align = alTop
             Anchors = [akLeft, akTop, akRight, akBottom]
@@ -641,116 +940,44 @@ object Main: TMain
             object Panel3: TPanel
               Left = 230
               Top = 0
-              Width = 584
+              Width = 596
               Height = 236
               Align = alClient
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 0
-              object Label34: TLabel
-                AlignWithMargins = True
-                Left = 3
-                Top = 138
-                Width = 578
-                Height = 16
-                Margins.Top = 0
-                Align = alBottom
-                Alignment = taCenter
-                Caption = 'SK'#321'ADY W MAGAZYNIE'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -13
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-                Layout = tlCenter
-              end
-              object Splitter1: TSplitter
-                Left = 0
-                Top = 154
-                Width = 584
-                Height = 3
-                Cursor = crVSplit
-                Align = alBottom
-              end
-              object lbDepot: TListBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 160
-                Width = 578
-                Height = 44
-                Align = alBottom
-                Anchors = [akLeft, akTop, akRight, akBottom]
-                TabOrder = 0
-                OnClick = lbDepotClick
-              end
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 584
-                Height = 138
+                Width = 596
+                Height = 236
                 Align = alClient
                 BevelOuter = bvNone
-                TabOrder = 1
-                object lbTrains2: TListBox
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 19
-                  Width = 578
-                  Height = 87
-                  Align = alClient
-                  DoubleBuffered = False
-                  ParentDoubleBuffered = False
-                  PopupMenu = pmTrainsets
-                  TabOrder = 0
-                  OnClick = lbTrainsClick
-                end
-                object Panel5: TPanel
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 109
-                  Width = 578
-                  Height = 29
-                  Margins.Top = 0
-                  Margins.Bottom = 0
+                TabOrder = 0
+                object Splitter1: TSplitter
+                  Left = 0
+                  Top = 128
+                  Width = 596
+                  Height = 8
+                  Cursor = crVSplit
                   Align = alBottom
-                  BevelOuter = bvNone
-                  ShowCaption = False
-                  TabOrder = 1
-                  object btnReplaceTrainset: TButton
-                    Left = 256
-                    Top = 0
-                    Width = 278
-                    Height = 29
-                    Action = actReplaceTrain
-                    Align = alLeft
-                    ParentShowHint = False
-                    ShowHint = True
-                    TabOrder = 0
-                  end
-                  object btnAddToDepo: TButton
-                    Left = 0
-                    Top = 0
-                    Width = 256
-                    Height = 29
-                    Action = actAddToMagazine
-                    Align = alLeft
-                    TabOrder = 1
-                  end
                 end
                 object pnlPociagiTop: TPanel
                   Left = 0
                   Top = 0
-                  Width = 584
+                  Width = 596
                   Height = 16
                   Align = alTop
                   BevelOuter = bvNone
                   ShowCaption = False
-                  TabOrder = 2
+                  TabOrder = 0
+                  DesignSize = (
+                    596
+                    16)
                   object Label33: TLabel
                     Left = 0
                     Top = 0
-                    Width = 584
+                    Width = 596
                     Height = 16
                     Margins.Top = 0
                     Align = alClient
@@ -776,45 +1003,140 @@ object Main: TMain
                     OnClick = chOnlyForDrivingClick
                   end
                   object chShowAI: TCheckBox
-                    Left = 411
+                    Left = 423
                     Top = -1
                     Width = 169
                     Height = 17
+                    Anchors = [akTop, akRight]
                     Caption = 'Pokazuj poci'#261'gi AI'
                     TabOrder = 1
                     OnClick = chOnlyForDrivingClick
                   end
                 end
-              end
-              object Panel6: TPanel
-                AlignWithMargins = True
-                Left = 3
-                Top = 207
-                Width = 578
-                Height = 29
-                Margins.Top = 0
-                Margins.Bottom = 0
-                Align = alBottom
-                BevelOuter = bvNone
-                ShowCaption = False
-                TabOrder = 2
-                object btnRemoveFromDepot: TButton
+                object Panel25: TPanel
                   Left = 0
-                  Top = 0
-                  Width = 256
-                  Height = 29
-                  Action = actRemoveFromDepot
-                  Align = alLeft
-                  TabOrder = 0
-                end
-                object btnSaveDepot: TButton
-                  Left = 256
-                  Top = 0
-                  Width = 278
-                  Height = 29
-                  Action = actSaveDepot
-                  Align = alLeft
+                  Top = 136
+                  Width = 596
+                  Height = 100
+                  Align = alBottom
+                  BevelOuter = bvNone
+                  ShowCaption = False
                   TabOrder = 1
+                  object Label34: TLabel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 0
+                    Width = 590
+                    Height = 16
+                    Margins.Top = 0
+                    Align = alTop
+                    Alignment = taCenter
+                    Caption = 'SK'#321'ADY W MAGAZYNIE'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -13
+                    Font.Name = 'Tahoma'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                    Layout = tlCenter
+                  end
+                  object Panel6: TPanel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 71
+                    Width = 590
+                    Height = 29
+                    Margins.Top = 0
+                    Margins.Bottom = 0
+                    Align = alBottom
+                    BevelOuter = bvNone
+                    ShowCaption = False
+                    TabOrder = 0
+                    object btnRemoveFromDepot: TButton
+                      Left = 0
+                      Top = 0
+                      Width = 256
+                      Height = 29
+                      Action = actRemoveFromDepot
+                      Align = alLeft
+                      TabOrder = 0
+                    end
+                    object btnSaveDepot: TButton
+                      Left = 256
+                      Top = 0
+                      Width = 278
+                      Height = 29
+                      Action = actSaveDepot
+                      Align = alLeft
+                      TabOrder = 1
+                    end
+                  end
+                  object lbDepot: TListBox
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 19
+                    Width = 590
+                    Height = 49
+                    Align = alClient
+                    TabOrder = 1
+                    OnClick = lbDepotClick
+                  end
+                end
+                object Panel26: TPanel
+                  Left = 0
+                  Top = 16
+                  Width = 596
+                  Height = 112
+                  Align = alClient
+                  BevelOuter = bvNone
+                  ShowCaption = False
+                  TabOrder = 2
+                  object Panel5: TPanel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 83
+                    Width = 590
+                    Height = 29
+                    Margins.Top = 0
+                    Margins.Bottom = 0
+                    Align = alBottom
+                    BevelOuter = bvNone
+                    ShowCaption = False
+                    TabOrder = 0
+                    object btnReplaceTrainset: TButton
+                      Left = 256
+                      Top = 0
+                      Width = 278
+                      Height = 29
+                      Action = actReplaceTrain
+                      Align = alLeft
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 0
+                    end
+                    object btnAddToDepo: TButton
+                      Left = 0
+                      Top = 0
+                      Width = 256
+                      Height = 29
+                      Action = actAddToMagazine
+                      Align = alLeft
+                      TabOrder = 1
+                    end
+                  end
+                  object lbTrains2: TListBox
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 3
+                    Width = 590
+                    Height = 77
+                    Align = alClient
+                    DoubleBuffered = False
+                    ParentDoubleBuffered = False
+                    PopupMenu = pmTrainsets
+                    TabOrder = 1
+                    OnClick = lbTrainsClick
+                  end
                 end
               end
             end
@@ -835,10 +1157,8 @@ object Main: TMain
                 Align = alTop
                 Style = csDropDownList
                 DoubleBuffered = False
-                ItemIndex = 0
                 ParentDoubleBuffered = False
                 TabOrder = 0
-                Text = 'Elektrowozy'
                 OnClick = cbTypesClick
                 Items.Strings = (
                   'Elektrowozy'
@@ -846,10 +1166,25 @@ object Main: TMain
                   'Parowozy'
                   'Szynobusy'
                   'EZT'
+                  'Wagony A'
+                  'Wagony B'
+                  'Wagony D'
+                  'Wagony E'
+                  'Wagony F'
+                  'Wagony G'
+                  'Wagony H'
+                  'Wagony L'
+                  'Wagony P'
+                  'Wagony R'
+                  'Wagony S'
+                  'Wagony U'
+                  'Wagony V'
+                  'Wagony W'
+                  'Wagony X'
+                  'Wagony Z'
                   'Robocze'
                   'Drezyny'
                   'Tramwaje'
-                  'Wagony'
                   'Samochody'
                   'Autobusy'
                   'Ci'#281#380'ar'#243'wki'
@@ -874,7 +1209,8 @@ object Main: TMain
                 Height = 128
                 Align = alClient
                 TabOrder = 2
-                OnClick = lbTexturesClick
+                OnDblClick = lbTexturesDblClick
+                OnMouseLeave = lbTexturesMouseLeave
                 OnMouseMove = lbTexturesMouseMove
               end
               object btnAddVehicle: TButton
@@ -913,7 +1249,7 @@ object Main: TMain
             AlignWithMargins = True
             Left = 3
             Top = 242
-            Width = 808
+            Width = 820
             Height = 167
             Align = alBottom
             BevelOuter = bvNone
@@ -922,7 +1258,7 @@ object Main: TMain
             object pcConfig: TPageControl
               Left = 296
               Top = 0
-              Width = 319
+              Width = 333
               Height = 167
               ActivePage = tsConfig
               Align = alLeft
@@ -933,7 +1269,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 3
-                  Width = 305
+                  Width = 319
                   Height = 130
                   Align = alClient
                   BevelOuter = bvNone
@@ -988,7 +1324,7 @@ object Main: TMain
                   object Panel8: TPanel
                     Left = 113
                     Top = 0
-                    Width = 192
+                    Width = 206
                     Height = 96
                     Align = alClient
                     BevelOuter = bvNone
@@ -998,7 +1334,7 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 3
-                      Width = 186
+                      Width = 200
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -1012,35 +1348,64 @@ object Main: TMain
                         'Pasa'#380'er'
                         'Brak obsady')
                     end
-                    object cbLoadType: TComboBox
-                      AlignWithMargins = True
-                      Left = 3
-                      Top = 33
-                      Width = 186
-                      Height = 24
-                      Align = alTop
-                      Style = csDropDownList
-                      DoubleBuffered = True
-                      ParentDoubleBuffered = False
-                      TabOrder = 1
-                      OnChange = cbLoadTypeChange
-                    end
                     object edLoadCount: TEdit
                       AlignWithMargins = True
                       Left = 3
                       Top = 63
-                      Width = 186
+                      Width = 200
                       Height = 24
                       Align = alTop
                       NumbersOnly = True
-                      TabOrder = 2
+                      TabOrder = 1
                       OnChange = edLoadCountChange
+                    end
+                    object pnlLoad: TPanel
+                      Left = 0
+                      Top = 30
+                      Width = 206
+                      Height = 30
+                      Align = alTop
+                      BevelOuter = bvNone
+                      Caption = 'pnlLoad'
+                      TabOrder = 2
+                      object cbLoadType: TComboBox
+                        AlignWithMargins = True
+                        Left = 3
+                        Top = 3
+                        Width = 170
+                        Height = 24
+                        Align = alClient
+                        Style = csDropDownList
+                        DoubleBuffered = True
+                        ParentDoubleBuffered = False
+                        TabOrder = 0
+                        OnChange = cbLoadTypeChange
+                      end
+                      object btnCopyLoad: TButton
+                        AlignWithMargins = True
+                        Left = 179
+                        Top = 3
+                        Width = 24
+                        Height = 24
+                        Action = actCopyLoad
+                        Align = alRight
+                        Caption = #171
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clWindowText
+                        Font.Height = -11
+                        Font.Name = 'Symbol'
+                        Font.Style = []
+                        ParentFont = False
+                        ParentShowHint = False
+                        ShowHint = True
+                        TabOrder = 1
+                      end
                     end
                   end
                   object chReversed: TCheckBox
                     Left = 0
                     Top = 96
-                    Width = 305
+                    Width = 319
                     Height = 17
                     Align = alBottom
                     Caption = 'Odwr'#243'cony'
@@ -1050,7 +1415,7 @@ object Main: TMain
                   object chRefAmbientTemp: TCheckBox
                     Left = 0
                     Top = 113
-                    Width = 305
+                    Width = 319
                     Height = 17
                     Align = alBottom
                     Caption = 'Ch'#322'odziwo w temp. otoczenia'
@@ -1072,7 +1437,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 3
-                  Width = 305
+                  Width = 319
                   Height = 130
                   Align = alClient
                   BevelOuter = bvNone
@@ -1127,7 +1492,7 @@ object Main: TMain
                   object Panel15: TPanel
                     Left = 119
                     Top = 0
-                    Width = 186
+                    Width = 200
                     Height = 130
                     Align = alClient
                     BevelOuter = bvNone
@@ -1137,7 +1502,7 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 33
-                      Width = 180
+                      Width = 194
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -1152,7 +1517,7 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 63
-                      Width = 180
+                      Width = 194
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -1168,7 +1533,7 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 3
-                      Width = 180
+                      Width = 194
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -1187,7 +1552,7 @@ object Main: TMain
               end
             end
             object pcOtherSettings: TPageControl
-              Left = 615
+              Left = 629
               Top = 0
               Width = 183
               Height = 167
@@ -1753,7 +2118,7 @@ object Main: TMain
         object pnlButtons: TPanel
           Left = 0
           Top = 371
-          Width = 814
+          Width = 826
           Height = 41
           Align = alBottom
           BevelOuter = bvNone
@@ -1762,7 +2127,7 @@ object Main: TMain
           TabOrder = 0
           object btnDefaultSettings: TButton
             AlignWithMargins = True
-            Left = 617
+            Left = 629
             Top = 3
             Width = 194
             Height = 35
@@ -1794,7 +2159,7 @@ object Main: TMain
         object pcSettings: TPageControl
           Left = 0
           Top = 0
-          Width = 814
+          Width = 826
           Height = 371
           ActivePage = tsMain
           Align = alClient
@@ -3080,7 +3445,7 @@ object Main: TMain
           AlignWithMargins = True
           Left = 3
           Top = 380
-          Width = 808
+          Width = 820
           Height = 29
           Action = actSaveKeyboard
           Align = alBottom
@@ -3089,7 +3454,7 @@ object Main: TMain
         object KeysGrid: TStringGrid
           Left = 0
           Top = 0
-          Width = 814
+          Width = 826
           Height = 342
           Align = alClient
           ColCount = 4
@@ -3106,7 +3471,7 @@ object Main: TMain
         object pnlKeyEdit: TPanel
           Left = 0
           Top = 342
-          Width = 814
+          Width = 826
           Height = 35
           Align = alBottom
           ShowCaption = False
@@ -3227,7 +3592,7 @@ object Main: TMain
   object sbTrain: TScrollBox
     Left = 0
     Top = 495
-    Width = 822
+    Width = 834
     Height = 84
     HorzScrollBar.Smooth = True
     HorzScrollBar.Tracking = True
@@ -3293,20 +3658,24 @@ object Main: TMain
       OnUpdate = actCopyCouplerUpdate
     end
     object actStart: TAction
+      Category = 'menu'
       Caption = 'Start'
       ShortCut = 16397
       OnExecute = actStartExecute
       OnUpdate = actStartUpdate
     end
     object actScenarios: TAction
+      Category = 'menu'
       Caption = 'Scenariusze'
       OnExecute = actScenariosExecute
     end
     object actDepo: TAction
+      Category = 'menu'
       Caption = 'Magazyn'
       OnExecute = actDepoExecute
     end
     object actSettings: TAction
+      Category = 'menu'
       Caption = 'Ustawienia'
       OnExecute = actSettingsExecute
     end
@@ -3344,6 +3713,67 @@ object Main: TMain
       ShortCut = 16430
       OnExecute = actRemoveTrainExecute
       OnUpdate = actRemoveTrainUpdate
+    end
+    object actCopyLoad: TAction
+      Caption = 'actCopyLoad'
+      Hint = 'Kopiuj '#322'adunek z poprzedniego pojazdu'
+      OnExecute = actCopyLoadExecute
+      OnUpdate = actCopyLoadUpdate
+    end
+    object actSpring: TAction
+      Category = 'weather'
+      Caption = 'Wiosna'
+      OnExecute = actSpringExecute
+    end
+    object actSummer: TAction
+      Category = 'weather'
+      Caption = 'Lato'
+      OnExecute = actSummerExecute
+    end
+    object actAutumn: TAction
+      Category = 'weather'
+      Caption = 'Jesie'#324
+      OnExecute = actAutumnExecute
+    end
+    object actWinter: TAction
+      Category = 'weather'
+      Caption = 'Zima'
+      OnExecute = actWinterExecute
+    end
+    object actCurrentDate: TAction
+      Category = 'weather'
+      Caption = 'Aktualna data'
+      OnExecute = actCurrentDateExecute
+    end
+    object actCloudless: TAction
+      Category = 'weather'
+      Caption = 'Bezchmurnie'
+      OnExecute = actCloudlessExecute
+    end
+    object actPartlyCloudy: TAction
+      Category = 'weather'
+      Caption = 'Ma'#322'e'
+      OnExecute = actPartlyCloudyExecute
+    end
+    object actCloudy: TAction
+      Category = 'weather'
+      Caption = 'Intensywne'
+      OnExecute = actCloudyExecute
+    end
+    object actFullCloudy: TAction
+      Category = 'weather'
+      Caption = 'Pe'#322'ne'
+      OnExecute = actFullCloudyExecute
+    end
+    object actLittleRain: TAction
+      Category = 'weather'
+      Caption = 'Lekkie'
+      OnExecute = actLittleRainExecute
+    end
+    object actBigRain: TAction
+      Category = 'weather'
+      Caption = 'Intensywne'
+      OnExecute = actBigRainExecute
     end
   end
 end

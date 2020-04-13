@@ -31,7 +31,6 @@ type
     procedure FindParameter(const Name: string;const Desc:string);
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
-    procedure Clamp(var Value: Integer; const Min, Max: Integer);
   public
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
@@ -207,15 +206,6 @@ begin
 
     Par.Free;
   end;
-end;
-
-procedure TSettings.Clamp(var Value:Integer;const Min:Integer; const Max:Integer);
-begin
-  if Value < Min then
-    Value := Min
-  else
-    if Value > Max then
-      Value := Max;
 end;
 
 procedure TSettings.ReadSettings;

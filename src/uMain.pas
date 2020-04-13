@@ -46,20 +46,12 @@ type
     sbAttachments: TScrollBox;
     lbTrains: TListBox;
     Panel3: TPanel;
-    lbDepot: TListBox;
     Panel4: TPanel;
-    lbTrains2: TListBox;
     pnlTextures: TPanel;
     cbTypes: TComboBox;
     cbModels: TComboBox;
     lbTextures: TListBox;
     Label32: TLabel;
-    Panel5: TPanel;
-    btnReplaceTrainset: TButton;
-    btnAddToDepo: TButton;
-    Panel6: TPanel;
-    btnRemoveFromDepot: TButton;
-    Label34: TLabel;
     btnAddVehicle: TButton;
     pnlVehicleOptions: TPanel;
     AL: TActionList;
@@ -70,7 +62,6 @@ type
     actRemoveVehicle: TAction;
     actCopyCoupler: TAction;
     actStart: TAction;
-    Splitter1: TSplitter;
     actScenarios: TAction;
     actDepo: TAction;
     actSettings: TAction;
@@ -90,7 +81,6 @@ type
     lbTrainMass: TLabel;
     lbTrainMassCaption: TLabel;
     lnTrainLengthCaption: TLabel;
-    btnSaveDepot: TButton;
     actSaveDepot: TAction;
     sbTrain: TScrollBox;
     tsKeyboard: TTabSheet;
@@ -194,7 +184,6 @@ type
     Label23: TLabel;
     Panel8: TPanel;
     cbDriverType: TComboBox;
-    cbLoadType: TComboBox;
     edLoadCount: TEdit;
     chReversed: TCheckBox;
     tsConfig: TTabSheet;
@@ -271,14 +260,7 @@ type
     actCouplerEZT: TAction;
     chSkipRendering: TCheckBox;
     lbTrainVelocity: TLabel;
-    tsOptions: TTabSheet;
-    tbDay: TTrackBar;
-    Label44: TLabel;
-    chCurrentDate: TCheckBox;
-    lbDay: TLabel;
-    Label46: TLabel;
-    tbTemperature: TTrackBar;
-    lbTemperature: TLabel;
+    tsWeather: TTabSheet;
     pnlShadowCabRange: TPanel;
     chRefAmbientTemp: TCheckBox;
     lbModelCaption: TLabel;
@@ -292,11 +274,66 @@ type
     imMini: TImage;
     chShowAI: TCheckBox;
     actRemoveTrain: TAction;
+    pnlLoad: TPanel;
+    cbLoadType: TComboBox;
+    btnCopyLoad: TButton;
+    actCopyLoad: TAction;
+    pnlDay: TPanel;
+    btnSpring: TButton;
+    btnSummer: TButton;
+    btnAutumn: TButton;
+    Button1: TButton;
+    btnCurrentDate: TButton;
+    Panel25: TPanel;
+    Label34: TLabel;
+    Panel6: TPanel;
+    btnRemoveFromDepot: TButton;
+    btnSaveDepot: TButton;
+    lbDepot: TListBox;
+    Panel26: TPanel;
+    Panel5: TPanel;
+    btnReplaceTrainset: TButton;
+    btnAddToDepo: TButton;
+    lbTrains2: TListBox;
+    Splitter1: TSplitter;
+    tbDay: TTrackBar;
+    Panel27: TPanel;
+    Panel23: TPanel;
+    pnlOvercast: TPanel;
+    tbOvercast: TTrackBar;
+    Panel24: TPanel;
+    Panel28: TPanel;
+    btnCloudless: TButton;
+    Button2: TButton;
+    btnCloudy: TButton;
+    pnlFullCloudy: TButton;
+    btnSmallRain: TButton;
+    btnBigRain: TButton;
+    tbTemperature: TTrackBar;
+    tbFog: TTrackBar;
+    pnlVisibility: TPanel;
+    lbFogNo: TLabel;
+    lbFog: TLabel;
+    lbCloudy: TLabel;
+    pnlLabelTemperature: TPanel;
+    lbTemperature: TLabel;
+    pnlLabelDay: TPanel;
+    lbDay: TLabel;
+    actSpring: TAction;
+    actSummer: TAction;
+    actAutumn: TAction;
+    actWinter: TAction;
+    actCurrentDate: TAction;
+    actCloudless: TAction;
+    actPartlyCloudy: TAction;
+    actCloudy: TAction;
+    actFullCloudy: TAction;
+    actLittleRain: TAction;
+    actBigRain: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbScenariosClick(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
-    procedure lbTexturesClick(Sender: TObject);
     procedure cbFeedbackmodeChange(Sender: TObject);
     procedure cbDriverTypeChange(Sender: TObject);
     procedure cbLoadTypeChange(Sender: TObject);
@@ -352,9 +389,6 @@ type
     procedure btnHelpClick(Sender: TObject);
     procedure actCouplerEZTUpdate(Sender: TObject);
     procedure actCouplerEZTExecute(Sender: TObject);
-    procedure tbDayChange(Sender: TObject);
-    procedure chCurrentDateClick(Sender: TObject);
-    procedure tbTemperatureChange(Sender: TObject);
     procedure edFieldofviewExit(Sender: TObject);
     procedure cbBigThumbnailClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -363,6 +397,22 @@ type
       Y: Integer);
     procedure actRemoveTrainUpdate(Sender: TObject);
     procedure actRemoveTrainExecute(Sender: TObject);
+    procedure actCopyLoadUpdate(Sender: TObject);
+    procedure actCopyLoadExecute(Sender: TObject);
+    procedure lbTexturesDblClick(Sender: TObject);
+    procedure lbTexturesMouseLeave(Sender: TObject);
+    procedure ConfigChange(Sender: TObject);
+    procedure actCurrentDateExecute(Sender: TObject);
+    procedure actSpringExecute(Sender: TObject);
+    procedure actSummerExecute(Sender: TObject);
+    procedure actAutumnExecute(Sender: TObject);
+    procedure actWinterExecute(Sender: TObject);
+    procedure actCloudlessExecute(Sender: TObject);
+    procedure actPartlyCloudyExecute(Sender: TObject);
+    procedure actCloudyExecute(Sender: TObject);
+    procedure actFullCloudyExecute(Sender: TObject);
+    procedure actLittleRainExecute(Sender: TObject);
+    procedure actBigRainExecute(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -399,6 +449,8 @@ type
     procedure EmptyTexData;
     procedure SetItemDesc(const Trainset: TTrain);
     procedure RemoveVehicle;
+    procedure AppDeactivate(Sender: TObject);
+    procedure AppActivate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -527,6 +579,7 @@ begin
     lbDepot.Items[lbDepot.ItemIndex] := PrepareTrainsetDesc(Train);
 
   ScrollPos := sbTrain.HorzScrollBar.Position;
+  SelVehicle := Train.Vehicles.Count-1;
   DrawTrain(Train);
   sbTrain.HorzScrollBar.Position := ScrollPos;
 end;
@@ -534,6 +587,16 @@ end;
 procedure TMain.actAddVehicleUpdate(Sender: TObject);
 begin
   actAddVehicle.Enabled := (lbTextures.ItemIndex >= 0) and (SelTrain >= 0);
+end;
+
+procedure TMain.actAutumnExecute(Sender: TObject);
+begin
+  tbDay.Position := 297;
+end;
+
+procedure TMain.actBigRainExecute(Sender: TObject);
+begin
+  tbOvercast.Position := 15;
 end;
 
 procedure TMain.actCheckUpdateExecute(Sender: TObject);
@@ -544,6 +607,16 @@ begin
   finally
     Free;
   end;
+end;
+
+procedure TMain.actCloudlessExecute(Sender: TObject);
+begin
+  tbOvercast.Position := 0;
+end;
+
+procedure TMain.actCloudyExecute(Sender: TObject);
+begin
+  tbOvercast.Position := 7;
 end;
 
 procedure TMain.actCopyCouplerExecute(Sender: TObject);
@@ -557,6 +630,27 @@ begin
   actCopyCoupler.Enabled := SelVehicle > 0;
 end;
 
+procedure TMain.actCopyLoadExecute(Sender: TObject);
+var
+  Index : Integer;
+begin
+  Index := cbLoadType.Items.IndexOf(Train.Vehicles[SelVehicle-1].LoadType);
+
+  if Index >= 0 then
+  begin
+    cbLoadType.ItemIndex := Index;
+    Train.Vehicles[SelVehicle].LoadType := cbLoadType.Text;
+    Train.Vehicles[SelVehicle].Loadquantity := Train.Vehicles[SelVehicle-1].Loadquantity;
+
+    edLoadCount.Text := FloatToStr(Train.Vehicles[SelVehicle].Loadquantity);
+  end;
+end;
+
+procedure TMain.actCopyLoadUpdate(Sender: TObject);
+begin
+  actCopyLoad.Enabled := SelVehicle > 0;
+end;
+
 procedure TMain.actCouplerEZTExecute(Sender: TObject);
 begin
   Train.Vehicles[SelVehicle].Coupler := 119;
@@ -566,6 +660,11 @@ end;
 procedure TMain.actCouplerEZTUpdate(Sender: TObject);
 begin
   actCouplerEZT.Enabled := SelVehicle > 0;
+end;
+
+procedure TMain.actCurrentDateExecute(Sender: TObject);
+begin
+  tbDay.Position := DayOfTheYear(Now);
 end;
 
 procedure TMain.DefaultSettings;
@@ -635,11 +734,26 @@ begin
   ChangePange(1);
 end;
 
+procedure TMain.actFullCloudyExecute(Sender: TObject);
+begin
+  tbOvercast.Position := 10;
+end;
+
 procedure TMain.actKeyboardExecute(Sender: TObject);
 begin
   Settings.ReadKeyboard;
   LoadKeysComponents;
   ChangePange(3);
+end;
+
+procedure TMain.actLittleRainExecute(Sender: TObject);
+begin
+  tbOvercast.Position := 11;
+end;
+
+procedure TMain.actPartlyCloudyExecute(Sender: TObject);
+begin
+  tbOvercast.Position := 3;
 end;
 
 procedure TMain.actRemoveFromDepotExecute(Sender: TObject);
@@ -692,8 +806,8 @@ procedure TMain.RemoveVehicle;
 begin
   Train.Vehicles.Extract(Train.Vehicles[SelVehicle]);
 
-    if SelVehicle > Train.Vehicles.Count-1  then
-      Dec(SelVehicle);
+  if SelVehicle > Train.Vehicles.Count-1  then
+    Dec(SelVehicle);
 end;
 
 procedure TMain.actRemoveTrainUpdate(Sender: TObject);
@@ -774,12 +888,18 @@ begin
   ChangePange(2);
 end;
 
+procedure TMain.actSpringExecute(Sender: TObject);
+begin
+  tbDay.Position := 113;
+end;
+
 procedure TMain.actStartExecute(Sender: TObject);
 var
   Starter : TStringList;
   i,y : Integer;
   SCN : TScenario;
   Parser : TParser;
+  Config : TConfig;
 begin
   SCN := (lbScenarios.Items.Objects[lbScenarios.ItemIndex] as TScenario);
   Starter := TStringList.Create;
@@ -787,6 +907,14 @@ begin
   Starter.Text := SCN.Other.Text;
 
   Parser := TParser.Create;
+
+  Config := SCN.Config;
+  Config.FogEnd := (tbFog.Max - tbFog.Position) + tbFog.Min;
+  Config.Day    := tbDay.Position;
+  Config.Overcast := tbOvercast.Position;
+  Config.Temperature := tbTemperature.Position;
+  SCN.Config := Config;
+
   Starter.Text := Parser.ChangeConfig(SCN.Other.Text,SCN.Config);
   Parser.Free;
 
@@ -819,6 +947,16 @@ begin
   actStart.Enabled := (SelTrain >= 0) and (SelVehicle >= 0)
                       and (Train.Vehicles[SelVehicle].CabOccupancy in [coHeadDriver,coRearDriver,coPassenger])
                       and (cbEXE.ItemIndex >= 0 );
+end;
+
+procedure TMain.actSummerExecute(Sender: TObject);
+begin
+  tbDay.Position := 204;
+end;
+
+procedure TMain.actWinterExecute(Sender: TObject);
+begin
+  tbDay.Position := 15;
 end;
 
 procedure TMain.btnHelpClick(Sender: TObject);
@@ -1036,17 +1174,6 @@ begin
   end;
 end;
 
-procedure TMain.chCurrentDateClick(Sender: TObject);
-begin
-  if chCurrentDate.Checked then
-  begin
-    tbDay.Enabled := False;
-    tbDay.Position := DayOfTheYear(Now);
-  end
-  else
-    tbDay.Enabled := True;
-end;
-
 procedure TMain.chOnlyForDrivingClick(Sender: TObject);
 begin
   lbScenariosClick(chOnlyForDriving);
@@ -1195,14 +1322,14 @@ procedure TMain.FormCreate(Sender: TObject);
 var
   i : Integer;
 begin
+  Application.OnActivate    := AppActivate;
+  Application.OnDeactivate  := AppDeactivate;
+
   DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
   //DIR := 'G:\MaSzyna\MaSzyna pliki\';
-
-  RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
-  RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
 
   RemoveOldVersion;
 
@@ -1282,10 +1409,20 @@ begin
     lbDepot.ItemIndex := 0;
 end;
 
+procedure TMain.AppActivate(Sender: TObject);
+begin
+  RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
+  RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
+end;
+
+procedure TMain.AppDeactivate(Sender: TObject);
+begin
+  UnRegisterHotKey(Handle, VK_DELETE);
+  UnRegisterHotKey(Handle, VK_INSERT);
+end;
+
 procedure TMain.FormDestroy(Sender: TObject);
 begin
-  UnRegisterHotKey(Handle, 0);
-
   Scenarios.Free;
   Textures.Free;
   Physics.Free;
@@ -1698,24 +1835,10 @@ begin
     Depot[SelTrain] := Value;
 end;
 
-procedure TMain.tbDayChange(Sender: TObject);
-var
-  Config : TConfig;
+procedure TMain.ConfigChange(Sender:TObject);
 begin
   lbDay.Caption := IntToStr(tbDay.Position);
-  Config := Scenarios[lbScenarios.ItemIndex].Config;
-  Config.Day := tbDay.Position;
-  Scenarios[lbScenarios.ItemIndex].Config :=Config;
-end;
-
-procedure TMain.tbTemperatureChange(Sender: TObject);
-var
-  Config : TConfig;
-begin
-  lbTemperature.Caption := IntToStr(tbTemperature.Position);
-  Config := Scenarios[lbScenarios.ItemIndex].Config;
-  Config.Temperature := tbTemperature.Position;
-  Scenarios[lbScenarios.ItemIndex].Config := Config;
+  lbTemperature.Caption := IntToStr(tbTemperature.Position) + '°C';
 end;
 
 procedure TMain.WMHotKey(var Msg: TWMHotKey);
@@ -1838,18 +1961,16 @@ begin
   lbTrains.Items.BeginUpdate;
   lbTrains.Clear;
 
+  meDesc.Lines.BeginUpdate;
+  meDesc.Text := SCN.Desc.Text;
+  meDesc.Lines.EndUpdate;
+
   for i := 0 to SCN.Trains.Count-1 do
   begin
     if (not chOnlyForDriving.Checked) or ((SCN.Trains[i].Vehicles.Count > 0) and (SCN.Trains[i].Vehicles[0].CabOccupancy in [coHeadDriver,coRearDriver])) then
     begin
       if (chShowAI.Checked) or (not SCN.Trains[I].AI) then
-      begin
-        meDesc.Lines.BeginUpdate;
-        meDesc.Text := SCN.Desc.Text;
-        meDesc.Lines.EndUpdate;
-
         lbTrains.AddItem(PrepareTrainsetDesc(SCN.Trains[i]),TObject(i));
-      end;
     end;
   end;
 
@@ -1861,23 +1982,17 @@ begin
   lbTrains.Items.EndUpdate;
 
   if SCN.Config.Day > 0 then
-  begin
-    chCurrentDate.Checked := False;
-    tbDay.Position := SCN.Config.Day;
-  end
+    tbDay.Position := SCN.Config.Day
   else
-  begin
-    chCurrentDate.Checked := True;
     tbDay.Position := DayOfTheYear(Now);
-  end;
-  lbDay.Caption := IntToStr(tbDay.Position);
 
   if (SCN.Config.Temperature >= -50) and (SCN.Config.Temperature <= 50) then
     tbTemperature.Position := Round(SCN.Config.Temperature)
   else
     tbTemperature.Position := 15;
 
-  lbTemperature.Caption := IntToStr(tbTemperature.Position);
+  tbFog.Position := (tbFog.Max - SCN.Config.FogEnd) + tbFog.Min;
+  tbOvercast.Position := Round(SCN.Config.Overcast);
 
   lbTrainsClick(self);
 end;
@@ -1897,7 +2012,7 @@ begin
     Result := EmptyStr;
 end;
 
-procedure TMain.lbTexturesClick(Sender: TObject);
+procedure TMain.lbTexturesDblClick(Sender: TObject);
 var
   Tex : TTexture;
   i : Integer;
@@ -1940,6 +2055,12 @@ begin
        SelectTex := True;
      end;
   end;
+end;
+
+procedure TMain.lbTexturesMouseLeave(Sender: TObject);
+begin
+  if lbTextures.ItemIndex >= 0 then
+    PaintVehicle(lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
 end;
 
 procedure TMain.lbTexturesMouseMove(Sender: TObject; Shift: TShiftState; X,

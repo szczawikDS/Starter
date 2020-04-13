@@ -18,7 +18,7 @@ type
     destructor Destroy; override;
   private
     function TokenFull: string;
-    function ParseConfig(const ConfigText:string):TConfig;
+    procedure ParseConfig(var Config: TConfig);
     function ParsePociag: TTrain;
     function ParsePojazd(const TrainSet: Boolean=True): TVehicle;
     function ParseScenariusz(const Sciezka: string): TScenario;
@@ -36,11 +36,22 @@ type
     procedure ParseTextDesc(Tex: TTexture);
     procedure ParseTextureModels(var Tekstura: TTexture);
     procedure SkipComment;
+    procedure ParseAtmo(var Config: TConfig);
   end;
 
 implementation
 
-uses SysUtils, uMain, Character;
+uses SysUtils, uMain, Character, Math;
+
+function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
+begin
+  Result := Value;
+  if Value < Min then
+    Result := Min
+  else
+    if Value > Max then
+      Result := Max;
+end;
 
 constructor TParser.Create;
 begin
@@ -360,16 +371,14 @@ begin
   end;
 end;
 
-function TParser.ParseConfig(const ConfigText:string):TConfig;
+procedure TParser.ParseConfig(var Config: TConfig);
 begin
-  Result.Day := 0;
-  Result.Temperature := 15;
-
-  Lexer.Origin := PChar(ConfigText);
-  Lexer.Init;
+  try
+  Config.Day := 0;
+  Config.Temperature := 15;
 
   Lexer.NextNoSpace;
-  While Lexer.TokenID <> ptNull do
+  While (Lexer.Token <> 'endconfig') and (Lexer.TokenID <> ptNull) do
   begin
     if Lexer.TokenID = ptSlash then
       SkipComment
@@ -380,7 +389,7 @@ begin
         if (SameText(Lexer.Token, 'movelight')) then
         begin
           Lexer.NextNoJunk;
-          Result.Day := StrToInt(Lexer.Token);
+          Config.Day := StrToInt(Lexer.Token);
         end
         else
         begin
@@ -389,7 +398,7 @@ begin
             if SameText(TokenFull, 'scenario.weather.temperature') then
             begin
               Lexer.NextNoJunk;
-              Result.Temperature := StrToFloat(TokenFull);
+              Config.Temperature := StrToFloat(TokenFull);
             end;
           end;
         end;
@@ -397,12 +406,16 @@ begin
     end;
     Lexer.NextNoSpace;
   end;
+  except
+    Errors.Add('B³¹d parsowania sekcji config.');
+  end;
 end;
 
 function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
 var
   EndPointer : integer;
   Day, Temperature : Boolean;
+  Atmo : string;
 begin
   try
     Lexer.Origin := PChar(Text);
@@ -457,6 +470,13 @@ begin
 
     if not Temperature then
       Insert(#13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ',Result, Pos('config',result)+6);
+
+    if Pos('atmo',Result) > 0 then
+      Delete(Result,Pos('atmo',Result),(Pos('endatmo',Result) + 7 - Pos('atmo',Result)));
+
+    Atmo := 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
+    Atmo := Atmo + ' ' + FloatToStr(Config.Overcast / 10) + ' endatmo' + #13#10;
+    Result := Atmo + Result;
   except
    Result := Text;
   end;
@@ -472,6 +492,34 @@ begin
       Lexer.NextNoJunk;
       Lexer.AheadNext;
     end;
+  end;
+end;
+
+procedure TParser.ParseAtmo(var Config:TConfig);
+begin
+  try
+    Lexer.NextNoJunk;
+    Lexer.NextNoJunk;
+    Lexer.NextNoJunk;
+    Lexer.NextNoJunk;
+    Config.FogStart := Clamp(StrToInt(Lexer.Token),10,2500);
+    Lexer.NextNoSpace;
+    Config.FogEnd := Clamp(StrToInt(Lexer.Token),Config.FogStart,2500);
+    Config.FogEnd := RandomRange(Config.FogStart,Config.FogEnd);
+
+    if Config.FogEnd > 0 then
+    begin
+      Lexer.NextNoJunk;
+      Lexer.NextNoJunk;
+      Lexer.NextNoJunk;
+    end;
+
+    Lexer.NextNoSpace;
+
+    if Lexer.Token <> 'endatmo' then
+      Config.Overcast := Round(StrToFloat(TokenFull) * 10);
+  except
+    Errors.Add('B³¹d parsowania wpisu atmo.');
   end;
 end;
 
@@ -492,18 +540,11 @@ begin
     FirstInitPos := Pos('FirstInit',Plik.Text);
 
     Result.Other.Text := Copy(Plik.Text,0,FirstInitPos-1);
-    if (Pos('config',Result.Other.Text) > 0) and (Pos('endconfig',Result.Other.Text) > 0) then
-    begin
-      Result.Config := ParseConfig(Copy(Plik.Text,Pos('config',Result.Other.Text)+6,
-                  Pos('endconfig',Result.Other.Text)-12-Pos('config',Result.Other.Text)+6));
-    end
-    else
+    if Pos('config',Result.Other.Text) = 0 then
     begin
       Config.Day := 0;
       Config.Temperature := 15;
-      Result.Config := Config;
     end;
-
 
     FirstInit := TStringList.Create;
     FirstInit.Text := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
@@ -534,6 +575,14 @@ begin
             while not SameText(Lexer.Token, 'enddescription') and (Lexer.TokenID <> ptNull) do
               Lexer.Next;
           end;
+
+          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token,'config')) then
+            ParseConfig(Config);
+
+          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token,'atmo')) then
+            ParseAtmo(Config);
+
+          Result.Config := Config;
 
           if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token, 'include')) and (Lexer.TokenPos > FirstInitPos) then
           begin
@@ -619,6 +668,7 @@ end;
 procedure TParser.ParseTextureModels(var Tekstura:TTexture);
 var
   Token : string;
+  Sign : Char;
   Model : TModel;
 begin
   while Lexer.TokenID = ptEqual do
@@ -644,6 +694,29 @@ begin
     end;
     Model.Mini := Token;
     Token := EmptyStr;
+
+    if Tekstura.Typ = tyUnknown then
+    begin
+      Sign := Model.Mini[1];
+      Sign := UpperCase(Sign)[1];
+
+      if Sign = 'A' then Tekstura.Typ := tyA else
+      if Sign = 'B' then Tekstura.Typ := tyB else
+      if Sign = 'D' then Tekstura.Typ := tyD else
+      if Sign = 'E' then Tekstura.Typ := tyE else
+      if Sign = 'F' then Tekstura.Typ := tyF else
+      if Sign = 'G' then Tekstura.Typ := tyG else
+      if Sign = 'H' then Tekstura.Typ := tyH else
+      if Sign = 'L' then Tekstura.Typ := tyL else
+      if Sign = 'P' then Tekstura.Typ := tyP else
+      if Sign = 'R' then Tekstura.Typ := tyR else
+      if Sign = 'S' then Tekstura.Typ := tyS else
+      if Sign = 'U' then Tekstura.Typ := tyU else
+      if Sign = 'V' then Tekstura.Typ := tyV else
+      if Sign = 'W' then Tekstura.Typ := tyW else
+      if Sign = 'X' then Tekstura.Typ := tyX else
+      if Sign = 'Z' then Tekstura.Typ := tyZ;
+    end;
 
     if Lexer.TokenID = ptComma then
     begin
@@ -686,9 +759,25 @@ begin
         begin
           Token := Copy(Plik[i],3,1);
 
-          if Token = UpperCase(Copy(Plik[i],3,1)) then
-            Grupa := tyWagon
-          else
+          if Token = '*' then
+            Grupa := tyUnknown else
+          if SameStr(Token,'A') then Grupa := tyA else
+          if SameStr(Token,'B') then Grupa := tyB else
+          if SameStr(Token,'D') then Grupa := tyD else
+          if SameStr(Token,'E') then Grupa := tyE else
+          if SameStr(Token,'F') then Grupa := tyF else
+          if SameStr(Token,'G') then Grupa := tyG else
+          if SameStr(Token,'H') then Grupa := tyH else
+          if SameStr(Token,'L') then Grupa := tyL else
+          if SameStr(Token,'P') then Grupa := tyP else
+          if SameStr(Token,'R') then Grupa := tyR else
+          if SameStr(Token,'S') then Grupa := tyS else
+          if SameStr(Token,'U') then Grupa := tyU else
+          if SameStr(Token,'V') then Grupa := tyV else
+          if SameStr(Token,'W') then Grupa := tyW else
+          if SameStr(Token,'X') then Grupa := tyX else
+          if SameStr(Token,'Z') then Grupa := tyZ else
+
           if SameText(Token,'e') then Grupa := tyELEKTROWOZ else
           if SameText(Token,'s') then Grupa := tySPALINOWOZ else
           if SameText(Token,'p') then Grupa := tyPAROWOZ    else
@@ -710,9 +799,6 @@ begin
         if Pos('=',Plik[i]) > 0 then
         begin
           Tekstura := TTexture.Create;
-
-          if Pos('026', Plik[i]) > 0 then
-            Tekstura := Tekstura;
 
           Tekstura.Typ := Grupa;
           Tekstura.Dir := ExtractFileDir(Copy(Sciezka,Pos('dynamic',Sciezka)+8,Length(Sciezka)));

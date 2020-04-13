@@ -7,8 +7,10 @@ uses System.Generics.Collections, System.Generics.Defaults, CastaliaPasLexTypes,
 
 type
 
-  TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,tyROBOCZY,tyDREZYNA,
-          tyTRAMWAJ,tyWAGON,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,tyINNE);
+  TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
+          tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
+          tyROBOCZY,tyDREZYNA,tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,
+          tyZWIERZE,tyINNE, tyUNKNOWN);
 
   TCabOccupancy = (coHeadDriver,coRearDriver,coPassenger,coNobody);
 
@@ -22,33 +24,24 @@ type
   TModifierKey = (mkShift, mkCtrl);
   TModifierKeys = set of TModifierKey;
 
-  //
   TModel = class
     Model : string;
     Mini  : string;
     MiniD : string;
   end;
-  //
 
   TTexture = class
     Plik  : string;
-
-    //
     Model   : string;
     Models  : TObjectList<TModel>;
-    //
-
     Mini  : string;
     MiniD : string;
     Opis  : string;
     Dir   : string;
-
     Fiz   : Integer;
     Mmd   : Boolean;
-
     Typ    : TTyp;
     Errors : TTexErrors;
-
     Version   : string;
     Mark      : string;
     Owner     : string;
@@ -57,10 +50,8 @@ type
     Works     : string;
     Author    : string;
     Photos    : string;
-  //
   public
     constructor Create;
-  //
   end;
 
   TPhysics = class
@@ -149,8 +140,11 @@ type
   end;
 
   TConfig = record
-    Day : Integer;
+    Day         : Integer;
     Temperature : Double;
+    FogStart    : Integer;
+    FogEnd      : Integer;
+    Overcast    : Integer;
   end;
 
   TScenario = class

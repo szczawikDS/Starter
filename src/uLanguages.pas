@@ -15,7 +15,7 @@ type
 implementation
 
 uses System.SysUtils, uMain, System.Classes,
-     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst;
+     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst, ExtCtrls;
 
 { TLanguages }
 
@@ -71,6 +71,11 @@ begin
           (Component as TCheckListBox).Clear;
           ExtractStrings(['|'],[],PChar(Value),(Component as TCheckListBox).Items);
           (Component as TCheckListBox).Items.EndUpdate;
+        end
+        else
+        if s = 6 then
+        begin
+          (Component as TPanel).Caption := Value;
         end;
       end;
 
@@ -84,7 +89,9 @@ begin
       else
       if LangFile[i] = '[combos]' then s := 4
       else
-      if LangFile[i] = '[checklists]' then s := 5;
+      if LangFile[i] = '[checklists]' then s := 5
+      else
+      if LangFile[i] = '[panels]' then s := 6;
 
       Inc(i);
     end;
