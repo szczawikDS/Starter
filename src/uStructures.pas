@@ -17,7 +17,7 @@ type
   TTexError = (teNoFile,teNoModel,teNoPhysics,teNoMultimedia);
   TTexErrors = set of TTexError;
 
-  TPhysicsSections = (psOther,psParam,psLoad,psDimension,psWheels,psBrake,psBuffCoupl,psCntrl);
+  TPhysicsSections = (psOther,psParam,psLoad,psDimension,psWheels,psBrake,psBuffCoupl,psBuffCouplA,psBuffCouplB,psCntrl);
 
   TSelectedList = (slSCN,slDEPO);
 
@@ -55,13 +55,15 @@ type
   end;
 
   TPhysics = class
-    ID      : Integer;
-    Name    : string;
-    Dir     : string;
-    Mass    : Double;
-    VMax    : Double;
-    Length  : Double;
+    ID            : Integer;
+    Name          : string;
+    Dir           : string;
+    Mass          : Double;
+    VMax          : Double;
+    Length        : Double;
     LoadAccepted  : string;
+    AllowedFlagA  : Integer;
+    AllowedFlagB  : Integer;
   end;
 
   TVehicle = class(TPersistent)
@@ -149,6 +151,7 @@ type
 
   TScenario = class
   private
+    FID          : string;       // $id - dla grupowania scenariuszy
     FName        : string;
     FTitle       : string;       // $n
     FDesc        : TStringList;  // $d
@@ -164,6 +167,7 @@ type
     procedure SetVehicles(const Value: TObjectList<TVehicle>);
     procedure SetOther(const Value: TStringList);
   public
+    property ID          : string read FID write FID;
     property Name        : string read FName write FName;
     property Title       : string read FTitle write FTitle;         // $n
     property Desc        : TStringList read FDesc write SetDesc;    // $d

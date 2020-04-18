@@ -32,7 +32,6 @@ type
     tsSettings: TTabSheet;
     pnlButtons: TPanel;
     btnDefaultSettings: TButton;
-    lbScenarios: TListBox;
     Panel2: TPanel;
     pcMissions: TPageControl;
     tsDescription: TTabSheet;
@@ -330,6 +329,7 @@ type
     actFullCloudy: TAction;
     actLittleRain: TAction;
     actBigRain: TAction;
+    tvSCN: TTreeView;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbScenariosClick(Sender: TObject);
@@ -413,6 +413,8 @@ type
     procedure actFullCloudyExecute(Sender: TObject);
     procedure actLittleRainExecute(Sender: TObject);
     procedure actBigRainExecute(Sender: TObject);
+    procedure cbModelsDrawItem(Control: TWinControl; Index: Integer;
+      Rect: TRect; State: TOwnerDrawState);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -451,6 +453,7 @@ type
     procedure RemoveVehicle;
     procedure AppDeactivate(Sender: TObject);
     procedure AppActivate(Sender: TObject);
+    procedure ScenariosList;
     { Private declarations }
   public
     { Public declarations }
@@ -463,6 +466,8 @@ type
     DIR         : string;
     MiniFactor  : Integer;
     SelList     : TSelectedList;
+
+    Images      : TObjectList<TBitmap>; //d
 
     property Train : TTrain read GetSelList write SetSelList;
 
@@ -901,7 +906,7 @@ var
   Parser : TParser;
   Config : TConfig;
 begin
-  SCN := (lbScenarios.Items.Objects[lbScenarios.ItemIndex] as TScenario);
+  SCN := TScenario(tvSCN.Selected.Data);
   Starter := TStringList.Create;
 
   Starter.Text := SCN.Other.Text;
@@ -946,7 +951,7 @@ procedure TMain.actStartUpdate(Sender: TObject);
 begin
   actStart.Enabled := (SelTrain >= 0) and (SelVehicle >= 0)
                       and (Train.Vehicles[SelVehicle].CabOccupancy in [coHeadDriver,coRearDriver,coPassenger])
-                      and (cbEXE.ItemIndex >= 0 );
+                      and (cbEXE.ItemIndex >= 0) and (tvSCN.Selected.Data <> nil);
 end;
 
 procedure TMain.actSummerExecute(Sender: TObject);
@@ -1148,10 +1153,43 @@ begin
   lbTextures.Items.EndUpdate;
 end;
 
+procedure TMain.cbModelsDrawItem(Control: TWinControl; Index: Integer;
+  Rect: TRect; State: TOwnerDrawState);
+var
+  ComboBox: TComboBox;
+  ItemWidth : Integer;
+begin
+  ComboBox := (Control as TComboBox);
+  try
+    with ComboBox.Canvas do
+    begin
+      FillRect(Rect);
+
+      ItemWidth := (cbModels.Width-GetSystemMetrics(SM_CYHSCROLL)) shr 1;
+
+      if Images[Index].Handle <> 0 then
+        Draw(ItemWidth -(Images[Index].Width shr 1), Rect.Top, Images[Index]);
+      Rect := Bounds(
+        ItemWidth - (TextWidth(ComboBox.Items[Index]) shr 1),
+        Rect.Top+15,
+        Rect.Right - Rect.Left,
+        Rect.Bottom - Rect.Top);
+      DrawText(
+        handle,
+        PChar(ComboBox.Items[Index]),
+        length(ComboBox.Items[index]),
+        Rect,
+        DT_VCENTER + DT_SINGLELINE);
+    end;
+  finally
+  end;
+end;
+
 procedure TMain.cbTypesClick(Sender: TObject);
 var
   i, y : Integer;
   slModels : TStringList;
+  Bitmap : TBitmap;
 begin
   slModels := TStringList.Create;
   slModels.Sorted := True;
@@ -1161,6 +1199,19 @@ begin
     if Ord(Textures[i].Typ) = cbTypes.ItemIndex then
       for y := 0 to Textures[i].Models.Count-1 do
         slModels.Add(Textures[i].Models[y].Mini);
+
+  if Assigned(Images) then
+    Images.Free;
+  Images := TObjectList<TBitmap>.Create;
+  for i := 0 to slModels.Count-1 do
+  begin
+    Bitmap := TBitmap.Create;
+    if FileExists(DIR + '\textures\mini\' + slModels[i] + '.bmp') then
+      Bitmap.LoadFromFile(DIR + '\textures\mini\' + slModels[i] + '.bmp')
+    else
+      Bitmap.LoadFromFile(DIR + '\textures\mini\other.bmp');
+    Images.Add(Bitmap);
+  end;
 
   cbModels.Items.BeginUpdate;
   cbModels.Items.Assign(slModels);
@@ -1200,9 +1251,48 @@ begin
 end;
 
 procedure TMain.clCouplersClick(Sender: TObject);
+var
+  CouplerOld, Coupler, SelectCouplerMax, NextCouplerMax : Integer;
 begin
-  if SelVehicle >= 0 then
-    Train.Vehicles[SelVehicle].Coupler := GetCoupler;
+  Coupler := GetCoupler;
+  if Train.Vehicles.Count > SelVehicle+1 then
+  begin
+    CouplerOld := Train.Vehicles[SelVehicle].Coupler;
+
+    if Train.Vehicles.Count > SelVehicle then
+    begin
+      if (Train.Vehicles[SelVehicle].Texture <> nil) and
+         (Train.Vehicles[SelVehicle+1].Texture <> nil) then
+      begin
+        SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagA;
+        if (Train.Vehicles[SelVehicle].Dist >= 0) and
+           (Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB <> 0) then
+          SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB;
+
+        NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagA;
+        if (Train.Vehicles[SelVehicle+1].Dist < 0) and
+           (Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB <> 0) then
+          NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB;
+
+        if NextCouplerMax < SelectCouplerMax then
+          SelectCouplerMax := NextCouplerMax;
+
+        if (Coupler <= SelectCouplerMax) or (Coupler < CouplerOld) then
+        begin
+          Train.Vehicles[SelVehicle].Coupler := Coupler;
+          clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
+        end
+        else
+        begin
+          Train.Vehicles[SelVehicle].Coupler := CouplerOld;
+          SelectCoupler(CouplerOld);
+          ShowMessage('Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.');
+        end;
+      end
+      else
+        Train.Vehicles[SelVehicle].Coupler := Coupler;
+    end;
+  end;
 end;
 
 function TMain.GetCoupler:Integer;
@@ -1319,8 +1409,6 @@ begin
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
-var
-  i : Integer;
 begin
   Application.OnActivate    := AppActivate;
   Application.OnDeactivate  := AppDeactivate;
@@ -1358,8 +1446,7 @@ begin
   SelVehicle := -1;
   SelectTex := True;
 
-  for i := 0 to Scenarios.Count-1 do
-    lbScenarios.AddItem(Scenarios[i].Name,Scenarios[i]);
+  ScenariosList;
 
   LoadMagazine;
 
@@ -1368,10 +1455,49 @@ begin
   Pages.Pages[2].TabVisible := False;
   Pages.ActivePageIndex := 0;
 
-  if lbScenarios.Count > 0 then
+  if tvSCN.Items.Count > 0 then
   begin
-    lbScenarios.ItemIndex := 0;
+    tvSCN.Select(tvSCN.Items[0]);
+    tvSCN.Selected.Expand(false);
+
+    if tvSCN.Selected.Count > 0 then
+      tvSCN.Select(tvSCN.Selected.Item[0]);
+
     lbScenariosClick(self);
+  end;
+end;
+
+procedure TMain.ScenariosList;
+var
+  i, y : Integer;
+  Found : boolean;
+begin
+  i := 0;
+
+  while i < Scenarios.Count-1 do
+  begin
+    if Scenarios[i].ID = '-' then
+    begin
+      tvSCN.Items.AddObject(nil,Scenarios[i].Name,Scenarios[i]);
+      Inc(i);
+    end
+    else
+    begin
+      Found := False;
+      for y := 0 to tvSCN.Items.Count-1 do
+      begin
+          if SameStr(tvSCN.Items[y].Text, Scenarios[i].ID) then
+          begin
+            tvSCN.Items.AddChildObject(tvSCN.Items[y],Scenarios[i].Name,Scenarios[i]);
+            Inc(i);
+            Found := True;
+            break;
+          end;
+      end;
+
+      if not Found then
+        tvSCN.Items.Add(nil,Scenarios[i].ID);
+    end;
   end;
 end;
 
@@ -1533,7 +1659,10 @@ begin
   i := 0;
   while i <= sbTrain.ControlCount-1 do
     if sbTrain.Controls[i].ClassType = TShape then
-      sbTrain.Controls[i].Free
+    begin
+      sbTrain.Controls[i].Free;
+      Break;
+    end
     else
       Inc(i);
 
@@ -1551,6 +1680,8 @@ begin
   Vehicle := Train.Vehicles[SelVehicle];
 
   SelectCoupler(Vehicle.Coupler);
+
+  clCouplers.Enabled := Train.Vehicles.Count > SelVehicle + 1;
 
   if Vehicle.Brake.IsEmpty then cbBrakeActing.ItemIndex := 0 else
   if Vehicle.Brake = 'G' then cbBrakeActing.ItemIndex := 1 else
@@ -1633,6 +1764,8 @@ begin
   end;
   if Coupler >= 1 then
     clCouplers.Checked[0] := True;
+
+  clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
 end;
 
 procedure TMain.LoadModelData(const PhysicsID:Integer);
@@ -1930,12 +2063,15 @@ var
   Mini : TJPEGImage;
   Attachment : TButton;
 begin
-  if (lbScenarios.ItemIndex < 0) or ((SCN = Scenarios[lbScenarios.ItemIndex]) and (Sender <> chOnlyForDriving)) then Exit;
+  //if (lbScenarios.ItemIndex < 0) or ((SCN = Scenarios[lbScenarios.ItemIndex]) and (Sender <> chOnlyForDriving)) then Exit;
+  if not Assigned(tvSCN.Selected) then exit;
+  if tvSCN.Selected.Data = nil then exit;
 
+  if (SCN = TScenario(tvSCN.Selected.Data)) and (Sender <> chOnlyForDriving) then Exit;
   SelTrain := -1;
 
   SCN := TScenario.Create;
-  SCN := Scenarios[lbScenarios.ItemIndex];
+  SCN := TScenario(tvSCN.Selected.Data);
 
   while sbAttachments.ControlCount > 0 do
     sbAttachments.Controls[0].Free;

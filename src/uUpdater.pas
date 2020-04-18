@@ -19,7 +19,7 @@ type
     function Ask(const Text: string): Boolean;
   public
     const
-      AppVersion = 12;
+      AppVersion = 13;
       procedure CheckUpdate;
   end;
 

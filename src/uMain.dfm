@@ -283,7 +283,7 @@ object Main: TMain
       Top = 3
       Width = 130
       Height = 13
-      Caption = 'Wersja 3.0.0 (13.04.2020)'
+      Caption = 'Wersja 3.1.0 (16.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -357,16 +357,6 @@ object Main: TMain
       TabOrder = 0
       object tsStart: TTabSheet
         Caption = 'Start'
-        object lbScenarios: TListBox
-          Left = 0
-          Top = 0
-          Width = 230
-          Height = 412
-          Align = alLeft
-          ExtendedSelect = False
-          TabOrder = 0
-          OnClick = lbScenariosClick
-        end
         object Panel2: TPanel
           Left = 230
           Top = 0
@@ -375,7 +365,7 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           ShowCaption = False
-          TabOrder = 1
+          TabOrder = 0
           object Label32: TLabel
             Left = 0
             Top = 0
@@ -706,7 +696,7 @@ object Main: TMain
                       Left = 0
                       Top = 0
                       Width = 34
-                      Height = 24
+                      Height = 16
                       Align = alLeft
                       Caption = 'Dobra'
                       Font.Charset = DEFAULT_CHARSET
@@ -784,7 +774,7 @@ object Main: TMain
                   object lbCloudy: TLabel
                     Left = 0
                     Top = 0
-                    Width = 254
+                    Width = 145
                     Height = 16
                     Align = alTop
                     Alignment = taCenter
@@ -915,6 +905,22 @@ object Main: TMain
             OnClick = lbTrainsClick
           end
         end
+        object tvSCN: TTreeView
+          Left = 0
+          Top = 0
+          Width = 230
+          Height = 412
+          Align = alLeft
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          HideSelection = False
+          Indent = 19
+          ReadOnly = True
+          RowSelect = True
+          ShowLines = False
+          TabOrder = 1
+          OnClick = lbScenariosClick
+        end
       end
       object tsMagazine: TTabSheet
         Caption = 'Magazyn'
@@ -989,6 +995,7 @@ object Main: TMain
                     Font.Name = 'Tahoma'
                     Font.Style = [fsBold]
                     ParentFont = False
+                    Transparent = True
                     Layout = tlCenter
                   end
                   object chOnlyForDriving: TCheckBox
@@ -1038,6 +1045,7 @@ object Main: TMain
                     Font.Name = 'Tahoma'
                     Font.Style = [fsBold]
                     ParentFont = False
+                    Transparent = True
                     Layout = tlCenter
                   end
                   object Panel6: TPanel
@@ -1194,19 +1202,21 @@ object Main: TMain
                 Left = 0
                 Top = 24
                 Width = 230
-                Height = 24
+                Height = 53
                 Align = alTop
-                Style = csDropDownList
-                DoubleBuffered = False
+                Style = csOwnerDrawFixed
+                DoubleBuffered = True
+                ItemHeight = 47
                 ParentDoubleBuffered = False
                 TabOrder = 1
                 OnClick = cbModelsClick
+                OnDrawItem = cbModelsDrawItem
               end
               object lbTextures: TListBox
                 Left = 0
-                Top = 48
+                Top = 77
                 Width = 230
-                Height = 128
+                Height = 99
                 Align = alClient
                 TabOrder = 2
                 OnDblClick = lbTexturesDblClick
@@ -1568,6 +1578,7 @@ object Main: TMain
                   Height = 112
                   Align = alClient
                   DoubleBuffered = False
+                  Enabled = False
                   Items.Strings = (
                     'Mechanicznie'
                     'Hamulec'
@@ -1578,6 +1589,8 @@ object Main: TMain
                     'Ogrzewanie'
                     'Blokada')
                   ParentDoubleBuffered = False
+                  ParentShowHint = False
+                  ShowHint = True
                   TabOrder = 0
                   OnClick = clCouplersClick
                 end
@@ -1799,7 +1812,7 @@ object Main: TMain
                   Left = 95
                   Top = 72
                   Width = 7
-                  Height = 39
+                  Height = 16
                   Align = alLeft
                   Alignment = taRightJustify
                   Caption = '0'
@@ -1841,7 +1854,7 @@ object Main: TMain
                     Left = 95
                     Top = 3
                     Width = 7
-                    Height = 20
+                    Height = 16
                     Align = alLeft
                     Alignment = taRightJustify
                     Caption = '0'
@@ -1873,7 +1886,7 @@ object Main: TMain
                     Left = 95
                     Top = 3
                     Width = 7
-                    Height = 20
+                    Height = 16
                     Align = alLeft
                     Alignment = taRightJustify
                     Caption = '0'
@@ -1905,7 +1918,7 @@ object Main: TMain
                     Left = 95
                     Top = 3
                     Width = 7
-                    Height = 20
+                    Height = 16
                     Align = alLeft
                     Alignment = taRightJustify
                     Caption = '0'
@@ -1938,10 +1951,10 @@ object Main: TMain
                   end
                   object lbTexPhoto: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 281
                     Top = 3
-                    Width = 206
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -1970,10 +1983,10 @@ object Main: TMain
                   end
                   object lbTexRevision: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 281
                     Top = 3
-                    Width = 206
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2002,10 +2015,10 @@ object Main: TMain
                   end
                   object lbTexStation: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 281
                     Top = 3
-                    Width = 206
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2034,10 +2047,10 @@ object Main: TMain
                   end
                   object lbTexOwner: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 281
                     Top = 3
-                    Width = 206
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2066,10 +2079,10 @@ object Main: TMain
                   end
                   object lbTexAuthor: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 281
                     Top = 3
-                    Width = 206
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2098,10 +2111,10 @@ object Main: TMain
                   end
                   object lbTexWorks: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 281
                     Top = 3
-                    Width = 206
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2528,10 +2541,10 @@ object Main: TMain
                 TabOrder = 7
                 object Label21: TLabel
                   AlignWithMargins = True
-                  Left = 3
+                  Left = 53
                   Top = 3
-                  Width = 147
-                  Height = 24
+                  Width = 97
+                  Height = 16
                   Align = alClient
                   Alignment = taRightJustify
                   Caption = 'Adres portu LPT:'
@@ -2563,7 +2576,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 239
+                Width = 39
                 Height = 16
                 Align = alTop
                 Alignment = taCenter
@@ -2579,7 +2592,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 266
-                Width = 239
+                Width = 48
                 Height = 16
                 Align = alTop
                 Alignment = taCenter
@@ -2688,10 +2701,10 @@ object Main: TMain
                 ShowCaption = False
                 TabOrder = 7
                 object Label3: TLabel
-                  Left = 0
+                  Left = 159
                   Top = 0
-                  Width = 200
-                  Height = 27
+                  Width = 41
+                  Height = 16
                   Align = alClient
                   Alignment = taRightJustify
                   Caption = 'Tarcie:'
@@ -2720,10 +2733,10 @@ object Main: TMain
                 ShowCaption = False
                 TabOrder = 8
                 object Label4: TLabel
-                  Left = 0
+                  Left = 123
                   Top = 0
-                  Width = 200
-                  Height = 27
+                  Width = 77
+                  Height = 16
                   Align = alClient
                   Alignment = taRightJustify
                   Caption = 'K'#261't widzenia:'
@@ -3306,7 +3319,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 199
+                Width = 101
                 Height = 16
                 Align = alTop
                 Alignment = taCenter

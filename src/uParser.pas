@@ -475,7 +475,7 @@ begin
       Delete(Result,Pos('atmo',Result),(Pos('endatmo',Result) + 7 - Pos('atmo',Result)));
 
     Atmo := 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
-    Atmo := Atmo + ' ' + FloatToStr(Config.Overcast / 10) + ' endatmo' + #13#10;
+    Atmo := Atmo + ' ' + FloatToStr(Config.Overcast * 0.1 {/ 10}) + ' endatmo' + #13#10;
     Result := Atmo + Result;
   except
    Result := Text;
@@ -532,6 +532,7 @@ var
 begin
   try
     Result := TScenario.Create;
+    Result.ID := '-';
     Result.Name := ExtractFileName( Copy(Sciezka,0,Pos('.scn',Sciezka)-1));
 
     Plik := TStringList.Create;
@@ -563,7 +564,9 @@ begin
         else
         if Pos('$f', Lexer.Token) > 0 then Result.Files.Add(Copy(Lexer.Token,6,Lexer.TokenLen))
         else
-        if Pos('$i', Lexer.Token) > 0 then Result.Image := Copy(Lexer.Token,6,Lexer.TokenLen);
+        if Pos('$i', Lexer.Token) > 0 then Result.Image := Copy(Lexer.Token,6,Lexer.TokenLen)
+        else
+        if Pos('$l', Lexer.Token) > 0 then Result.ID := Copy(Lexer.Token,6,Lexer.TokenLen);
       end
       else
         if Lexer.TokenID = ptSlash then
@@ -921,6 +924,8 @@ var
   Section : TPhysicsSections;
 begin
   try
+    Physics.AllowedFlagB := 0;
+
     PhysicsFile := TStringList.Create;
     if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
       PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
@@ -938,6 +943,9 @@ begin
         if Lexer.Token = 'Param'      then Section := psParam;
         if Lexer.Token = 'Load'       then Section := psLoad;
         if Lexer.Token = 'Dimensions' then Section := psDimension;
+        if Lexer.Token = 'BuffCoupl'  then  Section := psBuffCoupl;
+        if Lexer.Token = 'BuffCoupl1' then  Section := psBuffCouplA;
+        if Lexer.Token = 'BuffCoupl2' then  Section := psBuffCouplB;
 
         case Section of
           psParam:
@@ -974,6 +982,20 @@ begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
             Physics.Length := StrToFloat(Lexer.Token);
+          end;
+          psBuffCoupl..psBuffCouplA:
+          if Lexer.Token = 'AllowedFlag' then
+          begin
+            Lexer.NextNoJunk;
+            Lexer.NextNoJunk;
+            Physics.AllowedFlagA := Abs(StrToInt(TokenFull));
+          end;
+          psBuffCouplB:
+          if Lexer.Token = 'AllowedFlag' then
+          begin
+            Lexer.NextNoJunk;
+            Lexer.NextNoJunk;
+            Physics.AllowedFlagB := Abs(StrToInt(TokenFull));
           end;
         end;
       end
