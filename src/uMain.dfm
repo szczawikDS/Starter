@@ -1033,7 +1033,7 @@ object Main: TMain
                     AlignWithMargins = True
                     Left = 3
                     Top = 0
-                    Width = 590
+                    Width = 148
                     Height = 16
                     Margins.Top = 0
                     Align = alTop
@@ -2863,7 +2863,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 71
-                  Width = 150
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2883,7 +2883,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 120
-                  Width = 150
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2901,7 +2901,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 169
-                  Width = 150
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2920,7 +2920,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 218
-                  Width = 150
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2939,7 +2939,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 22
-                  Width = 150
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2952,7 +2952,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 283
-                  Width = 150
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -3186,7 +3186,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 22
-                Width = 194
+                Width = 198
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3240,7 +3240,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 140
-                Width = 194
+                Width = 198
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3256,7 +3256,7 @@ object Main: TMain
               object cbShadowMapSize: TComboBox
                 Left = 0
                 Top = 186
-                Width = 198
+                Width = 204
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3272,7 +3272,7 @@ object Main: TMain
               object cbShadowRange: TComboBox
                 Left = 0
                 Top = 229
-                Width = 198
+                Width = 204
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3289,7 +3289,7 @@ object Main: TMain
               object cbShadowsCabRange: TComboBox
                 Left = 0
                 Top = 272
-                Width = 198
+                Width = 204
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3493,7 +3493,7 @@ object Main: TMain
             Left = 1
             Top = 1
             Width = 104
-            Height = 24
+            Height = 33
             Align = alLeft
             Style = csDropDownList
             TabOrder = 0
@@ -3576,7 +3576,7 @@ object Main: TMain
             Left = 105
             Top = 1
             Width = 72
-            Height = 24
+            Height = 33
             Align = alLeft
             Style = csDropDownList
             TabOrder = 1
@@ -3589,7 +3589,7 @@ object Main: TMain
             Left = 177
             Top = 1
             Width = 72
-            Height = 24
+            Height = 33
             Align = alLeft
             Style = csDropDownList
             TabOrder = 2

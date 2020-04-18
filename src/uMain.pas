@@ -454,9 +454,7 @@ type
     procedure AppDeactivate(Sender: TObject);
     procedure AppActivate(Sender: TObject);
     procedure ScenariosList;
-    { Private declarations }
   public
-    { Public declarations }
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
     Physics     : TObjectList<TPhysics>;
@@ -466,8 +464,7 @@ type
     DIR         : string;
     MiniFactor  : Integer;
     SelList     : TSelectedList;
-
-    Images      : TObjectList<TBitmap>; //d
+    Images      : TObjectList<TBitmap>;
 
     property Train : TTrain read GetSelList write SetSelList;
 
