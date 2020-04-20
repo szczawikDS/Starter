@@ -19,10 +19,10 @@ type
   private
     function TokenFull: string;
     procedure ParseConfig(var Config: TConfig);
-    function ParsePociag: TTrain;
-    function ParsePojazd(const TrainSet: Boolean=True): TVehicle;
-    function ParseScenariusz(const Sciezka: string): TScenario;
-    procedure ParseTextures(const Sciezka: string);
+    function ParseTrain: TTrain;
+    function ParseVehicle(const TrainSet: Boolean=True): TVehicle;
+    function ParseScenario(const Path: string): TScenario;
+    procedure ParseTextures(const Path: string);
     procedure ParseTrainset(var Scenariusz: TScenario;
       const TrainFile: TStringList);
     procedure LoadModels;
@@ -34,7 +34,7 @@ type
     procedure LoadPhysics;
     procedure FindTexture(var Vehicle:TVehicle);
     procedure ParseTextDesc(Tex: TTexture);
-    procedure ParseTextureModels(var Tekstura: TTexture);
+    procedure ParseTextureModels(var Tex: TTexture);
     procedure SkipComment;
     procedure ParseAtmo(var Config: TConfig);
   end;
@@ -132,7 +132,7 @@ begin
     while (Ilosc = 0) do
     begin
       if Pos('$',SR.Name) <> 1 then
-        Main.Scenarios.Add(ParseScenariusz(Main.DIR + '\scenery\' + SR.Name));
+        Main.Scenarios.Add(ParseScenario(Main.DIR + '\scenery\' + SR.Name));
       Ilosc := FindNext(SR);
     end;
     FindClose(SR);
@@ -141,7 +141,7 @@ begin
   end;
 end;
 
-function TParser.ParsePociag:TTrain;
+function TParser.ParseTrain:TTrain;
 begin
   Result := TTrain.Create;
   try
@@ -160,7 +160,7 @@ begin
     while (not SameText(Lexer.Token, 'endtrainset')) and (Lexer.TokenID <> ptNull) do
     begin
       if (Lexer.TokenID = ptIdentifier) and (Pos('node',Lexer.Token) > 0) then
-        Result.Vehicles.Add(ParsePojazd);
+        Result.Vehicles.Add(ParseVehicle);
 
       if Pos('//$o',Lexer.Token) > 0 then
         if Pos('-',Lexer.Token) = 6 then
@@ -213,7 +213,7 @@ begin
   end;}
 end;
 
-function TParser.ParsePojazd(const TrainSet:Boolean=True):TVehicle;
+function TParser.ParseVehicle(const TrainSet:Boolean=True):TVehicle;
 begin
   try
     Result := TVehicle.Create;
@@ -523,7 +523,7 @@ begin
   end;
 end;
 
-function TParser.ParseScenariusz(const Sciezka:string):TScenario;
+function TParser.ParseScenario(const Path:string):TScenario;
 var
   Plik, FirstInit, IncFirstInit : TStringList;
   FirstInitPos : integer;
@@ -533,10 +533,10 @@ begin
   try
     Result := TScenario.Create;
     Result.ID := '-';
-    Result.Name := ExtractFileName( Copy(Sciezka,0,Pos('.scn',Sciezka)-1));
+    Result.Name := ExtractFileName( Copy(Path,0,Pos('.scn',Path)-1));
 
     Plik := TStringList.Create;
-    Plik.LoadFromFile(Sciezka);
+    Plik.LoadFromFile(Path);
 
     FirstInitPos := Pos('FirstInit',Plik.Text);
 
@@ -614,7 +614,7 @@ begin
     ParseTrainset(Result,FirstInit);
     Plik.Free;
   except
-    Errors.Add('B³¹d parsowania ' + Sciezka + ' Linia: ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania ' + Path + ' Linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -642,7 +642,7 @@ begin
     if (Lexer.TokenID = ptIdentifier) and (Pos('trainset',Lexer.Token) > 0)
         and (Pos('endtrainset',Lexer.Token) = 0) then
     begin
-      Pociag := ParsePociag;
+      Pociag := ParseTrain;
       if Pociag.Vehicles.Count > 0 then
         Scenariusz.Trains.Add(Pociag);
     end
@@ -658,7 +658,7 @@ begin
           Lexer.AheadNext;
 
         if SameText(Lexer.AheadToken,'dynamic') then
-          Scenariusz.Vehicles.Add(ParsePojazd(False));
+          Scenariusz.Vehicles.Add(ParseVehicle(False));
       end;
 
     Lexer.NextNoJunk;
@@ -668,7 +668,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseTextureModels(var Tekstura:TTexture);
+procedure TParser.ParseTextureModels(var Tex:TTexture);
 var
   Token : string;
   Sign : Char;
@@ -698,27 +698,27 @@ begin
     Model.Mini := Token;
     Token := EmptyStr;
 
-    if Tekstura.Typ = tyUnknown then
+    if Tex.Typ = tyUnknown then
     begin
       Sign := Model.Mini[1];
       Sign := UpperCase(Sign)[1];
 
-      if Sign = 'A' then Tekstura.Typ := tyA else
-      if Sign = 'B' then Tekstura.Typ := tyB else
-      if Sign = 'D' then Tekstura.Typ := tyD else
-      if Sign = 'E' then Tekstura.Typ := tyE else
-      if Sign = 'F' then Tekstura.Typ := tyF else
-      if Sign = 'G' then Tekstura.Typ := tyG else
-      if Sign = 'H' then Tekstura.Typ := tyH else
-      if Sign = 'L' then Tekstura.Typ := tyL else
-      if Sign = 'P' then Tekstura.Typ := tyP else
-      if Sign = 'R' then Tekstura.Typ := tyR else
-      if Sign = 'S' then Tekstura.Typ := tyS else
-      if Sign = 'U' then Tekstura.Typ := tyU else
-      if Sign = 'V' then Tekstura.Typ := tyV else
-      if Sign = 'W' then Tekstura.Typ := tyW else
-      if Sign = 'X' then Tekstura.Typ := tyX else
-      if Sign = 'Z' then Tekstura.Typ := tyZ;
+      if Sign = 'A' then Tex.Typ := tyA else
+      if Sign = 'B' then Tex.Typ := tyB else
+      if Sign = 'D' then Tex.Typ := tyD else
+      if Sign = 'E' then Tex.Typ := tyE else
+      if Sign = 'F' then Tex.Typ := tyF else
+      if Sign = 'G' then Tex.Typ := tyG else
+      if Sign = 'H' then Tex.Typ := tyH else
+      if Sign = 'L' then Tex.Typ := tyL else
+      if Sign = 'P' then Tex.Typ := tyP else
+      if Sign = 'R' then Tex.Typ := tyR else
+      if Sign = 'S' then Tex.Typ := tyS else
+      if Sign = 'U' then Tex.Typ := tyU else
+      if Sign = 'V' then Tex.Typ := tyV else
+      if Sign = 'W' then Tex.Typ := tyW else
+      if Sign = 'X' then Tex.Typ := tyX else
+      if Sign = 'Z' then Tex.Typ := tyZ;
     end;
 
     if Lexer.TokenID = ptComma then
@@ -734,22 +734,22 @@ begin
       Token := EmptyStr;
     end;
 
-    Tekstura.Models.Add(Model);
+    Tex.Models.Add(Model);
   end;
 end;
 
-procedure TParser.ParseTextures(const Sciezka:string);
+procedure TParser.ParseTextures(const Path:string);
 var
   Plik : TStringList;
   i, y : Integer;
-  Tekstura : TTexture;
+  Tex : TTexture;
   Physics : TPhysics;
   Token : string;
   Grupa : TTyp;
 begin
   try
     Plik := TStringList.Create;
-    Plik.LoadFromFile(Sciezka);
+    Plik.LoadFromFile(Path);
 
     try
       for i := 0 to Plik.Count-1 do
@@ -801,10 +801,10 @@ begin
 
         if Pos('=',Plik[i]) > 0 then
         begin
-          Tekstura := TTexture.Create;
+          Tex := TTexture.Create;
 
-          Tekstura.Typ := Grupa;
-          Tekstura.Dir := ExtractFileDir(Copy(Sciezka,Pos('dynamic',Sciezka)+8,Length(Sciezka)));
+          Tex.Typ := Grupa;
+          Tex.Dir := ExtractFileDir(Copy(Path,Pos('dynamic',Path)+8,Length(Path)));
           Lexer.Origin := PChar(Plik[i]);
           Lexer.Init;
 
@@ -813,37 +813,37 @@ begin
             Token := Token + Lexer.Token;
             Lexer.Next;
           end;
-          Tekstura.Plik := Token;
+          Tex.Plik := Token;
 
-          Tekstura.Plik := ChangeFileExt(Tekstura.Plik,'');
+          Tex.Plik := ChangeFileExt(Tex.Plik,'');
 
           Token := EmptyStr;
 
-          ParseTextureModels(Tekstura);
+          ParseTextureModels(Tex);
 
           if Lexer.TokenID = ptSlashesComment then
           begin
-            Tekstura.Opis := Copy(Lexer.Token,3,Lexer.TokenLen);
-            ParseTextDesc(Tekstura);
+            Tex.Opis := Copy(Lexer.Token,3,Lexer.TokenLen);
+            ParseTextDesc(Tex);
           end;
 
-          if not (FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Plik + '.mat'))
-            and not (FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Plik + '.dds'))
-            and not (FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Plik + '.tga'))  then
-              Include(Tekstura.Errors,teNoFile);
+          if not (FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Plik + '.mat'))
+            and not (FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Plik + '.dds'))
+            and not (FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Plik + '.tga'))  then
+              Include(Tex.Errors,teNoFile);
 
-          for y := 0 to Tekstura.Models.Count-1 do
+          for y := 0 to Tex.Models.Count-1 do
           begin
-            if not FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Models[y].Model + '.fiz')
-            and not FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Models[y].Model + 'dumb.fiz')  then
+            if not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz')
+            and not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz')  then
             begin
-              Include(Tekstura.Errors,teNoPhysics);
-              Tekstura.Fiz := -1;
+              Include(Tex.Errors,teNoPhysics);
+              Tex.Fiz := -1;
             end
             else
             begin
-              Tekstura.Fiz := IsPhysics(Tekstura.Models[y].Model);
-              if Tekstura.Fiz < 0 then
+              Tex.Fiz := IsPhysics(Tex.Models[y].Model);
+              if Tex.Fiz < 0 then
               begin
                 Physics := TPhysics.Create;
 
@@ -852,30 +852,30 @@ begin
                 else
                   Physics.ID := 0;
 
-                if not FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Models[y].Model + '.fiz') then
-                  Tekstura.Models[y].Model := Tekstura.Models[y].Model + 'dumb';
+                if not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') then
+                  Tex.Models[y].Model := Tex.Models[y].Model + 'dumb';
 
-                if FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Models[y].Model + '.fiz') then
-                  Physics.Name := Tekstura.Models[y].Model;
+                if FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') then
+                  Physics.Name := Tex.Models[y].Model;
 
-                Physics.Dir  := Tekstura.Dir;
+                Physics.Dir  := Tex.Dir;
                 Main.Physics.Add(Physics);
-                Tekstura.Fiz := Physics.ID;
+                Tex.Fiz := Physics.ID;
               end;
             end;
 
-            if not FileExists(Main.DIR + '\dynamic\' + Tekstura.Dir + '\' + Tekstura.Models[y].Model + '.mmd') then
-                Include(Tekstura.Errors,teNoMultimedia);
+            if not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then
+                Include(Tex.Errors,teNoMultimedia);
           end;
 
-          Main.Textures.Add(Tekstura);
+          Main.Textures.Add(Tex);
         end;
       end;
     finally
       Plik.Free;
     end;
   except
-    Errors.Add('B³¹d parsowania ' + Sciezka + ' Linia: ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania ' + Path + ' Linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -1057,7 +1057,7 @@ begin
 
           while Lexer.Token = 'node' do
           begin
-            Pociag.Vehicles.Add(ParsePojazd);
+            Pociag.Vehicles.Add(ParseVehicle);
             Lexer.NextID(ptIdentifier);
             Lexer.NextID(ptIdentifier);
           end;

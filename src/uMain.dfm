@@ -283,7 +283,7 @@ object Main: TMain
       Top = 3
       Width = 130
       Height = 13
-      Caption = 'Wersja 3.1.0 (16.04.2020)'
+      Caption = 'Wersja 3.2.0 (19.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -410,23 +410,24 @@ object Main: TMain
                 Width = 588
                 Height = 177
                 Align = alTop
+                BevelOuter = bvNone
                 ShowCaption = False
                 TabOrder = 1
                 object imScenario: TImage
                   AlignWithMargins = True
-                  Left = 359
-                  Top = 4
+                  Left = 360
+                  Top = 3
                   Width = 225
-                  Height = 169
+                  Height = 171
                   Align = alRight
                   Stretch = True
                 end
                 object meDesc: TMemo
                   AlignWithMargins = True
-                  Left = 4
-                  Top = 4
-                  Width = 349
-                  Height = 169
+                  Left = 3
+                  Top = 3
+                  Width = 351
+                  Height = 171
                   Align = alClient
                   ReadOnly = True
                   ScrollBars = ssVertical
@@ -696,7 +697,7 @@ object Main: TMain
                       Left = 0
                       Top = 0
                       Width = 34
-                      Height = 16
+                      Height = 24
                       Align = alLeft
                       Caption = 'Dobra'
                       Font.Charset = DEFAULT_CHARSET
@@ -774,7 +775,7 @@ object Main: TMain
                   object lbCloudy: TLabel
                     Left = 0
                     Top = 0
-                    Width = 145
+                    Width = 254
                     Height = 16
                     Align = alTop
                     Alignment = taCenter
@@ -1033,7 +1034,7 @@ object Main: TMain
                     AlignWithMargins = True
                     Left = 3
                     Top = 0
-                    Width = 148
+                    Width = 590
                     Height = 16
                     Margins.Top = 0
                     Align = alTop
@@ -1244,6 +1245,7 @@ object Main: TMain
                 ShowCaption = False
                 TabOrder = 4
                 object imMini: TImage
+                  Tag = -1
                   Left = 0
                   Top = 0
                   Width = 230
@@ -1251,6 +1253,7 @@ object Main: TMain
                   Align = alTop
                   AutoSize = True
                   Center = True
+                  OnMouseDown = imMiniMouseDown
                 end
               end
             end
@@ -1812,7 +1815,7 @@ object Main: TMain
                   Left = 95
                   Top = 72
                   Width = 7
-                  Height = 16
+                  Height = 39
                   Align = alLeft
                   Alignment = taRightJustify
                   Caption = '0'
@@ -1854,7 +1857,7 @@ object Main: TMain
                     Left = 95
                     Top = 3
                     Width = 7
-                    Height = 16
+                    Height = 20
                     Align = alLeft
                     Alignment = taRightJustify
                     Caption = '0'
@@ -1886,7 +1889,7 @@ object Main: TMain
                     Left = 95
                     Top = 3
                     Width = 7
-                    Height = 16
+                    Height = 20
                     Align = alLeft
                     Alignment = taRightJustify
                     Caption = '0'
@@ -1918,7 +1921,7 @@ object Main: TMain
                     Left = 95
                     Top = 3
                     Width = 7
-                    Height = 16
+                    Height = 20
                     Align = alLeft
                     Alignment = taRightJustify
                     Caption = '0'
@@ -1951,10 +1954,10 @@ object Main: TMain
                   end
                   object lbTexPhoto: TLabel
                     AlignWithMargins = True
-                    Left = 281
+                    Left = 79
                     Top = 3
-                    Width = 4
-                    Height = 16
+                    Width = 206
+                    Height = 20
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -1983,10 +1986,10 @@ object Main: TMain
                   end
                   object lbTexRevision: TLabel
                     AlignWithMargins = True
-                    Left = 281
+                    Left = 79
                     Top = 3
-                    Width = 4
-                    Height = 16
+                    Width = 206
+                    Height = 20
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2015,10 +2018,10 @@ object Main: TMain
                   end
                   object lbTexStation: TLabel
                     AlignWithMargins = True
-                    Left = 281
+                    Left = 79
                     Top = 3
-                    Width = 4
-                    Height = 16
+                    Width = 206
+                    Height = 20
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2047,10 +2050,10 @@ object Main: TMain
                   end
                   object lbTexOwner: TLabel
                     AlignWithMargins = True
-                    Left = 281
+                    Left = 79
                     Top = 3
-                    Width = 4
-                    Height = 16
+                    Width = 206
+                    Height = 20
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2079,10 +2082,10 @@ object Main: TMain
                   end
                   object lbTexAuthor: TLabel
                     AlignWithMargins = True
-                    Left = 281
+                    Left = 79
                     Top = 3
-                    Width = 4
-                    Height = 16
+                    Width = 206
+                    Height = 20
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2111,10 +2114,10 @@ object Main: TMain
                   end
                   object lbTexWorks: TLabel
                     AlignWithMargins = True
-                    Left = 281
+                    Left = 79
                     Top = 3
-                    Width = 4
-                    Height = 16
+                    Width = 206
+                    Height = 20
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2541,10 +2544,10 @@ object Main: TMain
                 TabOrder = 7
                 object Label21: TLabel
                   AlignWithMargins = True
-                  Left = 53
+                  Left = 3
                   Top = 3
-                  Width = 97
-                  Height = 16
+                  Width = 147
+                  Height = 24
                   Align = alClient
                   Alignment = taRightJustify
                   Caption = 'Adres portu LPT:'
@@ -2576,7 +2579,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 39
+                Width = 239
                 Height = 16
                 Align = alTop
                 Alignment = taCenter
@@ -2592,7 +2595,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 266
-                Width = 48
+                Width = 239
                 Height = 16
                 Align = alTop
                 Alignment = taCenter
@@ -2701,10 +2704,10 @@ object Main: TMain
                 ShowCaption = False
                 TabOrder = 7
                 object Label3: TLabel
-                  Left = 159
+                  Left = 0
                   Top = 0
-                  Width = 41
-                  Height = 16
+                  Width = 200
+                  Height = 27
                   Align = alClient
                   Alignment = taRightJustify
                   Caption = 'Tarcie:'
@@ -2733,10 +2736,10 @@ object Main: TMain
                 ShowCaption = False
                 TabOrder = 8
                 object Label4: TLabel
-                  Left = 123
+                  Left = 0
                   Top = 0
-                  Width = 77
-                  Height = 16
+                  Width = 200
+                  Height = 27
                   Align = alClient
                   Alignment = taRightJustify
                   Caption = 'K'#261't widzenia:'
@@ -2863,7 +2866,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 71
-                  Width = 194
+                  Width = 150
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2883,7 +2886,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 120
-                  Width = 194
+                  Width = 150
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2901,7 +2904,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 169
-                  Width = 194
+                  Width = 150
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2920,7 +2923,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 218
-                  Width = 194
+                  Width = 150
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2939,7 +2942,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 22
-                  Width = 194
+                  Width = 150
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -2952,7 +2955,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 283
-                  Width = 194
+                  Width = 150
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -3186,7 +3189,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 22
-                Width = 198
+                Width = 194
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3240,7 +3243,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 140
-                Width = 198
+                Width = 194
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3256,7 +3259,7 @@ object Main: TMain
               object cbShadowMapSize: TComboBox
                 Left = 0
                 Top = 186
-                Width = 204
+                Width = 198
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3272,7 +3275,7 @@ object Main: TMain
               object cbShadowRange: TComboBox
                 Left = 0
                 Top = 229
-                Width = 204
+                Width = 198
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3289,7 +3292,7 @@ object Main: TMain
               object cbShadowsCabRange: TComboBox
                 Left = 0
                 Top = 272
-                Width = 204
+                Width = 198
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
@@ -3319,7 +3322,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 101
+                Width = 199
                 Height = 16
                 Align = alTop
                 Alignment = taCenter
@@ -3493,7 +3496,7 @@ object Main: TMain
             Left = 1
             Top = 1
             Width = 104
-            Height = 33
+            Height = 24
             Align = alLeft
             Style = csDropDownList
             TabOrder = 0
@@ -3576,7 +3579,7 @@ object Main: TMain
             Left = 105
             Top = 1
             Width = 72
-            Height = 33
+            Height = 24
             Align = alLeft
             Style = csDropDownList
             TabOrder = 1
@@ -3589,7 +3592,7 @@ object Main: TMain
             Left = 177
             Top = 1
             Width = 72
-            Height = 33
+            Height = 24
             Align = alLeft
             Style = csDropDownList
             TabOrder = 2
@@ -3617,6 +3620,8 @@ object Main: TMain
     DoubleBuffered = True
     ParentDoubleBuffered = False
     TabOrder = 3
+    OnDragDrop = sbTrainDragDrop
+    OnDragOver = sbTrainDragOver
   end
   object pmTrainsets: TPopupMenu
     OwnerDraw = True
