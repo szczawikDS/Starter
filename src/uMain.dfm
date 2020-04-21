@@ -283,7 +283,7 @@ object Main: TMain
       Top = 3
       Width = 130
       Height = 13
-      Caption = 'Wersja 3.2.0 (19.04.2020)'
+      Caption = 'Wersja 3.3.0 (21.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -3792,6 +3792,9 @@ object Main: TMain
       Category = 'weather'
       Caption = 'Intensywne'
       OnExecute = actBigRainExecute
+    end
+    object actOpenVehicleDir: TAction
+      Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
     end
   end
 end

@@ -330,6 +330,7 @@ type
     actLittleRain: TAction;
     actBigRain: TAction;
     tvSCN: TTreeView;
+    actOpenVehicleDir: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbScenariosClick(Sender: TObject);
@@ -420,6 +421,7 @@ type
     procedure sbTrainDragOver(Sender, Source: TObject; X, Y: Integer;
       State: TDragState; var Accept: Boolean);
     procedure sbTrainDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure miOpenVehicleDirClick(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -469,6 +471,7 @@ type
     procedure ShapeDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure MoveVehicle(const FromPos, ToPos: integer);
     procedure RefreshTrain(const SelPos: Integer=-1);
+    procedure OpenDir(const Path: string);
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -1069,7 +1072,7 @@ end;
 procedure TMain.sbTrainDragOver(Sender, Source: TObject; X, Y: Integer;
   State: TDragState; var Accept: Boolean);
 begin
-  Accept := Sender <> Source;
+  Accept := (Sender <> Source) and (lbTextures.ItemIndex >= 0) and (SelTrain >= 0);
 end;
 
 procedure TMain.cbBrakeActingChange(Sender: TObject);
@@ -1617,10 +1620,10 @@ end;
 
 procedure TMain.ShapeDragDrop(Sender, Source: TObject; X, Y: Integer);
 begin
-  if X > ((Sender as TImage).Width shr 1) then
-    AddVehicle((Sender as TImage).Tag + 1)
+  if X > ((Sender as TShape).Width shr 1) then
+    AddVehicle((Sender as TShape).Tag + 1)
   else
-    AddVehicle((Sender as TImage).Tag);
+    AddVehicle((Sender as TShape).Tag);
 end;
 
 procedure TMain.ShapeDragOver(Sender, Source: TObject; X, Y: Integer;
@@ -2163,6 +2166,20 @@ begin
   OpenFile((Sender as TButton).Hint);
 end;
 
+procedure TMain.OpenDir(const Path:string);
+begin
+  try
+  ShellExecute(Application.Handle,
+    PChar('explore'),
+    PChar(Path),
+    nil,
+    nil,
+    SW_SHOWNORMAL);
+  except
+    ShowMessage('Nie uda³o siê otworzyæ lokalizacji.');
+  end;
+end;
+
 procedure TMain.lbScenariosClick(Sender: TObject);
 var
   i : Integer;
@@ -2349,6 +2366,16 @@ begin
   Clipboard.AsText := str;
 
   ClipTrain := Train;
+end;
+
+procedure TMain.miOpenVehicleDirClick(Sender: TObject);
+var
+  Tex : TTexture;
+begin
+  Tex := TTexture.Create;
+  Tex := (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
+  if Tex <> nil then
+    OpenDir(DIR + 'dynamic\' + Tex.Dir);
 end;
 
 procedure TMain.SetItemDesc(const Trainset:TTrain);
