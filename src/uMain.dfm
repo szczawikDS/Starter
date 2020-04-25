@@ -283,7 +283,7 @@ object Main: TMain
       Top = 3
       Width = 130
       Height = 13
-      Caption = 'Wersja 3.3.0 (21.04.2020)'
+      Caption = 'Wersja 3.4.0 (25.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -388,7 +388,7 @@ object Main: TMain
             Width = 596
             Height = 303
             ActivePage = tsDescription
-            Align = alClient
+            Align = alBottom
             MultiLine = True
             TabOrder = 0
             object tsDescription: TTabSheet
@@ -404,7 +404,7 @@ object Main: TMain
                 ScrollBars = ssVertical
                 TabOrder = 0
               end
-              object pnlScenariusze: TPanel
+              object pnlScenario: TPanel
                 Left = 0
                 Top = 0
                 Width = 588
@@ -476,10 +476,9 @@ object Main: TMain
                 object lbTrainMass: TLabel
                   Left = 190
                   Top = 0
-                  Width = 44
+                  Width = 7
                   Height = 26
                   Align = alLeft
-                  AutoSize = False
                   Caption = '0'
                   Layout = tlCenter
                 end
@@ -504,15 +503,25 @@ object Main: TMain
                   Caption = 'D'#322'ogo'#347#263' [m]:'
                   Layout = tlCenter
                 end
-                object lbTrainVelocity: TLabel
+                object lbTrackCaption: TLabel
                   AlignWithMargins = True
-                  Left = 237
+                  Left = 294
                   Top = 3
-                  Width = 180
+                  Width = 95
                   Height = 23
-                  Align = alLeft
+                  Align = alRight
+                  Alignment = taRightJustify
                   AutoSize = False
-                  Caption = 'Pr'#281'dko'#347#263' pocz'#261'tkowa:'
+                  Caption = 'Tor pocz'#261'tkowy:'
+                  Layout = tlCenter
+                end
+                object lbTrack: TLabel
+                  Left = 392
+                  Top = 0
+                  Width = 196
+                  Height = 26
+                  Align = alRight
+                  AutoSize = False
                   Layout = tlCenter
                 end
               end
@@ -900,7 +909,7 @@ object Main: TMain
             Top = 19
             Width = 590
             Height = 87
-            Align = alTop
+            Align = alClient
             PopupMenu = pmTrainsets
             TabOrder = 1
             OnClick = lbTrainsClick
@@ -968,8 +977,9 @@ object Main: TMain
                   Height = 8
                   Cursor = crVSplit
                   Align = alBottom
+                  Beveled = True
                 end
-                object pnlPociagiTop: TPanel
+                object pnlTrainsTop: TPanel
                   Left = 0
                   Top = 0
                   Width = 596
@@ -1087,6 +1097,7 @@ object Main: TMain
                     Width = 590
                     Height = 49
                     Align = alClient
+                    PopupMenu = pmDepot
                     TabOrder = 1
                     OnClick = lbDepotClick
                   end
@@ -1142,7 +1153,9 @@ object Main: TMain
                     Align = alClient
                     DoubleBuffered = False
                     ParentDoubleBuffered = False
+                    ParentShowHint = False
                     PopupMenu = pmTrainsets
+                    ShowHint = False
                     TabOrder = 1
                     OnClick = lbTrainsClick
                   end
@@ -1219,10 +1232,11 @@ object Main: TMain
                 Width = 230
                 Height = 99
                 Align = alClient
+                ParentShowHint = False
+                ShowHint = True
                 TabOrder = 2
+                OnClick = lbTexturesClick
                 OnDblClick = lbTexturesDblClick
-                OnMouseLeave = lbTexturesMouseLeave
-                OnMouseMove = lbTexturesMouseMove
               end
               object btnAddVehicle: TButton
                 Left = 0
@@ -3629,16 +3643,16 @@ object Main: TMain
     Left = 736
     Top = 381
     object miPasteFromClipboard: TMenuItem
-      Caption = 'Zast'#261'p poci'#261'giem ze schowka'
-      OnClick = miPasteFromClipboardClick
+      Action = actPasteFromClipboard
     end
     object miCopyToClipboard: TMenuItem
-      Caption = 'Skopiuj poci'#261'g do schowka'
-      OnClick = miCopyToClipboardClick
+      Action = actCopyToClipboard
     end
     object miAddToDepo: TMenuItem
-      Caption = 'Dodaj poci'#261'g do magazynu'
-      OnClick = actAddToMagazineExecute
+      Action = actAddToMagazine
+    end
+    object Usuwszystkiepojazdyzeskadu1: TMenuItem
+      Action = actRemoveTrain
     end
   end
   object AL: TActionList
@@ -3727,7 +3741,7 @@ object Main: TMain
       OnUpdate = actCouplerEZTUpdate
     end
     object actRemoveTrain: TAction
-      Caption = 'Usu'#324' poci'#261'g'
+      Caption = 'Usu'#324' wszystkie pojazdy ze sk'#322'adu'
       ShortCut = 16430
       OnExecute = actRemoveTrainExecute
       OnUpdate = actRemoveTrainUpdate
@@ -3795,6 +3809,24 @@ object Main: TMain
     end
     object actOpenVehicleDir: TAction
       Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
+    end
+    object actCopyToClipboard: TAction
+      Caption = 'Skopiuj poci'#261'g do schowka'
+      OnExecute = actCopyToClipboardExecute
+      OnUpdate = actCopyToClipboardUpdate
+    end
+    object actPasteFromClipboard: TAction
+      Caption = 'Zast'#261'p sk'#322'adem ze schowka'
+      OnExecute = actPasteFromClipboardExecute
+      OnUpdate = actPasteFromClipboardUpdate
+    end
+  end
+  object pmDepot: TPopupMenu
+    OnPopup = pmDepotPopup
+    Left = 735
+    Top = 337
+    object miCopyToClipboard2: TMenuItem
+      Action = actCopyToClipboard
     end
   end
 end

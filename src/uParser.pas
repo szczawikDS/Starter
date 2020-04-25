@@ -643,8 +643,7 @@ begin
         and (Pos('endtrainset',Lexer.Token) = 0) then
     begin
       Pociag := ParseTrain;
-      if Pociag.Vehicles.Count > 0 then
-        Scenariusz.Trains.Add(Pociag);
+      Scenariusz.Trains.Add(Pociag);
     end
     else
       if (Lexer.TokenID = ptIdentifier) and (Lexer.Token = 'node') then
@@ -1035,11 +1034,14 @@ begin
   try
     DepotFile := TStringList.Create;
 
-    if FileExists(Main.DIR + '\starter.ini') then
-      DepotFile.LoadFromFile(Main.DIR + '\starter.ini')
+    if FileExists(Main.DIR + '\starter\magazyn.ini') then
+      DepotFile.LoadFromFile(Main.DIR + '\starter\magazyn.ini')
     else
-      if FileExists(Main.DIR + '\RAINSTED.INI') then
-        DepotFile.LoadFromFile(Main.DIR + '\RAINSTED.INI');
+      if FileExists(Main.DIR + '\starter.ini') then
+        DepotFile.LoadFromFile(Main.DIR + '\starter.ini')
+      else
+        if FileExists(Main.DIR + '\RAINSTED.INI') then
+          DepotFile.LoadFromFile(Main.DIR + '\RAINSTED.INI');
 
     Lexer.Origin := PChar(DepotFile.Text);
     Lexer.Init;
@@ -1087,7 +1089,7 @@ begin
         DepotFile.Add(Format('%.2d=',[y]) + Main.PrepareNode(Main.Depot[i].Vehicles[y]));
     end;
 
-    DepotFile.SaveToFile(Main.DIR + '\starter.ini');
+    DepotFile.SaveToFile(Main.DIR + '\starter\magazyn.ini');
   except
     Errors.Add('B³¹d zapisu magazynu.');
   end;

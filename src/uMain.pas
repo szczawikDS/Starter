@@ -36,7 +36,7 @@ type
     pcMissions: TPageControl;
     tsDescription: TTabSheet;
     meMission: TMemo;
-    pnlScenariusze: TPanel;
+    pnlScenario: TPanel;
     imScenario: TImage;
     meDesc: TMemo;
     tsDetails: TTabSheet;
@@ -66,7 +66,7 @@ type
     actSettings: TAction;
     actDefaultSettings: TAction;
     actSaveSettings: TAction;
-    pnlPociagiTop: TPanel;
+    pnlTrainsTop: TPanel;
     Label33: TLabel;
     chOnlyForDriving: TCheckBox;
     imFacebook: TImage;
@@ -258,7 +258,6 @@ type
     btnCouplerEZT: TButton;
     actCouplerEZT: TAction;
     chSkipRendering: TCheckBox;
-    lbTrainVelocity: TLabel;
     tsWeather: TTabSheet;
     pnlShadowCabRange: TPanel;
     chRefAmbientTemp: TCheckBox;
@@ -331,6 +330,13 @@ type
     actBigRain: TAction;
     tvSCN: TTreeView;
     actOpenVehicleDir: TAction;
+    Usuwszystkiepojazdyzeskadu1: TMenuItem;
+    actCopyToClipboard: TAction;
+    pmDepot: TPopupMenu;
+    miCopyToClipboard2: TMenuItem;
+    actPasteFromClipboard: TAction;
+    lbTrackCaption: TLabel;
+    lbTrack: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbScenariosClick(Sender: TObject);
@@ -384,8 +390,6 @@ type
     procedure cbKey3Change(Sender: TObject);
     procedure cbBrakeStateChange(Sender: TObject);
     procedure cbBrakeAdjustChange(Sender: TObject);
-    procedure miCopyToClipboardClick(Sender: TObject);
-    procedure miPasteFromClipboardClick(Sender: TObject);
     procedure pmTrainsetsPopup(Sender: TObject);
     procedure btnHelpClick(Sender: TObject);
     procedure actCouplerEZTUpdate(Sender: TObject);
@@ -394,14 +398,11 @@ type
     procedure cbBigThumbnailClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chRefAmbientTempClick(Sender: TObject);
-    procedure lbTexturesMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure actRemoveTrainUpdate(Sender: TObject);
     procedure actRemoveTrainExecute(Sender: TObject);
     procedure actCopyLoadUpdate(Sender: TObject);
     procedure actCopyLoadExecute(Sender: TObject);
     procedure lbTexturesDblClick(Sender: TObject);
-    procedure lbTexturesMouseLeave(Sender: TObject);
     procedure ConfigChange(Sender: TObject);
     procedure actCurrentDateExecute(Sender: TObject);
     procedure actSpringExecute(Sender: TObject);
@@ -422,6 +423,12 @@ type
       State: TDragState; var Accept: Boolean);
     procedure sbTrainDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure miOpenVehicleDirClick(Sender: TObject);
+    procedure actCopyToClipboardExecute(Sender: TObject);
+    procedure actCopyToClipboardUpdate(Sender: TObject);
+    procedure pmDepotPopup(Sender: TObject);
+    procedure lbTexturesClick(Sender: TObject);
+    procedure actPasteFromClipboardExecute(Sender: TObject);
+    procedure actPasteFromClipboardUpdate(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -429,7 +436,7 @@ type
 
     procedure WMHotKey(var Msg: TWMHotKey); message WM_HOTKEY;
 
-    procedure OtworzZalacznik(Sender: TObject);
+    procedure OpenAttachment(Sender: TObject);
     procedure DrawTrain(const Train: TTrain);
     procedure RunSimulator;
     procedure SelectVehicle(Sender: TObject);
@@ -449,12 +456,11 @@ type
     procedure ClearTrainScroll;
     procedure RemoveOldVersion;
     procedure LoadKeysComponents;
-    procedure LoadTexData(const Tex: TTexture);
+    procedure LoadTexData(const Tex: TTexture;const ModelID:Integer=-1);
     procedure OpenFile(const Path: string);
     procedure PrepareLoadingScreen;
     procedure DefaultSettings;
     procedure AdaptMiniSize;
-    procedure EmptyTexData;
     procedure SetItemDesc(const Trainset: TTrain);
     procedure RemoveVehicle(const Index:Integer);
     procedure AppDeactivate(Sender: TObject);
@@ -472,6 +478,8 @@ type
     procedure MoveVehicle(const FromPos, ToPos: integer);
     procedure RefreshTrain(const SelPos: Integer=-1);
     procedure OpenDir(const Path: string);
+    procedure Mark(const Image: TImage);
+    procedure LoadVehicle(const Vehicle: TVehicle);
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -526,7 +534,7 @@ end;
 
 procedure TMain.actAddToMagazineUpdate(Sender: TObject);
 begin
-  actAddToMagazine.Enabled := lbTrains2.ItemIndex >= 0;
+  actAddToMagazine.Enabled := (lbTrains2.ItemIndex >= 0) and (Train.Vehicles.Count > 0);
 end;
 
 procedure TMain.AddVehicle(const Position:Integer);
@@ -682,6 +690,24 @@ begin
   actCopyLoad.Enabled := SelVehicle > 0;
 end;
 
+procedure TMain.actCopyToClipboardExecute(Sender: TObject);
+var
+  i : Integer;
+  Str : string;
+begin
+  str := EmptyStr;
+  for i := 0 to Train.Vehicles.Count-1 do
+    str := str + PrepareNode(Train.Vehicles[i]) + #13#10;
+  Clipboard.AsText := str;
+
+  ClipTrain := Train;
+end;
+
+procedure TMain.actCopyToClipboardUpdate(Sender: TObject);
+begin
+  actCopyToClipboard.Visible := (Train <> nil) and (Train.Vehicles.Count > 0);
+end;
+
 procedure TMain.actCouplerEZTExecute(Sender: TObject);
 begin
   Train.Vehicles[SelVehicle].Coupler := 119;
@@ -690,7 +716,7 @@ end;
 
 procedure TMain.actCouplerEZTUpdate(Sender: TObject);
 begin
-  actCouplerEZT.Enabled := SelVehicle > 0;
+  actCouplerEZT.Enabled := (Train <> nil) and (SelVehicle < Train.Vehicles.Count-1);
 end;
 
 procedure TMain.actCurrentDateExecute(Sender: TObject);
@@ -787,6 +813,20 @@ begin
   tbOvercast.Position := 3;
 end;
 
+procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
+begin
+  SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])].Vehicles := ClipTrain.Vehicles;
+
+  SetItemDesc(ClipTrain);
+
+  DrawTrain(SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])]);
+end;
+
+procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
+begin
+  actPasteFromClipboard.Visible := ClipTrain <> nil;
+end;
+
 procedure TMain.actRemoveFromDepotExecute(Sender: TObject);
 begin
   Depot.Extract(Depot[lbDepot.ItemIndex]);
@@ -843,7 +883,7 @@ end;
 
 procedure TMain.actRemoveTrainUpdate(Sender: TObject);
 begin
-  actRemoveTrain.Enabled := Train.Vehicles.Count > 0;
+  actRemoveTrain.Visible := (Train <> nil) and (Train.Vehicles.Count > 0);
 end;
 
 procedure TMain.actRemoveVehicleExecute(Sender: TObject);
@@ -1592,10 +1632,13 @@ end;
 
 function TMain.GetSelList: TTrain;
 begin
-  if SelList = slSCN then
-    Result := SCN.Trains[SelTrain]
+  if SelTrain >= 0 then
+    if SelList = slSCN then
+        Result := SCN.Trains[SelTrain]
+    else
+	    Result := Depot[SelTrain]
   else
-	  Result := Depot[SelTrain];
+    Result := nil;
 end;
 
 procedure TMain.imFacebookClick(Sender: TObject);
@@ -1641,7 +1684,10 @@ begin
       (Sender as TImage).BeginDrag(true)
     else
     if Sender is TShape then
+    begin
       (Sender as TShape).BeginDrag(True);
+      SelectVehicle(Sender);
+    end;
   end;
 end;
 
@@ -1713,7 +1759,7 @@ begin
   else
     lbTrains.ItemIndex := lbTrains2.ItemIndex;
 
-  if (lbTrains.ItemIndex < 0) or ((SelList =slSCN) and (SelTrain = Integer(lbTrains.Items.Objects[lbTrains.ItemIndex]))) then Exit;
+  if lbTrains.ItemIndex < 0 then Exit;
 
   SelList := slSCN;
 
@@ -1745,6 +1791,10 @@ begin
   meTimetable.Lines.EndUpdate;
 
   DrawTrain(Train);
+
+  lbTrack.Caption := Train.Track;
+  if Train.Vel > 0 then
+  lbTrack.Caption := lbTrack.Caption + ' (' + FloatToStr(Train.Vel) + 'km/h)';
 end;
 
 procedure TMain.ClearTrainScroll;
@@ -1755,11 +1805,10 @@ begin
   sbTrain.HorzScrollBar.Position := 0;
 end;
 
-procedure TMain.SelectVehicle(Sender:TObject);
+procedure TMain.Mark(const Image:TImage);
 var
   Mark : TShape;
   i : Integer;
-  Vehicle : TVehicle;
 begin
   i := 0;
   while i <= sbTrain.ControlCount-1 do
@@ -1776,18 +1825,33 @@ begin
   Mark.Pen.Width := 3;
   Mark.Pen.Color := clYellow;
   Mark.Parent := sbTrain;
-  Mark.Left   := (Sender as TImage).Left - 1;
-  Mark.Width  := (Sender as TImage).Width + 2;
-  Mark.Height := (Sender as TImage).Height + 3;
-  Mark.Tag    := (Sender as TImage).Tag;
+  Mark.Left   := Image.Left - 1;
+  Mark.Width  := Image.Width + 2;
+  Mark.Height := Image.Height + 3;
+  Mark.Tag    := Image.Tag;
   Mark.OnDragOver := ShapeDragOver;
   Mark.OnDragDrop := ShapeDragDrop;
   Mark.OnMouseDown := OnMouseDown;
-  SelVehicle := (Sender as TImage).Tag;
-  imMini.Picture.Bitmap := (Sender as TImage).Picture.Bitmap;
+end;
 
-  Vehicle := Train.Vehicles[SelVehicle];
+procedure TMain.SelectVehicle(Sender:TObject);
+begin
+  if Sender is TImage then
+  begin
+    Mark(Sender as TImage);
+    SelVehicle := (Sender as TImage).Tag;
+  end
+  else
+  if Sender is TShape then
+    SelVehicle := (Sender as TShape).Tag;
 
+  PaintVehicle(Train.Vehicles[SelVehicle].Texture,Train.Vehicles[SelVehicle].ModelID);
+
+  LoadVehicle(Train.Vehicles[SelVehicle]);
+end;
+
+procedure TMain.LoadVehicle(const Vehicle : TVehicle);
+begin
   SelectCoupler(Vehicle.Coupler);
 
   clCouplers.Enabled := Train.Vehicles.Count > SelVehicle + 1;
@@ -1831,6 +1895,7 @@ end;
 
 procedure TMain.SelectCoupler(Coupler:Integer);
 begin
+  clCouplers.Items.BeginUpdate;
   clCouplers.CheckAll(cbUnchecked);
 
   if Coupler >= 128 then
@@ -1872,15 +1937,13 @@ begin
     clCouplers.Checked[0] := True;
 
   clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
+  clCouplers.Items.EndUpdate;
 end;
 
 procedure TMain.LoadModelData(const PhysicsID:Integer);
 begin
-  cbLoadType.Items.Clear;
-
   if PhysicsID >= 0 then
   begin
-    ExtractStrings([','],[],PChar(Physics[PhysicsID].LoadAccepted),cbLoadType.Items);
     lbMass.Caption := FloatToStr(Physics[PhysicsID].Mass / 1000);
     lbLength.Caption := FloatToStr(Physics[PhysicsID].Length);
     lbVMax.Caption := FloatToStr(Physics[PhysicsID].VMax);
@@ -1893,7 +1956,7 @@ begin
   end;
 end;
 
-procedure TMain.LoadTexData(const Tex:TTexture);
+procedure TMain.LoadTexData(const Tex:TTexture;const ModelID:Integer=-1);
 begin
   if Tex <> nil then
   begin
@@ -1903,19 +1966,22 @@ begin
     lbTexWorks.Caption    := Tex.Works;
     lbTexAuthor.Caption   := Tex.Author;
     lbTexPhoto.Caption    := Tex.Photos;
+    if ModelID >= 0 then
+      lbModel.Caption     := Tex.Models[ModelID].Model
+    else
+      lbModel.Caption := EmptyStr;
   end
   else
-    EmptyTexData;
-end;
+  begin
+    lbTexOwner.Caption    := EmptyStr;
+    lbTexStation.Caption  := EmptyStr;
+    lbTexRevision.Caption := EmptyStr;
+    lbTexWorks.Caption    := EmptyStr;
+    lbTexAuthor.Caption   := EmptyStr;
+    lbTexPhoto.Caption    := EmptyStr;
+    lbModel.Caption       := EmptyStr;
+  end;
 
-procedure TMain.EmptyTexData;
-begin
-  lbTexOwner.Caption    := EmptyStr;
-  lbTexStation.Caption  := EmptyStr;
-  lbTexRevision.Caption := EmptyStr;
-  lbTexWorks.Caption    := EmptyStr;
-  lbTexAuthor.Caption   := EmptyStr;
-  lbTexPhoto.Caption    := EmptyStr;
 end;
 
 procedure TMain.SelectTexture(const Vehicle:TVehicle);
@@ -1938,9 +2004,10 @@ begin
 
     cbModelsClick(self);
     LoadModelData(Vehicle.Texture.Fiz);
-    LoadTexData(Vehicle.Texture);
+    LoadTexData(Vehicle.Texture,Vehicle.ModelID);
 
-    lbModel.Caption := Vehicle.Texture.Models[Vehicle.ModelID].Model;
+    cbLoadType.Items.Clear;
+    ExtractStrings([','],[],PChar(Physics[Vehicle.Texture.Fiz].LoadAccepted),cbLoadType.Items);
 
     if not SameText(Vehicle.TypeChk,Vehicle.Texture.Models[Vehicle.ModelID].Model) then
       lbModel.Caption := lbModel.Caption + ' (!)';
@@ -1959,11 +2026,7 @@ begin
       cbModels.ItemIndex := cbModels.Items.IndexOf(Textures[i].Models[0].Mini);
       cbModelsClick(self);
       LoadModelData(Textures[i].Fiz);
-      LoadTexData(Vehicle.Texture);
-      if Vehicle.Texture <> nil then
-        lbModel.Caption := Vehicle.Texture.Models[Vehicle.ModelID].Model
-      else
-        lbModel.Caption := '-';
+      LoadTexData(Vehicle.Texture,Vehicle.ModelID);
     end
     else
     begin
@@ -2029,14 +2092,6 @@ begin
       lbTrainMass.Caption := FloatToStr(TrainMass / 1000)
     else
       lbTrainMass.Caption := '';
-    if Train.Vel > 0 then
-    begin
-      lbTrainVelocity.Caption := FloatToStr(Train.Vel);
-      lbTrainVelocity.Caption := 'Prêdkoœæ pocz¹tkowa: ' + lbTrainVelocity.Caption + 'km/h';
-      lbTrainVelocity.Visible := True;
-    end
-    else
-      lbTrainVelocity.Visible := False;
   except
     lbTrainMass.Caption := '';
   end;
@@ -2113,9 +2168,16 @@ begin
   imMini.Picture.Bitmap := result;
 end;
 
+procedure TMain.pmDepotPopup(Sender: TObject);
+begin
+  SelList := slDEPO;
+  SelTrain := Integer(lbDepot.Items.Objects[lbDepot.ItemIndex]);
+end;
+
 procedure TMain.pmTrainsetsPopup(Sender: TObject);
 begin
-  miPasteFromClipboard.Visible := ClipTrain <> nil;
+  SelList := slSCN;
+  SelTrain := Integer(lbTrains.Items.Objects[lbTrains.ItemIndex]);
 end;
 
 procedure TMain.edFieldofviewExit(Sender: TObject);
@@ -2161,7 +2223,7 @@ begin
     TryStrToInt(edSway.Text,Train.Vehicles[SelVehicle].Sway);
 end;
 
-procedure TMain.OtworzZalacznik(Sender:TObject);
+procedure TMain.OpenAttachment(Sender:TObject);
 begin
   OpenFile((Sender as TButton).Hint);
 end;
@@ -2206,7 +2268,7 @@ begin
 
     Attachment.Hint := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],1)+1,Pos(' ',SCN.Files[i],4)-4);
     Attachment.Caption := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],10)+1,SCN.Files[i].Length);
-    Attachment.OnClick := OtworzZalacznik;
+    Attachment.OnClick := OpenAttachment;
   end;
 
   if FileExists(DIR + '\scenery\images\' + SCN.Image) then
@@ -2289,7 +2351,25 @@ begin
       end;
   end
   else
-    Result := EmptyStr;
+    Result := 'Wpis bez pojazdów. (Tor: ' + Trainset.Track +')';
+end;
+
+procedure TMain.lbTexturesClick(Sender: TObject);
+var
+  i : Integer;
+  Tex : TTexture;
+begin
+  LoadModelData((lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Fiz);
+
+  Tex := lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture;
+  PaintVehicle(Tex);
+
+  for i := 0 to Tex.Models.Count-1 do
+    if SameText(cbModels.Items[cbModels.ItemIndex],Tex.Models[i].Mini) then
+    begin
+      LoadTexData(Tex,i);
+      Break;
+    end;
 end;
 
 procedure TMain.lbTexturesDblClick(Sender: TObject);
@@ -2297,12 +2377,10 @@ var
   Tex : TTexture;
   i : Integer;
 begin
-  if lbTextures.ItemIndex <> -1 then
+  if (lbTextures.ItemIndex <> -1) and (Train.Vehicles.Count > 0) then
   begin
      Tex := (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
-
      LoadModelData(Tex.Fiz);
-     LoadTexData(Tex);
 
      if (SelVehicle >= 0) then
      begin
@@ -2323,7 +2401,7 @@ begin
        Train.Vehicles[SelVehicle].PathName := Tex.Dir;
        Train.Vehicles[SelVehicle].Texture := Tex;
 
-       lbModel.Caption := Train.Vehicles[SelVehicle].Texture.Models[Train.Vehicles[SelVehicle].ModelID].Model;
+       LoadTexData(Tex,Train.Vehicles[SelVehicle].ModelID);
 
        if SelList = slSCN then
          SetItemDesc(Train)
@@ -2331,48 +2409,16 @@ begin
         lbDepot.Items[lbDepot.ItemIndex] := PrepareTrainsetDesc(Train);
 
        DrawVehicle(Train.Vehicles[SelVehicle]);
-     end;
+     end
+     else
+      LoadTexData(Tex);
   end;
-end;
-
-procedure TMain.lbTexturesMouseLeave(Sender: TObject);
-begin
-  if lbTextures.ItemIndex >= 0 then
-    PaintVehicle(lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
-end;
-
-procedure TMain.lbTexturesMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-var
-  Index : Integer;
-  Point : TPoint;
-begin
-  Point.X := X;
-  Point.Y := Y;
-  Index := lbTextures.ItemAtPos(Point,True);
-
-  if Index >= 0 then
-    PaintVehicle(lbTextures.Items.Objects[Index] as TTexture);
-end;
-
-procedure TMain.miCopyToClipboardClick(Sender: TObject);
-var
-  i : Integer;
-  Str : string;
-begin
-  str := EmptyStr;
-  for i := 0 to Train.Vehicles.Count-1 do
-    str := str + PrepareNode(Train.Vehicles[i]) + #13#10;
-  Clipboard.AsText := str;
-
-  ClipTrain := Train;
 end;
 
 procedure TMain.miOpenVehicleDirClick(Sender: TObject);
 var
   Tex : TTexture;
 begin
-  Tex := TTexture.Create;
   Tex := (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
   if Tex <> nil then
     OpenDir(DIR + 'dynamic\' + Tex.Dir);
@@ -2382,15 +2428,6 @@ procedure TMain.SetItemDesc(const Trainset:TTrain);
 begin
   lbTrains.Items[lbTrains.ItemIndex] := PrepareTrainsetDesc(Trainset);
   lbTrains2.Items[lbTrains2.ItemIndex] := lbTrains.Items[lbTrains.ItemIndex];
-end;
-
-procedure TMain.miPasteFromClipboardClick(Sender: TObject);
-begin
-  SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])].Vehicles := ClipTrain.Vehicles;
-
-  SetItemDesc(ClipTrain);
-
-  DrawTrain(SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])]);
 end;
 
 end.
