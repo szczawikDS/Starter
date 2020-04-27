@@ -3,7 +3,7 @@ object frmUpdater: TfrmUpdater
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Aktualizator'
-  ClientHeight = 81
+  ClientHeight = 79
   ClientWidth = 269
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,6 +22,16 @@ object frmUpdater: TfrmUpdater
     Height = 13
     Caption = 'Aktualizuj'#281'...'
   end
+  object PB: TProgressBar
+    AlignWithMargins = True
+    Left = 3
+    Top = 59
+    Width = 263
+    Height = 17
+    Align = alBottom
+    TabOrder = 0
+    Visible = False
+  end
   object SSL: TIdSSLIOHandlerSocketOpenSSL
     MaxLineAction = maException
     Port = 0
@@ -36,6 +46,8 @@ object frmUpdater: TfrmUpdater
   end
   object HTTP: TIdHTTP
     IOHandler = SSL
+    OnWork = HTTPWork
+    OnWorkBegin = HTTPWorkBegin
     AllowCookies = True
     HandleRedirects = True
     ProxyParams.BasicAuthentication = False

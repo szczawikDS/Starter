@@ -128,7 +128,6 @@ type
     cbResolution: TComboBox;
     cbPyscreenrendererpriority: TComboBox;
     Panel1: TPanel;
-    chGlutfont: TCheckBox;
     chGfxresourcesweep: TCheckBox;
     chGfxresourcemove: TCheckBox;
     chUsevbo: TCheckBox;
@@ -137,7 +136,6 @@ type
     chSmoke: TCheckBox;
     Label38: TLabel;
     cbSmokeFidelity: TComboBox;
-    chMotionBlur: TCheckBox;
     Label20: TLabel;
     Label13: TLabel;
     chInputgamepad: TCheckBox;
@@ -337,9 +335,13 @@ type
     actPasteFromClipboard: TAction;
     lbTrackCaption: TLabel;
     lbTrack: TLabel;
+    lbCountVehiclesCaption: TLabel;
+    lbCountVehicles: TLabel;
+    chCrashDamage: TCheckBox;
+    chChromaticAberration: TCheckBox;
+    chMotionBlur: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure lbScenariosClick(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
     procedure cbFeedbackmodeChange(Sender: TObject);
     procedure cbDriverTypeChange(Sender: TObject);
@@ -429,6 +431,9 @@ type
     procedure lbTexturesClick(Sender: TObject);
     procedure actPasteFromClipboardExecute(Sender: TObject);
     procedure actPasteFromClipboardUpdate(Sender: TObject);
+    procedure lbModelDblClick(Sender: TObject);
+    procedure tvSCNChange(Sender: TObject; Node: TTreeNode);
+    procedure cbGfxrendererChange(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -480,6 +485,8 @@ type
     procedure OpenDir(const Path: string);
     procedure Mark(const Image: TImage);
     procedure LoadVehicle(const Vehicle: TVehicle);
+    function FindMaxCommonCoupler: Integer;
+    procedure ReloadSettingsState;
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -561,10 +568,14 @@ begin
   Vehicle.TypeChk  := Texture.Models[0].Model;
   Vehicle.PathName := Texture.Dir;
   Vehicle.Dist     := 0;
-  Vehicle.CabOccupancy := TCabOccupancy(cbDriverType.ItemIndex);
+
+  Vehicle.CabOccupancy := coNobody;
+
   Vehicle.Vel      := 0;
   Vehicle.Settings := '0';
+
   Vehicle.Coupler  := 3;
+
   TryStrToInt(edSway.Text,Vehicle.Sway);
   TryStrToInt(edFlatness.Text,Vehicle.Flatness);
   TryStrToInt(edFlatnessProb.Text,Vehicle.FlatnessProb);
@@ -733,7 +744,6 @@ begin
   chPause.Checked                       := False;
   chSoundenabled.Checked                := True;
   chDebugmode.Checked                   := False;
-  chGlutfont.Checked                    := False;
   chGfxresourcesweep.Checked            := False;
   chGfxresourcemove.Checked             := False;
   chShadows.Checked                     := True;
@@ -756,6 +766,8 @@ begin
   chPythonEnabled.Checked               := True;
   chPythonThreadedUpload.Checked        := True;
   chSkipRendering.Checked               := False;
+  chCrashDamage.Checked                 := True;
+  chChromaticAberration.Checked         := False;
 
   cbMouseScale.ItemIndex                := 0;
   cbLang.ItemIndex                      := 0;
@@ -773,7 +785,7 @@ begin
   cbShadowsCabRange.ItemIndex           := 3;
   cbGfxrenderer.ItemIndex               := 0;
   cbShadowMapSize.ItemIndex             := 1;
-  cbShadowRange.ItemIndex               := 3;
+  cbShadowRange.ItemIndex               := 4;
 
   edFriction.Text     := '1.0';
   edFieldofview.Text  := '45';
@@ -1166,6 +1178,20 @@ begin
   edFeedbackport.Enabled := cbFeedbackmode.ItemIndex = 3;
 end;
 
+procedure TMain.cbGfxrendererChange(Sender: TObject);
+begin
+  ReloadSettingsState;
+end;
+
+procedure TMain.ReloadSettingsState;
+begin
+  chUsevbo.Enabled := cbGfxrenderer.ItemIndex > 0;
+  chShadows.Enabled := cbGfxrenderer.ItemIndex = 1;
+
+  chMotionBlur.Enabled          := cbGfxrenderer.ItemIndex = 0;
+  chChromaticAberration.Enabled := cbGfxrenderer.ItemIndex = 0;
+end;
+
 procedure TMain.cbKey1Change(Sender: TObject);
 begin
   Settings.KeyParams[KeysGrid.Row-1].Key := cbKey1.Items[cbKey1.ItemIndex];
@@ -1304,7 +1330,7 @@ end;
 
 procedure TMain.chOnlyForDrivingClick(Sender: TObject);
 begin
-  lbScenariosClick(chOnlyForDriving);
+  tvSCNChange(chOnlyForDriving,tvSCN.Selected);
   if lbTrains2.Count > 0 then
   begin
     lbTrains2.ItemIndex := 0;
@@ -1325,6 +1351,12 @@ begin
       Train.Vehicles[SelVehicle].Dist := -1
     else
       Train.Vehicles[SelVehicle].Dist := 0;
+end;
+
+function TMain.FindMaxCommonCoupler:Integer;
+begin
+
+
 end;
 
 procedure TMain.clCouplersClick(Sender: TObject);
@@ -1396,6 +1428,8 @@ end;
 
 function TMain.PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
 begin
+  Dyn.Name := Dyn.Name + '.' + IntToStr(Random(100));
+
   Result := 'node ' + FloatToStr(Dyn.MinDist) + ' ' + FloatToStr(Dyn.MaxDist) + ' ' + Dyn.Name +
             ' dynamic ' + Dyn.Dir + ' ' + Dyn.ReplacableSkin + ' ' + Dyn.TypeChk + ' ';
 
@@ -1516,6 +1550,7 @@ begin
   Settings.ReadOwnSettings;
   DefaultSettings;
   Settings.ReadSettings;
+  ReloadSettingsState;
 
   AdaptMiniSize;
 
@@ -1538,9 +1573,9 @@ begin
 
     if tvSCN.Selected.Count > 0 then
       tvSCN.Select(tvSCN.Selected.Item[0]);
-
-    lbScenariosClick(self);
   end;
+
+  Randomize;
 end;
 
 procedure TMain.ScenariosList;
@@ -1675,6 +1710,82 @@ begin
   Accept := (Source is TImage) and ((Source as TImage).Name = 'imMini');
 end;
 
+procedure TMain.tvSCNChange(Sender: TObject; Node: TTreeNode);
+var
+  i : Integer;
+  Mini : TJPEGImage;
+  Attachment : TButton;
+begin
+  if not Assigned(tvSCN.Selected) then exit;
+  if tvSCN.Selected.Data = nil then exit;
+
+  if (SCN = TScenario(tvSCN.Selected.Data)) and (Sender <> chOnlyForDriving) then Exit;
+  SelTrain := -1;
+
+  SCN := TScenario.Create;
+  SCN := TScenario(tvSCN.Selected.Data);
+
+  while sbAttachments.ControlCount > 0 do
+    sbAttachments.Controls[0].Free;
+
+  for i := 0 to SCN.Files.Count-1 do
+  begin
+    Attachment := TButton.Create(self);
+    Attachment.Parent := sbAttachments;
+    Attachment.Align := alTop;
+
+    Attachment.Hint := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],1)+1,Pos(' ',SCN.Files[i],4)-4);
+    Attachment.Caption := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],10)+1,SCN.Files[i].Length);
+    Attachment.OnClick := OpenAttachment;
+  end;
+
+  if FileExists(DIR + '\scenery\images\' + SCN.Image) then
+  begin
+    Mini := TJPEGImage.Create;
+    Mini.LoadFromFile(DIR + '\scenery\images\' + SCN.Image);
+    imScenario.Picture.Bitmap.Assign(Mini);
+  end;
+
+  lbTrains.Items.BeginUpdate;
+  lbTrains.Clear;
+
+  meDesc.Lines.BeginUpdate;
+  meDesc.Text := SCN.Desc.Text;
+  meDesc.Lines.EndUpdate;
+
+  for i := 0 to SCN.Trains.Count-1 do
+  begin
+    if (not chOnlyForDriving.Checked) or ((SCN.Trains[i].Vehicles.Count > 0)
+      and (SCN.Trains[i].Vehicles[0].CabOccupancy in [coHeadDriver,coRearDriver])) then
+    begin
+      if (chShowAI.Checked) or (not SCN.Trains[I].AI) then
+        lbTrains.AddItem(PrepareTrainsetDesc(SCN.Trains[i]),TObject(i));
+    end;
+  end;
+
+  lbTrains2.Items := lbTrains.Items;
+
+  if lbTrains.Count > 0 then
+    lbTrains.ItemIndex := 0;
+
+  lbTrains.Items.EndUpdate;
+
+  if SCN.Config.Day > 0 then
+    tbDay.Position := SCN.Config.Day
+  else
+    tbDay.Position := DayOfTheYear(Now);
+
+  if (SCN.Config.Temperature >= -50) and (SCN.Config.Temperature <= 50) then
+    tbTemperature.Position := Round(SCN.Config.Temperature)
+  else
+    tbTemperature.Position := 15;
+
+  tbFog.Position := (tbFog.Max - SCN.Config.FogEnd) + tbFog.Min;
+  tbOvercast.Position := Round(SCN.Config.Overcast);
+
+  lbTrainsClick(self);
+end;
+
 procedure TMain.OnMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
@@ -1750,6 +1861,12 @@ begin
   SelTrain := Integer(lbDepot.Items.Objects[lbDepot.ItemIndex]);
 
   SelectTrain;
+end;
+
+procedure TMain.lbModelDblClick(Sender: TObject);
+begin
+  if Length(lbModel.Caption) > 0 then
+    OpenDir(DIR + lbModel.Hint);
 end;
 
 procedure TMain.lbTrainsClick(Sender: TObject);
@@ -1967,7 +2084,10 @@ begin
     lbTexAuthor.Caption   := Tex.Author;
     lbTexPhoto.Caption    := Tex.Photos;
     if ModelID >= 0 then
-      lbModel.Caption     := Tex.Models[ModelID].Model
+    begin
+      lbModel.Caption     := Tex.Models[ModelID].Model;
+      lbModel.Hint        := 'dynamic\' + Tex.Dir + '\';
+    end
     else
       lbModel.Caption := EmptyStr;
   end
@@ -2092,6 +2212,8 @@ begin
       lbTrainMass.Caption := FloatToStr(TrainMass / 1000)
     else
       lbTrainMass.Caption := '';
+
+    lbCountVehicles.Caption := IntToStr(Train.Vehicles.Count);
   except
     lbTrainMass.Caption := '';
   end;
@@ -2230,92 +2352,12 @@ end;
 
 procedure TMain.OpenDir(const Path:string);
 begin
-  try
   ShellExecute(Application.Handle,
     PChar('explore'),
     PChar(Path),
     nil,
     nil,
     SW_SHOWNORMAL);
-  except
-    ShowMessage('Nie uda³o siê otworzyæ lokalizacji.');
-  end;
-end;
-
-procedure TMain.lbScenariosClick(Sender: TObject);
-var
-  i : Integer;
-  Mini : TJPEGImage;
-  Attachment : TButton;
-begin
-  if not Assigned(tvSCN.Selected) then exit;
-  if tvSCN.Selected.Data = nil then exit;
-
-  if (SCN = TScenario(tvSCN.Selected.Data)) and (Sender <> chOnlyForDriving) then Exit;
-  SelTrain := -1;
-
-  SCN := TScenario.Create;
-  SCN := TScenario(tvSCN.Selected.Data);
-
-  while sbAttachments.ControlCount > 0 do
-    sbAttachments.Controls[0].Free;
-
-  for i := 0 to SCN.Files.Count-1 do
-  begin
-    Attachment := TButton.Create(self);
-    Attachment.Parent := sbAttachments;
-    Attachment.Align := alTop;
-
-    Attachment.Hint := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],1)+1,Pos(' ',SCN.Files[i],4)-4);
-    Attachment.Caption := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],10)+1,SCN.Files[i].Length);
-    Attachment.OnClick := OpenAttachment;
-  end;
-
-  if FileExists(DIR + '\scenery\images\' + SCN.Image) then
-  begin
-    Mini := TJPEGImage.Create;
-    Mini.LoadFromFile(DIR + '\scenery\images\' + SCN.Image);
-    imScenario.Picture.Bitmap.Assign(Mini);
-  end;
-
-  lbTrains.Items.BeginUpdate;
-  lbTrains.Clear;
-
-  meDesc.Lines.BeginUpdate;
-  meDesc.Text := SCN.Desc.Text;
-  meDesc.Lines.EndUpdate;
-
-  for i := 0 to SCN.Trains.Count-1 do
-  begin
-    if (not chOnlyForDriving.Checked) or ((SCN.Trains[i].Vehicles.Count > 0)
-      and (SCN.Trains[i].Vehicles[0].CabOccupancy in [coHeadDriver,coRearDriver])) then
-    begin
-      if (chShowAI.Checked) or (not SCN.Trains[I].AI) then
-        lbTrains.AddItem(PrepareTrainsetDesc(SCN.Trains[i]),TObject(i));
-    end;
-  end;
-
-  lbTrains2.Items := lbTrains.Items;
-
-  if lbTrains.Count > 0 then
-    lbTrains.ItemIndex := 0;
-
-  lbTrains.Items.EndUpdate;
-
-  if SCN.Config.Day > 0 then
-    tbDay.Position := SCN.Config.Day
-  else
-    tbDay.Position := DayOfTheYear(Now);
-
-  if (SCN.Config.Temperature >= -50) and (SCN.Config.Temperature <= 50) then
-    tbTemperature.Position := Round(SCN.Config.Temperature)
-  else
-    tbTemperature.Position := 15;
-
-  tbFog.Position := (tbFog.Max - SCN.Config.FogEnd) + tbFog.Min;
-  tbOvercast.Position := Round(SCN.Config.Overcast);
-
-  lbTrainsClick(self);
 end;
 
 function TMain.PrepareTrainsetDesc(const Trainset:TTrain):string;

@@ -306,9 +306,6 @@ begin
       if Params[i].Name = 'input.gamepad' then
         Main.Chinputgamepad.Checked := Params[i].Value = 'yes'
       else
-      if Params[i].Name = 'glutfont' then
-        Main.chGlutfont.Checked := Params[i].Value = 'yes'
-      else
       if Params[i].Name = 'gfx.postfx.motionblur.enabled' then
         Main.chMotionBlur.Checked := Params[i].Value = 'yes'
       else
@@ -335,6 +332,12 @@ begin
       else
       if Params[i].Name = 'gfx.skiprendering' then
         Main.chSkipRendering.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'crashdamage' then
+        Main.chCrashDamage.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled' then
+        Main.chChromaticAberration.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'mousescale' then
       begin
@@ -452,8 +455,12 @@ begin
           else
           if Par[0] = '2048' then Main.cbShadowMapSize.ItemIndex := 1
           else
-          if Par[0] = '4096' then Main.cbShadowMapSize.ItemIndex := 2;
+          if Par[0] = '4096' then Main.cbShadowMapSize.ItemIndex := 2
+          else
+          if Par[0] = '8192' then Main.cbShadowMapSize.ItemIndex := 3;
 
+          if StrToInt(Par[2]) >= 400 then Main.cbShadowRange.ItemIndex := 4
+          else
           if StrToInt(Par[2]) >= 250 then Main.cbShadowRange.ItemIndex := 3
           else
           if StrToInt(Par[2]) >= 150 then Main.cbShadowRange.ItemIndex := 2
@@ -617,7 +624,6 @@ begin
   FindParameter('debuglog','(3=yes) informacje o uruchamianiu i przebiegu dzia³ania symulacji: +1 - do pliku log.txt, +2 - wyœwietlanie w oknie, +4 - nazwy torów');
   FindParameter('multiplelogs','(no) zapisywanie logów do katalogu /logs/ bez nadpisywania po ka¿dym uruchomieniu symulacji');
   FindParameter('input.gamepad','(yes) no: ignorowanie sygna³u z gamepada, przydatne dla u¿ytkowników PoKeys');
-  FindParameter('glutfont','alternatywny sposób wyœwietlania napisów');
   FindParameter('mousescale','(3.2 0.5) czu³oœæ myszy, mo¿na dawaæ ujemne dla odwrócenia kierunku');
   FindParameter('feedbackmode','(1) 0 - wy³¹czone, 1 - za³¹czone sterowanie diodami klawiatury (Caps Lock - CA/SHP, Scroll Lock - jazda na oporach rozruchowych), 2 - (Caps - CA, Scroll -SHP), 3 - LPT, 4 - PoKeys55, 5 - COM');
   FindParameter('feedbackport','adres (dziesiêtnie) bazowy portu LPT dla feedbackmode 3 (zapalanie kontrolek wyjœciami LPT)');
@@ -634,6 +640,8 @@ begin
   FindParameter('python.threadedupload','(yes) wysylanie wygenerowanych obrazow ekranow przy uzyciu osobnego watku');
   FindParameter('python.enabled','(domyslnie yes) wylacza w ogole generowanie tekstur przy uzyciu pythona');
   FindParameter('gfx.skiprendering','(domyslnie no) wylacza w ogole wizualizacje symulacji, pozostawiajac jedynie ui');
+  FindParameter('crashdamage','(domyslnie yes) w³¹cza uszkodzenia sprzêgów i wykolejenia od zderzeñ');
+  FindParameter('gfx.postfx.chromaticaberration.enabled','(domyslnie no) Efekt aberracji chromatycznej');
 end;
 
 procedure TSettings.SaveSettings;
@@ -684,7 +692,6 @@ begin
     if Params[i].Name = 'debuglog'                      then SetCheckState(Main.chDebuglog.Checked,i) else
     if Params[i].Name = 'multiplelogs'                  then SetCheckState(Main.chMultiplelogs.Checked,i) else
     if Params[i].Name = 'input.gamepad'                 then SetCheckState(Main.chInputgamepad.Checked,i) else
-    if Params[i].Name = 'glutfont'                      then SetCheckState(Main.chGlutfont.Checked,i) else
     if Params[i].Name = 'gfx.postfx.motionblur.enabled' then SetCheckState(Main.chMotionBlur.Checked,i) else
     if Params[i].Name = 'gfx.envmap.enabled'            then SetCheckState(Main.chEnvmap.Checked,i) else
     if Params[i].Name = 'gfx.smoke'                     then SetCheckState(Main.chSmoke.Checked,i) else
@@ -694,6 +701,8 @@ begin
     if Params[i].Name = 'python.threadedupload'         then SetCheckState(Main.chPythonThreadedUpload.Checked,i) else
     if Params[i].Name = 'python.enabled'                then SetCheckState(Main.chPythonEnabled.Checked,i) else
     if Params[i].Name = 'gfx.skiprendering'             then SetCheckState(Main.chSkipRendering.Checked,i) else
+    if Params[i].Name = 'crashdamage'                   then SetCheckState(Main.chCrashDamage.Checked,i) else
+    if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled'  then SetCheckState(Main.chChromaticAberration.Checked,i) else
     if Params[i].Name = 'mousescale' then
     begin
       case Main.cbMouseScale.ItemIndex of
@@ -802,6 +811,7 @@ begin
         0: Params[i].Value := '1024';
         1: Params[i].Value := '2048';
         2: Params[i].Value := '4096';
+        3: Params[i].Value := '8192';
       end;
 
       case Main.cbShadowRange.ItemIndex of
@@ -809,6 +819,7 @@ begin
         1: Params[i].Value := Params[i].Value + ' 250 50 300';
         2: Params[i].Value := Params[i].Value + ' 250 150 300';
         3: Params[i].Value := Params[i].Value + ' 250 250 300';
+        4: Params[i].Value := Params[i].Value + ' 250 400 300';
       end;
     end
     else

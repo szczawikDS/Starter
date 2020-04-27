@@ -174,17 +174,17 @@ begin
       Lexer.NextNoSpace;
     end;
   except
-    Errors.Add('B³¹d parsowania sk³adu. Linia ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania sk³adu, linia ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
 procedure TParser.FindTexture(var Vehicle:TVehicle);
 var
   i, y : Integer;
-  //Found : Boolean;
+  Found : Boolean;
 begin
   Vehicle.Texture := nil;
-  //Found := False;
+  Found := False;
 
   for i := 0 to Main.Textures.Count-1 do
     if (SameText(Vehicle.ReplacableSkin,Main.Textures[i].Plik)) and (SameText(Vehicle.Dir,Main.Textures[i].Dir)) then
@@ -196,7 +196,7 @@ begin
         begin
           Vehicle.Texture := Main.Textures[i];
           Vehicle.ModelID := y;
-          //Found := True;
+          Found := True;
           Break;
         end;
       end;
@@ -205,12 +205,12 @@ begin
         Break;
     end;
 
-  {if not Found then
+  if not Found then
   begin
-    Errors.Add('');
+    {Errors.Add('');
     Errors.Add('B³¹d sparowania tekstura/model:');
-    Errors.Add(Main.PrepareNode(Vehicle,True));
-  end;}
+    Errors.Add(Main.PrepareNode(Vehicle,True));}
+  end;
 end;
 
 function TParser.ParseVehicle(const TrainSet:Boolean=True):TVehicle;
@@ -279,7 +279,7 @@ begin
 
     FindTexture(Result);
   except
-    Errors.Add('B³¹d parsowania wpisu. Linia ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania wpisu pojazdu ' + Result.Name);
   end;
 end;
 
@@ -367,7 +367,7 @@ begin
       end;
     end;
   except
-    Errors.Add('B³¹d parsowania sprzêgu ' + Vehicle.Name + '. Linia ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania sprzêgu ' + Vehicle.Name + ', linia ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -614,7 +614,7 @@ begin
     ParseTrainset(Result,FirstInit);
     Plik.Free;
   except
-    Errors.Add('B³¹d parsowania ' + Path + ' Linia: ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania ' + Path + ', linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -632,7 +632,7 @@ begin
     begin
       Lexer.InitAhead;
       if Lexer.AheadTokenID = ptStar then
-        while not ((Lexer.TokenID = ptStar) and (Lexer.AheadTokenID = ptSlash)) do
+        while not ((Lexer.TokenID = ptStar) and (Lexer.AheadTokenID = ptSlash)) and (Lexer.TokenID <> ptNull) do
         begin
           Lexer.NextNoJunk;
           Lexer.AheadNext;
@@ -673,67 +673,71 @@ var
   Sign : Char;
   Model : TModel;
 begin
-  while Lexer.TokenID = ptEqual do
-  begin
-    Lexer.NextNoSpace;
-
-    Model := TModel.Create;
-
-    while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull) do
-    begin
-      Token := Token + Lexer.Token;
-      Lexer.Next;
-    end;
-    Model.Model := Token;
-    Token := EmptyStr;
-    Lexer.NextNoSpace;
-
-    while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull)
-      and (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptEqual) do
-    begin
-      Token := Token + Lexer.Token;
-      Lexer.Next;
-    end;
-    Model.Mini := Token;
-    Token := EmptyStr;
-
-    if Tex.Typ = tyUnknown then
-    begin
-      Sign := Model.Mini[1];
-      Sign := UpperCase(Sign)[1];
-
-      if Sign = 'A' then Tex.Typ := tyA else
-      if Sign = 'B' then Tex.Typ := tyB else
-      if Sign = 'D' then Tex.Typ := tyD else
-      if Sign = 'E' then Tex.Typ := tyE else
-      if Sign = 'F' then Tex.Typ := tyF else
-      if Sign = 'G' then Tex.Typ := tyG else
-      if Sign = 'H' then Tex.Typ := tyH else
-      if Sign = 'L' then Tex.Typ := tyL else
-      if Sign = 'P' then Tex.Typ := tyP else
-      if Sign = 'R' then Tex.Typ := tyR else
-      if Sign = 'S' then Tex.Typ := tyS else
-      if Sign = 'U' then Tex.Typ := tyU else
-      if Sign = 'V' then Tex.Typ := tyV else
-      if Sign = 'W' then Tex.Typ := tyW else
-      if Sign = 'X' then Tex.Typ := tyX else
-      if Sign = 'Z' then Tex.Typ := tyZ;
-    end;
-
-    if Lexer.TokenID = ptComma then
+  try
+    while Lexer.TokenID = ptEqual do
     begin
       Lexer.NextNoSpace;
-      while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull)
-            and (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptEqual) do
+
+      Model := TModel.Create;
+
+      while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull) do
       begin
         Token := Token + Lexer.Token;
         Lexer.Next;
       end;
-      Model.MiniD := Token;
+      Model.Model := Token;
       Token := EmptyStr;
-    end;
+      Lexer.NextNoSpace;
 
-    Tex.Models.Add(Model);
+      while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull)
+        and (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptEqual) do
+      begin
+        Token := Token + Lexer.Token;
+        Lexer.Next;
+      end;
+      Model.Mini := Token;
+      Token := EmptyStr;
+
+      if Tex.Typ = tyUnknown then
+      begin
+        Sign := Model.Mini[1];
+        Sign := UpperCase(Sign)[1];
+
+        if Sign = 'A' then Tex.Typ := tyA else
+        if Sign = 'B' then Tex.Typ := tyB else
+        if Sign = 'D' then Tex.Typ := tyD else
+        if Sign = 'E' then Tex.Typ := tyE else
+        if Sign = 'F' then Tex.Typ := tyF else
+        if Sign = 'G' then Tex.Typ := tyG else
+        if Sign = 'H' then Tex.Typ := tyH else
+        if Sign = 'L' then Tex.Typ := tyL else
+        if Sign = 'P' then Tex.Typ := tyP else
+        if Sign = 'R' then Tex.Typ := tyR else
+        if Sign = 'S' then Tex.Typ := tyS else
+        if Sign = 'U' then Tex.Typ := tyU else
+        if Sign = 'V' then Tex.Typ := tyV else
+        if Sign = 'W' then Tex.Typ := tyW else
+        if Sign = 'X' then Tex.Typ := tyX else
+        if Sign = 'Z' then Tex.Typ := tyZ;
+      end;
+
+      if Lexer.TokenID = ptComma then
+      begin
+        Lexer.NextNoSpace;
+        while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull)
+              and (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptEqual) do
+        begin
+          Token := Token + Lexer.Token;
+          Lexer.Next;
+        end;
+        Model.MiniD := Token;
+        Token := EmptyStr;
+      end;
+
+      Tex.Models.Add(Model);
+    end;
+  except
+    Errors.Add('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik + ', linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -874,7 +878,7 @@ begin
       Plik.Free;
     end;
   except
-    Errors.Add('B³¹d parsowania ' + Path + ' Linia: ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania ' + Path + ', linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -1014,7 +1018,7 @@ begin
       Lexer.NextNoJunk;
     end;
   except
-    Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz Linia: ' + IntToStr(Lexer.LineNumber));
+    Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 

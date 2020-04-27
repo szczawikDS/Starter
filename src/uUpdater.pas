@@ -6,20 +6,25 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
   IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls, Vcl.ComCtrls;
 
 type
   TfrmUpdater = class(TForm)
     SSL: TIdSSLIOHandlerSocketOpenSSL;
     HTTP: TIdHTTP;
     Label1: TLabel;
+    PB: TProgressBar;
+    procedure HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCountMax: Int64);
+    procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCount: Int64);
   private
     procedure UpdateApp;
     procedure AutoUpdate;
     function Ask(const Text: string): Boolean;
   public
     const
-      AppVersion = 16;
+      AppVersion = 18;
       procedure CheckUpdate;
   end;
 
@@ -95,6 +100,23 @@ begin
   finally
     Hide;
   end;
+end;
+
+procedure TfrmUpdater.HTTPWork(ASender: TObject; AWorkMode: TWorkMode;
+  AWorkCount: Int64);
+begin
+  {if AWorkMode = wmRead then
+    PB.Position := AWorkCount;}
+end;
+
+procedure TfrmUpdater.HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode;
+  AWorkCountMax: Int64);
+begin
+  {if AWorkMode = wmRead then
+  begin
+    PB.Max      := AWorkCountMax;
+    PB.Position := 0;
+  end;}
 end;
 
 procedure TfrmUpdater.AutoUpdate;
