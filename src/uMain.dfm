@@ -27,9 +27,10 @@ object Main: TMain
     Height = 42
     Action = actStart
     Align = alBottom
+    Caption = 'START'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -16
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
@@ -284,7 +285,7 @@ object Main: TMain
       Width = 130
       Height = 13
       AutoSize = False
-      Caption = 'Wersja 3.5.0 (27.04.2020)'
+      Caption = 'Wersja 3.5.1 (27.04.2020)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -1093,7 +1094,20 @@ object Main: TMain
                     Transparent = True
                     Layout = tlCenter
                   end
-                  object Panel6: TPanel
+                  object lbDepot: TListBox
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 16
+                    Width = 640
+                    Height = 55
+                    Margins.Top = 0
+                    Margins.Bottom = 0
+                    Align = alClient
+                    PopupMenu = pmDepot
+                    TabOrder = 0
+                    OnClick = lbDepotClick
+                  end
+                  object btnRemoveFromDepot: TButton
                     AlignWithMargins = True
                     Left = 3
                     Top = 71
@@ -1101,39 +1115,9 @@ object Main: TMain
                     Height = 29
                     Margins.Top = 0
                     Margins.Bottom = 0
+                    Action = actRemoveFromDepot
                     Align = alBottom
-                    BevelOuter = bvNone
-                    ShowCaption = False
-                    TabOrder = 0
-                    object btnRemoveFromDepot: TButton
-                      Left = 0
-                      Top = 0
-                      Width = 256
-                      Height = 29
-                      Action = actRemoveFromDepot
-                      Align = alLeft
-                      TabOrder = 0
-                    end
-                    object btnSaveDepot: TButton
-                      Left = 256
-                      Top = 0
-                      Width = 278
-                      Height = 29
-                      Action = actSaveDepot
-                      Align = alLeft
-                      TabOrder = 1
-                    end
-                  end
-                  object lbDepot: TListBox
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 19
-                    Width = 640
-                    Height = 49
-                    Align = alClient
-                    PopupMenu = pmDepot
                     TabOrder = 1
-                    OnClick = lbDepotClick
                   end
                 end
                 object Panel26: TPanel
@@ -1145,53 +1129,32 @@ object Main: TMain
                   BevelOuter = bvNone
                   ShowCaption = False
                   TabOrder = 2
-                  object Panel5: TPanel
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 83
-                    Width = 640
-                    Height = 29
-                    Margins.Top = 0
-                    Margins.Bottom = 0
-                    Align = alBottom
-                    BevelOuter = bvNone
-                    ShowCaption = False
-                    TabOrder = 0
-                    object btnReplaceTrainset: TButton
-                      Left = 256
-                      Top = 0
-                      Width = 278
-                      Height = 29
-                      Action = actReplaceTrain
-                      Align = alLeft
-                      ParentShowHint = False
-                      ShowHint = True
-                      TabOrder = 0
-                    end
-                    object btnAddToDepo: TButton
-                      Left = 0
-                      Top = 0
-                      Width = 256
-                      Height = 29
-                      Action = actAddToMagazine
-                      Align = alLeft
-                      TabOrder = 1
-                    end
-                  end
                   object lbTrains2: TListBox
                     AlignWithMargins = True
                     Left = 3
                     Top = 3
                     Width = 640
                     Height = 77
+                    Margins.Bottom = 0
                     Align = alClient
                     DoubleBuffered = False
                     ParentDoubleBuffered = False
                     ParentShowHint = False
                     PopupMenu = pmTrainsets
                     ShowHint = False
-                    TabOrder = 1
+                    TabOrder = 0
                     OnClick = lbTrainsClick
+                  end
+                  object btnAddToDepo: TButton
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 80
+                    Width = 640
+                    Height = 29
+                    Margins.Top = 0
+                    Action = actAddToMagazine
+                    Align = alBottom
+                    TabOrder = 1
                   end
                 end
               end
@@ -3743,6 +3706,9 @@ object Main: TMain
     object Usuwszystkiepojazdyzeskadu1: TMenuItem
       Action = actRemoveTrain
     end
+    object miReplaceTrain: TMenuItem
+      Action = actReplaceTrain
+    end
   end
   object AL: TActionList
     Left = 692
@@ -3814,7 +3780,6 @@ object Main: TMain
     end
     object actSaveDepot: TAction
       Caption = 'Zapisz magazyn'
-      OnExecute = actSaveDepotExecute
     end
     object actSaveKeyboard: TAction
       Caption = 'Zapisz ustawienia przycisk'#243'w'

@@ -282,14 +282,8 @@ type
     btnCurrentDate: TButton;
     Panel25: TPanel;
     Label34: TLabel;
-    Panel6: TPanel;
-    btnRemoveFromDepot: TButton;
-    btnSaveDepot: TButton;
     lbDepot: TListBox;
     Panel26: TPanel;
-    Panel5: TPanel;
-    btnReplaceTrainset: TButton;
-    btnAddToDepo: TButton;
     lbTrains2: TListBox;
     Splitter1: TSplitter;
     tbDay: TTrackBar;
@@ -340,6 +334,9 @@ type
     chCrashDamage: TCheckBox;
     chChromaticAberration: TCheckBox;
     chMotionBlur: TCheckBox;
+    miReplaceTrain: TMenuItem;
+    btnRemoveFromDepot: TButton;
+    btnAddToDepo: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -383,7 +380,6 @@ type
     procedure actCheckUpdateExecute(Sender: TObject);
     procedure lbVersionDblClick(Sender: TObject);
     procedure lbVersionClick(Sender: TObject);
-    procedure actSaveDepotExecute(Sender: TObject);
     procedure actSaveKeyboardExecute(Sender: TObject);
     procedure actKeyboardExecute(Sender: TObject);
     procedure KeysGridClick(Sender: TObject);
@@ -487,6 +483,7 @@ type
     procedure LoadVehicle(const Vehicle: TVehicle);
     function FindMaxCommonCoupler: Integer;
     procedure ReloadSettingsState;
+    function UniqueVehicleName(const Name:string;VehicleTex:string=''):string;
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -544,6 +541,29 @@ begin
   actAddToMagazine.Enabled := (lbTrains2.ItemIndex >= 0) and (Train.Vehicles.Count > 0);
 end;
 
+function TMain.UniqueVehicleName(const Name:string;VehicleTex:string=''):string;
+var
+  i,y,Count:Integer;
+begin
+  if VehicleTex.Length = 0 then
+    VehicleTex := Name;
+
+  Result := Name;
+  Count := 0;
+
+  for i := 0 to SCN.Trains.Count-1 do
+    for y := 0 to SCN.Trains[i].Vehicles.Count-1 do
+      if SameText(SCN.Trains[i].Vehicles[y].ReplacableSkin,VehicleTex) then
+          Inc(Count);
+
+  for i := 0 to SCN.Vehicles.Count-1 do
+    if SameText(SCN.Vehicles[i].ReplacableSkin,VehicleTex) then
+      Inc(Count);
+
+  if Count > 0 then
+    Result := Result + '.' + IntToStr(Count);
+end;
+
 procedure TMain.AddVehicle(const Position:Integer);
 var
   Vehicle : TVehicle;
@@ -561,9 +581,17 @@ begin
   Vehicle.Texture := Texture;
   Vehicle.ModelID := 0;
   if Texture.Models[0].MiniD.Length > 0 then
-    Vehicle.Name     := Texture.Models[0].MiniD
+  begin
+    if Texture.Typ <= TTyp.tyEZT then
+      Vehicle.Name := UniqueVehicleName(Texture.Models[0].MiniD,Vehicle.ReplacableSkin)
+    else
+      Vehicle.Name := Texture.Models[0].MiniD;
+  end
   else
-    Vehicle.Name := Vehicle.ReplacableSkin;
+    if Texture.Typ <= TTyp.tyEZT then
+      Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin)
+    else
+      Vehicle.Name := Vehicle.ReplacableSkin;
 
   Vehicle.TypeChk  := Texture.Models[0].Model;
   Vehicle.PathName := Texture.Dir;
@@ -941,16 +969,6 @@ begin
   actReplaceTrain.Enabled := (lbTrains2.ItemIndex >= 0) and (lbDepot.ItemIndex >= 0);
 end;
 
-procedure TMain.actSaveDepotExecute(Sender: TObject);
-begin
-  with TParser.Create do
-  try
-    SaveDepot;
-  finally
-    Free;
-  end;
-end;
-
 procedure TMain.actSaveKeyboardExecute(Sender: TObject);
 begin
   Settings.SaveKeyboardSettings;
@@ -1095,6 +1113,12 @@ var
   SEI : TShellExecuteInfo;
 begin
   Settings.SaveSettings;
+  with TParser.Create do
+  try
+    SaveDepot;
+  finally
+    Free;
+  end;
 
   if FileExists(DIR + cbEXE.Text) then
   begin
@@ -1428,8 +1452,6 @@ end;
 
 function TMain.PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
 begin
-  Dyn.Name := Dyn.Name + '.' + IntToStr(Random(100));
-
   Result := 'node ' + FloatToStr(Dyn.MinDist) + ' ' + FloatToStr(Dyn.MaxDist) + ' ' + Dyn.Name +
             ' dynamic ' + Dyn.Dir + ' ' + Dyn.ReplacableSkin + ' ' + Dyn.TypeChk + ' ';
 
@@ -1517,6 +1539,12 @@ end;
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Settings.SaveSettings;
+  with TParser.Create do
+  try
+    SaveDepot;
+  finally
+    Free;
+  end;
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
@@ -1574,8 +1602,6 @@ begin
     if tvSCN.Selected.Count > 0 then
       tvSCN.Select(tvSCN.Selected.Item[0]);
   end;
-
-  Randomize;
 end;
 
 procedure TMain.ScenariosList;

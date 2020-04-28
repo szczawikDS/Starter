@@ -207,9 +207,9 @@ begin
 
   if not Found then
   begin
-    {Errors.Add('');
+    Errors.Add('');
     Errors.Add('B³¹d sparowania tekstura/model:');
-    Errors.Add(Main.PrepareNode(Vehicle,True));}
+    Errors.Add(Main.PrepareNode(Vehicle,True));
   end;
 end;
 
