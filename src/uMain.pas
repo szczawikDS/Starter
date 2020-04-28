@@ -44,8 +44,6 @@ type
     tsAttachments: TTabSheet;
     sbAttachments: TScrollBox;
     lbTrains: TListBox;
-    Panel3: TPanel;
-    Panel4: TPanel;
     pnlTextures: TPanel;
     cbTypes: TComboBox;
     cbModels: TComboBox;
@@ -55,7 +53,6 @@ type
     pnlVehicleOptions: TPanel;
     AL: TActionList;
     actAddToMagazine: TAction;
-    actReplaceTrain: TAction;
     actRemoveFromDepot: TAction;
     actAddVehicle: TAction;
     actRemoveVehicle: TAction;
@@ -66,9 +63,6 @@ type
     actSettings: TAction;
     actDefaultSettings: TAction;
     actSaveSettings: TAction;
-    pnlTrainsTop: TPanel;
-    Label33: TLabel;
-    chOnlyForDriving: TCheckBox;
     imFacebook: TImage;
     imMaszyna: TImage;
     miPasteFromClipboard: TMenuItem;
@@ -268,7 +262,6 @@ type
     cbBigThumbnail: TCheckBox;
     pnlMini: TPanel;
     imMini: TImage;
-    chShowAI: TCheckBox;
     actRemoveTrain: TAction;
     pnlLoad: TPanel;
     cbLoadType: TComboBox;
@@ -280,12 +273,6 @@ type
     btnAutumn: TButton;
     Button1: TButton;
     btnCurrentDate: TButton;
-    Panel25: TPanel;
-    Label34: TLabel;
-    lbDepot: TListBox;
-    Panel26: TPanel;
-    lbTrains2: TListBox;
-    Splitter1: TSplitter;
     tbDay: TTrackBar;
     Panel27: TPanel;
     Panel23: TPanel;
@@ -335,8 +322,17 @@ type
     chChromaticAberration: TCheckBox;
     chMotionBlur: TCheckBox;
     miReplaceTrain: TMenuItem;
-    btnRemoveFromDepot: TButton;
+    pcTrains: TPageControl;
+    tsSCNTrains: TTabSheet;
+    pnlTrainsTop: TPanel;
+    chOnlyForDriving: TCheckBox;
+    chShowAI: TCheckBox;
+    Panel26: TPanel;
+    lbTrains2: TListBox;
     btnAddToDepo: TButton;
+    tsDepoTrains: TTabSheet;
+    btnRemoveFromDepot: TButton;
+    lbDepot: TListBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -356,8 +352,6 @@ type
     procedure cbBrakeActingChange(Sender: TObject);
     procedure actAddToMagazineExecute(Sender: TObject);
     procedure actAddToMagazineUpdate(Sender: TObject);
-    procedure actReplaceTrainExecute(Sender: TObject);
-    procedure actReplaceTrainUpdate(Sender: TObject);
     procedure actRemoveFromDepotExecute(Sender: TObject);
     procedure actRemoveFromDepotUpdate(Sender: TObject);
     procedure actAddVehicleExecute(Sender: TObject);
@@ -484,6 +478,7 @@ type
     function FindMaxCommonCoupler: Integer;
     procedure ReloadSettingsState;
     function UniqueVehicleName(const Name:string;VehicleTex:string=''):string;
+    procedure miTrainClick(Sender: TObject);
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -941,32 +936,6 @@ end;
 procedure TMain.actRemoveVehicleUpdate(Sender: TObject);
 begin
   actRemoveVehicle.Enabled := SelVehicle >= 0;
-end;
-
-procedure TMain.actReplaceTrainExecute(Sender: TObject);
-var
-  Train : TTrain;
-  Vehicle : TVehicle;
-  i : Integer;
-begin
-  Train := SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])];
-  Train.Vehicles.Clear;
-
-  for i := 0 to Depot[lbDepot.ItemIndex].Vehicles.Count-1 do
-  begin
-    Vehicle := TVehicle.Create;
-    Vehicle.Assign(Depot[lbDepot.ItemIndex].Vehicles[i]);
-    Train.Vehicles.Add(Vehicle);
-  end;
-
-  SetItemDesc(Train);
-
-  DrawTrain(Train);
-end;
-
-procedure TMain.actReplaceTrainUpdate(Sender: TObject);
-begin
-  actReplaceTrain.Enabled := (lbTrains2.ItemIndex >= 0) and (lbDepot.ItemIndex >= 0);
 end;
 
 procedure TMain.actSaveKeyboardExecute(Sender: TObject);
@@ -2318,14 +2287,61 @@ end;
 
 procedure TMain.pmDepotPopup(Sender: TObject);
 begin
-  SelList := slDEPO;
-  SelTrain := Integer(lbDepot.Items.Objects[lbDepot.ItemIndex]);
+  if Depot.Count > 0 then
+  begin
+    SelList := slDEPO;
+    SelTrain := Integer(lbDepot.Items.Objects[lbDepot.ItemIndex]);
+  end
+  else
+    Abort;
 end;
 
 procedure TMain.pmTrainsetsPopup(Sender: TObject);
+var
+  MI : TMenuItem;
+  i : Integer;
 begin
-  SelList := slSCN;
-  SelTrain := Integer(lbTrains.Items.Objects[lbTrains.ItemIndex]);
+  if lbTrains.Count > 0 then
+  begin
+    SelList := slSCN;
+    SelTrain := Integer(lbTrains.Items.Objects[lbTrains.ItemIndex]);
+
+    miReplaceTrain.Clear;
+    miReplaceTrain.Visible := Depot.Count > 0;
+    for i := 0 to Depot.Count-1 do
+    begin
+      MI := TMenuItem.Create(miReplaceTrain);
+      MI.Caption := lbDepot.Items[i];
+      MI.Tag := i;
+      MI.OnClick := miTrainClick;
+      miReplaceTrain.Add(MI);
+    end;
+  end
+  else
+    Abort;
+end;
+
+procedure TMain.miTrainClick(Sender: TObject);
+var
+  Train : TTrain;
+  Vehicle : TVehicle;
+  i, Index : Integer;
+begin
+  Index := (Sender as TMenuItem).Tag;
+
+  Train := SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])];
+  Train.Vehicles.Clear;
+
+  for i := 0 to Depot[Index].Vehicles.Count-1 do
+  begin
+    Vehicle := TVehicle.Create;
+    Vehicle.Assign(Depot[Index].Vehicles[i]);
+    Train.Vehicles.Add(Vehicle);
+  end;
+
+  SetItemDesc(Train);
+
+  DrawTrain(Train);
 end;
 
 procedure TMain.edFieldofviewExit(Sender: TObject);

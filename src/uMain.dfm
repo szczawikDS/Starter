@@ -986,179 +986,6 @@ object Main: TMain
             Anchors = [akLeft, akTop, akRight, akBottom]
             BevelOuter = bvNone
             TabOrder = 0
-            object Panel3: TPanel
-              Left = 230
-              Top = 0
-              Width = 646
-              Height = 236
-              Align = alClient
-              BevelOuter = bvNone
-              ShowCaption = False
-              TabOrder = 0
-              object Panel4: TPanel
-                Left = 0
-                Top = 0
-                Width = 646
-                Height = 236
-                Align = alClient
-                BevelOuter = bvNone
-                TabOrder = 0
-                object Splitter1: TSplitter
-                  Left = 0
-                  Top = 128
-                  Width = 646
-                  Height = 8
-                  Cursor = crVSplit
-                  Align = alBottom
-                  Beveled = True
-                end
-                object pnlTrainsTop: TPanel
-                  Left = 0
-                  Top = 0
-                  Width = 646
-                  Height = 16
-                  Align = alTop
-                  BevelOuter = bvNone
-                  ShowCaption = False
-                  TabOrder = 0
-                  DesignSize = (
-                    646
-                    16)
-                  object Label33: TLabel
-                    Left = 0
-                    Top = 0
-                    Width = 646
-                    Height = 16
-                    Margins.Top = 0
-                    Align = alClient
-                    Alignment = taCenter
-                    AutoSize = False
-                    Caption = 'SK'#321'ADY NA SCENERII'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -13
-                    Font.Name = 'Tahoma'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                    Transparent = True
-                    Layout = tlCenter
-                  end
-                  object chOnlyForDriving: TCheckBox
-                    Left = 3
-                    Top = -1
-                    Width = 169
-                    Height = 17
-                    Caption = 'Tylko do prowadzenia'
-                    Checked = True
-                    State = cbChecked
-                    TabOrder = 0
-                    OnClick = chOnlyForDrivingClick
-                  end
-                  object chShowAI: TCheckBox
-                    Left = 473
-                    Top = -1
-                    Width = 169
-                    Height = 17
-                    Anchors = [akTop, akRight]
-                    Caption = 'Pokazuj poci'#261'gi AI'
-                    TabOrder = 1
-                    OnClick = chOnlyForDrivingClick
-                  end
-                end
-                object Panel25: TPanel
-                  Left = 0
-                  Top = 136
-                  Width = 646
-                  Height = 100
-                  Align = alBottom
-                  BevelOuter = bvNone
-                  ShowCaption = False
-                  TabOrder = 1
-                  object Label34: TLabel
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 0
-                    Width = 640
-                    Height = 16
-                    Margins.Top = 0
-                    Align = alTop
-                    Alignment = taCenter
-                    AutoSize = False
-                    Caption = 'SK'#321'ADY W MAGAZYNIE'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -13
-                    Font.Name = 'Tahoma'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                    Transparent = True
-                    Layout = tlCenter
-                  end
-                  object lbDepot: TListBox
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 16
-                    Width = 640
-                    Height = 55
-                    Margins.Top = 0
-                    Margins.Bottom = 0
-                    Align = alClient
-                    PopupMenu = pmDepot
-                    TabOrder = 0
-                    OnClick = lbDepotClick
-                  end
-                  object btnRemoveFromDepot: TButton
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 71
-                    Width = 640
-                    Height = 29
-                    Margins.Top = 0
-                    Margins.Bottom = 0
-                    Action = actRemoveFromDepot
-                    Align = alBottom
-                    TabOrder = 1
-                  end
-                end
-                object Panel26: TPanel
-                  Left = 0
-                  Top = 16
-                  Width = 646
-                  Height = 112
-                  Align = alClient
-                  BevelOuter = bvNone
-                  ShowCaption = False
-                  TabOrder = 2
-                  object lbTrains2: TListBox
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 3
-                    Width = 640
-                    Height = 77
-                    Margins.Bottom = 0
-                    Align = alClient
-                    DoubleBuffered = False
-                    ParentDoubleBuffered = False
-                    ParentShowHint = False
-                    PopupMenu = pmTrainsets
-                    ShowHint = False
-                    TabOrder = 0
-                    OnClick = lbTrainsClick
-                  end
-                  object btnAddToDepo: TButton
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 80
-                    Width = 640
-                    Height = 29
-                    Margins.Top = 0
-                    Action = actAddToMagazine
-                    Align = alBottom
-                    TabOrder = 1
-                  end
-                end
-              end
-            end
             object pnlTextures: TPanel
               Left = 0
               Top = 0
@@ -1167,7 +994,7 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
-              TabOrder = 1
+              TabOrder = 0
               object cbTypes: TComboBox
                 Left = 0
                 Top = 0
@@ -1265,6 +1092,117 @@ object Main: TMain
                   AutoSize = True
                   Center = True
                   OnMouseDown = imMiniMouseDown
+                end
+              end
+            end
+            object pcTrains: TPageControl
+              AlignWithMargins = True
+              Left = 233
+              Top = 3
+              Width = 640
+              Height = 230
+              ActivePage = tsSCNTrains
+              Align = alClient
+              MultiLine = True
+              TabOrder = 1
+              object tsSCNTrains: TTabSheet
+                Caption = 'Sk'#322'ady na scenerii'
+                object Panel26: TPanel
+                  Left = 0
+                  Top = 0
+                  Width = 632
+                  Height = 199
+                  Align = alClient
+                  BevelOuter = bvNone
+                  ShowCaption = False
+                  TabOrder = 0
+                  object lbTrains2: TListBox
+                    Left = 0
+                    Top = 0
+                    Width = 632
+                    Height = 154
+                    Margins.Bottom = 0
+                    Align = alClient
+                    DoubleBuffered = False
+                    ParentDoubleBuffered = False
+                    ParentShowHint = False
+                    PopupMenu = pmTrainsets
+                    ShowHint = False
+                    TabOrder = 0
+                    OnClick = lbTrainsClick
+                  end
+                  object btnAddToDepo: TButton
+                    Left = 0
+                    Top = 170
+                    Width = 632
+                    Height = 29
+                    Margins.Top = 0
+                    Margins.Bottom = 0
+                    Action = actAddToMagazine
+                    Align = alBottom
+                    TabOrder = 1
+                  end
+                  object pnlTrainsTop: TPanel
+                    Left = 0
+                    Top = 154
+                    Width = 632
+                    Height = 16
+                    Align = alBottom
+                    BevelOuter = bvNone
+                    ShowCaption = False
+                    TabOrder = 2
+                    DesignSize = (
+                      632
+                      16)
+                    object chOnlyForDriving: TCheckBox
+                      Left = 3
+                      Top = -1
+                      Width = 169
+                      Height = 17
+                      Caption = 'Tylko do prowadzenia'
+                      Checked = True
+                      State = cbChecked
+                      TabOrder = 0
+                      OnClick = chOnlyForDrivingClick
+                    end
+                    object chShowAI: TCheckBox
+                      Left = 467
+                      Top = -1
+                      Width = 169
+                      Height = 17
+                      Anchors = [akTop, akRight]
+                      Caption = 'Pokazuj poci'#261'gi AI'
+                      TabOrder = 1
+                      OnClick = chOnlyForDrivingClick
+                    end
+                  end
+                end
+              end
+              object tsDepoTrains: TTabSheet
+                Caption = 'Sk'#322'ady w magazynie'
+                ImageIndex = 1
+                object btnRemoveFromDepot: TButton
+                  Left = 0
+                  Top = 170
+                  Width = 632
+                  Height = 29
+                  Margins.Top = 0
+                  Margins.Bottom = 0
+                  Action = actRemoveFromDepot
+                  Align = alBottom
+                  TabOrder = 0
+                end
+                object lbDepot: TListBox
+                  Left = 0
+                  Top = 0
+                  Width = 632
+                  Height = 170
+                  Margins.Top = 0
+                  Margins.Bottom = 0
+                  Align = alClient
+                  PopupMenu = pmDepot
+                  TabOrder = 1
+                  OnClick = lbDepotClick
                 end
               end
             end
@@ -3707,7 +3645,7 @@ object Main: TMain
       Action = actRemoveTrain
     end
     object miReplaceTrain: TMenuItem
-      Action = actReplaceTrain
+      Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
     end
   end
   object AL: TActionList
@@ -3717,11 +3655,6 @@ object Main: TMain
       Caption = 'Dodaj do magazynu'
       OnExecute = actAddToMagazineExecute
       OnUpdate = actAddToMagazineUpdate
-    end
-    object actReplaceTrain: TAction
-      Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
-      OnExecute = actReplaceTrainExecute
-      OnUpdate = actReplaceTrainUpdate
     end
     object actRemoveFromDepot: TAction
       Caption = 'Usu'#324' z magazynu'
@@ -3776,6 +3709,7 @@ object Main: TMain
     end
     object actCheckUpdate: TAction
       Caption = 'Aktualizuj starer'
+      Enabled = False
       OnExecute = actCheckUpdateExecute
     end
     object actSaveDepot: TAction

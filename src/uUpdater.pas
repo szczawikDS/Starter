@@ -4,14 +4,12 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
-  IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,{ IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
+  IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,}
   Vcl.StdCtrls;
 
 type
   TfrmUpdater = class(TForm)
-    SSL: TIdSSLIOHandlerSocketOpenSSL;
-    HTTP: TIdHTTP;
     Label1: TLabel;
   private
     procedure UpdateApp;
@@ -58,7 +56,7 @@ begin
     Application.ProcessMessages;
 
     UpdateFile := TStringList.Create;
-    UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/version2.txt');
+    //UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/version2.txt');
 
     if TryStrToInt(UpdateFile[0],Version) then
     begin
@@ -80,7 +78,7 @@ begin
           begin
             Par.DelimitedText := UpdateFile[i];
             Stream.Clear;
-            HTTP.Get('http://www.szczawik.net/maszyna/'+Par[0], Stream);
+            //HTTP.Get('http://www.szczawik.net/maszyna/'+Par[0], Stream);
             Stream.SaveToFile(Main.DIR + '\' + Par[1]);
           end;
 
@@ -126,7 +124,7 @@ begin
   Main.Cursor := crHourGlass;
   Stream := TMemoryStream.Create;
   try
-    HTTP.Get('http://www.szczawik.net/maszyna/Starter.exe', Stream);
+    //HTTP.Get('http://www.szczawik.net/maszyna/Starter.exe', Stream);
     Stream.SaveToFile(Main.DIR + '\StarterNew.exe');
     AutoUpdate;
   finally
