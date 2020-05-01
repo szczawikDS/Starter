@@ -35,6 +35,7 @@ type
 	  procedure LFProc;
     procedure NullProc;
     procedure NumberProc;
+    procedure MinusProc;
     procedure SlashProc;
     procedure SpaceProc;
     procedure SquareCloseProc;
@@ -143,6 +144,7 @@ begin
       '!', '"', '%', '&', '('..'/', ':'..'@', '['..'^', '`', '~':
         begin
           case I of
+            //'-': fProcTable[I] := MinusProc;
             '*': fProcTable[I] := StarProc;
             ',': fProcTable[I] := CommaProc;
             '/': fProcTable[I] := SlashProc;
@@ -257,6 +259,12 @@ begin
 
     Inc(Run);
   end;
+end;
+
+procedure TmwBasePasLex.MinusProc;
+begin
+  inc(Run);
+  fTokenID := ptMinus;
 end;
 
 procedure TmwBasePasLex.SlashProc;

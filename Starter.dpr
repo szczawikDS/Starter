@@ -11,7 +11,6 @@ uses
   uLanguages in 'src\uLanguages.pas',
   Vcl.Themes,
   Vcl.Styles,
-  uUpdater in 'src\uUpdater.pas' {frmUpdater},
   uStart in 'src\uStart.pas' {frmStart};
 
 {$R *.res}

@@ -9,11 +9,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  System.Generics.Collections, System.Generics.Defaults,Vcl.ButtonGroup, uStructures,
+  System.Generics.Collections, System.Generics.Defaults, uStructures,
   Vcl.ComCtrls, uSettings, Vcl.CheckLst, Vcl.Menus, System.Actions, Vcl.ActnList,
-  Vcl.Imaging.pngimage, IdTCPConnection, IdTCPClient, IdHTTP, IdBaseComponent,
-  IdComponent, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
-  IdSSLOpenSSL, Vcl.Grids, Vcl.Samples.Spin, Rtti, TypInfo;
+  Vcl.Grids, Vcl.Imaging.pngimage;
 
 type
   TMain = class(TForm)
@@ -98,9 +96,6 @@ type
     chInactivepause: TCheckBox;
     chPause: TCheckBox;
     cbMouseScale: TComboBox;
-    pnlLang: TPanel;
-    Label12: TLabel;
-    cbLang: TComboBox;
     pnlGraphic: TPanel;
     Label16: TLabel;
     Label6: TLabel;
@@ -121,15 +116,6 @@ type
     cbMultisampling: TComboBox;
     cbResolution: TComboBox;
     cbPyscreenrendererpriority: TComboBox;
-    Panel1: TPanel;
-    chGfxresourcesweep: TCheckBox;
-    chGfxresourcemove: TCheckBox;
-    chUsevbo: TCheckBox;
-    chVsync: TCheckBox;
-    chShadows: TCheckBox;
-    chSmoke: TCheckBox;
-    Label38: TLabel;
-    cbSmokeFidelity: TComboBox;
     Label20: TLabel;
     Label13: TLabel;
     chInputgamepad: TCheckBox;
@@ -158,15 +144,6 @@ type
     pnlFieldOfView: TPanel;
     Label4: TLabel;
     edFieldofview: TEdit;
-    Panel12: TPanel;
-    Label18: TLabel;
-    cbReflectionsFramerate: TComboBox;
-    chEnvmap: TCheckBox;
-    chExtraEffects: TCheckBox;
-    chScaleSpeculars: TCheckBox;
-    chShadowMap: TCheckBox;
-    Label40: TLabel;
-    cbGfxrenderer: TComboBox;
     pcConfig: TPageControl;
     pnlConfig: TPanel;
     Panel7: TPanel;
@@ -188,10 +165,6 @@ type
     Label41: TLabel;
     Label42: TLabel;
     cbBrakeActing: TComboBox;
-    Label36: TLabel;
-    cbShadowMapSize: TComboBox;
-    Label43: TLabel;
-    cbShadowRange: TComboBox;
     pcOtherSettings: TPageControl;
     tsCoupler: TTabSheet;
     tsCondition: TTabSheet;
@@ -249,14 +222,11 @@ type
     btnCopyCoupler: TButton;
     btnCouplerEZT: TButton;
     actCouplerEZT: TAction;
-    chSkipRendering: TCheckBox;
     tsWeather: TTabSheet;
     pnlShadowCabRange: TPanel;
     chRefAmbientTemp: TCheckBox;
     lbModelCaption: TLabel;
     lbModel: TLabel;
-    Label53: TLabel;
-    cbShadowsCabRange: TComboBox;
     lbStarter: TLabel;
     cbCloseApp: TCheckBox;
     cbBigThumbnail: TCheckBox;
@@ -319,8 +289,6 @@ type
     lbCountVehiclesCaption: TLabel;
     lbCountVehicles: TLabel;
     chCrashDamage: TCheckBox;
-    chChromaticAberration: TCheckBox;
-    chMotionBlur: TCheckBox;
     miReplaceTrain: TMenuItem;
     pcTrains: TPageControl;
     tsSCNTrains: TTabSheet;
@@ -333,6 +301,37 @@ type
     tsDepoTrains: TTabSheet;
     btnRemoveFromDepot: TButton;
     lbDepot: TListBox;
+    Panel1: TPanel;
+    Label38: TLabel;
+    chGfxresourcesweep: TCheckBox;
+    chGfxresourcemove: TCheckBox;
+    chUsevbo: TCheckBox;
+    chVsync: TCheckBox;
+    chShadows: TCheckBox;
+    chSmoke: TCheckBox;
+    cbSmokeFidelity: TComboBox;
+    chSkipRendering: TCheckBox;
+    Panel12: TPanel;
+    Label18: TLabel;
+    Label40: TLabel;
+    Label36: TLabel;
+    Label43: TLabel;
+    Label53: TLabel;
+    cbReflectionsFramerate: TComboBox;
+    chExtraEffects: TCheckBox;
+    chShadowMap: TCheckBox;
+    cbGfxrenderer: TComboBox;
+    cbShadowMapSize: TComboBox;
+    cbShadowRange: TComboBox;
+    cbShadowsCabRange: TComboBox;
+    chChromaticAberration: TCheckBox;
+    chMotionBlur: TCheckBox;
+    chScaleSpeculars: TCheckBox;
+    chEnvmap: TCheckBox;
+    cbLang: TComboBox;
+    chSkipPipeline: TCheckBox;
+    pnlTime: TPanel;
+    dtTime: TDateTimePicker;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -424,6 +423,8 @@ type
     procedure lbModelDblClick(Sender: TObject);
     procedure tvSCNChange(Sender: TObject; Node: TTreeNode);
     procedure cbGfxrendererChange(Sender: TObject);
+    procedure imLangClick(Sender: TObject);
+    procedure cbModelsChange(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -475,10 +476,12 @@ type
     procedure OpenDir(const Path: string);
     procedure Mark(const Image: TImage);
     procedure LoadVehicle(const Vehicle: TVehicle);
-    function FindMaxCommonCoupler: Integer;
     procedure ReloadSettingsState;
     function UniqueVehicleName(const Name:string;VehicleTex:string=''):string;
     procedure miTrainClick(Sender: TObject);
+    function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
+    procedure Connect(const LeftVehicle: Integer);
+    procedure SelectModel(const Tex: TTexture; const ModelID: Integer=0);
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -501,7 +504,7 @@ var
 
 implementation
 
-uses DateUtils, JPEG, ShellApi, uParser, uUpdater, Clipbrd;
+uses DateUtils, JPEG, ShellApi, uParser,{ uUpdater,} Clipbrd;
 
 {$R *.dfm}
 
@@ -563,6 +566,8 @@ procedure TMain.AddVehicle(const Position:Integer);
 var
   Vehicle : TVehicle;
   Texture : TTexture;
+  i : Integer;
+  Staffed : Boolean;
 begin
   Vehicle := TVehicle.Create;
   Vehicle.MinDist  := -1;
@@ -594,10 +599,21 @@ begin
 
   Vehicle.CabOccupancy := coNobody;
 
+  if Vehicle.Texture.Typ in [TTyp.tyELEKTROWOZ..tyEZT] then
+  begin
+    Staffed := False;
+    for i := 0 to Train.Vehicles.Count-1 do
+      if Train.Vehicles[i].CabOccupancy in [coHeadDriver..coRearDriver] then
+      begin
+        Staffed := True;
+        Break;
+      end;
+    if not Staffed then
+      Vehicle.CabOccupancy := coHeadDriver;
+  end;
+
   Vehicle.Vel      := 0;
   Vehicle.Settings := '0';
-
-  Vehicle.Coupler  := 3;
 
   TryStrToInt(edSway.Text,Vehicle.Sway);
   TryStrToInt(edFlatness.Text,Vehicle.Flatness);
@@ -631,12 +647,58 @@ begin
 
   Train.Vehicles.Insert(Position,Vehicle);
 
+  Connect(Position-1);
+  Connect(Position);
+
   if SelList = slSCN then
     SetItemDesc(Train)
   else
     lbDepot.Items[lbDepot.ItemIndex] := PrepareTrainsetDesc(Train);
 
   RefreshTrain(Position);
+end;
+
+procedure TMain.Connect(const LeftVehicle:Integer);
+var
+  LeftMax, RightMax : Integer;
+begin
+  if (LeftVehicle >= 0) and (Train.Vehicles.Count-1 > LeftVehicle) then
+  begin
+    LeftMax := GetMaxCoupler(Train.Vehicles[LeftVehicle],False);
+
+    if Train.Vehicles.Count-1 > LeftVehicle then
+      RightMax  := GetMaxCoupler(Train.Vehicles[LeftVehicle+1])
+    else
+      RightMax := 3;
+
+    if LeftMax > RightMax then
+      Train.Vehicles[LeftVehicle].Coupler := RightMax
+    else
+      Train.Vehicles[LeftVehicle].Coupler := LeftMax;
+  end;
+end;
+
+function TMain.GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
+begin
+  if Vehicle.Texture <> nil then
+  begin
+    if LeftCoupler then
+    begin
+      if Vehicle.Dist >= 0 then
+        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagA
+      else
+        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagB;
+    end
+    else
+    begin
+      if Vehicle.Dist >= 0 then
+        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagB
+      else
+        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagA;
+    end;
+  end
+  else
+    Result := 3;
 end;
 
 procedure TMain.RefreshTrain(const SelPos:Integer=-1);
@@ -674,12 +736,12 @@ end;
 
 procedure TMain.actCheckUpdateExecute(Sender: TObject);
 begin
-  with TfrmUpdater.Create(self) do
+  {with TfrmUpdater.Create(self) do
   try
     CheckUpdate;
   finally
     Free;
-  end;
+  end;}
 end;
 
 procedure TMain.actCloudlessExecute(Sender: TObject);
@@ -791,6 +853,7 @@ begin
   chSkipRendering.Checked               := False;
   chCrashDamage.Checked                 := True;
   chChromaticAberration.Checked         := False;
+  chSkipPipeline.Checked                := False;
 
   cbMouseScale.ItemIndex                := 0;
   cbLang.ItemIndex                      := 0;
@@ -849,12 +912,16 @@ begin
 end;
 
 procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
+var
+  i : Integer;
 begin
-  SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])].Vehicles := ClipTrain.Vehicles;
+  Train.Vehicles := ClipTrain.Vehicles;
 
-  SetItemDesc(ClipTrain);
+  for i := 0 to Train.Vehicles.Count-1 do
+    Train.Vehicles[i].Name := UniqueVehicleName(Train.Vehicles[i].ReplacableSkin);
 
-  DrawTrain(SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])]);
+  SetItemDesc(Train);
+  DrawTrain(Train);
 end;
 
 procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
@@ -971,6 +1038,8 @@ var
   Parser : TParser;
   Config : TConfig;
 begin
+  btnStart.Enabled := False;
+
   SCN := TScenario(tvSCN.Selected.Data);
   Starter := TStringList.Create;
 
@@ -1030,8 +1099,16 @@ begin
 end;
 
 procedure TMain.btnHelpClick(Sender: TObject);
+var
+  Param : TParam;
 begin
-  OpenFile('\readme.html');
+  Param := Settings.FindParam('lang');
+
+  if (Param <> nil) then
+    if SameText(Param.Value,'pl') then
+      OpenFile('\readme.html')
+    else
+      OpenFile('\en-readme.html');
 end;
 
 procedure TMain.OpenFile(const Path:string);
@@ -1103,7 +1180,13 @@ begin
     SEI.nShow := SW_SHOWNORMAL;
     ShellExecuteEx(@SEI);
 
-    if cbCloseApp.Checked then Application.Terminate;
+    if cbCloseApp.Checked then
+      Application.Terminate
+    else
+    begin
+      Sleep(500);
+      btnStart.Enabled := True;
+    end;
   end
   else
     ShowMessage('Nie znaleziono pliku wykonywalnego (eu07.exe) symulatora.');
@@ -1174,15 +1257,32 @@ end;
 procedure TMain.cbGfxrendererChange(Sender: TObject);
 begin
   ReloadSettingsState;
+  chSkipPipeline.Checked := cbGfxrenderer.ItemIndex = 1;
 end;
 
 procedure TMain.ReloadSettingsState;
 begin
-  chUsevbo.Enabled := cbGfxrenderer.ItemIndex > 0;
-  chShadows.Enabled := cbGfxrenderer.ItemIndex = 1;
+  chMotionBlur.Enabled            := cbGfxrenderer.ItemIndex = 0;
+  chChromaticAberration.Enabled   := cbGfxrenderer.ItemIndex = 0;
 
-  chMotionBlur.Enabled          := cbGfxrenderer.ItemIndex = 0;
-  chChromaticAberration.Enabled := cbGfxrenderer.ItemIndex = 0;
+  chUsevbo.Enabled                := cbGfxrenderer.ItemIndex > 0;
+
+  chUsevbo.Enabled                := cbGfxrenderer.ItemIndex > 1;
+
+  chShadowMap.Enabled             := cbGfxrenderer.ItemIndex < 2;
+  chExtraEffects.Enabled          := cbGfxrenderer.ItemIndex < 2;
+
+  chShadows.Enabled               := cbGfxrenderer.ItemIndex = 2;
+
+  chEnvmap.Enabled                := cbGfxrenderer.ItemIndex < 3;
+  Label53.Enabled                 := cbGfxrenderer.ItemIndex < 3;
+  cbShadowsCabRange.Enabled       := cbGfxrenderer.ItemIndex < 3;
+  Label36.Enabled                 := cbGfxrenderer.ItemIndex < 3;
+  cbShadowMapSize.Enabled         := cbGfxrenderer.ItemIndex < 3;
+  Label43.Enabled                 := cbGfxrenderer.ItemIndex < 3;
+  cbShadowRange.Enabled           := cbGfxrenderer.ItemIndex < 3;
+  Label18.Enabled                 := cbGfxrenderer.ItemIndex < 3;
+  cbReflectionsFramerate.Enabled  := cbGfxrenderer.ItemIndex < 3;
 end;
 
 procedure TMain.cbKey1Change(Sender: TObject);
@@ -1226,6 +1326,20 @@ end;
 procedure TMain.cbBigThumbnailClick(Sender: TObject);
 begin
   AdaptMiniSize;
+end;
+
+procedure TMain.cbModelsChange(Sender: TObject);
+begin
+  if (cbTypes.ItemIndex = Ord(TTyp.tyEZT))
+    or (cbTypes.ItemIndex = Ord(TTyp.tySZYNOBUS))
+    or ((cbTypes.ItemIndex = Ord(TTyp.tyELEKTROWOZ)) and (Pos('ET4',cbModels.Items[cbModels.ItemIndex]) > 0)) then
+    if lbTextures.Count > lbTextures.Tag then
+    begin
+      lbTextures.Items.BeginUpdate;
+      lbTextures.ItemIndex := lbTextures.Tag;
+      lbTextures.Items.EndUpdate;
+      lbTexturesClick(nil);
+    end;
 end;
 
 procedure TMain.cbModelsClick(Sender: TObject);
@@ -1346,12 +1460,6 @@ begin
       Train.Vehicles[SelVehicle].Dist := 0;
 end;
 
-function TMain.FindMaxCommonCoupler:Integer;
-begin
-
-
-end;
-
 procedure TMain.clCouplersClick(Sender: TObject);
 var
   CouplerOld, Coupler, SelectCouplerMax, NextCouplerMax : Integer;
@@ -1361,38 +1469,46 @@ begin
   begin
     CouplerOld := Train.Vehicles[SelVehicle].Coupler;
 
-    if Train.Vehicles.Count > SelVehicle then
+    if Coupler > CouplerOld then
     begin
-      if (Train.Vehicles[SelVehicle].Texture <> nil) and
-         (Train.Vehicles[SelVehicle+1].Texture <> nil) then
+      if Train.Vehicles.Count > SelVehicle then
       begin
-        SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagA;
-        if (Train.Vehicles[SelVehicle].Dist >= 0) and
-           (Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB <> 0) then
-          SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB;
-
-        NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagA;
-        if (Train.Vehicles[SelVehicle+1].Dist < 0) and
-           (Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB <> 0) then
-          NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB;
-
-        if NextCouplerMax < SelectCouplerMax then
-          SelectCouplerMax := NextCouplerMax;
-
-        if (Coupler <= SelectCouplerMax) or (Coupler < CouplerOld) then
+        if (Train.Vehicles[SelVehicle].Texture <> nil) and
+           (Train.Vehicles[SelVehicle+1].Texture <> nil) then
         begin
-          Train.Vehicles[SelVehicle].Coupler := Coupler;
-          clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
+          SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagA;
+          if (Train.Vehicles[SelVehicle].Dist >= 0) and
+             (Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB <> 0) then
+            SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB;
+
+          NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagA;
+          if (Train.Vehicles[SelVehicle+1].Dist < 0) and
+             (Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB <> 0) then
+            NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB;
+
+          if NextCouplerMax < SelectCouplerMax then
+            SelectCouplerMax := NextCouplerMax;
+
+          if (Coupler <= SelectCouplerMax) or (Coupler < CouplerOld) then
+          begin
+            Train.Vehicles[SelVehicle].Coupler := Coupler;
+            clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
+          end
+          else
+          begin
+            Train.Vehicles[SelVehicle].Coupler := CouplerOld;
+            SelectCoupler(CouplerOld);
+            ShowMessage('Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.');
+          end;
         end
         else
-        begin
-          Train.Vehicles[SelVehicle].Coupler := CouplerOld;
-          SelectCoupler(CouplerOld);
-          ShowMessage('Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.');
-        end;
-      end
-      else
-        Train.Vehicles[SelVehicle].Coupler := Coupler;
+          Train.Vehicles[SelVehicle].Coupler := Coupler;
+      end;
+    end
+    else
+    begin
+      Train.Vehicles[SelVehicle].Coupler := Coupler;
+      clCouplers.Hint := Coupler.ToString;
     end;
   end;
 end;
@@ -1521,8 +1637,9 @@ begin
   Application.OnActivate    := AppActivate;
   Application.OnDeactivate  := AppDeactivate;
 
-  DIR := ExtractFilePath(ParamStr(0));
+  //DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
+  DIR := 'G:\MaSzyna\MaSzyna2004\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
   //DIR := 'G:\MaSzyna\MaSzyna pliki\';
@@ -1674,6 +1791,15 @@ end;
 procedure TMain.imFacebookClick(Sender: TObject);
 begin
   ShellExecute(Handle,'open',PChar('https://www.facebook.com/MaSzynaeu07pl/'),nil,nil, SW_SHOWNORMAL)
+end;
+
+procedure TMain.imLangClick(Sender: TObject);
+begin
+  if cbLang.ItemIndex = 0 then
+    cbLang.ItemIndex := 1
+  else
+    cbLang.ItemIndex := 0;
+  cbLangChange(self);
 end;
 
 procedure TMain.imMaszynaClick(Sender: TObject);
@@ -1838,8 +1964,8 @@ end;
 
 procedure TMain.lbVersionClick(Sender: TObject);
 begin
-  Pages.ActivePageIndex := 2;
-  btnCheckUpdate.SetFocus;
+  //Pages.ActivePageIndex := 2;
+  //btnCheckUpdate.SetFocus;
 end;
 
 procedure TMain.lbVersionDblClick(Sender: TObject);
@@ -2099,27 +2225,27 @@ begin
 
 end;
 
+procedure TMain.SelectModel(const Tex:TTexture;const ModelID:Integer=0);
+begin
+  cbTypes.ItemIndex := Ord(Tex.Typ);
+  cbTypesClick(self);
+
+  cbModels.ItemIndex := cbModels.Items.IndexOf(Tex.Models[ModelID].Mini);
+  cbModelsClick(self);
+
+  LoadModelData(Tex.Fiz);
+  LoadTexData(Tex,ModelID);
+end;
+
 procedure TMain.SelectTexture(const Vehicle:TVehicle);
 var
   i : Integer;
 begin
   if Textures.Count = 0 then Exit;
-
-  cbModels.Items.BeginUpdate;
   lbTextures.Items.BeginUpdate;
-  cbLoadType.Items.BeginUpdate;
-  i := 0;
-
   if Vehicle.Texture <> nil then
   begin
-    cbTypes.ItemIndex := Ord(Vehicle.Texture.Typ);
-    cbTypesClick(self);
-
-    cbModels.ItemIndex := cbModels.Items.IndexOf(Vehicle.Texture.Models[Vehicle.ModelID].Mini);
-
-    cbModelsClick(self);
-    LoadModelData(Vehicle.Texture.Fiz);
-    LoadTexData(Vehicle.Texture,Vehicle.ModelID);
+    SelectModel(Vehicle.Texture,Vehicle.ModelID);
 
     cbLoadType.Items.Clear;
     ExtractStrings([','],[],PChar(Physics[Vehicle.Texture.Fiz].LoadAccepted),cbLoadType.Items);
@@ -2131,18 +2257,12 @@ begin
   end
   else
   begin
+    i := 0;
     while (not SameText(Textures[i].Dir,Vehicle.Dir)) and (i < Textures.Count-1) do
       Inc(i);
 
     if SameText(Textures[i].Dir,Vehicle.Dir) then
-    begin
-      cbTypes.ItemIndex := Ord(Textures[i].Typ);
-      cbTypesClick(self);
-      cbModels.ItemIndex := cbModels.Items.IndexOf(Textures[i].Models[0].Mini);
-      cbModelsClick(self);
-      LoadModelData(Textures[i].Fiz);
-      LoadTexData(Vehicle.Texture,Vehicle.ModelID);
-    end
+      SelectModel(Textures[i])
     else
     begin
       cbTypes.ItemIndex := -1;
@@ -2150,10 +2270,7 @@ begin
       lbTextures.ItemIndex := -1;
     end;
   end;
-
-  cbModels.Items.EndUpdate;
   lbTextures.Items.EndUpdate;
-  cbLoadType.Items.EndUpdate;
 end;
 
 procedure TMain.DrawTrain(const Train:TTrain);
@@ -2336,6 +2453,7 @@ begin
   begin
     Vehicle := TVehicle.Create;
     Vehicle.Assign(Depot[Index].Vehicles[i]);
+    Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin);
     Train.Vehicles.Add(Vehicle);
   end;
 
@@ -2443,17 +2561,22 @@ var
   i : Integer;
   Tex : TTexture;
 begin
-  LoadModelData((lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Fiz);
+  if lbTextures.ItemIndex >= 0 then
+  begin
+    LoadModelData((lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Fiz);
 
-  Tex := lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture;
-  PaintVehicle(Tex);
+    Tex := lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture;
 
-  for i := 0 to Tex.Models.Count-1 do
-    if SameText(cbModels.Items[cbModels.ItemIndex],Tex.Models[i].Mini) then
-    begin
-      LoadTexData(Tex,i);
-      Break;
-    end;
+    for i := 0 to Tex.Models.Count-1 do
+      if SameText(cbModels.Items[cbModels.ItemIndex],Tex.Models[i].Mini) then
+      begin
+        PaintVehicle(Tex,i);
+        LoadTexData(Tex,i);
+        Break;
+      end;
+  end;
+
+  lbTextures.Tag := lbTextures.ItemIndex;
 end;
 
 procedure TMain.lbTexturesDblClick(Sender: TObject);

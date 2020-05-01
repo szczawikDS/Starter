@@ -23,6 +23,7 @@ type
     ptFloat,
     ptIdentifier,
     ptInteger,
+    ptMinus,
     ptNull,
     ptSlash,
     ptSlashesComment,

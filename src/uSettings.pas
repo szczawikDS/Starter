@@ -190,14 +190,31 @@ begin
       begin
         if (Par.Count > 3) then
         begin
-          KeyParam.Key := Par[3];
-          KeyParam.Key2 := Par[1];
-          KeyParam.Key3 := Par[2];
+          if (Par[1] <> 'shift') and (Par[1] <> 'ctrl') then
+          begin
+            KeyParam.Key := Par[1];
+            KeyParam.Key2 := Par[3];
+            KeyParam.Key3 := Par[2];
+          end
+          else
+          begin
+            KeyParam.Key := Par[3];
+            KeyParam.Key2 := Par[1];
+            KeyParam.Key3 := Par[2];
+          end;
         end
         else
         begin
-          KeyParam.Key := Par[2];
-          KeyParam.Key2 := Par[1];
+          if (Par[1] <> 'shift') and (Par[1] <> 'ctrl') then
+          begin
+            KeyParam.Key := Par[1];
+            KeyParam.Key2 := Par[2];
+          end
+          else
+          begin
+            KeyParam.Key := Par[2];
+            KeyParam.Key2 := Par[1];
+          end;
         end;
       end;
 
@@ -339,6 +356,9 @@ begin
       if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled' then
         Main.chChromaticAberration.Checked := Params[i].Value = 'yes'
       else
+      if Params[i].Name = 'gfx.skippipeline' then
+        Main.chSkipPipeline.Checked := Params[i].Value = 'yes'
+      else
       if Params[i].Name = 'mousescale' then
       begin
         Par := TStringList.Create;
@@ -399,8 +419,8 @@ begin
       if Params[i].Name = 'gfxrenderer' then
       begin
         if Params[i].Value = 'full'   then Main.cbGfxrenderer.ItemIndex := 0 else
-        if Params[i].Value = 'legacy' then Main.cbGfxrenderer.ItemIndex := 1 else
-        if Params[i].Value = 'simple' then Main.cbGfxrenderer.ItemIndex := 2;
+        if Params[i].Value = 'legacy' then Main.cbGfxrenderer.ItemIndex := 2 else
+        if Params[i].Value = 'simple' then Main.cbGfxrenderer.ItemIndex := 3;
       end
       else
       if Params[i].Name = 'maxtexturesize' then
@@ -481,6 +501,9 @@ begin
     Main.cbResolution.ItemIndex := Main.cbResolution.Items.IndexOf(ParWidth + ' x ' + ParHeight);
     if Main.cbResolution.ItemIndex = -1 then
       Main.cbResolution.ItemIndex := Main.cbResolution.Items.Count-1;
+
+    if (Main.cbGfxrenderer.ItemIndex = 0) and (Main.chSkipPipeline.Checked) then
+      Main.cbGfxrenderer.ItemIndex := 1;
 
   except
     on E: Exception do ShowMessage('B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
@@ -703,6 +726,7 @@ begin
     if Params[i].Name = 'gfx.skiprendering'             then SetCheckState(Main.chSkipRendering.Checked,i) else
     if Params[i].Name = 'crashdamage'                   then SetCheckState(Main.chCrashDamage.Checked,i) else
     if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled'  then SetCheckState(Main.chChromaticAberration.Checked,i) else
+    if Params[i].Name = 'gfx.skippipeline'              then SetCheckState(Main.chSkipPipeline.Checked,i) else
     if Params[i].Name = 'mousescale' then
     begin
       case Main.cbMouseScale.ItemIndex of
@@ -720,9 +744,9 @@ begin
     if Params[i].Name = 'gfxrenderer'  then
     begin
       case Main.cbGfxrenderer.ItemIndex of
-        0: Params[i].Value := 'full';
-        1: Params[i].Value := 'legacy';
-        2: Params[i].Value := 'simple';
+        0..1: Params[i].Value := 'full';
+        2: Params[i].Value := 'legacy';
+        3: Params[i].Value := 'simple';
       end;
     end
     else
@@ -815,6 +839,7 @@ begin
       end;
 
       case Main.cbShadowRange.ItemIndex of
+       -1: Params[i].Value := Params[i].Value + ' 250 400 300';
         0: Params[i].Value := Params[i].Value + ' 250 25 300';
         1: Params[i].Value := Params[i].Value + ' 250 50 300';
         2: Params[i].Value := Params[i].Value + ' 250 150 300';
@@ -844,7 +869,7 @@ begin
   Settings := TStringList.Create;
 
   for i := 0 to KeyParams.Count-1 do
-    Settings.Add(KeyParams[i].Name + ' ' + KeyParams[i].Key + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' // ' + KeyParams[i].Desc);
+    Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
 
   Settings.SaveToFile(Main.DIR + 'eu07_input-keyboard.ini');
 end;

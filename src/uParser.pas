@@ -228,6 +228,10 @@ begin
     Result.Name := TokenFull;
 
     Lexer.NextID(ptIdentifier);
+
+    if not SameText('dynamic',Lexer.Token) then
+      Errors.Add('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
+
     Lexer.NextID(ptIdentifier);
     Result.Dir := TokenFull;
 
@@ -925,9 +929,10 @@ procedure TParser.ParsePhysics(Physics:TPhysics);
 var
   PhysicsFile : TStringList;
   Section : TPhysicsSections;
+  Buff2Found : Boolean;
 begin
   try
-    Physics.AllowedFlagB := 0;
+    Buff2Found := False;
 
     PhysicsFile := TStringList.Create;
     if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
@@ -991,14 +996,22 @@ begin
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.AllowedFlagA := Abs(StrToInt(TokenFull));
+            Physics.AllowedFlagA := StrToInt(TokenFull);
+
+            if Physics.AllowedFlagA < 0 then
+              Physics.AllowedFlagA := Abs(Physics.AllowedFlagA) + 128
           end;
           psBuffCouplB:
           if Lexer.Token = 'AllowedFlag' then
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.AllowedFlagB := Abs(StrToInt(TokenFull));
+            Physics.AllowedFlagB := StrToInt(TokenFull);
+
+            if Physics.AllowedFlagB < 0 then
+              Physics.AllowedFlagB := Abs(Physics.AllowedFlagB) + 128;
+
+            Buff2Found := True;
           end;
         end;
       end
@@ -1017,6 +1030,10 @@ begin
 
       Lexer.NextNoJunk;
     end;
+
+    if not Buff2Found then
+      Physics.AllowedFlagB := Physics.AllowedFlagA;
+
   except
     Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
   end;
