@@ -250,15 +250,24 @@ begin
     Lexer.Origin := PChar(Settings.Text);
     Lexer.Init;
 
-    Lexer.NextNoJunk;
+    Lexer.NextNoSpace;
     while Lexer.TokenID <> ptNull do
     begin
       Param := TParam.Create;
-      Param.Name := GetParamName;
+
+      if Lexer.TokenID = ptSlashesComment then
+      begin
+        Param.Desc := Lexer.Token;
+      end
+      else
+      begin
+        Param.Name := GetParamName;
+        Lexer.NextNoSpace;
+        Param.Value:= Trim(GetParamValue);
+        if Lexer.TokenID = ptSlashesComment then Param.Desc := Lexer.Token;
+      end;
+
       Lexer.NextNoSpace;
-      Param.Value:= Trim(GetParamValue);
-      if Lexer.TokenID = ptSlashesComment then Param.Desc := Lexer.Token;
-      Lexer.NextNoJunk;
       Params.Add(Param);
     end;
 
@@ -852,7 +861,12 @@ begin
     if Params[i].Name = 'lang' then Params[i].Value := LowerCase(Main.cbLang.Text);
 
     if Pos('//',Params[i].Desc) > 0 then
-      Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + Params[i].Desc)
+    begin
+      if Params[i].Name.Length = 0 then
+        Settings.Add(Params[i].Desc)
+      else
+        Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + Params[i].Desc);
+    end
     else
       Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
   end;

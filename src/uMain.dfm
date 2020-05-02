@@ -371,7 +371,7 @@ object Main: TMain
       Top = 0
       Width = 884
       Height = 439
-      ActivePage = tsMagazine
+      ActivePage = tsStart
       Align = alClient
       DoubleBuffered = True
       MultiLine = True
@@ -1162,7 +1162,7 @@ object Main: TMain
               Top = 3
               Width = 640
               Height = 226
-              ActivePage = tsDepoTrains
+              ActivePage = tsSCNTrains
               Align = alClient
               MultiLine = True
               TabOrder = 1
@@ -2204,10 +2204,15 @@ object Main: TMain
           object tsMain: TTabSheet
             Caption = 'Og'#243'lne'
             object pnlPhysic: TPanel
-              Left = 220
+              AlignWithMargins = True
+              Left = 270
               Top = 0
               Width = 235
               Height = 336
+              Margins.Left = 50
+              Margins.Top = 0
+              Margins.Right = 50
+              Margins.Bottom = 0
               Align = alLeft
               BevelOuter = bvNone
               ParentBackground = False
@@ -2254,10 +2259,10 @@ object Main: TMain
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 134
+                Top = 164
                 Width = 229
                 Height = 16
-                Margins.Top = 10
+                Margins.Top = 40
                 Align = alTop
                 Alignment = taCenter
                 AutoSize = False
@@ -2272,7 +2277,7 @@ object Main: TMain
               object Label1: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 153
+                Top = 183
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2282,7 +2287,7 @@ object Main: TMain
               object Label8: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 202
+                Top = 232
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2292,7 +2297,7 @@ object Main: TMain
               object chSoundenabled: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 274
+                Top = 304
                 Width = 229
                 Height = 17
                 Align = alTop
@@ -2340,7 +2345,7 @@ object Main: TMain
               object chDebugmode: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 251
+                Top = 281
                 Width = 229
                 Height = 17
                 Align = alTop
@@ -2352,7 +2357,7 @@ object Main: TMain
               object cbEXE: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 172
+                Top = 202
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2363,7 +2368,7 @@ object Main: TMain
               object cbConvertmodels: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 221
+                Top = 251
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2419,10 +2424,10 @@ object Main: TMain
               object Label20: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 147
+                Top = 177
                 Width = 208
                 Height = 16
-                Margins.Top = 10
+                Margins.Top = 40
                 Align = alTop
                 Alignment = taCenter
                 AutoSize = False
@@ -2437,7 +2442,7 @@ object Main: TMain
               object Label13: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 166
+                Top = 196
                 Width = 208
                 Height = 16
                 Align = alTop
@@ -2496,7 +2501,7 @@ object Main: TMain
               object chInputgamepad: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 248
+                Top = 278
                 Width = 208
                 Height = 17
                 Align = alTop
@@ -2506,7 +2511,7 @@ object Main: TMain
               object cbFeedbackmode: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 185
+                Top = 215
                 Width = 208
                 Height = 24
                 Align = alTop
@@ -2528,7 +2533,7 @@ object Main: TMain
               object pnlFeedBackPort: TPanel
                 AlignWithMargins = True
                 Left = 3
-                Top = 215
+                Top = 245
                 Width = 208
                 Height = 27
                 Align = alTop
@@ -2562,7 +2567,7 @@ object Main: TMain
             end
             object Panel11: TPanel
               AlignWithMargins = True
-              Left = 458
+              Left = 558
               Top = 3
               Width = 245
               Height = 330
@@ -2590,9 +2595,10 @@ object Main: TMain
               object lbStarter: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 289
+                Top = 306
                 Width = 239
                 Height = 16
+                Margins.Top = 20
                 Align = alTop
                 Alignment = taCenter
                 AutoSize = False
@@ -2760,7 +2766,7 @@ object Main: TMain
               object cbCloseApp: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 308
+                Top = 325
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2772,7 +2778,7 @@ object Main: TMain
               object cbBigThumbnail: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 331
+                Top = 348
                 Width = 239
                 Height = 17
                 Align = alTop
