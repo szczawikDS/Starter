@@ -332,6 +332,8 @@ type
     chSkipPipeline: TCheckBox;
     pnlTime: TPanel;
     dtTime: TDateTimePicker;
+    Splitter: TSplitter;
+    actReplaceTrain: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -425,6 +427,7 @@ type
     procedure cbGfxrendererChange(Sender: TObject);
     procedure imLangClick(Sender: TObject);
     procedure cbModelsChange(Sender: TObject);
+    procedure actReplaceTrainExecute(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -995,7 +998,13 @@ begin
   if SelList = slSCN then
     SetItemDesc(Train)
   else
-    lbDepot.Items[lbDepot.ItemIndex] := PrepareTrainsetDesc(Train);
+    if Train.Vehicles.Count > 0 then
+      lbDepot.Items[lbDepot.ItemIndex] := PrepareTrainsetDesc(Train)
+    else
+    begin
+      Depot.Delete(lbDepot.ItemIndex);
+      lbDepot.Items.Delete(lbDepot.ItemIndex);
+    end;
 
   DrawTrain(Train);
 end;
@@ -1003,6 +1012,11 @@ end;
 procedure TMain.actRemoveVehicleUpdate(Sender: TObject);
 begin
   actRemoveVehicle.Enabled := SelVehicle >= 0;
+end;
+
+procedure TMain.actReplaceTrainExecute(Sender: TObject);
+begin
+  //
 end;
 
 procedure TMain.actSaveKeyboardExecute(Sender: TObject);
@@ -1181,12 +1195,7 @@ begin
     ShellExecuteEx(@SEI);
 
     if cbCloseApp.Checked then
-      Application.Terminate
-    else
-    begin
-      Sleep(500);
-      btnStart.Enabled := True;
-    end;
+      Application.Terminate;
   end
   else
     ShowMessage('Nie znaleziono pliku wykonywalnego (eu07.exe) symulatora.');
@@ -1762,12 +1771,14 @@ procedure TMain.AppActivate(Sender: TObject);
 begin
   RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
   RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
+  btnStart.Enabled := True;
 end;
 
 procedure TMain.AppDeactivate(Sender: TObject);
 begin
   UnRegisterHotKey(Handle, VK_DELETE);
   UnRegisterHotKey(Handle, VK_INSERT);
+  btnStart.Enabled := False;
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
@@ -1920,7 +1931,18 @@ begin
       (Sender as TShape).BeginDrag(True);
       SelectVehicle(Sender);
     end;
-  end;
+  end
+  else
+    if Button = mbRight then
+      if SelList = slSCN then
+      begin
+        if Sender is TImage then
+          pmTrainsets.Popup(Main.Left + sbTrain.Left + (Sender as TImage).Left + X,Main.Top + sbTrain.Top + (Sender as TImage).Top + Y)
+        else
+          pmTrainsets.Popup(Main.Left + sbTrain.Left + (Sender as TShape).Left + X,Main.Top + sbTrain.Top + (Sender as TShape).Top + Y);
+      end
+      else
+        pmDepot.Popup(Main.Left + sbTrain.Left + X,Main.Top + sbTrain.Top + Y);
 end;
 
 procedure TMain.BitmapDragDrop(Sender, Source: TObject; X, Y: Integer);

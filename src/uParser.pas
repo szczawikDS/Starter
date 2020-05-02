@@ -277,8 +277,8 @@ begin
 
     if Result.Loadquantity > 0 then
     begin
-      Lexer.NextID(ptIdentifier);
-      Result.LoadType := Lexer.Token;
+      Lexer.NextNoJunk;
+      Result.LoadType := TokenFull;
     end;
 
     FindTexture(Result);

@@ -284,9 +284,9 @@ object Main: TMain
       Top = 3
       Width = 82
       Height = 13
-      Hint = '(1.05.2020)'
+      Hint = '(3.05.2020)'
       AutoSize = False
-      Caption = 'Wersja 3.8.0'
+      Caption = 'Wersja 3.9.0'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -371,7 +371,7 @@ object Main: TMain
       Top = 0
       Width = 884
       Height = 439
-      ActivePage = tsStart
+      ActivePage = tsMagazine
       Align = alClient
       DoubleBuffered = True
       MultiLine = True
@@ -404,6 +404,15 @@ object Main: TMain
             Font.Style = [fsBold]
             ParentFont = False
             Layout = tlCenter
+          end
+          object Splitter: TSplitter
+            Left = 0
+            Top = 102
+            Width = 646
+            Height = 3
+            Cursor = crVSplit
+            Align = alBottom
+            Beveled = True
           end
           object pcMissions: TPageControl
             Left = 0
@@ -992,7 +1001,7 @@ object Main: TMain
             Left = 3
             Top = 19
             Width = 640
-            Height = 83
+            Height = 80
             Align = alClient
             PopupMenu = pmTrainsets
             TabOrder = 1
@@ -1153,7 +1162,7 @@ object Main: TMain
               Top = 3
               Width = 640
               Height = 226
-              ActivePage = tsSCNTrains
+              ActivePage = tsDepoTrains
               Align = alClient
               MultiLine = True
               TabOrder = 1
@@ -3674,7 +3683,7 @@ object Main: TMain
       Action = actRemoveTrain
     end
     object miReplaceTrain: TMenuItem
-      Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
+      Action = actReplaceTrain
     end
   end
   object AL: TActionList
@@ -3836,6 +3845,10 @@ object Main: TMain
       Caption = 'Zast'#261'p sk'#322'adem ze schowka'
       OnExecute = actPasteFromClipboardExecute
       OnUpdate = actPasteFromClipboardUpdate
+    end
+    object actReplaceTrain: TAction
+      Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
+      OnExecute = actReplaceTrainExecute
     end
   end
   object pmDepot: TPopupMenu
