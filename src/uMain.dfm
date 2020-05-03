@@ -2,7 +2,7 @@ object Main: TMain
   Left = 0
   Top = 0
   Caption = 'Starter'
-  ClientHeight = 627
+  ClientHeight = 661
   ClientWidth = 884
   Color = clBtnFace
   Constraints.MinHeight = 666
@@ -22,7 +22,7 @@ object Main: TMain
   object btnStart: TButton
     AlignWithMargins = True
     Left = 3
-    Top = 582
+    Top = 616
     Width = 878
     Height = 42
     Action = actStart
@@ -280,13 +280,35 @@ object Main: TMain
       OnClick = imMaszynaClick
     end
     object lbVersion: TLabel
-      Left = 503
-      Top = 3
-      Width = 82
-      Height = 13
+      Left = 545
+      Top = 0
+      Width = 42
+      Height = 50
       Hint = '(3.05.2020)'
+      Align = alLeft
       AutoSize = False
-      Caption = 'Wersja 3.9.0'
+      Caption = '3.9.0'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = lbVersionClick
+      OnDblClick = lbVersionDblClick
+    end
+    object lbVersionCaption: TLabel
+      Left = 497
+      Top = 0
+      Width = 48
+      Height = 50
+      Hint = '(3.05.2020)'
+      Align = alLeft
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Wersja:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -361,7 +383,7 @@ object Main: TMain
     Left = 0
     Top = 56
     Width = 884
-    Height = 439
+    Height = 473
     Align = alClient
     BevelOuter = bvNone
     ShowCaption = False
@@ -370,8 +392,8 @@ object Main: TMain
       Left = 0
       Top = 0
       Width = 884
-      Height = 439
-      ActivePage = tsStart
+      Height = 473
+      ActivePage = tsMagazine
       Align = alClient
       DoubleBuffered = True
       MultiLine = True
@@ -383,7 +405,7 @@ object Main: TMain
           Left = 230
           Top = 0
           Width = 646
-          Height = 408
+          Height = 442
           Align = alClient
           BevelOuter = bvNone
           ShowCaption = False
@@ -407,7 +429,7 @@ object Main: TMain
           end
           object Splitter: TSplitter
             Left = 0
-            Top = 102
+            Top = 136
             Width = 646
             Height = 3
             Cursor = crVSplit
@@ -416,7 +438,7 @@ object Main: TMain
           end
           object pcMissions: TPageControl
             Left = 0
-            Top = 105
+            Top = 139
             Width = 646
             Height = 303
             ActivePage = tsDescription
@@ -1001,7 +1023,7 @@ object Main: TMain
             Left = 3
             Top = 19
             Width = 640
-            Height = 80
+            Height = 114
             Align = alClient
             PopupMenu = pmTrainsets
             TabOrder = 1
@@ -1012,7 +1034,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 230
-          Height = 408
+          Height = 442
           Align = alLeft
           BevelInner = bvNone
           BevelOuter = bvNone
@@ -1032,7 +1054,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 876
-          Height = 408
+          Height = 442
           Align = alClient
           BevelOuter = bvNone
           ShowCaption = False
@@ -1041,7 +1063,7 @@ object Main: TMain
             Left = 0
             Top = 0
             Width = 876
-            Height = 232
+            Height = 266
             Align = alTop
             Anchors = [akLeft, akTop, akRight, akBottom]
             BevelOuter = bvNone
@@ -1050,7 +1072,7 @@ object Main: TMain
               Left = 0
               Top = 0
               Width = 230
-              Height = 232
+              Height = 266
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -1115,7 +1137,7 @@ object Main: TMain
                 Left = 0
                 Top = 77
                 Width = 230
-                Height = 95
+                Height = 129
                 Align = alClient
                 ParentShowHint = False
                 ShowHint = True
@@ -1125,7 +1147,7 @@ object Main: TMain
               end
               object btnAddVehicle: TButton
                 Left = 0
-                Top = 203
+                Top = 237
                 Width = 230
                 Height = 29
                 Action = actAddVehicle
@@ -1134,7 +1156,7 @@ object Main: TMain
               end
               object pnlMini: TPanel
                 Left = 0
-                Top = 172
+                Top = 206
                 Width = 230
                 Height = 31
                 Align = alBottom
@@ -1161,7 +1183,7 @@ object Main: TMain
               Left = 233
               Top = 3
               Width = 640
-              Height = 226
+              Height = 260
               ActivePage = tsSCNTrains
               Align = alClient
               MultiLine = True
@@ -1172,7 +1194,7 @@ object Main: TMain
                   Left = 0
                   Top = 0
                   Width = 632
-                  Height = 195
+                  Height = 229
                   Align = alClient
                   BevelOuter = bvNone
                   ShowCaption = False
@@ -1181,7 +1203,7 @@ object Main: TMain
                     Left = 0
                     Top = 0
                     Width = 632
-                    Height = 150
+                    Height = 184
                     Margins.Bottom = 0
                     Align = alClient
                     DoubleBuffered = False
@@ -1194,7 +1216,7 @@ object Main: TMain
                   end
                   object btnAddToDepo: TButton
                     Left = 0
-                    Top = 166
+                    Top = 200
                     Width = 632
                     Height = 29
                     Margins.Top = 0
@@ -1205,7 +1227,7 @@ object Main: TMain
                   end
                   object pnlTrainsTop: TPanel
                     Left = 0
-                    Top = 150
+                    Top = 184
                     Width = 632
                     Height = 16
                     Align = alBottom
@@ -1244,7 +1266,7 @@ object Main: TMain
                 ImageIndex = 1
                 object btnRemoveFromDepot: TButton
                   Left = 0
-                  Top = 166
+                  Top = 200
                   Width = 632
                   Height = 29
                   Margins.Top = 0
@@ -1257,7 +1279,7 @@ object Main: TMain
                   Left = 0
                   Top = 0
                   Width = 632
-                  Height = 166
+                  Height = 200
                   Margins.Top = 0
                   Margins.Bottom = 0
                   Align = alClient
@@ -1271,7 +1293,7 @@ object Main: TMain
           object pnlVehicleOptions: TPanel
             AlignWithMargins = True
             Left = 3
-            Top = 238
+            Top = 272
             Width = 870
             Height = 167
             Align = alBottom
@@ -2154,7 +2176,7 @@ object Main: TMain
         ImageIndex = 2
         object pnlButtons: TPanel
           Left = 0
-          Top = 367
+          Top = 401
           Width = 876
           Height = 41
           Align = alBottom
@@ -2197,7 +2219,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 876
-          Height = 367
+          Height = 401
           ActivePage = tsMain
           Align = alClient
           TabOrder = 1
@@ -2208,7 +2230,7 @@ object Main: TMain
               Left = 270
               Top = 0
               Width = 235
-              Height = 336
+              Height = 370
               Margins.Left = 50
               Margins.Top = 0
               Margins.Right = 50
@@ -2259,7 +2281,7 @@ object Main: TMain
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 164
+                Top = 187
                 Width = 229
                 Height = 16
                 Margins.Top = 40
@@ -2277,7 +2299,7 @@ object Main: TMain
               object Label1: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 183
+                Top = 206
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2287,7 +2309,7 @@ object Main: TMain
               object Label8: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 232
+                Top = 255
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2297,7 +2319,7 @@ object Main: TMain
               object chSoundenabled: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 304
+                Top = 127
                 Width = 229
                 Height = 17
                 Align = alTop
@@ -2345,7 +2367,7 @@ object Main: TMain
               object chDebugmode: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 281
+                Top = 304
                 Width = 229
                 Height = 17
                 Align = alTop
@@ -2357,7 +2379,7 @@ object Main: TMain
               object cbEXE: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 202
+                Top = 225
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2368,7 +2390,7 @@ object Main: TMain
               object cbConvertmodels: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 251
+                Top = 274
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2389,7 +2411,7 @@ object Main: TMain
               Left = 3
               Top = 3
               Width = 214
-              Height = 330
+              Height = 364
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -2442,7 +2464,7 @@ object Main: TMain
               object Label13: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 196
+                Top = 219
                 Width = 208
                 Height = 16
                 Align = alTop
@@ -2501,7 +2523,7 @@ object Main: TMain
               object chInputgamepad: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 278
+                Top = 196
                 Width = 208
                 Height = 17
                 Align = alTop
@@ -2511,7 +2533,7 @@ object Main: TMain
               object cbFeedbackmode: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 215
+                Top = 238
                 Width = 208
                 Height = 24
                 Align = alTop
@@ -2533,7 +2555,7 @@ object Main: TMain
               object pnlFeedBackPort: TPanel
                 AlignWithMargins = True
                 Left = 3
-                Top = 245
+                Top = 268
                 Width = 208
                 Height = 27
                 Align = alTop
@@ -2564,13 +2586,155 @@ object Main: TMain
                   Text = '888'
                 end
               end
+              object pnlUART: TPanel
+                Left = 0
+                Top = 298
+                Width = 214
+                Height = 161
+                Align = alTop
+                BevelOuter = bvNone
+                Enabled = False
+                ParentBackground = False
+                ShowCaption = False
+                TabOrder = 7
+                Visible = False
+                object pnlCOM: TPanel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 3
+                  Width = 208
+                  Height = 27
+                  Align = alTop
+                  BevelOuter = bvNone
+                  ParentBackground = False
+                  ShowCaption = False
+                  TabOrder = 0
+                  object Label12: TLabel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 3
+                    Width = 39
+                    Height = 24
+                    Align = alClient
+                    Alignment = taRightJustify
+                    AutoSize = False
+                    Caption = 'UART:'
+                    Layout = tlCenter
+                  end
+                  object edUART: TEdit
+                    AlignWithMargins = True
+                    Left = 48
+                    Top = 3
+                    Width = 157
+                    Height = 21
+                    Align = alRight
+                    TabOrder = 0
+                    Text = 'COM3 115200 0.03 0.03'
+                  end
+                end
+                object pnlUARTtune: TPanel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 36
+                  Width = 208
+                  Height = 27
+                  Align = alTop
+                  BevelOuter = bvNone
+                  ParentBackground = False
+                  ShowCaption = False
+                  TabOrder = 1
+                  object Label33: TLabel
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 3
+                    Width = 70
+                    Height = 24
+                    Align = alLeft
+                    Alignment = taRightJustify
+                    AutoSize = False
+                    Caption = 'UARTTUNE:'
+                    Layout = tlCenter
+                  end
+                  object edUARTtune: TEdit
+                    AlignWithMargins = True
+                    Left = 79
+                    Top = 3
+                    Width = 126
+                    Height = 21
+                    Align = alClient
+                    TabOrder = 0
+                    Text = '26 225 71 236 1.4 255 0.8 255 0.8 255 4000 255 800 255 150 255'
+                  end
+                end
+                object chTrainenable: TCheckBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 86
+                  Width = 208
+                  Height = 17
+                  Align = alTop
+                  Caption = 'Hamulec'
+                  TabOrder = 2
+                end
+                object chUARTDebug: TCheckBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 132
+                  Width = 208
+                  Height = 17
+                  Align = alTop
+                  Caption = 'UART debug'
+                  TabOrder = 3
+                end
+                object chLocalenable: TCheckBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 109
+                  Width = 208
+                  Height = 17
+                  Align = alTop
+                  Caption = 'Hamulec lokomotywy'
+                  TabOrder = 4
+                end
+                object Panel4: TPanel
+                  Left = 0
+                  Top = 66
+                  Width = 214
+                  Height = 17
+                  Align = alTop
+                  BevelOuter = bvNone
+                  ParentBackground = False
+                  ShowCaption = False
+                  TabOrder = 5
+                  object chMainenable: TCheckBox
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 3
+                    Width = 86
+                    Height = 11
+                    Align = alLeft
+                    Caption = 'Nastawnik'
+                    TabOrder = 0
+                  end
+                  object chScndenable: TCheckBox
+                    AlignWithMargins = True
+                    Left = 95
+                    Top = 3
+                    Width = 90
+                    Height = 11
+                    Align = alLeft
+                    Caption = 'Bocznik'
+                    TabOrder = 1
+                  end
+                end
+              end
             end
             object Panel11: TPanel
               AlignWithMargins = True
               Left = 558
               Top = 3
               Width = 245
-              Height = 330
+              Height = 364
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -2808,7 +2972,7 @@ object Main: TMain
               Left = 3
               Top = 3
               Width = 662
-              Height = 330
+              Height = 364
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -2818,7 +2982,7 @@ object Main: TMain
                 Left = 3
                 Top = 3
                 Width = 200
-                Height = 324
+                Height = 358
                 Align = alLeft
                 BevelOuter = bvNone
                 ParentBackground = False
@@ -2999,7 +3163,7 @@ object Main: TMain
                 Left = 459
                 Top = 3
                 Width = 200
-                Height = 324
+                Height = 358
                 Align = alRight
                 BevelOuter = bvNone
                 ParentBackground = False
@@ -3134,7 +3298,7 @@ object Main: TMain
                 Left = 209
                 Top = 3
                 Width = 204
-                Height = 324
+                Height = 358
                 Align = alLeft
                 BevelOuter = bvNone
                 ParentBackground = False
@@ -3358,7 +3522,7 @@ object Main: TMain
               Left = 668
               Top = 0
               Width = 205
-              Height = 336
+              Height = 370
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -3506,7 +3670,7 @@ object Main: TMain
         object btnSaveKeyboard: TButton
           AlignWithMargins = True
           Left = 3
-          Top = 376
+          Top = 410
           Width = 870
           Height = 29
           Action = actSaveKeyboard
@@ -3517,7 +3681,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 876
-          Height = 338
+          Height = 372
           Align = alClient
           ColCount = 4
           FixedCols = 0
@@ -3532,7 +3696,7 @@ object Main: TMain
         end
         object pnlKeyEdit: TPanel
           Left = 0
-          Top = 338
+          Top = 372
           Width = 876
           Height = 35
           Align = alBottom
@@ -3655,7 +3819,7 @@ object Main: TMain
   end
   object sbTrain: TScrollBox
     Left = 0
-    Top = 495
+    Top = 529
     Width = 884
     Height = 84
     HorzScrollBar.Smooth = True
@@ -3684,6 +3848,7 @@ object Main: TMain
     end
     object miAddToDepo: TMenuItem
       Action = actAddToMagazine
+      Caption = 'Dodaj sk'#322'ad do magazynu'
     end
     object Usuwszystkiepojazdyzeskadu1: TMenuItem
       Action = actRemoveTrain

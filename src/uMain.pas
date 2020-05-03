@@ -116,19 +116,6 @@ type
     cbMultisampling: TComboBox;
     cbResolution: TComboBox;
     cbPyscreenrendererpriority: TComboBox;
-    Label20: TLabel;
-    Label13: TLabel;
-    chInputgamepad: TCheckBox;
-    cbFeedbackmode: TComboBox;
-    pnlFeedBackPort: TPanel;
-    Label21: TLabel;
-    edFeedbackport: TEdit;
-    Label17: TLabel;
-    Label1: TLabel;
-    Label8: TLabel;
-    chDebugmode: TCheckBox;
-    cbEXE: TComboBox;
-    cbConvertmodels: TComboBox;
     Panel11: TPanel;
     Label19: TLabel;
     chFullphysics: TCheckBox;
@@ -334,6 +321,33 @@ type
     dtTime: TDateTimePicker;
     Splitter: TSplitter;
     actReplaceTrain: TAction;
+    lbVersionCaption: TLabel;
+    Label20: TLabel;
+    chInputgamepad: TCheckBox;
+    Label13: TLabel;
+    cbFeedbackmode: TComboBox;
+    pnlFeedBackPort: TPanel;
+    Label21: TLabel;
+    edFeedbackport: TEdit;
+    pnlUART: TPanel;
+    pnlCOM: TPanel;
+    Label12: TLabel;
+    edUART: TEdit;
+    pnlUARTtune: TPanel;
+    Label33: TLabel;
+    edUARTtune: TEdit;
+    chTrainenable: TCheckBox;
+    chUARTDebug: TCheckBox;
+    chLocalenable: TCheckBox;
+    Panel4: TPanel;
+    chMainenable: TCheckBox;
+    chScndenable: TCheckBox;
+    Label17: TLabel;
+    Label1: TLabel;
+    chDebugmode: TCheckBox;
+    cbEXE: TComboBox;
+    Label8: TLabel;
+    cbConvertmodels: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -485,6 +499,7 @@ type
     function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
     procedure Connect(const LeftVehicle: Integer);
     procedure SelectModel(const Tex: TTexture; const ModelID: Integer=0);
+    procedure ReplaceTrain(const Vehicles: TObjectList<TVehicle>);
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -652,6 +667,8 @@ begin
 
   Connect(Position-1);
   Connect(Position);
+  if (Train.Vehicles.Count = 1) and (Vehicle.Coupler = 0) then
+    Vehicle.Coupler := 3;
 
   if SelList = slSCN then
     SetItemDesc(Train)
@@ -915,16 +932,8 @@ begin
 end;
 
 procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
-var
-  i : Integer;
 begin
-  Train.Vehicles := ClipTrain.Vehicles;
-
-  for i := 0 to Train.Vehicles.Count-1 do
-    Train.Vehicles[i].Name := UniqueVehicleName(Train.Vehicles[i].ReplacableSkin);
-
-  SetItemDesc(Train);
-  DrawTrain(Train);
+  ReplaceTrain(ClipTrain.Vehicles);
 end;
 
 procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
@@ -1198,7 +1207,10 @@ begin
       Application.Terminate;
   end
   else
+  begin
     ShowMessage('Nie znaleziono pliku wykonywalnego (eu07.exe) symulatora.');
+    btnStart.Enabled := True;
+  end;
 end;
 
 procedure TMain.sbTrainDragDrop(Sender, Source: TObject; X, Y: Integer);
@@ -1260,7 +1272,8 @@ end;
 
 procedure TMain.cbFeedbackmodeChange(Sender: TObject);
 begin
-  edFeedbackport.Enabled := cbFeedbackmode.ItemIndex = 3;
+  pnlFeedBackPort.Visible := cbFeedbackmode.ItemIndex = 3;
+  pnlUART.Visible := cbFeedbackmode.ItemIndex = 5;
 end;
 
 procedure TMain.cbGfxrendererChange(Sender: TObject);
@@ -1315,7 +1328,9 @@ end;
 procedure TMain.cbLangChange(Sender: TObject);
 var
   Param : TParam;
+  i : Integer;
 begin
+  i := cbTypes.ItemIndex;
   Param := Settings.FindParam('lang');
 
   if (Param <> nil) and (not SameText(Param.Value,cbLang.Text)) then
@@ -1324,6 +1339,8 @@ begin
     Settings.ReadOwnSettings;
     Settings.ReadSettings;
   end;
+
+  cbTypes.ItemIndex := i;
 end;
 
 procedure TMain.cbLoadTypeChange(Sender: TObject);
@@ -1474,45 +1491,35 @@ var
   CouplerOld, Coupler, SelectCouplerMax, NextCouplerMax : Integer;
 begin
   Coupler := GetCoupler;
+
   if Train.Vehicles.Count > SelVehicle+1 then
   begin
     CouplerOld := Train.Vehicles[SelVehicle].Coupler;
 
     if Coupler > CouplerOld then
     begin
-      if Train.Vehicles.Count > SelVehicle then
+      if (Train.Vehicles[SelVehicle].Texture <> nil) and
+         (Train.Vehicles[SelVehicle+1].Texture <> nil) then
       begin
-        if (Train.Vehicles[SelVehicle].Texture <> nil) and
-           (Train.Vehicles[SelVehicle+1].Texture <> nil) then
-        begin
-          SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagA;
-          if (Train.Vehicles[SelVehicle].Dist >= 0) and
-             (Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB <> 0) then
-            SelectCouplerMax := Physics[Train.Vehicles[SelVehicle].Texture.Fiz].AllowedFlagB;
+        SelectCouplerMax  := GetMaxCoupler(Train.Vehicles[SelVehicle],False);
+        NextCouplerMax    := GetMaxCoupler(Train.Vehicles[SelVehicle+1]);
+      end;
 
-          NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagA;
-          if (Train.Vehicles[SelVehicle+1].Dist < 0) and
-             (Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB <> 0) then
-            NextCouplerMax := Physics[Train.Vehicles[SelVehicle+1].Texture.Fiz].AllowedFlagB;
-
-          if NextCouplerMax < SelectCouplerMax then
+      if NextCouplerMax < SelectCouplerMax then
             SelectCouplerMax := NextCouplerMax;
 
-          if (Coupler <= SelectCouplerMax) or (Coupler < CouplerOld) then
-          begin
-            Train.Vehicles[SelVehicle].Coupler := Coupler;
-            clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
-          end
-          else
-          begin
-            Train.Vehicles[SelVehicle].Coupler := CouplerOld;
-            SelectCoupler(CouplerOld);
-            ShowMessage('Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.');
-          end;
-        end
-        else
-          Train.Vehicles[SelVehicle].Coupler := Coupler;
+      if (Coupler <= SelectCouplerMax) or (Coupler < CouplerOld) then
+      begin
+        Train.Vehicles[SelVehicle].Coupler := Coupler;
+        clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString;
+      end
+      else
+      begin
+        Train.Vehicles[SelVehicle].Coupler := CouplerOld;
+        SelectCoupler(CouplerOld);
+        ShowMessage('Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.');
       end;
+
     end
     else
     begin
@@ -1592,9 +1599,6 @@ begin
   else
     Result := Result + ' 0';
 
-  if SameText(Dyn.LoadType, 'pantstate') then
-    Result := Result + ' 1';
-
   if Dyn.LoadType.Length > 0 then
     Result := Result + ' ' + Dyn.LoadType;
 
@@ -1646,10 +1650,10 @@ begin
   Application.OnActivate    := AppActivate;
   Application.OnDeactivate  := AppDeactivate;
 
-  //DIR := ExtractFilePath(ParamStr(0));
+  DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
-  DIR := 'G:\MaSzyna\MaSzyna2004\';
-  //DIR := 'G:\MaSzyna\pctga\';
+  //DIR := 'G:\MaSzyna\MaSzyna2004\';
+  DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
   //DIR := 'G:\MaSzyna\MaSzyna pliki\';
 
@@ -1751,6 +1755,11 @@ begin
     DrawTrain(Train);
 end;
 
+function CompareNames(Item1, Item2: Pointer): Integer;
+begin
+  Result := CompareText(TTrain(Item1).Vehicles[0].Name, TTrain(Item2).Vehicles[0].Name);
+end;
+
 procedure TMain.LoadMagazine;
 var
   i : Integer;
@@ -1758,13 +1767,20 @@ begin
   lbDepot.Items.BeginUpdate;
   lbDepot.Clear;
 
+  Depot.Sort(TComparer<TTrain>.Construct(
+      function (const L, R: TTrain): integer
+      begin
+        result := CompareNames(L, R);
+      end
+  ));
+
   for i := 0 to Depot.Count-1 do
     lbDepot.AddItem(PrepareTrainsetDesc(Depot[i]),TObject(i));
 
   lbDepot.Items.EndUpdate;
 
   if lbDepot.Count > 0 then
-    lbDepot.ItemIndex := 0;
+    lbDepot.ItemIndex := lbDepot.Count-1;
 end;
 
 procedure TMain.AppActivate(Sender: TObject);
@@ -1942,7 +1958,10 @@ begin
           pmTrainsets.Popup(Main.Left + sbTrain.Left + (Sender as TShape).Left + X,Main.Top + sbTrain.Top + (Sender as TShape).Top + Y);
       end
       else
-        pmDepot.Popup(Main.Left + sbTrain.Left + X,Main.Top + sbTrain.Top + Y);
+        if Sender is TImage then
+          pmDepot.Popup(Main.Left + sbTrain.Left + (Sender as TImage).Left + X,Main.Top + sbTrain.Top + (Sender as TImage).Top + Y)
+        else
+          pmDepot.Popup(Main.Left + sbTrain.Left + (Sender as TShape).Left + X,Main.Top + sbTrain.Top + (Sender as TShape).Top + Y);
 end;
 
 procedure TMain.BitmapDragDrop(Sender, Source: TObject; X, Y: Integer);
@@ -2462,25 +2481,32 @@ end;
 
 procedure TMain.miTrainClick(Sender: TObject);
 var
-  Train : TTrain;
-  Vehicle : TVehicle;
-  i, Index : Integer;
+  Index : Integer;
 begin
   Index := (Sender as TMenuItem).Tag;
+  ReplaceTrain(Depot[Index].Vehicles);
+end;
 
-  Train := SCN.Trains[Integer(lbTrains.Items.Objects[lbTrains.ItemIndex])];
+procedure TMain.ReplaceTrain(const Vehicles:TObjectList<TVehicle>);
+var
+  Vehicle : TVehicle;
+  i : Integer;
+begin
   Train.Vehicles.Clear;
-
-  for i := 0 to Depot[Index].Vehicles.Count-1 do
+  for i := 0 to Vehicles.Count-1 do
   begin
     Vehicle := TVehicle.Create;
-    Vehicle.Assign(Depot[Index].Vehicles[i]);
+    Vehicle.Assign(Vehicles[i]);
     Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin);
     Train.Vehicles.Add(Vehicle);
   end;
 
-  SetItemDesc(Train);
+  if Train.Vehicles.Count > 0 then
+    SelVehicle := 0
+  else
+    SelVehicle := -1;
 
+  SetItemDesc(Train);
   DrawTrain(Train);
 end;
 

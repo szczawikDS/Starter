@@ -368,6 +368,28 @@ begin
       if Params[i].Name = 'gfx.skippipeline' then
         Main.chSkipPipeline.Checked := Params[i].Value = 'yes'
       else
+      ///////////////////////////////// UART ///////////////////////////////////
+      {if Params[i].Name = 'uart' then
+        Main.edUART.Text := Params[i].Value
+      else
+      if Params[i].Name = 'uarttune' then
+        Main.edUARTtune.Text := Params[i].Value
+      else
+      if Params[i].Name = 'uartdebug' then
+        Main.chUARTDebug.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'uartfeature' then
+      begin
+        Par := TStringList.Create;
+        ExtractStrings([' '],[],PChar(Params[i].Value),Par);
+        Main.chMainenable.Checked   := Par[0] = 'yes';
+        Main.chScndenable.Checked   := Par[1] = 'yes';
+        Main.chTrainenable.Checked  := Par[2] = 'yes';
+        Main.chLocalenable.Checked  := Par[3] = 'yes';
+        Par.Free;
+      end
+      else}
+      //////////////////////////////////////////////////////////////////////////
       if Params[i].Name = 'mousescale' then
       begin
         Par := TStringList.Create;
@@ -386,7 +408,7 @@ begin
       if Params[i].Name = 'feedbackmode' then
       begin
         Main.cbFeedbackmode.ItemIndex := StrToInt(Params[i].Value);
-        Main.edFeedbackport.Enabled := Main.cbFeedbackmode.ItemIndex = 3;
+        Main.pnlFeedbackport.Visible := Main.cbFeedbackmode.ItemIndex = 3;
       end
       else
       if Params[i].Name = 'feedbackport' then Main.edFeedbackport.Text := Params[i].Value else
