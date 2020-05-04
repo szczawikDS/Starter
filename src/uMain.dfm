@@ -284,7 +284,7 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(3.05.2020)'
+      Hint = '(4.05.2020)'
       Align = alLeft
       AutoSize = False
       Caption = '3.9.0'
@@ -369,14 +369,13 @@ object Main: TMain
       Align = alRight
       Style = csDropDownList
       DoubleBuffered = False
-      ItemIndex = 0
       ParentDoubleBuffered = False
       TabOrder = 4
-      Text = 'PL'
       OnChange = cbLangChange
       Items.Strings = (
         'PL'
-        'EN')
+        'EN'
+        'CZ')
     end
   end
   object pnlMain: TPanel
@@ -393,7 +392,7 @@ object Main: TMain
       Top = 0
       Width = 884
       Height = 473
-      ActivePage = tsMagazine
+      ActivePage = tsStart
       Align = alClient
       DoubleBuffered = True
       MultiLine = True
@@ -519,7 +518,7 @@ object Main: TMain
                 TabOrder = 1
                 object lbTrainLength: TLabel
                   Left = 0
-                  Top = 116
+                  Top = 122
                   Width = 142
                   Height = 20
                   Align = alTop
@@ -527,10 +526,11 @@ object Main: TMain
                   AutoSize = False
                   Caption = '0'
                   Layout = tlCenter
+                  ExplicitTop = 116
                 end
                 object lbTrainMass: TLabel
                   Left = 0
-                  Top = 71
+                  Top = 77
                   Width = 142
                   Height = 20
                   Align = alTop
@@ -538,11 +538,12 @@ object Main: TMain
                   AutoSize = False
                   Caption = '0'
                   Layout = tlCenter
+                  ExplicitTop = 71
                 end
                 object lbTrainMassCaption: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 46
+                  Top = 49
                   Width = 136
                   Height = 25
                   Align = alTop
@@ -550,10 +551,11 @@ object Main: TMain
                   AutoSize = False
                   Caption = 'Masa [t]:'
                   Layout = tlBottom
+                  ExplicitTop = 46
                 end
                 object lnTrainLengthCaption: TLabel
                   Left = 0
-                  Top = 91
+                  Top = 97
                   Width = 142
                   Height = 25
                   Align = alTop
@@ -561,6 +563,7 @@ object Main: TMain
                   AutoSize = False
                   Caption = 'D'#322'ogo'#347#263' [m]:'
                   Layout = tlBottom
+                  ExplicitTop = 91
                 end
                 object lbTrackCaption: TLabel
                   AlignWithMargins = True
@@ -576,17 +579,18 @@ object Main: TMain
                 end
                 object lbTrack: TLabel
                   Left = 0
-                  Top = 23
+                  Top = 26
                   Width = 142
                   Height = 20
                   Align = alTop
                   Alignment = taCenter
                   AutoSize = False
                   Layout = tlCenter
+                  ExplicitTop = 23
                 end
                 object lbCountVehiclesCaption: TLabel
                   Left = 0
-                  Top = 136
+                  Top = 142
                   Width = 142
                   Height = 25
                   Align = alTop
@@ -594,10 +598,11 @@ object Main: TMain
                   AutoSize = False
                   Caption = 'Ilo'#347#263' pojazd'#243'w:'
                   Layout = tlBottom
+                  ExplicitTop = 136
                 end
                 object lbCountVehicles: TLabel
                   Left = 0
-                  Top = 161
+                  Top = 167
                   Width = 142
                   Height = 20
                   Align = alTop
@@ -605,6 +610,7 @@ object Main: TMain
                   AutoSize = False
                   Caption = '0'
                   Layout = tlCenter
+                  ExplicitTop = 161
                 end
               end
             end
@@ -643,7 +649,7 @@ object Main: TMain
                   Left = 114
                   Top = 0
                   Width = 71
-                  Height = 27
+                  Height = 24
                   Margins.Top = 0
                   Align = alClient
                   Alignment = taCenter
@@ -656,6 +662,7 @@ object Main: TMain
                   Font.Style = []
                   ParentFont = False
                   Layout = tlCenter
+                  ExplicitHeight = 27
                 end
                 object btnSpring: TButton
                   Left = 188
@@ -1221,7 +1228,7 @@ object Main: TMain
                     Height = 29
                     Margins.Top = 0
                     Margins.Bottom = 0
-                    Action = actAddToMagazine
+                    Action = actAddToDepo
                     Align = alBottom
                     TabOrder = 1
                   end
@@ -1344,7 +1351,7 @@ object Main: TMain
                     object Label22: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 30
+                      Top = 33
                       Width = 107
                       Height = 24
                       Align = alTop
@@ -1352,11 +1359,12 @@ object Main: TMain
                       AutoSize = False
                       Caption = #321'adunek:'
                       Layout = tlCenter
+                      ExplicitTop = 30
                     end
                     object Label23: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 57
+                      Top = 63
                       Width = 107
                       Height = 24
                       Align = alTop
@@ -1364,6 +1372,7 @@ object Main: TMain
                       AutoSize = False
                       Caption = 'Ilo'#347#263' '#322'adunku:'
                       Layout = tlCenter
+                      ExplicitTop = 57
                     end
                   end
                   object Panel8: TPanel
@@ -1512,7 +1521,7 @@ object Main: TMain
                     object Label41: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 30
+                      Top = 33
                       Width = 113
                       Height = 24
                       Align = alTop
@@ -1520,11 +1529,12 @@ object Main: TMain
                       AutoSize = False
                       Caption = 'Wy'#322#261'cznik:'
                       Layout = tlCenter
+                      ExplicitTop = 30
                     end
                     object Label42: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 57
+                      Top = 63
                       Width = 113
                       Height = 24
                       Align = alTop
@@ -1532,6 +1542,7 @@ object Main: TMain
                       AutoSize = False
                       Caption = 'Dostosowanie:'
                       Layout = tlCenter
+                      ExplicitTop = 57
                     end
                   end
                   object Panel15: TPanel
@@ -1713,7 +1724,7 @@ object Main: TMain
                     object Label28: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 30
+                      Top = 33
                       Width = 99
                       Height = 24
                       Hint = 'Podkucie w mm.'
@@ -1724,11 +1735,12 @@ object Main: TMain
                       ParentShowHint = False
                       ShowHint = True
                       Layout = tlCenter
+                      ExplicitTop = 30
                     end
                     object Label29: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 57
+                      Top = 63
                       Width = 99
                       Height = 24
                       Hint = 'Losowa warto'#347#263' podkucia od 0 do podanej warto'#347'ci (mm)'
@@ -1739,11 +1751,12 @@ object Main: TMain
                       ParentShowHint = False
                       ShowHint = True
                       Layout = tlCenter
+                      ExplicitTop = 57
                     end
                     object Label30: TLabel
                       AlignWithMargins = True
                       Left = 3
-                      Top = 84
+                      Top = 93
                       Width = 99
                       Height = 24
                       Hint = 'Prawdopodobie'#324'stwo wyst'#261'pienia (%) podkucia'
@@ -1754,6 +1767,7 @@ object Main: TMain
                       ParentShowHint = False
                       ShowHint = True
                       Layout = tlCenter
+                      ExplicitTop = 84
                     end
                   end
                   object pnlConditionEdits: TPanel
@@ -1838,18 +1852,19 @@ object Main: TMain
                   Left = 3
                   Top = 72
                   Width = 86
-                  Height = 39
+                  Height = 36
                   Align = alLeft
                   Alignment = taRightJustify
                   AutoSize = False
                   Caption = 'Model:'
+                  ExplicitHeight = 39
                 end
                 object lbModel: TLabel
                   AlignWithMargins = True
                   Left = 95
                   Top = 72
                   Width = 248
-                  Height = 39
+                  Height = 36
                   Align = alClient
                   Alignment = taRightJustify
                   AutoSize = False
@@ -1857,6 +1872,7 @@ object Main: TMain
                   ParentShowHint = False
                   ShowHint = True
                   OnDblClick = lbModelDblClick
+                  ExplicitHeight = 39
                 end
                 object btnRemoveVehicle: TButton
                   Left = 0
@@ -1884,22 +1900,24 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 86
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'VMax [km/h]:'
+                    ExplicitHeight = 20
                   end
                   object lbVMax: TLabel
                     AlignWithMargins = True
                     Left = 95
                     Top = 3
                     Width = 248
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = '0'
+                    ExplicitHeight = 20
                   end
                 end
                 object Panel9: TPanel
@@ -1917,22 +1935,24 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 86
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Masa [t]:'
+                    ExplicitHeight = 20
                   end
                   object lbMass: TLabel
                     AlignWithMargins = True
                     Left = 95
                     Top = 3
                     Width = 248
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = '0'
+                    ExplicitHeight = 20
                   end
                 end
                 object pnlVehicleLength: TPanel
@@ -1950,22 +1970,24 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 86
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'D'#322'ugo'#347#263' [m]:'
+                    ExplicitHeight = 20
                   end
                   object lbLength: TLabel
                     AlignWithMargins = True
                     Left = 95
                     Top = 3
                     Width = 248
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = '0'
+                    ExplicitHeight = 20
                   end
                 end
               end
@@ -1987,21 +2009,25 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Zdj'#281'cia:'
+                    ExplicitHeight = 20
                   end
                   object lbTexPhoto: TLabel
                     AlignWithMargins = True
                     Left = 79
                     Top = 3
                     Width = 264
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
+                    ExplicitLeft = 339
+                    ExplicitWidth = 4
+                    ExplicitHeight = 16
                   end
                 end
                 object Panel17: TPanel
@@ -2019,21 +2045,25 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Data rew.:'
+                    ExplicitHeight = 20
                   end
                   object lbTexRevision: TLabel
                     AlignWithMargins = True
                     Left = 79
                     Top = 3
                     Width = 264
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
+                    ExplicitLeft = 339
+                    ExplicitWidth = 4
+                    ExplicitHeight = 16
                   end
                 end
                 object Panel18: TPanel
@@ -2051,21 +2081,25 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Stacja:'
+                    ExplicitHeight = 20
                   end
                   object lbTexStation: TLabel
                     AlignWithMargins = True
                     Left = 79
                     Top = 3
                     Width = 264
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
+                    ExplicitLeft = 339
+                    ExplicitWidth = 4
+                    ExplicitHeight = 16
                   end
                 end
                 object Panel19: TPanel
@@ -2083,21 +2117,25 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Operator:'
+                    ExplicitHeight = 20
                   end
                   object lbTexOwner: TLabel
                     AlignWithMargins = True
                     Left = 79
                     Top = 3
                     Width = 264
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
+                    ExplicitLeft = 339
+                    ExplicitWidth = 4
+                    ExplicitHeight = 16
                   end
                 end
                 object Panel20: TPanel
@@ -2115,21 +2153,25 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Autor:'
+                    ExplicitHeight = 20
                   end
                   object lbTexAuthor: TLabel
                     AlignWithMargins = True
                     Left = 79
                     Top = 3
                     Width = 264
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
+                    ExplicitLeft = 339
+                    ExplicitWidth = 4
+                    ExplicitHeight = 16
                   end
                 end
                 object Panel21: TPanel
@@ -2147,23 +2189,27 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 20
+                    Height = 17
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'Rewizja:'
+                    ExplicitHeight = 20
                   end
                   object lbTexWorks: TLabel
                     AlignWithMargins = True
                     Left = 79
                     Top = 3
                     Width = 264
-                    Height = 20
+                    Height = 17
                     Align = alClient
                     Alignment = taRightJustify
                     ParentShowHint = False
                     ShowAccelChar = False
                     ShowHint = True
+                    ExplicitLeft = 339
+                    ExplicitWidth = 4
+                    ExplicitHeight = 16
                   end
                 end
               end
@@ -2261,27 +2307,29 @@ object Main: TMain
               object Label6: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 29
+                Top = 32
                 Width = 229
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'G'#322'o'#347'no'#347#263' d'#378'wi'#281'k'#243'w:'
+                ExplicitTop = 29
               end
               object Label31: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 78
+                Top = 84
                 Width = 229
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'G'#322'o'#347'no'#347#263' radia:'
+                ExplicitTop = 78
               end
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 187
+                Top = 196
                 Width = 229
                 Height = 16
                 Margins.Top = 40
@@ -2295,31 +2343,34 @@ object Main: TMain
                 Font.Name = 'Tahoma'
                 Font.Style = [fsBold]
                 ParentFont = False
+                ExplicitTop = 187
               end
               object Label1: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 206
+                Top = 218
                 Width = 229
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'Wyb'#243'r EXE:'
+                ExplicitTop = 206
               end
               object Label8: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 255
+                Top = 270
                 Width = 229
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'Generowanie E3D:'
+                ExplicitTop = 255
               end
               object chSoundenabled: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 127
+                Top = 136
                 Width = 229
                 Height = 17
                 Align = alTop
@@ -2331,7 +2382,7 @@ object Main: TMain
               object cbSoundvolume: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 48
+                Top = 54
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2349,7 +2400,7 @@ object Main: TMain
               object cbRadioVolume: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 97
+                Top = 106
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2367,7 +2418,7 @@ object Main: TMain
               object chDebugmode: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 304
+                Top = 322
                 Width = 229
                 Height = 17
                 Align = alTop
@@ -2379,7 +2430,7 @@ object Main: TMain
               object cbEXE: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 225
+                Top = 240
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2390,7 +2441,7 @@ object Main: TMain
               object cbConvertmodels: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 274
+                Top = 292
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2436,17 +2487,18 @@ object Main: TMain
               object Label2: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 91
+                Top = 94
                 Width = 208
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'Czu'#322'o'#347#263' kursora:'
+                ExplicitTop = 91
               end
               object Label20: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 177
+                Top = 183
                 Width = 208
                 Height = 16
                 Margins.Top = 40
@@ -2460,21 +2512,23 @@ object Main: TMain
                 Font.Name = 'Tahoma'
                 Font.Style = [fsBold]
                 ParentFont = False
+                ExplicitTop = 177
               end
               object Label13: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 219
+                Top = 228
                 Width = 208
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'Informacje zwrotne:'
+                ExplicitTop = 219
               end
               object chFullScreen: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 22
+                Top = 25
                 Width = 208
                 Height = 17
                 Align = alTop
@@ -2484,7 +2538,7 @@ object Main: TMain
               object chInactivepause: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 45
+                Top = 48
                 Width = 208
                 Height = 17
                 Align = alTop
@@ -2496,7 +2550,7 @@ object Main: TMain
               object chPause: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 68
+                Top = 71
                 Width = 208
                 Height = 17
                 Align = alTop
@@ -2506,7 +2560,7 @@ object Main: TMain
               object cbMouseScale: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 110
+                Top = 116
                 Width = 208
                 Height = 24
                 Align = alTop
@@ -2523,7 +2577,7 @@ object Main: TMain
               object chInputgamepad: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 196
+                Top = 205
                 Width = 208
                 Height = 17
                 Align = alTop
@@ -2533,7 +2587,7 @@ object Main: TMain
               object cbFeedbackmode: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 238
+                Top = 250
                 Width = 208
                 Height = 24
                 Align = alTop
@@ -2555,7 +2609,7 @@ object Main: TMain
               object pnlFeedBackPort: TPanel
                 AlignWithMargins = True
                 Left = 3
-                Top = 268
+                Top = 280
                 Width = 208
                 Height = 27
                 Align = alTop
@@ -2568,12 +2622,13 @@ object Main: TMain
                   Left = 3
                   Top = 3
                   Width = 147
-                  Height = 24
+                  Height = 21
                   Align = alClient
                   Alignment = taRightJustify
                   AutoSize = False
                   Caption = 'Adres portu LPT:'
                   Layout = tlCenter
+                  ExplicitHeight = 24
                 end
                 object edFeedbackport: TEdit
                   AlignWithMargins = True
@@ -2584,11 +2639,12 @@ object Main: TMain
                   Align = alRight
                   TabOrder = 0
                   Text = '888'
+                  ExplicitHeight = 24
                 end
               end
               object pnlUART: TPanel
                 Left = 0
-                Top = 298
+                Top = 310
                 Width = 214
                 Height = 161
                 Align = alTop
@@ -2614,12 +2670,13 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 39
-                    Height = 24
+                    Height = 21
                     Align = alClient
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'UART:'
                     Layout = tlCenter
+                    ExplicitHeight = 24
                   end
                   object edUART: TEdit
                     AlignWithMargins = True
@@ -2630,6 +2687,7 @@ object Main: TMain
                     Align = alRight
                     TabOrder = 0
                     Text = 'COM3 115200 0.03 0.03'
+                    ExplicitHeight = 24
                   end
                 end
                 object pnlUARTtune: TPanel
@@ -2648,12 +2706,13 @@ object Main: TMain
                     Left = 3
                     Top = 3
                     Width = 70
-                    Height = 24
+                    Height = 21
                     Align = alLeft
                     Alignment = taRightJustify
                     AutoSize = False
                     Caption = 'UARTTUNE:'
                     Layout = tlCenter
+                    ExplicitHeight = 24
                   end
                   object edUARTtune: TEdit
                     AlignWithMargins = True
@@ -2664,6 +2723,7 @@ object Main: TMain
                     Align = alClient
                     TabOrder = 0
                     Text = '26 225 71 236 1.4 255 0.8 255 0.8 255 4000 255 800 255 150 255'
+                    ExplicitHeight = 24
                   end
                 end
                 object chTrainenable: TCheckBox
@@ -2759,7 +2819,7 @@ object Main: TMain
               object lbStarter: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 306
+                Top = 309
                 Width = 239
                 Height = 16
                 Margins.Top = 20
@@ -2773,11 +2833,12 @@ object Main: TMain
                 Font.Name = 'Tahoma'
                 Font.Style = [fsBold]
                 ParentFont = False
+                ExplicitTop = 306
               end
               object chFullphysics: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 22
+                Top = 25
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2789,7 +2850,7 @@ object Main: TMain
               object chEnabletraction: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 45
+                Top = 48
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2801,7 +2862,7 @@ object Main: TMain
               object chLivetraction: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 68
+                Top = 71
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2813,7 +2874,7 @@ object Main: TMain
               object chLoadtraction: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 91
+                Top = 94
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2825,7 +2886,7 @@ object Main: TMain
               object chPhysicslog: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 114
+                Top = 117
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2837,7 +2898,7 @@ object Main: TMain
               object chDebuglog: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 137
+                Top = 140
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2849,7 +2910,7 @@ object Main: TMain
               object chMultiplelogs: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 160
+                Top = 163
                 Width = 239
                 Height = 34
                 Align = alTop
@@ -2862,7 +2923,7 @@ object Main: TMain
               object pnlFriction: TPanel
                 AlignWithMargins = True
                 Left = 3
-                Top = 223
+                Top = 226
                 Width = 239
                 Height = 27
                 Align = alTop
@@ -2890,12 +2951,13 @@ object Main: TMain
                   Align = alRight
                   TabOrder = 0
                   Text = '1'
+                  ExplicitHeight = 24
                 end
               end
               object pnlFieldOfView: TPanel
                 AlignWithMargins = True
                 Left = 3
-                Top = 256
+                Top = 259
                 Width = 239
                 Height = 27
                 Align = alTop
@@ -2925,12 +2987,13 @@ object Main: TMain
                   TabOrder = 0
                   Text = '1'
                   OnExit = edFieldofviewExit
+                  ExplicitHeight = 24
                 end
               end
               object cbCloseApp: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 325
+                Top = 331
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2942,7 +3005,7 @@ object Main: TMain
               object cbBigThumbnail: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 348
+                Top = 354
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2953,7 +3016,7 @@ object Main: TMain
               object chCrashDamage: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 200
+                Top = 203
                 Width = 239
                 Height = 17
                 Align = alTop
@@ -2991,53 +3054,58 @@ object Main: TMain
                 object Label7: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 52
+                  Top = 55
                   Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Skalowanie tekstur:'
+                  ExplicitTop = 52
                 end
                 object Label11: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 101
+                  Top = 107
                   Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Jako'#347#263' '#322'uk'#243'w tor'#243'w:'
+                  ExplicitTop = 101
                 end
                 object Label9: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 150
+                  Top = 159
                   Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Jako'#347#263' filtrowania tekstur:'
+                  ExplicitTop = 150
                 end
                 object Label5: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 199
+                  Top = 211
                   Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Multisampling:'
+                  ExplicitTop = 199
                 end
                 object Label10: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 248
+                  Top = 263
                   Width = 194
                   Height = 32
                   Align = alTop
                   AutoSize = False
                   Caption = 'Cz'#281'stotliwo'#347#263' od'#347'wie'#380'ania ekran'#243'w dodatkowych:'
                   WordWrap = True
+                  ExplicitTop = 248
                 end
                 object Label14: TLabel
                   AlignWithMargins = True
@@ -3052,7 +3120,7 @@ object Main: TMain
                 object cbMaxtexturesize: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 71
+                  Top = 77
                   Width = 150
                   Height = 24
                   Align = alTop
@@ -3072,7 +3140,7 @@ object Main: TMain
                 object cbSplinefidelity: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 120
+                  Top = 129
                   Width = 150
                   Height = 24
                   Align = alTop
@@ -3090,7 +3158,7 @@ object Main: TMain
                 object cbAnisotropicfiltering: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 169
+                  Top = 181
                   Width = 150
                   Height = 24
                   Align = alTop
@@ -3109,7 +3177,7 @@ object Main: TMain
                 object cbMultisampling: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 218
+                  Top = 233
                   Width = 150
                   Height = 24
                   Align = alTop
@@ -3128,7 +3196,7 @@ object Main: TMain
                 object cbResolution: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 22
+                  Top = 25
                   Width = 150
                   Height = 24
                   Align = alTop
@@ -3141,7 +3209,7 @@ object Main: TMain
                 object cbPyscreenrendererpriority: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 283
+                  Top = 301
                   Width = 150
                   Height = 24
                   Align = alTop
@@ -3255,7 +3323,7 @@ object Main: TMain
                 object cbSmokeFidelity: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 183
+                  Top = 186
                   Width = 194
                   Height = 24
                   Align = alTop
@@ -3273,7 +3341,7 @@ object Main: TMain
                 object chSkipRendering: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 213
+                  Top = 216
                   Width = 194
                   Height = 17
                   Align = alTop
@@ -3283,7 +3351,7 @@ object Main: TMain
                 object chScaleSpeculars: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 236
+                  Top = 239
                   Width = 194
                   Height = 17
                   Align = alTop
@@ -3307,12 +3375,13 @@ object Main: TMain
                 object Label18: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 98
+                  Top = 101
                   Width = 198
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Od'#347'wie'#380'anie odbi'#263':'
+                  ExplicitTop = 98
                 end
                 object Label40: TLabel
                   AlignWithMargins = True
@@ -3327,37 +3396,40 @@ object Main: TMain
                 object Label36: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 147
+                  Top = 153
                   Width = 198
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Rozdzielczo'#347#263' cieni:'
+                  ExplicitTop = 147
                 end
                 object Label43: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 190
+                  Top = 199
                   Width = 198
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Zasi'#281'g cieni:'
+                  ExplicitTop = 190
                 end
                 object Label53: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 233
+                  Top = 245
                   Width = 198
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Zasi'#281'g '#378'r'#243'de'#322' cieni w kabinie:'
+                  ExplicitTop = 233
                 end
                 object cbReflectionsFramerate: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 117
+                  Top = 123
                   Width = 194
                   Height = 24
                   Align = alTop
@@ -3375,7 +3447,7 @@ object Main: TMain
                 object chExtraEffects: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 299
+                  Top = 314
                   Width = 198
                   Height = 17
                   Align = alTop
@@ -3387,7 +3459,7 @@ object Main: TMain
                 object chShadowMap: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 276
+                  Top = 291
                   Width = 198
                   Height = 17
                   Align = alTop
@@ -3399,7 +3471,7 @@ object Main: TMain
                 object cbGfxrenderer: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 22
+                  Top = 25
                   Width = 194
                   Height = 24
                   Align = alTop
@@ -3417,7 +3489,7 @@ object Main: TMain
                 end
                 object cbShadowMapSize: TComboBox
                   Left = 0
-                  Top = 163
+                  Top = 172
                   Width = 198
                   Height = 24
                   Align = alTop
@@ -3434,7 +3506,7 @@ object Main: TMain
                 end
                 object cbShadowRange: TComboBox
                   Left = 0
-                  Top = 206
+                  Top = 218
                   Width = 198
                   Height = 24
                   Align = alTop
@@ -3452,7 +3524,7 @@ object Main: TMain
                 end
                 object cbShadowsCabRange: TComboBox
                   Left = 0
-                  Top = 249
+                  Top = 264
                   Width = 198
                   Height = 24
                   Align = alTop
@@ -3472,7 +3544,7 @@ object Main: TMain
                 object chChromaticAberration: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 345
+                  Top = 360
                   Width = 198
                   Height = 17
                   Align = alTop
@@ -3484,7 +3556,7 @@ object Main: TMain
                 object chMotionBlur: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 322
+                  Top = 337
                   Width = 198
                   Height = 17
                   Align = alTop
@@ -3496,7 +3568,7 @@ object Main: TMain
                 object chEnvmap: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 75
+                  Top = 78
                   Width = 198
                   Height = 17
                   Align = alTop
@@ -3508,7 +3580,7 @@ object Main: TMain
                 object chSkipPipeline: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 52
+                  Top = 55
                   Width = 198
                   Height = 17
                   Align = alTop
@@ -3547,7 +3619,7 @@ object Main: TMain
               object chPythonThreadedUpload: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 45
+                Top = 48
                 Width = 199
                 Height = 17
                 Align = alTop
@@ -3559,7 +3631,7 @@ object Main: TMain
               object chPythonEnabled: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 22
+                Top = 25
                 Width = 199
                 Height = 17
                 Align = alTop
@@ -3570,7 +3642,7 @@ object Main: TMain
               end
               object pnlShadowCabRange: TPanel
                 Left = 0
-                Top = 65
+                Top = 68
                 Width = 205
                 Height = 47
                 Align = alTop
@@ -3847,7 +3919,7 @@ object Main: TMain
       Action = actCopyToClipboard
     end
     object miAddToDepo: TMenuItem
-      Action = actAddToMagazine
+      Action = actAddToDepo
       Caption = 'Dodaj sk'#322'ad do magazynu'
     end
     object Usuwszystkiepojazdyzeskadu1: TMenuItem
@@ -3860,10 +3932,10 @@ object Main: TMain
   object AL: TActionList
     Left = 692
     Top = 383
-    object actAddToMagazine: TAction
+    object actAddToDepo: TAction
       Caption = 'Dodaj do magazynu'
-      OnExecute = actAddToMagazineExecute
-      OnUpdate = actAddToMagazineUpdate
+      OnExecute = actAddToDepoExecute
+      OnUpdate = actAddToDepoUpdate
     end
     object actRemoveFromDepot: TAction
       Caption = 'Usu'#324' z magazynu'
