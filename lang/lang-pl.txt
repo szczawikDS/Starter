@@ -21,7 +21,6 @@ Label17=Inne
 Label1=Wybór EXE:
 Label8=Generowanie E3D:
 Label31=G³oœnoœæ radia:
-Label12=Jêzyk:
 Label7=Skalowanie tekstur:
 Label11=Jakoœæ ³uków torów:
 Label9=Jakoœæ filtrowania tekstur:
@@ -54,14 +53,15 @@ lbCloudy=Zachmurzenie / opady
 lbFog=Z³a
 lbFogNo=Dobra
 lbTrackCaption=Tor pocz¹tkowy:
+lbVersionCaption=Wersja:
+lbCountVehiclesCaption=Iloœæ pojazdów:
 [/labels]
 [actions]
-actAddToMagazine=Dodaj do magazynu
+actAddToDepo=Dodaj sk³ad do magazynu
 actReplaceTrain=Zamieñ na sk³ad z magazynu
 actRemoveFromDepot=Usuñ z magazynu
 actAddVehicle=Dodaj pojazd
 actRemoveVehicle=Usuñ pojazd
-actCopyCoupler=«
 actStart=Start
 actScenarios=Scenariusze
 actDepo=Magazyn
@@ -85,7 +85,6 @@ actBigRain=Intensywne
 actPasteFromClipboard=Zast¹p sk³adem ze schowka
 actCopyToClipboard=Skopiuj poci¹g do schowka
 actRemoveTrain=Usuñ wszystkie pojazdy ze sk³adu
-actReplaceTrain=Zamieñ na sk³ad z magazynu
 [/actions]
 [tabs]
 tsStart=Start
@@ -146,15 +145,12 @@ chCrashDamage=Uszkodzenia przy zderzeniu
 chChromaticAberration=Aberracja chromatyczna
 [/checks]
 [combos]
-cbTypy=|Elektrowozy|Spalinowozy|Parowozy|Szynobusy|EZT|Robocze|Drezyny|Tramwaje|Wagony|Samochody|Autobusy|Ciê¿arówki|Inne
-cbModele=
 cbDriverType=|Maszynista (kabina A)|Maszynista (kabina B)|Pasa¿er|Brak obsady
 cbBrakeActing=|Brak|G - nastawa towarowa|P - nastawa pasa¿erska|R - nastawa poœpieszna|R + magn. ham. szynowy|Q - bez powietrza
 cbBrakeState=|N - hamulec w³¹czony|0 - wy³¹czony, odluŸniony|1 - wy³¹czony, odluŸniony z 10% prawdopodobieñstwem
 cbBrakeAdjust=|N - nastawienie neutralne|T - pró¿ny|H - ³adowny I|F - ³adowny II
 cbShadowMapSize=|Niska|Umiarkowana|Wysoka
 cbShadowRange=|Bardzo niski (25m)|Niski (50m)|Wysoki (150m)|Bardzo wysoki (250m)
-cbLoadType=
 cbMouseScale=|Standardowa|Niska|Wysoka|Bardzo wysoka
 cbSoundvolume=|Standardowa|Niska|Wysoka
 cbConvertmodels=|Wy³¹czone|Nowe Opacity|Z optymalizacj¹|Z bananami|Rozszerzone
@@ -171,6 +167,7 @@ cbSmokeFidelity=|Bardzo niska|Niska|Wysoka|Bardzo wysoka
 cbReflectionsFramerate=|Bardzo niska|Niska|Wysoka|Bardzo wysoka
 cbShadowsCabRange=Wy³¹czone|Bardzo niski (10m)|Niski (20m)|Standardowy (30m)|Wysoki (50m)|Bardzo wysoki (100m)
 cbGfxrenderer=|Pe³ny|Uproszczony shaderowy|Uproszczony|Stary
+cbTypes=Elektrowozy|Spalinowozy|Parowozy|Szynobusy|EZT|Wagony A|Wagony B|Wagony D|Wagony E|Wagony F|Wagony G|Wagony H|Wagony L|Wagony P|Wagony R|Wagony S|Wagony U|Wagony V|Wagony W|Wagony X|Wagony Z|Robocze|Drezyny|Tramwaje|Samochody|Autobusy|Ciê¿arówki|Inne
 [/combo]
 [checklists]
 clCouplers=|Mechanicznie|Hamulec|Ukrotnienie|Wysokie napiêcie|Przejœcie|Powietrze 8atm|Ogrzewanie|Blokada

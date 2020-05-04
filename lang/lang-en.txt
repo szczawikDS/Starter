@@ -21,7 +21,6 @@ Label17=Other
 Label1=EXE selection:
 Label8=Generating E3D:
 Label31=Radio volume:
-Label12=Language:
 Label7=Texture scaling:
 Label11=Quality of track curves:
 Label9=Texture filter quality:
@@ -54,13 +53,14 @@ lbCloudy=Cloudiness
 lbFog=Bad
 lbFogNo=Good
 lbTrackCaption=Starting track:
+lbVersionCaption=Version:
+lbCountVehiclesCaption=Count of vehicles:
 [/labels]
 [actions]
-actAddToMagazine=Add to warehouse
+actAddToDepo=Add to warehouse
 actRemoveFromDepot=Remove from warehoue
 actAddVehicle=Add vehicle
 actRemoveVehicle=Remove vehicle
-actCopyCoupler=«
 actStart=Start
 actScenarios=Scenarios
 actDepo=Depot
@@ -153,7 +153,6 @@ cbBrakeState=|N - On|0 - Off, slack|1 - Off, slack with 10% probability
 cbBrakeAdjust=|N - neutral|T - empty|H - loaded I|F - loaded II
 cbShadowMapSize=|Low|Moderate|High
 cbShadowRange=|Very low (25m)|Low (50m)|High (150m)|Very high (250m)
-cbLoadType=
 cbMouseScale=|Standard|Low|High|Very high
 cbSoundvolume=|Normal|Low|High
 cbConvertmodels=|Off|New Opacity|With optimization|With "bananas"|Extended
@@ -170,6 +169,7 @@ cbSmokeFidelity=|Very low|Low|High|Very high
 cbReflectionsFramerate=|Very low|Low|High|Very high
 cbShadowsCabRange=Disabled|Very low (10m)|Low (20m)|Standard (30m)|High (50m)|Very high (100m)
 cbGfxrenderer=|Full|Simple (shaders)|Simple|Legacy
+cbTypes=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car L|Car P|Car R|Car S|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|Other
 [/combo]
 [checklists]
 clCouplers=|Mechanical|Brake|Connector|High voltage|Passage|Air 8atm|Heating|Lock

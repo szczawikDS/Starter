@@ -1,7 +1,5 @@
 ﻿[labels]
 Label32=SOUPRAVY V SCENÉRII
-Label34=SOUPRAVY VE SKLADU
-Label33=SOUPRAVY V SCENÉRII
 Label27=Kymácení:
 Label28=Obutí:
 Label29=Max. obutí:
@@ -23,7 +21,6 @@ Label17=Ostatní
 Label1=Výběr EXE:
 Label8=Generování E3D:
 Label31=Hlasitost radia:
-Label12=Jazyk:
 Label7=Škálování(mapování)textur:
 Label11=Kvalita křivek kolejí:
 Label9=Kvalita filtrování textur:
@@ -56,20 +53,21 @@ lbCloudy=Oblačnost / srážky
 lbFog=Špatná
 lbFogNo=Dobrá
 lbTrackCaption=Počáteční kolej:
+lbVersionCaption=Verze:
+lbCountVehiclesCaption=Počet vozidel:
 [/labels]
 [actions]
-actAddToMagazine=Přidej soupravu do skladu
+actAddToDepo=Přidej soupravu do skladu
 actReplaceTrain=Změň na soupravu ze skladu
 actRemoveFromDepot=Odstraň soupravu ze skladu
-actAddVehicle=Přidej vozidlo
-actRemoveVehicle=Odstraň vozidlo
-actCopyCoupler=«
+actAddVehicle=Přidat vozidlo
+actRemoveVehicle=Odebrat vozidlo
 actStart=Start
 actScenarios=Scenérie
-actDepo=Sklad
+actDepo=Depo
 actSettings=Nastavení
 actDefaultSettings=Obnovit výchozí nastavení
-actSaveDepot=Uložit sklad
+actSaveDepot=Uložit depo
 actKeyboard=Nastavení kláves
 actSaveKeyboard=Ulož nastavení kláves
 actCheckUpdate=Aktualizuj starter
@@ -84,6 +82,9 @@ actCloudy=Oblačno
 actFullCloudy=Zataženo
 actLittleRain=Mrholení
 actBigRain=Déšť
+actPasteFromClipboard=Nahraď soupravou ze schovky
+actCopyToClipboard=Zkopíruj soupravu do schovky
+actRemoveTrain=Odstraň všechna vozidla ze soupravy
 [/actions]
 [tabs]
 tsStart=Start
@@ -101,6 +102,8 @@ tsAboutTex=O tekstuře
 tsCoupler=Spřažení
 tsCondition=Technický stav
 tsWeather=Počasí
+tsSCNTrains=Soupravy v scenérii
+tsDepoTrains=Soupravy ve skladu
 [/tabs]
 [checks]
 chOnlyForDriving=Pouze říditelné
@@ -136,21 +139,19 @@ chPythonEnabled=Skripty zapnuté
 chPythonThreadedUpload=Obrazovky v samostat. vlákně
 chSkipRendering=Přeskočit vykreslování
 chCurrentDate=Aktualní datum
-chRefAmbientTemp=Chłodziwo w temp. otoczenia
+chRefAmbientTemp=Předehřátá diesel lok. v zimě
 chShowAI=Zobrazit vlaky AI
 chCrashDamage=Poškození kolizí
 chChromaticAberration=Chromatická aberace
 [/checks]
 [combos]
-cbTypy=|Elektrické lokomotivy|Motorové lokomotivy|Parní lokomotivy|Motorové vozy|EZT|Pracovní vozy|Drezíny|Tramvaje|Vagony|Automobily|Autobusy|Nákladní automobily|Ostatní
-cbModele=
+cbTypes=|Elektrické lokomotivy|Motorové lokomotivy|Parní lokomotivy|Motorové vozy|Elektrické jednotky|Vagony A|Vagony B|Vagony D|Vagony E|Vagony F|Vagony G|Vagony H|Vagony L|Vagony P|Vagony R|Vagony S|Vagony U|Vagony V|Vagony W|Vagony X|Vagony Z|Pracovní vozy|Drezíny|Tramvaje|Automobily|Autobusy|Nákladní automobily|Ostatní
 cbDriverType=|Strojvedoucí (kabina A)|Strojvedoucí (kabina B)|Pasažér|Žádné obsazení
 cbBrakeActing=|Není nastaven|G - nákladní režim|P - osobní režim|R - rychlíkový režim|R + magn. kolejová brzda|Q - bez vzduchu
 cbBrakeState=|N - brzdič zabržděný|0 - odbržděný, odpuštěný|1 - obržděný, odpuštěný z 10% pravděpodobností
 cbBrakeAdjust=|N - neutralní nastavení|T - prázdný|H - naložen I|F - naložen II
 cbShadowMapSize=|Nízké|Mírné|Vysoké
 cbShadowRange=|Velmi nízký (25m)|Nízký (50m)|Vysoký (150m)|Velmi vysoký (250m)
-cbLoadType=
 cbMouseScale=|Standartní|Nízká|Vysoká|Velmi vysoká
 cbSoundvolume=|Standartní|Nnízká|Vysoká
 cbConvertmodels=|Vypnuté|Nová neprůhled.|S optimalizací|S banány|Rozšířené
