@@ -284,10 +284,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(4.05.2020)'
+      Hint = '(7.05.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '3.9.0'
+      Caption = '4.2'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -518,7 +518,7 @@ object Main: TMain
                 TabOrder = 1
                 object lbTrainLength: TLabel
                   Left = 0
-                  Top = 122
+                  Top = 173
                   Width = 142
                   Height = 20
                   Align = alTop
@@ -555,7 +555,7 @@ object Main: TMain
                 end
                 object lnTrainLengthCaption: TLabel
                   Left = 0
-                  Top = 97
+                  Top = 148
                   Width = 142
                   Height = 25
                   Align = alTop
@@ -590,7 +590,7 @@ object Main: TMain
                 end
                 object lbCountVehiclesCaption: TLabel
                   Left = 0
-                  Top = 142
+                  Top = 193
                   Width = 142
                   Height = 25
                   Align = alTop
@@ -602,7 +602,7 @@ object Main: TMain
                 end
                 object lbCountVehicles: TLabel
                   Left = 0
-                  Top = 167
+                  Top = 218
                   Width = 142
                   Height = 20
                   Align = alTop
@@ -611,6 +611,33 @@ object Main: TMain
                   Caption = '0'
                   Layout = tlCenter
                   ExplicitTop = 161
+                end
+                object lbTrainBruttoCaption: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 100
+                  Width = 136
+                  Height = 25
+                  Align = alTop
+                  Alignment = taCenter
+                  AutoSize = False
+                  Caption = 'Masa brutto [t]:'
+                  Layout = tlBottom
+                  ExplicitLeft = 11
+                  ExplicitTop = 142
+                end
+                object lbTrainBrutto: TLabel
+                  Left = 0
+                  Top = 128
+                  Width = 142
+                  Height = 20
+                  Align = alTop
+                  Alignment = taCenter
+                  AutoSize = False
+                  Caption = '0'
+                  Layout = tlCenter
+                  ExplicitLeft = 3
+                  ExplicitTop = 147
                 end
               end
             end
@@ -1092,6 +1119,7 @@ object Main: TMain
                 Align = alTop
                 Style = csDropDownList
                 DoubleBuffered = False
+                DropDownCount = 16
                 ParentDoubleBuffered = False
                 TabOrder = 0
                 OnClick = cbTypesClick
@@ -1195,6 +1223,7 @@ object Main: TMain
               Align = alClient
               MultiLine = True
               TabOrder = 1
+              OnChange = pcTrainsChange
               object tsSCNTrains: TTabSheet
                 Caption = 'Sk'#322'ady na scenerii'
                 object Panel26: TPanel
@@ -1217,7 +1246,7 @@ object Main: TMain
                     ParentDoubleBuffered = False
                     ParentShowHint = False
                     PopupMenu = pmTrainsets
-                    ShowHint = False
+                    ShowHint = True
                     TabOrder = 0
                     OnClick = lbTrainsClick
                   end
@@ -3990,7 +4019,6 @@ object Main: TMain
     end
     object actCheckUpdate: TAction
       Caption = 'Aktualizuj starer'
-      Enabled = False
       OnExecute = actCheckUpdateExecute
     end
     object actSaveDepot: TAction

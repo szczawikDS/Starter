@@ -12,8 +12,8 @@ type
 
   TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
           tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
-          tyROBOCZY,tyDREZYNA,tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,
-          tyZWIERZE,tyINNE, tyUNKNOWN);
+          tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
+          tyINNE, tyUNKNOWN);
 
   TCabOccupancy = (coHeadDriver,coRearDriver,coPassenger,coNobody);
 
@@ -58,7 +58,6 @@ type
   end;
 
   TPhysics = class
-    ID            : Integer;
     Name          : string;
     Dir           : string;
     Mass          : Double;
@@ -187,6 +186,11 @@ type
     Name : string;
     Desc : string;
     ModifierKeys : TModifierKeys;
+  end;
+
+  TLoad = class
+    Name    : string;
+    Weight  : Integer;
   end;
 
 implementation

@@ -4,20 +4,18 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,{ IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
-  IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,}
-  Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, httpsend;
 
 type
   TfrmUpdater = class(TForm)
     Label1: TLabel;
   private
-    procedure UpdateApp;
     procedure AutoUpdate;
     function Ask(const Text: string): Boolean;
+    procedure Update(const UpdateFile: TStringList);
   public
     const
-      AppVersion = 19;
+      AppVersion = 21;
       procedure CheckUpdate;
   end;
 
@@ -45,18 +43,58 @@ begin
     end;
 end;
 
+procedure DownloadToStream(const URL : string; const SomeStream : TStream);
+const
+  Location_Prefix = 'Location:' + #32;
+  Opera_UserAgent = 'Opera/9.80 (Windows NT 5.1; U; pl) Presto/2.2.15 Version/10.10';
+var
+  SynHttp : THttpSend;
+  I, Position : integer;
+  Str, DirectLink : string;
+begin
+  SynHttp := THttpSend.Create;
+  try
+    SynHttp.UserAgent := Opera_UserAgent;
+    SynHttp.HTTPMethod('GET', Url);
+    case SynHttp.ResultCode of
+      301, 302 :
+        begin
+          for I := 0 to SynHttp.Headers.Count - 1 do
+          begin
+            Str := SynHttp.Headers[I];
+            Position := Pos(Location_Prefix, Str);
+            if Position > 0 then
+            begin
+              DirectLink := Copy(Str, Position + Length(Location_Prefix), MaxInt);
+              Break;
+            end;
+          end;
+          DownloadToStream(DirectLink, SomeStream);
+        end;
+    else
+      SynHttp.Document.SaveToStream(SomeStream);
+      SomeStream.Position := 0;
+    end;
+  finally
+    SynHttp.Free;
+  end;
+end;
+
 procedure TfrmUpdater.CheckUpdate;
 var
-  UpdateFile, Par : TStringList;
+  UpdateFile : TStringList;
   Stream: TMemoryStream;
-  i, Version : Integer;
+  Version : Integer;
 begin
+  UpdateFile := TStringList.Create;
   try
     Show;
     Application.ProcessMessages;
 
-    UpdateFile := TStringList.Create;
-    //UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/version2.txt');
+    Stream := TMemoryStream.Create;
+    DownloadToStream('https://www.szczawik.net/maszyna/ver.txt',Stream);
+    UpdateFile.LoadFromStream(Stream);
+    Stream.Free;
 
     if TryStrToInt(UpdateFile[0],Version) then
     begin
@@ -66,32 +104,44 @@ begin
       begin
         Hide;
         if Ask('Zaktualizowaæ program?') then
-        begin
-          Show;
-          Application.ProcessMessages;
-
-          Par := TStringList.Create;
-          Par.Delimiter := ' ';
-
-          Stream := TMemoryStream.Create;
-          for i := 1 to UpdateFile.Count-1 do
-          begin
-            Par.DelimitedText := UpdateFile[i];
-            Stream.Clear;
-            //HTTP.Get('http://www.szczawik.net/maszyna/'+Par[0], Stream);
-            Stream.SaveToFile(Main.DIR + '\' + Par[1]);
-          end;
-
-          Stream.Free;
-          Par.Free;
-          UpdateFile.Free;
-
-          UpdateApp;
-        end;
+          Update(UpdateFile);
       end;
     end;
   finally
+    UpdateFile.Free;
     Hide;
+  end;
+end;
+
+procedure TfrmUpdater.Update(const UpdateFile:TStringList);
+var
+  Par : TStringList;
+  Stream: TMemoryStream;
+  i : Integer;
+begin
+  Show;
+  try
+    Main.Cursor := crHourGlass;
+    Application.ProcessMessages;
+
+    Par := TStringList.Create;
+    Par.Delimiter := ' ';
+
+    Stream := TMemoryStream.Create;
+    for i := 1 to UpdateFile.Count-1 do
+    begin
+      Par.DelimitedText := UpdateFile[i];
+      Stream.Clear;
+      DownloadToStream('http://www.szczawik.net/maszyna/'+Par[0],Stream);
+      Stream.SaveToFile(Main.DIR + '\' + Par[1]);
+    end;
+
+    if FileExists(Main.DIR + '\StarterNew.exe') then
+      AutoUpdate;
+  finally
+    Main.Cursor := crDefault;
+    Stream.Free;
+    Par.Free;
   end;
 end;
 
@@ -114,22 +164,6 @@ begin
     Bat.Free;
   except
 
-  end;
-end;
-
-procedure TfrmUpdater.UpdateApp;
-var
-  Stream: TMemoryStream;
-begin
-  Main.Cursor := crHourGlass;
-  Stream := TMemoryStream.Create;
-  try
-    //HTTP.Get('http://www.szczawik.net/maszyna/Starter.exe', Stream);
-    Stream.SaveToFile(Main.DIR + '\StarterNew.exe');
-    AutoUpdate;
-  finally
-    Stream.Free;
-    Main.Cursor := crDefault;
   end;
 end;
 

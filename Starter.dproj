@@ -87,13 +87,13 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1045</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.9.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=4.2.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <UWP_DelphiLogo44>img\m.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>img\m.png</UWP_DelphiLogo150>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
-        <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_MajorVer>4</VerInfo_MajorVer>
         <DCC_Inlining>auto</DCC_Inlining>
+        <VerInfo_MinorVer>2</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -107,9 +107,9 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1045</VerInfo_Locale>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
-        <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=3.9.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_MajorVer>4</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=4.2.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>2</VerInfo_MinorVer>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -129,6 +129,19 @@
             <Form>frmStart</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\synapse\blcksock.pas"/>
+        <DCCReference Include="src\synapse\httpsend.pas"/>
+        <DCCReference Include="src\synapse\synacode.pas"/>
+        <DCCReference Include="src\synapse\synafpc.pas"/>
+        <DCCReference Include="src\synapse\synaip.pas"/>
+        <DCCReference Include="src\synapse\synautil.pas"/>
+        <DCCReference Include="src\synapse\synsock.pas"/>
+        <DCCReference Include="src\uUpdater.pas">
+            <Form>frmUpdater</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="src\synapse\ssl_openssl.pas"/>
+        <DCCReference Include="src\synapse\ssl_openssl_lib.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

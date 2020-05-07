@@ -92,7 +92,7 @@ end;
 function TSettings.GetParamName:string;
 begin
   Result := '';
-  while (Lexer.TokenID <> ptSpace) and (Lexer.TokenID <> ptCRLF) do
+  while not Lexer.IsSpace do
   begin
     Result := Result + Lexer.Token;
     Lexer.Next;
@@ -467,7 +467,7 @@ begin
       end
       else
       if Params[i].Name = 'multisampling' then Main.cbMultisampling.ItemIndex := StrToInt(Params[i].Value) else
-      if Params[i].Name = 'gfx.smoke.fidelity' then Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value)-1 else  // round?
+      if Params[i].Name = 'gfx.smoke.fidelity' then Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
       if Params[i].Name = 'convertmodels' then Main.cbConvertmodels.ItemIndex := StrToInt(Params[i].Value) else
       if Params[i].Name = 'anisotropicfiltering' then
       begin
