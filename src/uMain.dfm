@@ -561,7 +561,7 @@ object Main: TMain
                   Align = alTop
                   Alignment = taCenter
                   AutoSize = False
-                  Caption = 'D'#322'ogo'#347#263' [m]:'
+                  Caption = 'D'#322'ugo'#347#263' [m]:'
                   Layout = tlBottom
                   ExplicitTop = 91
                 end

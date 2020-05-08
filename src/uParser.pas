@@ -1,3 +1,23 @@
+{
+  Starter
+  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+
+  This file is part of Starter.
+
+  Starter is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  Starter is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Starter.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit uParser;
 
 interface
@@ -16,6 +36,7 @@ type
     function ChangeConfig(const Text:string;const Config:TConfig):string;
     constructor Create;
     destructor Destroy; override;
+    function ParseTrainFromClipBoard(const Trainset:string):TTrain;
   private
     function TokenFull: string;
     procedure ParseConfig(var Config: TConfig);
@@ -185,6 +206,18 @@ begin
     FindClose(SR);
   except
     Errors.Add('B³¹d wczytywania scenerii ' + SR.Name);
+  end;
+end;
+
+function TParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
+begin
+  try
+    Lexer.Origin := PChar(Trainset);
+    Lexer.Init;
+    Lexer.NextNoJunk;
+    Result := ParseTrain;
+  except
+    Result := nil;
   end;
 end;
 

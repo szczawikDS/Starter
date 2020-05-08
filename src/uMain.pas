@@ -1,6 +1,22 @@
-// Starter for MaSzyna
-// Author: Damian Skrzek alias szczawik
-// First stable version was published 26.09.2019
+{
+  Starter
+  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+
+  This file is part of Starter.
+
+  Starter is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  Starter is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Starter.  If not, see <http://www.gnu.org/licenses/>.
+}
 
 unit uMain;
 
@@ -959,12 +975,24 @@ end;
 
 procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
 begin
-  ReplaceTrain(ClipTrain.Vehicles);
+  if ClipTrain <> nil then
+    ReplaceTrain(ClipTrain.Vehicles)
+  else
+  begin
+    with TParser.Create do
+    try
+      ClipTrain := ParseTrainFromClipBoard(Clipboard.AsText);
+      if ClipTrain <> nil then
+        ReplaceTrain(ClipTrain.Vehicles);
+    finally
+      Free;
+    end;
+  end;
 end;
 
 procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
 begin
-  actPasteFromClipboard.Visible := ClipTrain <> nil;
+  actPasteFromClipboard.Visible := (ClipTrain <> nil) or (Clipboard.AsText.Length > 50);
 end;
 
 procedure TMain.actRemoveFromDepotExecute(Sender: TObject);
