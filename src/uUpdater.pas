@@ -24,11 +24,16 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, httpsend;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket,
+  IdIOHandlerStack;
 
 type
   TfrmUpdater = class(TForm)
     Label1: TLabel;
+    HTTP: TIdHTTP;
+    SSL: TIdSSLIOHandlerSocketOpenSSL;
   private
     procedure AutoUpdate;
     function Ask(const Text: string): Boolean;
@@ -63,47 +68,9 @@ begin
     end;
 end;
 
-procedure DownloadToStream(const URL : string; const SomeStream : TStream);
-const
-  Location_Prefix = 'Location:' + #32;
-  Opera_UserAgent = 'Opera/9.80 (Windows NT 5.1; U; pl) Presto/2.2.15 Version/10.10';
-var
-  SynHttp : THttpSend;
-  I, Position : integer;
-  Str, DirectLink : string;
-begin
-  SynHttp := THttpSend.Create;
-  try
-    SynHttp.UserAgent := Opera_UserAgent;
-    SynHttp.HTTPMethod('GET', Url);
-    case SynHttp.ResultCode of
-      301, 302 :
-        begin
-          for I := 0 to SynHttp.Headers.Count - 1 do
-          begin
-            Str := SynHttp.Headers[I];
-            Position := Pos(Location_Prefix, Str);
-            if Position > 0 then
-            begin
-              DirectLink := Copy(Str, Position + Length(Location_Prefix), MaxInt);
-              Break;
-            end;
-          end;
-          DownloadToStream(DirectLink, SomeStream);
-        end;
-    else
-      SynHttp.Document.SaveToStream(SomeStream);
-      SomeStream.Position := 0;
-    end;
-  finally
-    SynHttp.Free;
-  end;
-end;
-
 procedure TfrmUpdater.CheckUpdate;
 var
   UpdateFile : TStringList;
-  Stream: TMemoryStream;
   Version : Integer;
 begin
   UpdateFile := TStringList.Create;
@@ -111,10 +78,7 @@ begin
     Show;
     Application.ProcessMessages;
 
-    Stream := TMemoryStream.Create;
-    DownloadToStream('https://www.szczawik.net/maszyna/ver.txt',Stream);
-    UpdateFile.LoadFromStream(Stream);
-    Stream.Free;
+    UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/ver.txt');
 
     if TryStrToInt(UpdateFile[0],Version) then
     begin
@@ -152,7 +116,7 @@ begin
     begin
       Par.DelimitedText := UpdateFile[i];
       Stream.Clear;
-      DownloadToStream('http://www.szczawik.net/maszyna/'+Par[0],Stream);
+      HTTP.Get('http://www.szczawik.net/maszyna/'+Par[0], Stream);
       Stream.SaveToFile(Main.DIR + '\' + Par[1]);
     end;
 

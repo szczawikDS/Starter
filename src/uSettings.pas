@@ -41,6 +41,10 @@ type
 
   TSettings = class
   private
+    DebugLogTrack : Boolean;
+    DebugLogSpeed : Boolean;
+    //////////////////////////////
+
     Lexer : TmwPasLex;
     function GetParamName: string;
     function GetParamValue: string;
@@ -48,7 +52,7 @@ type
     procedure ResolutionList;
     procedure SaveOwnSettings;
     procedure LoadEXE;
-    procedure FindParameter(const Name: string;const Desc:string);
+    procedure FindParameter(const Name: string;const Desc:string='');
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
   public
@@ -250,7 +254,7 @@ var
   Token, ParWidth, ParHeight : string;
   Settings, Par : TStringList;
   Param : TParam;
-  i : Integer;
+  i, ValInt : Integer;
   Val : Double;
 begin
   try
@@ -337,14 +341,8 @@ begin
       if Params[i].Name = 'livetraction' then
         Main.chLivetraction.Checked := Params[i].Value = 'yes'
       else
-      if Params[i].Name = 'loadtraction' then
-        Main.chLoadtraction.Checked := Params[i].Value = 'yes'
-      else
       if Params[i].Name = 'physicslog' then
         Main.chPhysicslog.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'debuglog' then
-        Main.chDebuglog.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'multiplelogs' then
         Main.chMultiplelogs.Checked := Params[i].Value = 'yes'
@@ -387,6 +385,36 @@ begin
       else
       if Params[i].Name = 'gfx.skippipeline' then
         Main.chSkipPipeline.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'debuglog' then
+      begin
+        if Params[i].Value = 'yes' then ValInt := 3 else
+        if Params[i].Value = 'no' then ValInt := 0
+        else
+          TryStrToInt(Params[i].Value,ValInt);
+
+        DebugLogTrack := False;
+        DebugLogSpeed := False;
+        Main.chDebuglog.Checked := False;
+        Main.chDebugLogVis.Checked := False;
+        if ValInt >= 8 then
+        begin
+          DebugLogSpeed := True;
+          Dec(ValInt,8);
+        end;
+        if ValInt >= 4 then
+        begin
+          DebugLogTrack := True;
+          Dec(ValInt,4);
+        end;
+        if ValInt >= 2 then
+        begin
+          Main.chDebuglog.Checked := True;
+          Dec(ValInt,2);
+        end;
+        if ValInt >= 1 then
+          Main.chDebugLogVis.Checked := True;
+      end
       else
       ///////////////////////////////// UART ///////////////////////////////////
       {if Params[i].Name = 'uart' then
@@ -557,10 +585,18 @@ begin
       Main.cbGfxrenderer.ItemIndex := 1;
 
   except
-    on E: Exception do ShowMessage('B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
+    on E: Exception do
+    begin
+      ShowMessage('B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
                                     + 'Parametr: ' + Params[i].Name + #13#10
                                     + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10
                                     + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
+      Main.Errors.Add('B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
+                                    + 'Parametr: ' + Params[i].Name + #13#10
+                                    + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10
+                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
+    end;
+
   end;
 end;
 
@@ -646,7 +682,7 @@ begin
   Params.Add(Param);
 end;
 
-procedure TSettings.FindParameter(const Name:string;const Desc:string);
+procedure TSettings.FindParameter(const Name:string;const Desc:string='');
 var
   i : Integer;
 begin
@@ -693,7 +729,6 @@ begin
   FindParameter('soundenabled','(yes) no: wy³¹cza odgrywanie dŸwiêków przestrzennych');
   FindParameter('enabletraction','(yes) no: wy³¹cza ³amanie pantografu');
   FindParameter('livetraction','(yes) no: lokomotywy elektryczne bêd¹ mia³y zasilanie, jeœli tylko podnios¹ pantografy');
-  FindParameter('loadtraction','(yes) no: wy³¹cza ³adowanie elementów trakcji elektrycznej');
   FindParameter('physicslog','(no) yes: w³¹cza zapisywanie parametrów fizycznych dla wszystkich obsadzonych przez AI lub cz³owieka pojazdów');
   FindParameter('debuglog','(3=yes) informacje o uruchamianiu i przebiegu dzia³ania symulacji: +1 - do pliku log.txt, +2 - wyœwietlanie w oknie, +4 - nazwy torów');
   FindParameter('multiplelogs','(no) zapisywanie logów do katalogu /logs/ bez nadpisywania po ka¿dym uruchomieniu symulacji');
@@ -721,7 +756,7 @@ end;
 procedure TSettings.SaveSettings;
 var
   Settings, Par : TStringList;
-  i : Integer;
+  i, Value : Integer;
 begin
   SaveOwnSettings;
   Settings := TStringList.Create;
@@ -761,9 +796,7 @@ begin
     if Params[i].Name = 'soundenabled'                  then SetCheckState(Main.chSoundenabled.Checked,i) else
     if Params[i].Name = 'enabletraction'                then SetCheckState(Main.chEnabletraction.Checked,i) else
     if Params[i].Name = 'livetraction'                  then SetCheckState(Main.chLivetraction.Checked,i) else
-    if Params[i].Name = 'loadtraction'                  then SetCheckState(Main.chLoadtraction.Checked,i) else
     if Params[i].Name = 'physicslog'                    then SetCheckState(Main.chPhysicslog.Checked,i) else
-    if Params[i].Name = 'debuglog'                      then SetCheckState(Main.chDebuglog.Checked,i) else
     if Params[i].Name = 'multiplelogs'                  then SetCheckState(Main.chMultiplelogs.Checked,i) else
     if Params[i].Name = 'input.gamepad'                 then SetCheckState(Main.chInputgamepad.Checked,i) else
     if Params[i].Name = 'gfx.postfx.motionblur.enabled' then SetCheckState(Main.chMotionBlur.Checked,i) else
@@ -859,7 +892,6 @@ begin
     else
     if Params[i].Name = 'gfx.shadows.cab.range' then
     begin
-      //Params[i].Value := Main.tbShadowRange.Position.ToString;
       case Main.cbShadowsCabRange.ItemIndex of
         0: Params[i].Value := '0';
         1: Params[i].Value := '10';
@@ -897,6 +929,16 @@ begin
         3: Params[i].Value := Params[i].Value + ' 250 250 300';
         4: Params[i].Value := Params[i].Value + ' 250 400 300';
       end;
+    end
+    else
+    if Params[i].Name = 'debuglog' then
+    begin
+      Value := 0;
+      if DebugLogSpeed then Inc(Value,8);
+      if DebugLogTrack then Inc(Value,4);
+      if Main.chDebugLogVis.Checked then Inc(Value,2);
+      if Main.chDebuglog.Checked then Inc(Value);
+      Params[i].Value :=  IntToStr(Value);
     end
     else
     if Params[i].Name = 'splinefidelity' then Params[i].Value := IntToStr(Main.cbSplinefidelity.ItemIndex+1) else

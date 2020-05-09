@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Starter.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -129,19 +129,10 @@
             <Form>frmStart</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\synapse\blcksock.pas"/>
-        <DCCReference Include="src\synapse\httpsend.pas"/>
-        <DCCReference Include="src\synapse\synacode.pas"/>
-        <DCCReference Include="src\synapse\synafpc.pas"/>
-        <DCCReference Include="src\synapse\synaip.pas"/>
-        <DCCReference Include="src\synapse\synautil.pas"/>
-        <DCCReference Include="src\synapse\synsock.pas"/>
         <DCCReference Include="src\uUpdater.pas">
             <Form>frmUpdater</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\synapse\ssl_openssl.pas"/>
-        <DCCReference Include="src\synapse\ssl_openssl_lib.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

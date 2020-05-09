@@ -137,7 +137,6 @@ type
     chFullphysics: TCheckBox;
     chEnabletraction: TCheckBox;
     chLivetraction: TCheckBox;
-    chLoadtraction: TCheckBox;
     chPhysicslog: TCheckBox;
     chDebuglog: TCheckBox;
     chMultiplelogs: TCheckBox;
@@ -366,6 +365,8 @@ type
     cbConvertmodels: TComboBox;
     lbTrainBruttoCaption: TLabel;
     lbTrainBrutto: TLabel;
+    chDebugLogVis: TCheckBox;
+    actReloadSettingState: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -461,6 +462,8 @@ type
     procedure cbModelsChange(Sender: TObject);
     procedure actReplaceTrainExecute(Sender: TObject);
     procedure pcTrainsChange(Sender: TObject);
+    procedure actReloadSettingStateExecute(Sender: TObject);
+    procedure chSoundenabledClick(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -534,13 +537,12 @@ type
     Physics     : TObjectList<TPhysics>;
     Depot       : TObjectList<TTrain>;
     Loads       : TList<TLoad>;
-    ClipTrain   : TTrain;
     Settings    : TSettings;
     DIR         : string;
     MiniFactor  : Integer;
     SelList     : TSelectedList;
     Images      : TObjectList<TBitmap>;
-
+    Errors      : TStringList;
     property Train : TTrain read GetSelList write SetSelList;
 
     function PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True): string;
@@ -853,12 +855,11 @@ var
   i : Integer;
   Str : string;
 begin
-  str := EmptyStr;
+  str := 'trainset ' + Train.TrainName + ' ' + Train.Track + ' ' + FloatToStr(Train.Dist) + ' ' + FloatToStr(Train.Vel) + #13#10;
   for i := 0 to Train.Vehicles.Count-1 do
     str := str + PrepareNode(Train.Vehicles[i]) + #13#10;
+  str := str + 'endtrainset';
   Clipboard.AsText := str;
-
-  ClipTrain := Train;
 end;
 
 procedure TMain.actCopyToClipboardUpdate(Sender: TObject);
@@ -899,9 +900,9 @@ begin
   chFullphysics.Checked                 := True;
   chEnabletraction.Checked              := True;
   chLivetraction.Checked                := True;
-  chLoadtraction.Checked                := True;
   chPhysicslog.Checked                  := False;
-  chDebuglog.Checked                    := False;
+  chDebuglog.Checked                    := True;
+  chDebugLogVis.Checked                 := True;
   chMultiplelogs.Checked                := False;
   chInputgamepad.Checked                := True;
   chMotionBlur.Checked                  := True;
@@ -974,25 +975,27 @@ begin
 end;
 
 procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
+var
+  ClipTrain : TTrain;
 begin
-  if ClipTrain <> nil then
-    ReplaceTrain(ClipTrain.Vehicles)
-  else
-  begin
-    with TParser.Create do
-    try
-      ClipTrain := ParseTrainFromClipBoard(Clipboard.AsText);
-      if ClipTrain <> nil then
-        ReplaceTrain(ClipTrain.Vehicles);
-    finally
-      Free;
-    end;
+  with TParser.Create do
+  try
+    ClipTrain := ParseTrainFromClipBoard(Clipboard.AsText);
+    if ClipTrain <> nil then
+      ReplaceTrain(ClipTrain.Vehicles);
+  finally
+    Free;
   end;
 end;
 
 procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
 begin
-  actPasteFromClipboard.Visible := (ClipTrain <> nil) or (Clipboard.AsText.Length > 50);
+  actPasteFromClipboard.Visible := (Clipboard.AsText.Length > 50);
+end;
+
+procedure TMain.actReloadSettingStateExecute(Sender: TObject);
+begin
+  ReloadSettingsState;
 end;
 
 procedure TMain.actRemoveFromDepotExecute(Sender: TObject);
@@ -1228,12 +1231,6 @@ var
   SEI : TShellExecuteInfo;
 begin
   Settings.SaveSettings;
-  with TParser.Create do
-  try
-    SaveDepot;
-  finally
-    Free;
-  end;
 
   if FileExists(DIR + cbEXE.Text) then
   begin
@@ -1334,7 +1331,6 @@ end;
 procedure TMain.cbGfxrendererChange(Sender: TObject);
 begin
   ReloadSettingsState;
-  chSkipPipeline.Checked := cbGfxrenderer.ItemIndex = 1;
 end;
 
 procedure TMain.ReloadSettingsState;
@@ -1360,6 +1356,13 @@ begin
   cbShadowRange.Enabled           := cbGfxrenderer.ItemIndex < 3;
   Label18.Enabled                 := cbGfxrenderer.ItemIndex < 3;
   cbReflectionsFramerate.Enabled  := cbGfxrenderer.ItemIndex < 3;
+
+  chSkipPipeline.Checked          := cbGfxrenderer.ItemIndex = 1;
+
+  label6.Enabled                  := chSoundenabled.Checked;
+  cbSoundvolume.Enabled           := chSoundenabled.Checked;
+  Label31.Enabled                 := chSoundenabled.Checked;
+  cbRadioVolume.Enabled           := chSoundenabled.Checked;
 end;
 
 procedure TMain.cbKey1Change(Sender: TObject);
@@ -1541,6 +1544,11 @@ begin
       Train.Vehicles[SelVehicle].Dist := 0;
 end;
 
+procedure TMain.chSoundenabledClick(Sender: TObject);
+begin
+  ReloadSettingsState;
+end;
+
 procedure TMain.clCouplersClick(Sender: TObject);
 var
   CouplerOld, Coupler, SelectCouplerMax, NextCouplerMax : Integer;
@@ -1696,22 +1704,17 @@ end;
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Settings.SaveSettings;
-  with TParser.Create do
-  try
-    SaveDepot;
-  finally
-    Free;
-  end;
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
 begin
+  Errors := TStringList.Create;
   Application.OnActivate    := AppActivate;
   Application.OnDeactivate  := AppDeactivate;
 
-  DIR := ExtractFilePath(ParamStr(0));
-  //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
-  //DIR := 'G:\MaSzyna\MaSzyna2004\';
+  //DIR := ExtractFilePath(ParamStr(0));
+ // DIR := 'G:\MaSzyna\MaSzyna2001beta\';
+  DIR := 'G:\MaSzyna\MaSzyna2004\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
   //DIR := 'G:\MaSzyna\MaSzyna pliki\';
@@ -1843,7 +1846,11 @@ begin
     if lbDepot.Count > 0 then
       lbDepot.ItemIndex := lbDepot.Count-1;
   except
-    ShowMessage('B³¹d wczytywania sk³adów z magazynu.');
+    on E: Exception do
+    begin
+      ShowMessage('B³¹d wczytywania sk³adów z magazynu. Szczegó³y b³êdu: ' + E.Message);
+      Errors.Add('B³¹d wczytywania magazynu. Szczegó³y b³êdu: ' + E.Message);
+    end;
   end;
 end;
 
@@ -1866,8 +1873,13 @@ begin
   Scenarios.Free;
   Textures.Free;
   Physics.Free;
-  // Depot.Free; ?
+  Depot.Free;
   Loads.Free;
+
+  if Errors.Count > 0 then
+    if ForceDirectories(Main.DIR + '\starter') then
+      Errors.SaveToFile(Main.DIR + '\starter\bledy.txt');
+  Errors.Free;
 end;
 
 function TMain.GetSelList: TTrain;
@@ -1995,6 +2007,8 @@ begin
 
   tbFog.Position := (tbFog.Max - SCN.Config.FogEnd) + tbFog.Min;
   tbOvercast.Position := Round(SCN.Config.Overcast);
+
+  dtTime.Time := SCN.Time;
 
   lbTrainsClick(self);
 end;
@@ -2626,7 +2640,12 @@ begin
   begin
     Vehicle := TVehicle.Create;
     Vehicle.Assign(Vehicles[i]);
-    Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin);
+
+    if (Vehicle.Texture <> nil) and (Vehicle.Texture.Models[Vehicle.ModelID].MiniD.Length > 0) then
+      Vehicle.Name := UniqueVehicleName(Vehicle.Texture.Models[Vehicle.ModelID].MiniD,Vehicle.ReplacableSkin)
+    else
+      Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin);
+
     Train.Vehicles.Add(Vehicle);
   end;
 

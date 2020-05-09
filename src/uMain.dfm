@@ -905,7 +905,6 @@ object Main: TMain
                     Font.Style = [fsBold]
                     ParentFont = False
                     TabOrder = 4
-                    Visible = False
                     object dtTime: TDateTimePicker
                       Left = 59
                       Top = 0
@@ -2336,7 +2335,7 @@ object Main: TMain
               object Label6: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 32
+                Top = 55
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2347,7 +2346,7 @@ object Main: TMain
               object Label31: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 84
+                Top = 107
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2399,19 +2398,20 @@ object Main: TMain
               object chSoundenabled: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 136
+                Top = 32
                 Width = 229
                 Height = 17
                 Align = alTop
-                Caption = 'D'#378'wi'#281'ki przestrzenne'
+                Caption = 'D'#378'wi'#281'ki'
                 Checked = True
                 State = cbChecked
                 TabOrder = 0
+                OnClick = chSoundenabledClick
               end
               object cbSoundvolume: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 54
+                Top = 77
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2429,7 +2429,7 @@ object Main: TMain
               object cbRadioVolume: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 106
+                Top = 129
                 Width = 229
                 Height = 24
                 Align = alTop
@@ -2900,41 +2900,29 @@ object Main: TMain
                 State = cbChecked
                 TabOrder = 2
               end
-              object chLoadtraction: TCheckBox
+              object chPhysicslog: TCheckBox
                 AlignWithMargins = True
                 Left = 3
                 Top = 94
                 Width = 239
                 Height = 17
                 Align = alTop
-                Caption = #321'aduj elementy sieci trakcyjnej'
+                Caption = 'Zapisuj parametry fizyczne pojazd'#243'w'
                 Checked = True
                 State = cbChecked
                 TabOrder = 3
               end
-              object chPhysicslog: TCheckBox
+              object chDebuglog: TCheckBox
                 AlignWithMargins = True
                 Left = 3
                 Top = 117
                 Width = 239
                 Height = 17
                 Align = alTop
-                Caption = 'Zapisuj parametry fizyczne pojazd'#243'w'
-                Checked = True
-                State = cbChecked
-                TabOrder = 4
-              end
-              object chDebuglog: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 140
-                Width = 239
-                Height = 17
-                Align = alTop
                 Caption = 'Zapisuj przebieg symulacji'
                 Checked = True
                 State = cbChecked
-                TabOrder = 5
+                TabOrder = 4
               end
               object chMultiplelogs: TCheckBox
                 AlignWithMargins = True
@@ -2946,7 +2934,7 @@ object Main: TMain
                 Caption = 'Nadpisuj poprzednie przebiegi symulacji'
                 Checked = True
                 State = cbChecked
-                TabOrder = 6
+                TabOrder = 5
                 WordWrap = True
               end
               object pnlFriction: TPanel
@@ -2959,7 +2947,7 @@ object Main: TMain
                 BevelOuter = bvNone
                 ParentBackground = False
                 ShowCaption = False
-                TabOrder = 7
+                TabOrder = 6
                 object Label3: TLabel
                   Left = 0
                   Top = 0
@@ -2993,7 +2981,7 @@ object Main: TMain
                 BevelOuter = bvNone
                 ParentBackground = False
                 ShowCaption = False
-                TabOrder = 8
+                TabOrder = 7
                 object Label4: TLabel
                   Left = 0
                   Top = 0
@@ -3029,7 +3017,7 @@ object Main: TMain
                 Caption = 'Zamknij starter automatycznie'
                 Checked = True
                 State = cbChecked
-                TabOrder = 9
+                TabOrder = 8
               end
               object cbBigThumbnail: TCheckBox
                 AlignWithMargins = True
@@ -3039,7 +3027,7 @@ object Main: TMain
                 Height = 17
                 Align = alTop
                 Caption = 'Du'#380'e miniaturki'
-                TabOrder = 10
+                TabOrder = 9
                 OnClick = cbBigThumbnailClick
               end
               object chCrashDamage: TCheckBox
@@ -3050,6 +3038,18 @@ object Main: TMain
                 Height = 17
                 Align = alTop
                 Caption = 'Uszkodzenia przy zderzeniu'
+                Checked = True
+                State = cbChecked
+                TabOrder = 10
+              end
+              object chDebugLogVis: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 140
+                Width = 239
+                Height = 17
+                Align = alTop
+                Caption = 'Wy'#347'wietlaj przebieg symulacji'
                 Checked = True
                 State = cbChecked
                 TabOrder = 11
@@ -4108,18 +4108,26 @@ object Main: TMain
       Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
     end
     object actCopyToClipboard: TAction
+      Category = 'menu'
       Caption = 'Skopiuj poci'#261'g do schowka'
       OnExecute = actCopyToClipboardExecute
       OnUpdate = actCopyToClipboardUpdate
     end
     object actPasteFromClipboard: TAction
+      Category = 'menu'
       Caption = 'Zast'#261'p sk'#322'adem ze schowka'
       OnExecute = actPasteFromClipboardExecute
       OnUpdate = actPasteFromClipboardUpdate
     end
     object actReplaceTrain: TAction
+      Category = 'menu'
       Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
       OnExecute = actReplaceTrainExecute
+    end
+    object actReloadSettingState: TAction
+      Category = 'menu'
+      Caption = 'actReloadSettingState'
+      OnExecute = actReloadSettingStateExecute
     end
   end
   object pmDepot: TPopupMenu
