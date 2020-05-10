@@ -1120,10 +1120,11 @@ begin
   Parser := TParser.Create;
 
   Config := SCN.Config;
-  Config.FogEnd := (tbFog.Max - tbFog.Position) + tbFog.Min;
-  Config.Day    := tbDay.Position;
-  Config.Overcast := tbOvercast.Position;
-  Config.Temperature := tbTemperature.Position;
+  Config.FogEnd       := (tbFog.Max - tbFog.Position) + tbFog.Min;
+  Config.Day          := tbDay.Position;
+  Config.Overcast     := tbOvercast.Position;
+  Config.Temperature  := tbTemperature.Position;
+  Config.Time         := dtTime.Time;
   SCN.Config := Config;
 
   Starter.Text := Parser.ChangeConfig(SCN.Other.Text,SCN.Config);
@@ -1712,9 +1713,9 @@ begin
   Application.OnActivate    := AppActivate;
   Application.OnDeactivate  := AppDeactivate;
 
-  //DIR := ExtractFilePath(ParamStr(0));
- // DIR := 'G:\MaSzyna\MaSzyna2001beta\';
-  DIR := 'G:\MaSzyna\MaSzyna2004\';
+  DIR := ExtractFilePath(ParamStr(0));
+  //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
+  //DIR := 'G:\MaSzyna\MaSzyna2004\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
   //DIR := 'G:\MaSzyna\MaSzyna pliki\';
@@ -2008,7 +2009,7 @@ begin
   tbFog.Position := (tbFog.Max - SCN.Config.FogEnd) + tbFog.Min;
   tbOvercast.Position := Round(SCN.Config.Overcast);
 
-  dtTime.Time := SCN.Time;
+  dtTime.Time := SCN.Config.Time;
 
   lbTrainsClick(self);
 end;

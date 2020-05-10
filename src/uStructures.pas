@@ -169,6 +169,7 @@ type
     FogStart    : Integer;
     FogEnd      : Integer;
     Overcast    : Integer;
+    Time        : TTime;
   end;
 
   TScenario = class
@@ -183,7 +184,6 @@ type
     FVehicles    : TObjectList<TVehicle>;
     FOther       : TStringList;
     FConfig      : TConfig;
-    FTime         : TTime;
     procedure SetDesc(const Value: TStringList);
     procedure SetFiles(const Value: TStringList);
     procedure SetTrains(const Value: TObjectList<TTrain>);
@@ -200,7 +200,6 @@ type
     property Vehicles    : TObjectList<TVehicle> read FVehicles write SetVehicles;
     property Other       : TStringList read FOther write SetOther;
     property Config      : TConfig read FConfig write FConfig;
-    property Time        : TTime read FTime write FTime;
     constructor Create;
   end;
 

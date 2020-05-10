@@ -545,8 +545,8 @@ end;
 function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
 var
   EndPointer : integer;
-  Day, Temperature : Boolean;
-  Atmo : string;
+  Day, Temperature, TimeOverride : Boolean;
+  Atmo, Token : string;
 begin
   try
     Lexer.Origin := PChar(Text);
@@ -557,6 +557,7 @@ begin
 
     Day := False;
     Temperature := False;
+    TimeOverride := False;
 
     Lexer.NextNoSpace;
     While Lexer.TokenID <> ptNull do
@@ -575,7 +576,8 @@ begin
         begin
           if SameText(Lexer.Token, 'scenario') then
           begin
-            if SameText(GetToken, 'scenario.weather.temperature') then
+            Token := GetToken;
+            if SameText(Token, 'scenario.weather.temperature') then
             begin
               result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-27);
               Result := Result + #13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ';
@@ -583,6 +585,16 @@ begin
               GetToken;
               EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
               Temperature := True;
+            end
+            else
+            if SameText(Token, 'scenario.time.override') then
+            begin
+              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-22);
+              Result := Result + #13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ';
+              Lexer.NextNoJunk;
+              GetToken;
+              EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
+              TimeOverride := True;
             end;
           end;
         end;
@@ -601,6 +613,9 @@ begin
 
     if not Temperature then
       Insert(#13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ',Result, Pos('config',result)+6);
+
+    if not TimeOverride then
+      Insert(#13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ',Result, Pos('config',result)+6);
 
     if Pos('atmo',Result) > 0 then
       Delete(Result,Pos('atmo',Result),(Pos('endatmo',Result) + 7 - Pos('atmo',Result)));
@@ -672,11 +687,10 @@ begin
     FirstInitPos := Pos('FirstInit',Plik.Text);
 
     Result.Other.Text := Copy(Plik.Text,0,FirstInitPos-1);
-    if Pos('config',Result.Other.Text) = 0 then
-    begin
-      Config.Day := 0;
-      Config.Temperature := 15;
-    end;
+
+    Config.Day := 0;
+    Config.Temperature := 15;
+    Config.Time := Now;
 
     FirstInit := TStringList.Create;
     FirstInit.Text := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
@@ -719,7 +733,7 @@ begin
           if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token,'time')) then
           begin
             Lexer.NextNoJunk;
-            Result.Time := StrToTime(GetToken);
+            Config.Time := StrToTime(GetToken);
           end;
 
           Result.Config := Config;
