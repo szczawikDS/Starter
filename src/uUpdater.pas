@@ -40,7 +40,7 @@ type
     procedure Update(const UpdateFile: TStringList);
   public
     const
-      AppVersion = 21;
+      AppVersion = 22;
       procedure CheckUpdate;
       class procedure UpdateProgram;
   end;
@@ -113,7 +113,7 @@ begin
     begin
       Par.DelimitedText := UpdateFile[i];
       Stream.Clear;
-      HTTP.Get('http://www.szczawik.net/maszyna/'+Par[0], Stream);
+      HTTP.Get('https://www.szczawik.net/maszyna/'+Par[0], Stream);
       Stream.SaveToFile(Main.DIR + '\' + Par[1]);
     end;
 

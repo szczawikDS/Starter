@@ -2380,7 +2380,6 @@ begin
   begin
     if (Train.Vehicles[i].Texture <> nil) and (Train.Vehicles[i].Texture.Fiz >= 0) then
     begin
-
       if (Train.Vehicles[i].CabOccupancy > coRearDriver) or ((Train.Vehicles[i].Texture.Typ = tyEZT)
       or (Train.Vehicles[i].Texture.Typ = tySZYNOBUS))
       or ((Train.Vehicles[i].Texture.Typ <= tyPAROWOZ) and (Train.Vehicles.Count = 1)) then
@@ -2406,9 +2405,11 @@ begin
 
     Inc(ImageWidth,Image.Width);
 
-    if (Train.Vehicles[i].CabOccupancy > coRearDriver) or ((Train.Vehicles[i].Texture.Typ = tyEZT)
+    if (Train.Vehicles[i].CabOccupancy > coRearDriver)
+      or (Train.Vehicles[i].Texture <> nil) and
+         (((Train.Vehicles[i].Texture.Typ = tyEZT)
       or (Train.Vehicles[i].Texture.Typ = tySZYNOBUS))
-      or ((Train.Vehicles[i].Texture.Typ <= tyPAROWOZ) and (Train.Vehicles.Count = 1)) then
+      or ((Train.Vehicles[i].Texture.Typ <= tyPAROWOZ) and (Train.Vehicles.Count = 1))) then
     begin
       LoadIndex := LoadsIndex(Train.Vehicles[i].LoadType);
 
