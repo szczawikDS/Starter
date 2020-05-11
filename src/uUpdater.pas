@@ -42,10 +42,8 @@ type
     const
       AppVersion = 21;
       procedure CheckUpdate;
+      class procedure UpdateProgram;
   end;
-
-var
-  frmUpdater: TfrmUpdater;
 
 implementation
 
@@ -104,14 +102,13 @@ var
   i : Integer;
 begin
   Show;
+  Par := TStringList.Create;
+  Stream := TMemoryStream.Create;
   try
     Main.Cursor := crHourGlass;
     Application.ProcessMessages;
 
-    Par := TStringList.Create;
     Par.Delimiter := ' ';
-
-    Stream := TMemoryStream.Create;
     for i := 1 to UpdateFile.Count-1 do
     begin
       Par.DelimitedText := UpdateFile[i];
@@ -126,6 +123,16 @@ begin
     Main.Cursor := crDefault;
     Stream.Free;
     Par.Free;
+  end;
+end;
+
+class procedure TfrmUpdater.UpdateProgram;
+begin
+  with TfrmUpdater.Create(nil) do
+  try
+    CheckUpdate;
+  finally
+    Free;
   end;
 end;
 

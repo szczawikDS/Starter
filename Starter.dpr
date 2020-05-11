@@ -25,7 +25,6 @@ begin
   Application.Title := 'Starter MaSzyna';
   TStyleManager.TrySetStyle('Carbon');
   Application.CreateForm(TMain, Main);
-  Application.CreateForm(TfrmUpdater, frmUpdater);
   frmStart.Destroy;
 
   Application.Run;

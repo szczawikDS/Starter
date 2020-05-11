@@ -29,13 +29,13 @@ type
   TParser = class
     Lexer:TmwPasLex;
   public
-    procedure LoadData;
-    procedure SaveDepot;
+    class procedure LoadData;
+    class procedure SaveDepot;
+    class function ChangeConfig(const Text:string;const Config:TConfig):string;
     procedure ReadDepot;
-    function ChangeConfig(const Text:string;const Config:TConfig):string;
     constructor Create;
     destructor Destroy; override;
-    function ParseTrainFromClipBoard(const Trainset:string):TTrain;
+    class function ParseTrainFromClipBoard(const Trainset:string):TTrain;
   private
     function GetToken: string; overload;
     function GetToken(const Params: TStringList): string; overload;
@@ -76,44 +76,16 @@ begin
       Result := Max;
 end;
 {$IFDEF DEBUG}
-function generate: string;
-const
-  letras_mi = 'abcdefghijklmnopqrstuvwxyz';
-  letras_ma = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  numeros = '0123456789';
-begin
-  Result := '';
-  Result := Result + letras_mi[Random(Length(letras_mi)) + 1];
-  Result := Result + letras_ma[Random(Length(letras_ma)) + 1];
-  Result := Result + numeros[Random(Length(numeros)) + 1];
-end;
 
 procedure Measure;
 var
   Stopwatch: TStopwatch;
-  i, y : Integer;
-
-  s1, s2 : char;
+  i : Integer;
 begin
   Stopwatch := TStopwatch.StartNew;
-
-  {  for i := 0 to 1000000 do
-    begin
-      s1 := generate;
-      s2 := generate;
-
-      //if SameText(s1,s2) then
-      //  s1 := s1;
-
-      //if CompareText(s1,s2) = 0 then
-      //  s1 := s1;
-
-      if s1 = s2 then
-        s1 := s1;
-    end;
-
+  //
   i := Stopwatch.ElapsedMilliseconds;
-  i := 0;}
+  i := 0;
 end;
 {$ENDIF}
 
@@ -127,11 +99,7 @@ end;
 
 destructor TParser.Destroy;
 begin
-  try
-    Lexer.Free;
-  Finally
-
-  end;
+  Lexer.Free;
 end;
 
 function TParser.GetToken:string;
@@ -160,13 +128,18 @@ begin
     end;
 end;
 
-procedure TParser.LoadData;
+class procedure TParser.LoadData;
 begin
-  LoadModels;
-  LoadPhysics;
-  LoadSceneries;
-  ReadDepot;
-  LoadWeights;
+  with TParser.Create do
+  try
+    LoadModels;
+    LoadPhysics;
+    LoadSceneries;
+    ReadDepot;
+    LoadWeights;
+  finally
+    Free;
+  end;
 end;
 
 procedure TParser.LoadModels;
@@ -221,13 +194,18 @@ begin
   end;
 end;
 
-function TParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
+class function TParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
 begin
   try
-    Lexer.Origin := PChar(Trainset);
-    Lexer.Init;
-    Lexer.NextNoJunk;
-    Result := ParseTrain;
+    with TParser.Create do
+    try
+      Lexer.Origin := PChar(Trainset);
+      Lexer.Init;
+      Lexer.NextNoJunk;
+      Result := ParseTrain;
+    finally
+      Free;
+    end;
   except
     Result := nil;
   end;
@@ -542,89 +520,94 @@ begin
   end;
 end;
 
-function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
+class function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
 var
   EndPointer : integer;
   Day, Temperature, TimeOverride : Boolean;
   Atmo, Token : string;
 begin
   try
-    Lexer.Origin := PChar(Text);
-    Lexer.Init;
+    with TParser.Create do
+    try
+      Lexer.Origin := PChar(Text);
+      Lexer.Init;
 
-    result := '';
-    EndPointer := 0;
+      result := '';
+      EndPointer := 0;
 
-    Day := False;
-    Temperature := False;
-    TimeOverride := False;
+      Day := False;
+      Temperature := False;
+      TimeOverride := False;
 
-    Lexer.NextNoSpace;
-    While Lexer.TokenID <> ptNull do
-    begin
-      if (Lexer.TokenID = ptIdentifier) then
+      Lexer.NextNoSpace;
+      While Lexer.TokenID <> ptNull do
       begin
-        if (SameText(Lexer.Token, 'movelight')) then
+        if (Lexer.TokenID = ptIdentifier) then
         begin
-          result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer);
-          Result := Result + #13#10 + 'movelight ' + IntToStr(Config.Day) + ' ';
-          Lexer.NextNoJunk;
-          EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
-          Day := True;
-        end
-        else
-        begin
-          if SameText(Lexer.Token, 'scenario') then
+          if (SameText(Lexer.Token, 'movelight')) then
           begin
-            Token := GetToken;
-            if SameText(Token, 'scenario.weather.temperature') then
+            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer);
+            Result := Result + #13#10 + 'movelight ' + IntToStr(Config.Day) + ' ';
+            Lexer.NextNoJunk;
+            EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
+            Day := True;
+          end
+          else
+          begin
+            if SameText(Lexer.Token, 'scenario') then
             begin
-              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-27);
-              Result := Result + #13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ';
-              Lexer.NextNoJunk;
-              GetToken;
-              EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
-              Temperature := True;
-            end
-            else
-            if SameText(Token, 'scenario.time.override') then
-            begin
-              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-22);
-              Result := Result + #13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ';
-              Lexer.NextNoJunk;
-              GetToken;
-              EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
-              TimeOverride := True;
+              Token := GetToken;
+              if SameText(Token, 'scenario.weather.temperature') then
+              begin
+                result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-27);
+                Result := Result + #13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ';
+                Lexer.NextNoJunk;
+                GetToken;
+                EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
+                Temperature := True;
+              end
+              else
+              if SameText(Token, 'scenario.time.override') then
+              begin
+                result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-22);
+                Result := Result + #13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ';
+                Lexer.NextNoJunk;
+                GetToken;
+                EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
+                TimeOverride := True;
+              end;
             end;
           end;
         end;
+
+        Lexer.NextNoSpace;
       end;
 
-      Lexer.NextNoSpace;
+      Result := Result + Copy(Text,EndPointer,Text.Length);
+
+      if Pos('config',Result) = 0 then
+        Result := 'config endconfig' + #13#10 + Result;
+
+      if not Day then
+        Insert(#13#10 + 'movelight ' + IntToStr(Config.Day) + ' ',Result, Pos('config',result)+6);
+
+      if not Temperature then
+        Insert(#13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ',Result, Pos('config',result)+6);
+
+      if not TimeOverride then
+        Insert(#13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ',Result, Pos('config',result)+6);
+
+      if Pos('atmo',Result) > 0 then
+        Delete(Result,Pos('atmo',Result),(Pos('endatmo',Result) + 7 - Pos('atmo',Result)));
+
+      Atmo := 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
+      Atmo := Atmo + ' ' + FloatToStr(Config.Overcast * 0.1) + ' endatmo' + #13#10;
+      Result := Atmo + Result;
+    finally
+      Free;
     end;
-
-    Result := Result + Copy(Text,EndPointer,Text.Length);
-
-    if Pos('config',Result) = 0 then
-      Result := 'config endconfig' + #13#10 + Result;
-
-    if not Day then
-      Insert(#13#10 + 'movelight ' + IntToStr(Config.Day) + ' ',Result, Pos('config',result)+6);
-
-    if not Temperature then
-      Insert(#13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ',Result, Pos('config',result)+6);
-
-    if not TimeOverride then
-      Insert(#13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ',Result, Pos('config',result)+6);
-
-    if Pos('atmo',Result) > 0 then
-      Delete(Result,Pos('atmo',Result),(Pos('endatmo',Result) + 7 - Pos('atmo',Result)));
-
-    Atmo := 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
-    Atmo := Atmo + ' ' + FloatToStr(Config.Overcast * 0.1) + ' endatmo' + #13#10;
-    Result := Atmo + Result;
   except
-   Result := Text;
+    Result := Text;
   end;
 end;
 
@@ -1267,7 +1250,7 @@ begin
   end;
 end;
 
-procedure TParser.SaveDepot;
+class procedure TParser.SaveDepot;
 var
   DepotFile : TStringList;
   i, y : Integer;

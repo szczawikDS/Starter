@@ -76,7 +76,6 @@ type
     actDepo: TAction;
     actSettings: TAction;
     actDefaultSettings: TAction;
-    actSaveSettings: TAction;
     imFacebook: TImage;
     imMaszyna: TImage;
     miPasteFromClipboard: TMenuItem;
@@ -88,7 +87,6 @@ type
     lbTrainMass: TLabel;
     lbTrainMassCaption: TLabel;
     lnTrainLengthCaption: TLabel;
-    actSaveDepot: TAction;
     sbTrain: TScrollBox;
     tsKeyboard: TTabSheet;
     cbKey: TComboBox;
@@ -366,7 +364,6 @@ type
     lbTrainBruttoCaption: TLabel;
     lbTrainBrutto: TLabel;
     chDebugLogVis: TCheckBox;
-    actReloadSettingState: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -400,7 +397,6 @@ type
     procedure actDepoExecute(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
     procedure actDefaultSettingsExecute(Sender: TObject);
-    procedure actSaveSettingsExecute(Sender: TObject);
     procedure cbLangChange(Sender: TObject);
     procedure chOnlyForDrivingClick(Sender: TObject);
     procedure imFacebookClick(Sender: TObject);
@@ -462,7 +458,6 @@ type
     procedure cbModelsChange(Sender: TObject);
     procedure actReplaceTrainExecute(Sender: TObject);
     procedure pcTrainsChange(Sender: TObject);
-    procedure actReloadSettingStateExecute(Sender: TObject);
     procedure chSoundenabledClick(Sender: TObject);
   private
     SCN : TScenario;
@@ -470,7 +465,6 @@ type
     SelVehicle : Integer;
 
     procedure WMHotKey(var Msg: TWMHotKey); message WM_HOTKEY;
-
     procedure OpenAttachment(Sender: TObject);
     procedure DrawTrain(const Train: TTrain);
     procedure RunSimulator;
@@ -573,13 +567,7 @@ begin
   end;
   Depot.Add(DepoTrain);
 
-  with TParser.Create do
-  try
-    SaveDepot;
-  finally
-    Free;
-  end;
-
+  TParser.SaveDepot;
   LoadMagazine;
 end;
 
@@ -800,12 +788,7 @@ end;
 
 procedure TMain.actCheckUpdateExecute(Sender: TObject);
 begin
-  with TfrmUpdater.Create(self) do
-  try
-    CheckUpdate;
-  finally
-    Free;
-  end;
+  TfrmUpdater.UpdateProgram;
 end;
 
 procedure TMain.actCloudlessExecute(Sender: TObject);
@@ -978,14 +961,9 @@ procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
 var
   ClipTrain : TTrain;
 begin
-  with TParser.Create do
-  try
-    ClipTrain := ParseTrainFromClipBoard(Clipboard.AsText);
-    if ClipTrain <> nil then
-      ReplaceTrain(ClipTrain.Vehicles);
-  finally
-    Free;
-  end;
+  ClipTrain := TParser.ParseTrainFromClipBoard(Clipboard.AsText);
+  if ClipTrain <> nil then
+    ReplaceTrain(ClipTrain.Vehicles);
 end;
 
 procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
@@ -993,22 +971,10 @@ begin
   actPasteFromClipboard.Visible := (Clipboard.AsText.Length > 50);
 end;
 
-procedure TMain.actReloadSettingStateExecute(Sender: TObject);
-begin
-  ReloadSettingsState;
-end;
-
 procedure TMain.actRemoveFromDepotExecute(Sender: TObject);
 begin
   Depot.Extract(Depot[lbDepot.ItemIndex]);
-
-  with TParser.Create do
-  try
-    SaveDepot;
-  finally
-    Free;
-  end;
-
+  TParser.SaveDepot;
   LoadMagazine;
   if Depot.Count > 0 then
   begin
@@ -1082,11 +1048,6 @@ begin
   Settings.SaveKeyboardSettings;
 end;
 
-procedure TMain.actSaveSettingsExecute(Sender: TObject);
-begin
-  Settings.SaveSettings;
-end;
-
 procedure TMain.actScenariosExecute(Sender: TObject);
 begin
   ChangePange(0);
@@ -1106,18 +1067,12 @@ procedure TMain.actStartExecute(Sender: TObject);
 var
   Starter : TStringList;
   i,y : Integer;
-  SCN : TScenario;
-  Parser : TParser;
   Config : TConfig;
 begin
   btnStart.Enabled := False;
-
-  SCN := TScenario(tvSCN.Selected.Data);
   Starter := TStringList.Create;
 
   Starter.Text := SCN.Other.Text;
-
-  Parser := TParser.Create;
 
   Config := SCN.Config;
   Config.FogEnd       := (tbFog.Max - tbFog.Position) + tbFog.Min;
@@ -1126,9 +1081,7 @@ begin
   Config.Temperature  := tbTemperature.Position;
   Config.Time         := dtTime.Time;
   SCN.Config := Config;
-
-  Starter.Text := Parser.ChangeConfig(SCN.Other.Text,SCN.Config);
-  Parser.Free;
+  Starter.Text := TParser.ChangeConfig(SCN.Other.Text,SCN.Config);
 
   Starter.Add('FirstInit');
 
@@ -1415,9 +1368,8 @@ end;
 
 procedure TMain.cbModelsChange(Sender: TObject);
 begin
-  if (cbTypes.ItemIndex = Ord(TTyp.tyEZT))
-    or (cbTypes.ItemIndex = Ord(TTyp.tySZYNOBUS))
-    or ((cbTypes.ItemIndex = Ord(TTyp.tyELEKTROWOZ)) and (Pos('ET4',cbModels.Items[cbModels.ItemIndex]) > 0)) then
+  if (cbTypes.ItemIndex in [Ord(TTyp.tySZYNOBUS)..Ord(TTyp.tyEZT)])
+      or ((cbTypes.ItemIndex = Ord(TTyp.tyELEKTROWOZ)) and (Pos('ET4',cbModels.Items[cbModels.ItemIndex]) > 0)) then
     if lbTextures.Count > lbTextures.Tag then
     begin
       lbTextures.Items.BeginUpdate;
@@ -1718,7 +1670,6 @@ begin
   //DIR := 'G:\MaSzyna\MaSzyna2004\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
-  //DIR := 'G:\MaSzyna\MaSzyna pliki\';
 
   RemoveOldVersion;
 
@@ -1730,12 +1681,7 @@ begin
   Depot     := TObjectList<TTrain>.Create;
   Loads     := TList<TLoad>.Create;
 
-  with TParser.Create do
-  try
-    LoadData;
-  finally
-    Free;
-  end;
+  TParser.LoadData;
 
   Settings := TSettings.Create;
   Settings.ReadOwnSettings;
@@ -1949,7 +1895,6 @@ begin
   if (SCN = TScenario(tvSCN.Selected.Data)) and (Sender <> chOnlyForDriving) then Exit;
   SelTrain := -1;
 
-  SCN := TScenario.Create;
   SCN := TScenario(tvSCN.Selected.Data);
 
   while sbAttachments.ControlCount > 0 do
@@ -2099,7 +2044,6 @@ begin
   if (lbDepot.ItemIndex < 0) or ((SelList = slDEPO) and (SelTrain = Integer(lbDepot.Items.Objects[lbDepot.ItemIndex]))) then Exit;
 
   SelList := slDEPO;
-
   SelTrain := Integer(lbDepot.Items.Objects[lbDepot.ItemIndex]);
 
   SelectTrain;

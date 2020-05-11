@@ -4013,16 +4013,9 @@ object Main: TMain
       Caption = 'Przywr'#243#263' ustawienia domy'#347'lne'
       OnExecute = actDefaultSettingsExecute
     end
-    object actSaveSettings: TAction
-      Caption = 'Zapisz ustawienia'
-      OnExecute = actSaveSettingsExecute
-    end
     object actCheckUpdate: TAction
       Caption = 'Aktualizuj starer'
       OnExecute = actCheckUpdateExecute
-    end
-    object actSaveDepot: TAction
-      Caption = 'Zapisz magazyn'
     end
     object actSaveKeyboard: TAction
       Caption = 'Zapisz ustawienia przycisk'#243'w'
@@ -4123,11 +4116,6 @@ object Main: TMain
       Category = 'menu'
       Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
       OnExecute = actReplaceTrainExecute
-    end
-    object actReloadSettingState: TAction
-      Category = 'menu'
-      Caption = 'actReloadSettingState'
-      OnExecute = actReloadSettingStateExecute
     end
   end
   object pmDepot: TPopupMenu
