@@ -51,7 +51,7 @@ type
     procedure ParseCoupler(var Vehicle: TVehicle);
     function GetBrakeValue(const Settings:string;Pos:Integer):string;
     procedure ParsePhysics(Physics:TPhysics;Path:string='';aParams:TStringList=nil);
-    function IsPhysics(const Name: string): Integer;
+    function IsPhysics(const Dir:string;const Name: string): Integer;
     procedure LoadPhysics;
     procedure FindTexture(var Vehicle:TVehicle);
     procedure ParseTextDesc(Tex: TTexture);
@@ -969,7 +969,7 @@ begin
             if FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') or
                FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz') then
             begin
-              Tex.Fiz := IsPhysics(Tex.Models[y].Model);
+              Tex.Fiz := IsPhysics(Tex.Dir,Tex.Models[y].Model);
               if Tex.Fiz < 0 then
               begin
                 Physics := TPhysics.Create;
@@ -1030,14 +1030,14 @@ begin
   end;
 end;
 
-function TParser.IsPhysics(const Name:string):Integer;
+function TParser.IsPhysics(const Dir:string;const Name:string):Integer;
 var
   i : Integer;
 begin
   Result := -1;
 
   for i := 0 to Main.Physics.Count-1 do
-    if CompareText(Main.Physics[i].Name,Name) = 0 then
+    if (CompareText(Main.Physics[i].Name,Name) = 0) and (CompareText(Main.Physics[i].Dir,Dir) = 0) then
     begin
       Result := i;
       Break;
@@ -1053,8 +1053,6 @@ var
   Include : string;
 begin
   try
-    if '6D' = Physics.Name then
-      Include := include;
     Params := TStringList.Create;
 
     if aParams <> nil then

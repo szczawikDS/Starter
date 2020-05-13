@@ -40,7 +40,7 @@ type
     procedure Update(const UpdateFile: TStringList);
   public
     const
-      AppVersion = 22;
+      AppVersion = 23;
       procedure CheckUpdate;
       class procedure UpdateProgram;
   end;

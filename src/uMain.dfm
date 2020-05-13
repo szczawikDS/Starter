@@ -284,10 +284,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(11.05.2020)'
+      Hint = '(13.05.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '4.3'
+      Caption = '4.3.1'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -304,7 +304,7 @@ object Main: TMain
       Top = 0
       Width = 48
       Height = 50
-      Hint = '(11.05.2020)'
+      Hint = '(13.05.2020)'
       Align = alLeft
       Alignment = taCenter
       AutoSize = False
