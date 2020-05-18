@@ -284,10 +284,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(13.05.2020)'
+      Hint = '(17.05.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '4.3.1'
+      Caption = '4.4.0'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -304,7 +304,7 @@ object Main: TMain
       Top = 0
       Width = 48
       Height = 50
-      Hint = '(13.05.2020)'
+      Hint = '(17.05.2020)'
       Align = alLeft
       Alignment = taCenter
       AutoSize = False
@@ -2865,7 +2865,7 @@ object Main: TMain
                 Width = 239
                 Height = 34
                 Align = alTop
-                Caption = 'Nadpisuj poprzednie przebiegi symulacji'
+                Caption = 'Zachowuj poprzednie przebiegi symulacji'
                 Checked = True
                 State = cbChecked
                 TabOrder = 5

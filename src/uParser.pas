@@ -121,11 +121,7 @@ begin
     Result := Params[StrToInt(Lexer.Token[2])-1];
   end
   else
-    while (not Lexer.IsSpace) and (Lexer.TokenID <> ptNull) do
-    begin
-      Result := Result + Lexer.Token;
-      Lexer.Next;
-    end;
+    Result := GetToken;
 end;
 
 class procedure TParser.LoadData;
@@ -481,10 +477,13 @@ begin
 end;
 
 procedure TParser.ParseConfig(var Config: TConfig);
+var
+  Token : string;
 begin
   try
     Config.Day := 0;
     Config.Temperature := 15;
+    Config.Other := '';
 
     Lexer.NextNoSpace;
     While (Lexer.Token <> 'endconfig') and (Lexer.TokenID <> ptNull) do
@@ -493,25 +492,31 @@ begin
         SkipComment
       else
       begin
-        if (Lexer.TokenID = ptIdentifier) then
+        if (SameText(Lexer.Token, 'movelight')) then
         begin
-          if (SameText(Lexer.Token, 'movelight')) then
+          Lexer.NextNoJunk;
+          Config.Day := StrToInt(Lexer.Token);
+        end
+        else
+        if SameText(Lexer.Token, 'scenario') then
+        begin
+          Token := GetToken;
+          if SameText(Token, 'scenario.weather.temperature') then
           begin
             Lexer.NextNoJunk;
-            Config.Day := StrToInt(Lexer.Token);
+            Config.Temperature := StrToFloat(GetToken);
           end
           else
           begin
-            if SameText(Lexer.Token, 'scenario') then
+            if SameText(Token, 'scenario.time.override') then
             begin
-              if SameText(GetToken, 'scenario.weather.temperature') then
-              begin
-                Lexer.NextNoJunk;
-                Config.Temperature := StrToFloat(GetToken);
-              end;
+              Lexer.NextNoJunk;
+              GetToken;
             end;
           end;
-        end;
+        end
+        else
+          Config.Other := Config.Other + Lexer.Token + ' ';
       end;
       Lexer.NextNoSpace;
     end;
@@ -522,9 +527,8 @@ end;
 
 class function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
 var
-  EndPointer : integer;
-  Day, Temperature, TimeOverride : Boolean;
-  Atmo, Token : string;
+  EndPointer, ConfigPos : integer;
+  AtmoStr, Token : string;
 begin
   try
     with TParser.Create do
@@ -535,48 +539,65 @@ begin
       result := '';
       EndPointer := 0;
 
-      Day := False;
-      Temperature := False;
-      TimeOverride := False;
-
       Lexer.NextNoSpace;
       While Lexer.TokenID <> ptNull do
       begin
         if (Lexer.TokenID = ptIdentifier) then
         begin
+          if (SameText(Lexer.Token, 'config')) then
+          begin
+            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer);
+
+            while not SameText(Lexer.Token, 'endconfig') do
+              Lexer.NextNoJunk;
+
+            EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
+          end;
+          //////////////////////////
           if (SameText(Lexer.Token, 'movelight')) then
           begin
             result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer);
-            Result := Result + #13#10 + 'movelight ' + IntToStr(Config.Day) + ' ';
             Lexer.NextNoJunk;
             EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
-            Day := True;
           end
           else
+          if SameText(Lexer.Token, 'scenario') then
           begin
-            if SameText(Lexer.Token, 'scenario') then
+            Token := GetToken;
+            if SameText(Token, 'scenario.weather.temperature') then
             begin
-              Token := GetToken;
-              if SameText(Token, 'scenario.weather.temperature') then
-              begin
-                result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-27);
-                Result := Result + #13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ';
-                Lexer.NextNoJunk;
-                GetToken;
-                EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
-                Temperature := True;
-              end
-              else
-              if SameText(Token, 'scenario.time.override') then
-              begin
-                result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-22);
-                Result := Result + #13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ';
-                Lexer.NextNoJunk;
-                GetToken;
-                EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
-                TimeOverride := True;
-              end;
+              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-27);
+              Lexer.NextNoJunk;
+              GetToken;
+              EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
+            end
+            else
+            if SameText(Token, 'scenario.time.override') then
+            begin
+              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-22);
+              Lexer.NextNoJunk;
+              GetToken;
+              EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
             end;
+          end;
+          /////////////////
+          if SameText(Lexer.Token, 'time') then
+          begin
+            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-5);
+            while not SameText(Lexer.Token, 'endtime') do
+              Lexer.NextNoJunk;
+            GetToken;
+            EndPointer := Lexer.TokenPos + Lexer.TokenLen;
+          end
+          else
+          if SameText(Lexer.Token, 'atmo') then
+          begin
+            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-1);
+
+            while not SameText(Lexer.Token, 'endatmo') do
+              Lexer.NextNoJunk;
+
+            EndPointer := Lexer.TokenPos + Lexer.TokenLen;
           end;
         end;
 
@@ -584,25 +605,18 @@ begin
       end;
 
       Result := Result + Copy(Text,EndPointer,Text.Length);
+      Result := 'config ' + #13#10 + 'endconfig' + #13#10 + Result;
+      ConfigPos := 8;
 
-      if Pos('config',Result) = 0 then
-        Result := 'config endconfig' + #13#10 + Result;
+      Insert(#13#10 + 'time ' + FormatDateTime('h:MM',Config.TimeStart) + ' 0 0 endtime ',Result, ConfigPos + 11);
+      AtmoStr := #13#10 + 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
+      AtmoStr := AtmoStr + ' ' + FloatToStr(Config.Overcast * 0.1) + ' endatmo';
+      Insert(AtmoStr,Result, ConfigPos + 11);
 
-      if not Day then
-        Insert(#13#10 + 'movelight ' + IntToStr(Config.Day) + ' ',Result, Pos('config',result)+6);
-
-      if not Temperature then
-        Insert(#13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ',Result, Pos('config',result)+6);
-
-      if not TimeOverride then
-        Insert(#13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ',Result, Pos('config',result)+6);
-
-      if Pos('atmo',Result) > 0 then
-        Delete(Result,Pos('atmo',Result),(Pos('endatmo',Result) + 7 - Pos('atmo',Result)));
-
-      Atmo := 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
-      Atmo := Atmo + ' ' + FloatToStr(Config.Overcast * 0.1) + ' endatmo' + #13#10;
-      Result := Atmo + Result;
+      Insert(#13#10 + Config.Other ,Result, ConfigPos);
+      Insert(#13#10 + 'movelight ' + IntToStr(Config.Day) + ' ',Result, ConfigPos);
+      Insert(#13#10 + 'scenario.weather.temperature ' + FloatToStr(Config.Temperature) + ' ',Result, ConfigPos);
+      Insert(#13#10 + 'scenario.time.override ' + FormatDateTime('h:MM',Config.Time) + ' ',Result, ConfigPos);
     finally
       Free;
     end;
@@ -717,6 +731,7 @@ begin
           begin
             Lexer.NextNoJunk;
             Config.Time := StrToTime(GetToken);
+            Config.TimeStart := Config.Time;
           end;
 
           Result.Config := Config;
@@ -1091,7 +1106,7 @@ begin
           Lexer.NextNoJunk;
           while Lexer.Token <> 'end' do
           begin
-            Params.Add(Lexer.Token);
+            Params.Add(GetToken);
             Lexer.NextNoJunk;
           end;
         end;
@@ -1126,11 +1141,7 @@ begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
 
-            while not Lexer.IsJunk do
-            begin
-              Physics.LoadAccepted := Physics.LoadAccepted + Lexer.Token;
-              Lexer.Next;
-            end;
+            Physics.LoadAccepted := GetToken(Params);
           end;
           psDimension:
           if Lexer.Token = 'L' then

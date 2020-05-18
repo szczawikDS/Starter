@@ -525,6 +525,7 @@ type
     procedure AssignBrakeState(Vehicle: TVehicle);
     procedure TrainDesc;
     procedure NoSelection;
+    procedure CheckInstallation;
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -1659,6 +1660,25 @@ begin
   Settings.SaveSettings;
 end;
 
+procedure TMain.CheckInstallation;
+var
+  Str : string;
+begin
+  str := '';
+
+  if DirectoryExists(DIR + 'dynamic') = False then
+    Str := '/dynamic ';
+
+  if DirectoryExists(DIR + 'scenery') = False then
+    Str := Str + '/scenery ';
+
+  if DirectoryExists(DIR + 'textures') = False then
+    Str := Str + '/textures ';
+
+  if Str.Length > 0 then
+    ShowMessage('Wykryto braki katalogów: ' + Str + '. Mo¿liwa b³êdna instalacja symulatora.');
+end;
+
 procedure TMain.FormCreate(Sender: TObject);
 begin
   Errors := TStringList.Create;
@@ -1666,7 +1686,6 @@ begin
   Application.OnDeactivate  := AppDeactivate;
 
   DIR := ExtractFilePath(ParamStr(0));
-  //DIR := 'G:\MaSzyna\MaSzyna2001beta\';
   //DIR := 'G:\MaSzyna\MaSzyna2004\';
   //DIR := 'G:\MaSzyna\pctga\';
   //DIR := 'G:\MaSzyna\MaSzyna1908\';
@@ -1682,6 +1701,8 @@ begin
   Loads     := TList<TLoad>.Create;
 
   TParser.LoadData;
+
+  CheckInstallation;
 
   Settings := TSettings.Create;
   Settings.ReadOwnSettings;
