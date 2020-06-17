@@ -169,7 +169,7 @@ type
     FogStart    : Integer;
     FogEnd      : Integer;
     Overcast    : Integer;
-    TimeStart   : TTime;
+    StartTime   : TTime;
     Time        : TTime;
     Other       : string;
   end;

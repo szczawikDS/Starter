@@ -510,7 +510,7 @@ type
     procedure Mark(const Image: TImage);
     procedure LoadVehicle(const Vehicle: TVehicle);
     procedure ReloadSettingsState;
-    function UniqueVehicleName(const Name:string;VehicleTex:string=''):string;
+    function UniqueVehicleName(const Vehicle:TVehicle):string; overload;
     procedure miTrainClick(Sender: TObject);
     function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
     procedure Connect(const LeftVehicle: Integer);
@@ -526,6 +526,7 @@ type
     procedure TrainDesc;
     procedure NoSelection;
     procedure CheckInstallation;
+    function IsVehicleName(const Name: string): Integer;
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -577,29 +578,48 @@ begin
   actAddToDepo.Enabled := (lbTrains2.ItemIndex >= 0) and (Train.Vehicles.Count > 0);
 end;
 
-function TMain.UniqueVehicleName(const Name:string;VehicleTex:string=''):string;
+function TMain.IsVehicleName(const Name:string):Integer;
 var
-  i,y,Count:Integer;
+  i, y : Integer;
 begin
-  if VehicleTex.Length = 0 then
-    VehicleTex := Name;
-
-  Result := Name;
-  Count := 0;
+  Result := 0;
 
   for i := 0 to SCN.Trains.Count-1 do
     for y := 0 to SCN.Trains[i].Vehicles.Count-1 do
       if (SCN.Trains[i].Vehicles[y].Texture <> nil)
          and (SCN.Trains[i].Vehicles[y].Texture.Typ <= TTyp.tyEZT)
-         and (SameText(SCN.Trains[i].Vehicles[y].ReplacableSkin,VehicleTex)) then
-        Inc(Count);
+         and (SameText(SCN.Trains[i].Vehicles[y].Name,Name)) then
+        Inc(Result);
 
   for i := 0 to SCN.Vehicles.Count-1 do
-    if SameText(SCN.Vehicles[i].ReplacableSkin,VehicleTex) then
-      Inc(Count);
+    if SameText(SCN.Vehicles[i].Name,Name) then
+      Inc(Result);
+end;
 
-  if Count > 1 then
-    Result := Result + '.' + IntToStr(Count);
+function TMain.UniqueVehicleName(const Vehicle:TVehicle):string;
+var
+  Suffix, Found : Integer;
+begin
+  if Vehicle.ReplacableSkin.Length > 0 then
+    if not SameText('NONE',Vehicle.ReplacableSkin) then
+      Result := Vehicle.ReplacableSkin
+    else
+      if Vehicle.Texture.Models[Vehicle.ModelID].MiniD.Length > 0 then
+        Result := Vehicle.Texture.Models[Vehicle.ModelID].MiniD
+      else
+        Result := Vehicle.Texture.Models[Vehicle.ModelID].Mini;
+
+  Suffix := 0;
+
+  Found := IsVehicleName(Result);
+  while Found > 0 do
+  begin
+    Suffix := Suffix + Found;
+    Found := IsVehicleName(Result + IntToStr(Suffix));
+  end;
+
+  if Suffix > 0 then
+    Result := Result + IntToStr(Suffix);
 end;
 
 procedure TMain.AssignTexToVehicle(Vehicle:TVehicle;const Tex:TTexture);
@@ -620,11 +640,7 @@ begin
   Vehicle.Texture   := Tex;
   Vehicle.TypeChk   := Tex.Models[ModelID].Model;
   Vehicle.PathName  := Tex.Dir;
-
-  if Tex.Models[ModelID].MiniD.Length > 0 then
-    Vehicle.Name := UniqueVehicleName(Tex.Models[ModelID].MiniD,Vehicle.ReplacableSkin)
-  else
-    Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin);
+  Vehicle.Name      := UniqueVehicleName(Vehicle);
 end;
 
 procedure TMain.AddVehicle(const Position:Integer);
@@ -1186,6 +1202,9 @@ var
   SEI : TShellExecuteInfo;
 begin
   Settings.SaveSettings;
+
+  if cbEXE.ItemIndex = 0 then
+    cbEXE.ItemIndex := cbEXE.Items.Count-1;
 
   if FileExists(DIR + cbEXE.Text) then
   begin
@@ -2607,12 +2626,7 @@ begin
   begin
     Vehicle := TVehicle.Create;
     Vehicle.Assign(Vehicles[i]);
-
-    if (Vehicle.Texture <> nil) and (Vehicle.Texture.Models[Vehicle.ModelID].MiniD.Length > 0) then
-      Vehicle.Name := UniqueVehicleName(Vehicle.Texture.Models[Vehicle.ModelID].MiniD,Vehicle.ReplacableSkin)
-    else
-      Vehicle.Name := UniqueVehicleName(Vehicle.ReplacableSkin);
-
+    Vehicle.Name := UniqueVehicleName(Vehicle);
     Train.Vehicles.Add(Vehicle);
   end;
 

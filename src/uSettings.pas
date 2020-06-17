@@ -140,16 +140,19 @@ var
 begin
   Main.cbEXE.Items.BeginUpdate;
   Main.cbEXE.Clear;
-  Ilosc := FindFirst(Main.DIR + '*.exe',faAnyFile,SR);
+  Ilosc := FindFirst(Main.DIR + 'eu07*.exe',faAnyFile,SR);
   while (Ilosc = 0) do
   begin
-    if (SR.Name <> 'Starter.exe') and (SR.Name <> 'RAINSTED.exe') then
-      if FileExists(Main.DIR + SR.Name) then
-        Main.cbEXE.Items.Add(SR.Name);
+    if FileExists(Main.DIR + SR.Name) then
+      Main.cbEXE.Items.Add(SR.Name);
 
     Ilosc := FindNext(SR);
   end;
   System.SysUtils.FindClose(SR);
+
+  if Main.cbEXE.Items.Count > 0 then
+    Main.cbEXE.Items.Add('Autom.');
+
   Main.cbEXE.Items.EndUpdate;
 end;
 

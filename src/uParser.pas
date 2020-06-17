@@ -31,7 +31,7 @@ type
   public
     class procedure LoadData;
     class procedure SaveDepot;
-    class function ChangeConfig(const Text:string;const Config:TConfig):string;
+    class function ChangeConfig(Text:string;const Config:TConfig):string;
     procedure ReadDepot;
     constructor Create;
     destructor Destroy; override;
@@ -525,7 +525,7 @@ begin
   end;
 end;
 
-class function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
+class function TParser.ChangeConfig(Text:string;const Config:TConfig):string;
 var
   EndPointer, ConfigPos : integer;
   AtmoStr, Token : string;
@@ -587,7 +587,7 @@ begin
             while not SameText(Lexer.Token, 'endtime') do
               Lexer.NextNoJunk;
             GetToken;
-            EndPointer := Lexer.TokenPos + Lexer.TokenLen;
+            EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
           end
           else
           if SameText(Lexer.Token, 'atmo') then
@@ -597,7 +597,7 @@ begin
             while not SameText(Lexer.Token, 'endatmo') do
               Lexer.NextNoJunk;
 
-            EndPointer := Lexer.TokenPos + Lexer.TokenLen;
+            EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
           end;
         end;
 
@@ -608,7 +608,8 @@ begin
       Result := 'config ' + #13#10 + 'endconfig' + #13#10 + Result;
       ConfigPos := 8;
 
-      Insert(#13#10 + 'time ' + FormatDateTime('h:MM',Config.TimeStart) + ' 0 0 endtime ',Result, ConfigPos + 11);
+      Insert(#13#10 + 'time ' + FormatDateTime('h:MM',Config.StartTime) + ' 0 0 endtime ',Result, ConfigPos + 11);
+
       AtmoStr := #13#10 + 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
       AtmoStr := AtmoStr + ' ' + FloatToStr(Config.Overcast * 0.1) + ' endatmo';
       Insert(AtmoStr,Result, ConfigPos + 11);
@@ -688,6 +689,7 @@ begin
     Config.Day := 0;
     Config.Temperature := 15;
     Config.Time := Now;
+    Config.StartTime := StrToTime('10:30');
 
     FirstInit := TStringList.Create;
     FirstInit.Text := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
@@ -731,7 +733,7 @@ begin
           begin
             Lexer.NextNoJunk;
             Config.Time := StrToTime(GetToken);
-            Config.TimeStart := Config.Time;
+            Config.StartTime := Config.Time;
           end;
 
           Result.Config := Config;
