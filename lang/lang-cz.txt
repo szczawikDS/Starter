@@ -35,7 +35,8 @@ Label4=Pozorovací úhel:
 Label21=Adresa portu LPT:
 lnTrainLengthCaption=Délka [m]:
 lbTrainMassCaption=Hmotsnost [t]:
-lbMassCaption=Hmotnost [t]:
+lbTrainBruttoCaption=Celková hmotnost [t]:
+lbMassCaption=Gross weight [t]:
 lbVMaxCaption=VMax [km/h]:
 lbLengthCaption=Délka [m]:
 label38=Hustota dýmu - kouře:
@@ -58,7 +59,6 @@ lbCountVehiclesCaption=Počet vozidel:
 [/labels]
 [actions]
 actAddToDepo=Přidej soupravu do skladu
-actReplaceTrain=Změň na soupravu ze skladu
 actRemoveFromDepot=Odstraň soupravu ze skladu
 actAddVehicle=Přidat vozidlo
 actRemoveVehicle=Odebrat vozidlo
@@ -76,15 +76,16 @@ actSummer=Léto
 actAutumn=Podzim
 actWinter=Zima
 actCurrentDate=Aktualní datum
-actCloudless=Jasno
-actPartlyCloudy=Polojasno
-actCloudy=Oblačno
-actFullCloudy=Zataženo
-actLittleRain=Mrholení
-actBigRain=Déšť
 actPasteFromClipboard=Nahraď soupravou ze schovky
 actCopyToClipboard=Zkopíruj soupravu do schovky
 actRemoveTrain=Odstraň všechna vozidla ze soupravy
+actReplaceTrain=Změň na soupravu ze skladu
+actCopyTextureName=Zkopírujte jméno do schránky
+actReloadScenarios=Znovu načíst scenérii
+actOpenTexDir=Otevřená složka obsahující
+actOpenScenarioDir=Otevřená složka obsahující
+actAbout=O Starterovi
+actOpenDepo=Databáze vozidel
 [/actions]
 [tabs]
 tsStart=Start
@@ -111,7 +112,7 @@ chReversed=Otočit
 chFullScreen=Režim celé obrazovky
 chInactivepause=Pozastav, pokud je okno neaktivní
 chPause=Pauza po spuštění
-chSoundenabled=Prostorové zvuky
+chSoundenabled=Zvuky
 chDebugmode=Testovací režim
 chGfxresourcesweep=Odstraň nepoužívané textury z OpenGL
 chGfxresourcemove=Režim uchování paměti
@@ -124,10 +125,9 @@ cbBigThumbnail=Velké miniatury
 chFullphysics=Zvýšená přesnost fyziky
 chEnabletraction=Možnost zlomení pantografu
 chLivetraction=Napájení pouze pod trolejí
-chLoadtraction=Načítej prvky trakční sítě
 chPhysicslog=Zapisuj fyzické parametry vozidel
 chDebuglog=Zapisuj průběh simulace
-chMultiplelogs=Přepisuj předchozí průběhy simulace
+chMultiplelogs=Držet předchozí průběhy simulace
 chInputgamepad=Ignoruj signaly z gamepadu
 chMotionBlur=Rozmazání pohybu
 chEnvmap=Odbicia jako cubemapa
@@ -143,6 +143,7 @@ chRefAmbientTemp=Předehřátá diesel lok. v zimě
 chShowAI=Zobrazit vlaky AI
 chCrashDamage=Poškození kolizí
 chChromaticAberration=Chromatická aberace
+chDebugLogVis=Zobrazit log
 [/checks]
 [combos]
 cbTypes=|Elektrické lokomotivy|Motorové lokomotivy|Parní lokomotivy|Motorové vozy|Elektrické jednotky|Vagony A|Vagony B|Vagony D|Vagony E|Vagony F|Vagony G|Vagony H|Vagony L|Vagony P|Vagony R|Vagony S|Vagony U|Vagony V|Vagony W|Vagony X|Vagony Z|Pracovní vozy|Drezíny|Tramvaje|Automobily|Autobusy|Nákladní automobily|Ostatní
@@ -151,7 +152,7 @@ cbBrakeActing=|Není nastaven|G - nákladní režim|P - osobní režim|R - rychl
 cbBrakeState=|N - brzdič zabržděný|0 - odbržděný, odpuštěný|1 - obržděný, odpuštěný z 10% pravděpodobností
 cbBrakeAdjust=|N - neutralní nastavení|T - prázdný|H - naložen I|F - naložen II
 cbShadowMapSize=|Nízké|Mírné|Vysoké
-cbShadowRange=|Velmi nízký (25m)|Nízký (50m)|Vysoký (150m)|Velmi vysoký (250m)
+cbShadowRange=|Velmi nízký (25m)|Nízký (50m)|Mírný (150m)|Vysoký (250m)|Velmi vysoký (400m)
 cbMouseScale=|Standartní|Nízká|Vysoká|Velmi vysoká
 cbSoundvolume=|Standartní|Nnízká|Vysoká
 cbConvertmodels=|Vypnuté|Nová neprůhled.|S optimalizací|S banány|Rozšířené
@@ -168,6 +169,7 @@ cbSmokeFidelity=|Velmi nízká|Nízká|Vysoká|Velmi vysoká
 cbReflectionsFramerate=|Velmi nízké|Nízké|Vysoké|Velmi vysoké
 cbShadowsCabRange=Vypnuté|Velmi nízké (10m)|Nízké (20m)|Standartní (30m)|Vysoké (50m)|Velmi vysoké (100m)
 cbGfxrenderer=|Plný|Zjednodušený|Starý
+cbOvercast=Náhodné|Jasno|Polojasno|Oblačno|Zataženo|Mrholení|Déšť
 [/combo]
 [checklists]
 clCouplers=|Mechanické|Brzda|Propojení|Vysoké napětí|Přechod|Vzduch 8atm|Ohřev|Blokace
@@ -176,4 +178,5 @@ clCouplers=|Mechanické|Brzda|Propojení|Vysoké napětí|Přechod|Vzduch 8atm|O
 pnlLabelDay=Den v roku
 pnlLabelTemperature=Teplota
 pnlVisibility=Viditelnost
+pnlTime=Čas:
 [/panels]

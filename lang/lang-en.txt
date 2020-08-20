@@ -35,6 +35,7 @@ Label4=View angle:
 Label21=LPT port address:
 lnTrainLengthCaption=Length [m]:
 lbTrainMassCaption=Mass [t]:
+lbTrainBruttoCaption=Gross weight [t]:
 lbMassCaption=Mass [t]:
 lbVMaxCaption=VMax [km/h]:
 lbLengthCaption=Length [m]:
@@ -55,6 +56,8 @@ lbFogNo=Good
 lbTrackCaption=Starting track:
 lbVersionCaption=Version:
 lbCountVehiclesCaption=Count of vehicles:
+lbSearch=Search:
+lbExample= For example, looking for ET22-799, just type 799.
 [/labels]
 [actions]
 actAddToDepo=Add to warehouse
@@ -75,16 +78,16 @@ actSummer=Summer
 actAutumn=Autumn
 actWinter=Winter
 actCurrentDate=Current date
-actCloudless=Cloudless
-actPartlyCloudy=Partly Cloudy
-actCloudy=Cloudy
-actFullCloudy=Full
-actLittleRain=Drizzle
-actBigRain=Shower
 actPasteFromClipboard=Replace from clipboard
 actCopyToClipboard=Copy to clipboard
 actRemoveTrain=Remove all vehicles from train
 actReplaceTrain=Replace by train from warehouse
+actCopyTextureName=Copy name to clipboard
+actReloadScenarios=Reload scenarios
+actOpenTexDir=Open tex directory
+actOpenScenarioDir=Open scenario directory
+actAbout=About Starter
+actOpenDepo=Vehicles base
 [/actions]
 [tabs]
 tsStart=Start
@@ -111,7 +114,7 @@ chReversed=Reversed
 chFullScreen=Full screen mode
 chInactivepause=Inactive pause
 chPause=Pause on start
-chSoundenabled=Surround sounds
+chSoundenabled=Sounds
 chDebugmode=Debugmode
 chGfxresourcesweep=Delete unused textures from OpenGL
 chGfxresourcemove=Memory preservation mode
@@ -124,10 +127,9 @@ cbBigThumbnail=Big thumbnails
 chFullphysics=Full physics
 chEnabletraction=Enable traction
 chLivetraction=Supply only under the catenary
-chLoadtraction=Load traction
 chPhysicslog=Save physics log
 chDebuglog=Save log
-chMultiplelogs=Multiple logs
+chMultiplelogs=Keep previous logs
 chInputgamepad=Ignore gamepad signals
 chMotionBlur=Motion blur
 chEnvmap=Environment map
@@ -143,6 +145,7 @@ chRefAmbientTemp=Refrigerant of ambient temperature
 chShowAI=Show AI trains
 chCrashDamage=Crash damage
 chChromaticAberration=Chromatic aberration
+chDebugLogVis=Show log
 [/checks]
 [combos]
 cbTypy=|Electric locos|Diesel locos|Steam locos|Railcars|EMU|Worktrains|Trolleys|Trams|Waggon|Cars|Coaches|Trucks|Other
@@ -152,7 +155,7 @@ cbBrakeActing=|Brak|G - Cargo|P - Passanger|R - Rapid|R + magn. rail brake|Q - w
 cbBrakeState=|N - On|0 - Off, slack|1 - Off, slack with 10% probability
 cbBrakeAdjust=|N - neutral|T - empty|H - loaded I|F - loaded II
 cbShadowMapSize=|Low|Moderate|High
-cbShadowRange=|Very low (25m)|Low (50m)|High (150m)|Very high (250m)
+cbShadowRange=|Very low (25m)|Low (50m)|Moderate (150m)|High (250m)|Very high (400m)
 cbMouseScale=|Standard|Low|High|Very high
 cbSoundvolume=|Normal|Low|High
 cbConvertmodels=|Off|New Opacity|With optimization|With "bananas"|Extended
@@ -170,6 +173,7 @@ cbReflectionsFramerate=|Very low|Low|High|Very high
 cbShadowsCabRange=Disabled|Very low (10m)|Low (20m)|Standard (30m)|High (50m)|Very high (100m)
 cbGfxrenderer=|Full|Simple (shaders)|Simple|Legacy
 cbTypes=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car L|Car P|Car R|Car S|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|Other
+cbOvercast=Random|Cloudless|Partly Cloudy|Cloudy|Full|Drizzle|Shower
 [/combo]
 [checklists]
 clCouplers=|Mechanical|Brake|Connector|High voltage|Passage|Air 8atm|Heating|Lock
@@ -178,4 +182,5 @@ clCouplers=|Mechanical|Brake|Connector|High voltage|Passage|Air 8atm|Heating|Loc
 pnlLabelDay=Day of the year
 pnlLabelTemperature=Temperature
 pnlVisibility=Visibility
+pnlTime=Time:
 [/panels]
