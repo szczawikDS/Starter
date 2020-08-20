@@ -351,7 +351,7 @@ begin
         Main.chMultiplelogs.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'input.gamepad' then
-        Main.Chinputgamepad.Checked := Params[i].Value = 'yes'
+        Main.Chinputgamepad.Checked := Params[i].Value = 'no'
       else
       if Params[i].Name = 'gfx.postfx.motionblur.enabled' then
         Main.chMotionBlur.Checked := Params[i].Value = 'yes'
@@ -801,7 +801,7 @@ begin
     if Params[i].Name = 'livetraction'                  then SetCheckState(Main.chLivetraction.Checked,i) else
     if Params[i].Name = 'physicslog'                    then SetCheckState(Main.chPhysicslog.Checked,i) else
     if Params[i].Name = 'multiplelogs'                  then SetCheckState(Main.chMultiplelogs.Checked,i) else
-    if Params[i].Name = 'input.gamepad'                 then SetCheckState(Main.chInputgamepad.Checked,i) else
+    if Params[i].Name = 'input.gamepad'                 then SetCheckState(not Main.chInputgamepad.Checked,i) else
     if Params[i].Name = 'gfx.postfx.motionblur.enabled' then SetCheckState(Main.chMotionBlur.Checked,i) else
     if Params[i].Name = 'gfx.envmap.enabled'            then SetCheckState(Main.chEnvmap.Checked,i) else
     if Params[i].Name = 'gfx.smoke'                     then SetCheckState(Main.chSmoke.Checked,i) else

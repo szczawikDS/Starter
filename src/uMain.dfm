@@ -17,6 +17,7 @@ object Main: TMain
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnDeactivate = FormDeactivate
   PixelsPerInch = 96
   TextHeight = 16
   object btnStart: TButton
@@ -284,10 +285,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(06.06.2020)'
+      Hint = '(20.08.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '4.5.0'
+      Caption = '5.0'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -304,7 +305,7 @@ object Main: TMain
       Top = 0
       Width = 48
       Height = 50
-      Hint = '(06.06.2020)'
+      Hint = '(20.08.2020)'
       Align = alLeft
       Alignment = taCenter
       AutoSize = False
@@ -933,91 +934,24 @@ object Main: TMain
                     ParentFont = False
                     Layout = tlCenter
                   end
-                  object tbOvercast: TTrackBar
-                    Left = 0
-                    Top = 16
-                    Width = 254
+                  object cbOvercast: TComboBox
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 19
+                    Width = 248
                     Height = 24
                     Align = alTop
-                    Max = 20
+                    Style = csDropDownList
                     TabOrder = 0
-                    TickMarks = tmBoth
-                    TickStyle = tsNone
-                    OnChange = ConfigChange
-                  end
-                  object Panel24: TPanel
-                    Left = 0
-                    Top = 40
-                    Width = 120
-                    Height = 140
-                    Align = alLeft
-                    BevelOuter = bvNone
-                    ShowCaption = False
-                    TabOrder = 1
-                    object btnCloudless: TButton
-                      Left = 0
-                      Top = 0
-                      Width = 120
-                      Height = 23
-                      Action = actCloudless
-                      Align = alTop
-                      TabOrder = 0
-                    end
-                    object Button2: TButton
-                      Left = 0
-                      Top = 23
-                      Width = 120
-                      Height = 24
-                      Action = actPartlyCloudy
-                      Align = alTop
-                      TabOrder = 1
-                    end
-                    object btnCloudy: TButton
-                      Left = 0
-                      Top = 47
-                      Width = 120
-                      Height = 26
-                      Action = actCloudy
-                      Align = alTop
-                      TabOrder = 2
-                    end
-                    object pnlFullCloudy: TButton
-                      Left = 0
-                      Top = 73
-                      Width = 120
-                      Height = 24
-                      Action = actFullCloudy
-                      Align = alTop
-                      TabOrder = 3
-                    end
-                  end
-                  object Panel28: TPanel
-                    Left = 120
-                    Top = 40
-                    Width = 134
-                    Height = 140
-                    Align = alClient
-                    BevelOuter = bvNone
-                    ShowCaption = False
-                    TabOrder = 2
-                    object btnSmallRain: TButton
-                      Left = 0
-                      Top = 0
-                      Width = 134
-                      Height = 23
-                      Action = actLittleRain
-                      Align = alTop
-                      TabOrder = 0
-                    end
-                    object btnBigRain: TButton
-                      Left = 0
-                      Top = 23
-                      Width = 134
-                      Height = 24
-                      Action = actBigRain
-                      Align = alTop
-                      TabOrder = 1
-                    end
+                    OnChange = cbOvercastChange
+                    Items.Strings = (
+                      'Losowe'
+                      'Bezchmurnie'
+                      'Ma'#322'e zachmurzenie'
+                      'Intensywne'
+                      'Pe'#322'ne'
+                      'Lekkie opady'
+                      'Du'#380'e opady')
                   end
                 end
               end
@@ -1061,6 +995,7 @@ object Main: TMain
           BevelOuter = bvNone
           HideSelection = False
           Indent = 19
+          PopupMenu = pmScenarios
           ReadOnly = True
           RowSelect = True
           ShowLines = False
@@ -1098,48 +1033,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 0
-              object cbTypes: TComboBox
-                Left = 0
-                Top = 0
-                Width = 230
-                Height = 24
-                Align = alTop
-                Style = csDropDownList
-                DoubleBuffered = False
-                DropDownCount = 16
-                ParentDoubleBuffered = False
-                TabOrder = 0
-                OnClick = cbTypesClick
-                Items.Strings = (
-                  'Elektrowozy'
-                  'Spalinowozy'
-                  'Parowozy'
-                  'Szynobusy'
-                  'EZT'
-                  'Wagony A'
-                  'Wagony B'
-                  'Wagony D'
-                  'Wagony E'
-                  'Wagony F'
-                  'Wagony G'
-                  'Wagony H'
-                  'Wagony L'
-                  'Wagony P'
-                  'Wagony R'
-                  'Wagony S'
-                  'Wagony U'
-                  'Wagony V'
-                  'Wagony W'
-                  'Wagony X'
-                  'Wagony Z'
-                  'Robocze'
-                  'Drezyny'
-                  'Tramwaje'
-                  'Samochody'
-                  'Autobusy'
-                  'Ci'#281#380'ar'#243'wki'
-                  'Inne')
-              end
               object cbModels: TComboBox
                 Left = 0
                 Top = 24
@@ -1150,7 +1043,7 @@ object Main: TMain
                 DoubleBuffered = True
                 ItemHeight = 47
                 ParentDoubleBuffered = False
-                TabOrder = 1
+                TabOrder = 0
                 OnChange = cbModelsChange
                 OnClick = cbModelsClick
                 OnDrawItem = cbModelsDrawItem
@@ -1162,8 +1055,9 @@ object Main: TMain
                 Height = 129
                 Align = alClient
                 ParentShowHint = False
+                PopupMenu = pmTextures
                 ShowHint = True
-                TabOrder = 2
+                TabOrder = 1
                 OnClick = lbTexturesClick
                 OnDblClick = lbTexturesDblClick
               end
@@ -1174,7 +1068,7 @@ object Main: TMain
                 Height = 29
                 Action = actAddVehicle
                 Align = alBottom
-                TabOrder = 3
+                TabOrder = 2
               end
               object pnlMini: TPanel
                 Left = 0
@@ -1186,7 +1080,7 @@ object Main: TMain
                 DoubleBuffered = False
                 ParentDoubleBuffered = False
                 ShowCaption = False
-                TabOrder = 4
+                TabOrder = 3
                 object imMini: TImage
                   Tag = -1
                   Left = 0
@@ -1197,6 +1091,74 @@ object Main: TMain
                   AutoSize = True
                   Center = True
                   OnMouseDown = imMiniMouseDown
+                end
+              end
+              object pnlTypes: TPanel
+                Left = 0
+                Top = 0
+                Width = 230
+                Height = 24
+                Align = alTop
+                BevelOuter = bvNone
+                ShowCaption = False
+                TabOrder = 4
+                object btnSearch: TButton
+                  Left = 200
+                  Top = 0
+                  Width = 30
+                  Height = 24
+                  Align = alRight
+                  Caption = 'L'
+                  Font.Charset = SYMBOL_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -13
+                  Font.Name = 'Webdings'
+                  Font.Style = []
+                  ParentFont = False
+                  TabOrder = 0
+                  OnClick = btnSearchClick
+                end
+                object cbTypes: TComboBox
+                  Left = 0
+                  Top = 0
+                  Width = 200
+                  Height = 24
+                  Align = alClient
+                  Style = csDropDownList
+                  DoubleBuffered = False
+                  DropDownCount = 16
+                  ParentDoubleBuffered = False
+                  TabOrder = 1
+                  OnClick = cbTypesClick
+                  Items.Strings = (
+                    'Elektrowozy'
+                    'Spalinowozy'
+                    'Parowozy'
+                    'Szynobusy'
+                    'EZT'
+                    'Wagony A'
+                    'Wagony B'
+                    'Wagony D'
+                    'Wagony E'
+                    'Wagony F'
+                    'Wagony G'
+                    'Wagony H'
+                    'Wagony L'
+                    'Wagony P'
+                    'Wagony R'
+                    'Wagony S'
+                    'Wagony U'
+                    'Wagony V'
+                    'Wagony W'
+                    'Wagony X'
+                    'Wagony Z'
+                    'Robocze'
+                    'Drezyny'
+                    'Tramwaje'
+                    'Samochody'
+                    'Autobusy'
+                    'Ci'#281#380'ar'#243'wki'
+                    'Inne')
                 end
               end
             end
@@ -1440,7 +1402,7 @@ object Main: TMain
                         AlignWithMargins = True
                         Left = 3
                         Top = 3
-                        Width = 170
+                        Width = 140
                         Height = 24
                         Align = alClient
                         Style = csDropDownList
@@ -1467,6 +1429,24 @@ object Main: TMain
                         ParentShowHint = False
                         ShowHint = True
                         TabOrder = 1
+                      end
+                      object btnCopyLoadAll: TButton
+                        AlignWithMargins = True
+                        Left = 149
+                        Top = 3
+                        Width = 24
+                        Height = 24
+                        Action = actCopyLoadToAll
+                        Align = alRight
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clWindowText
+                        Font.Height = -11
+                        Font.Name = 'Symbol'
+                        Font.Style = []
+                        ParentFont = False
+                        ParentShowHint = False
+                        ShowHint = True
+                        TabOrder = 2
                       end
                     end
                   end
@@ -2226,6 +2206,7 @@ object Main: TMain
             Action = actCheckUpdate
             Align = alLeft
             TabOrder = 1
+            OnMouseDown = btnCheckUpdateMouseDown
           end
           object btnKeybard: TButton
             AlignWithMargins = True
@@ -2236,6 +2217,16 @@ object Main: TMain
             Action = actKeyboard
             Align = alLeft
             TabOrder = 2
+          end
+          object btnAbout: TButton
+            AlignWithMargins = True
+            Left = 520
+            Top = 3
+            Width = 153
+            Height = 35
+            Action = actAbout
+            Align = alRight
+            TabOrder = 3
           end
         end
         object pcSettings: TPageControl
@@ -3862,7 +3853,7 @@ object Main: TMain
   object pmTrainsets: TPopupMenu
     OwnerDraw = True
     OnPopup = pmTrainsetsPopup
-    Left = 736
+    Left = 784
     Top = 381
     object miPasteFromClipboard: TMenuItem
       Action = actPasteFromClipboard
@@ -3990,36 +3981,6 @@ object Main: TMain
       Caption = 'Aktualna data'
       OnExecute = actCurrentDateExecute
     end
-    object actCloudless: TAction
-      Category = 'weather'
-      Caption = 'Bezchmurnie'
-      OnExecute = actCloudlessExecute
-    end
-    object actPartlyCloudy: TAction
-      Category = 'weather'
-      Caption = 'Ma'#322'e'
-      OnExecute = actPartlyCloudyExecute
-    end
-    object actCloudy: TAction
-      Category = 'weather'
-      Caption = 'Intensywne'
-      OnExecute = actCloudyExecute
-    end
-    object actFullCloudy: TAction
-      Category = 'weather'
-      Caption = 'Pe'#322'ne'
-      OnExecute = actFullCloudyExecute
-    end
-    object actLittleRain: TAction
-      Category = 'weather'
-      Caption = 'Lekkie'
-      OnExecute = actLittleRainExecute
-    end
-    object actBigRain: TAction
-      Category = 'weather'
-      Caption = 'Intensywne'
-      OnExecute = actBigRainExecute
-    end
     object actOpenVehicleDir: TAction
       Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
     end
@@ -4040,13 +4001,72 @@ object Main: TMain
       Caption = 'Zamie'#324' na sk'#322'ad z magazynu'
       OnExecute = actReplaceTrainExecute
     end
+    object actCopyTextureName: TAction
+      Category = 'menu'
+      Caption = 'Skopiuj nazw'#281' do schowka'
+      OnExecute = actCopyTextureNameExecute
+    end
+    object actReloadScenarios: TAction
+      Category = 'menu'
+      Caption = 'Prze'#322'aduj scenerie'
+      OnExecute = actReloadScenariosExecute
+    end
+    object actOpenTexDir: TAction
+      Category = 'menu'
+      Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
+      OnExecute = actOpenTexDirExecute
+    end
+    object actOpenScenarioDir: TAction
+      Category = 'menu'
+      Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
+      OnExecute = actOpenScenarioDirExecute
+    end
+    object actCopyLoadToAll: TAction
+      Caption = #177
+      Hint = 'Dodaj ten '#322'adunek do wszystkich mo'#380'liwych nast'#281'pnych pojazd'#243'w'
+      OnExecute = actCopyLoadToAllExecute
+      OnUpdate = actCopyLoadToAllUpdate
+    end
+    object actOpenDepo: TAction
+      Category = 'menu'
+      Caption = 'Baza taboru'
+      OnExecute = actOpenDepoExecute
+    end
+    object actAbout: TAction
+      Category = 'menu'
+      Caption = 'O Starterze'
+      OnExecute = actAboutExecute
+    end
   end
   object pmDepot: TPopupMenu
     OnPopup = pmDepotPopup
-    Left = 735
+    Left = 783
     Top = 337
     object miCopyToClipboard2: TMenuItem
       Action = actCopyToClipboard
+    end
+  end
+  object pmTextures: TPopupMenu
+    Left = 108
+    Top = 195
+    object miCopyTexture: TMenuItem
+      Action = actCopyTextureName
+    end
+    object miOpenTexDir: TMenuItem
+      Action = actOpenTexDir
+    end
+    object miDepo: TMenuItem
+      Action = actOpenDepo
+    end
+  end
+  object pmScenarios: TPopupMenu
+    Left = 108
+    Top = 259
+    object miReloadScenario: TMenuItem
+      Action = actReloadScenarios
+    end
+    object miOpenScenarioDir: TMenuItem
+      Action = actOpenScenarioDir
     end
   end
 end

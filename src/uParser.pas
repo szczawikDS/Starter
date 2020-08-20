@@ -32,6 +32,7 @@ type
     class procedure LoadData;
     class procedure SaveDepot;
     class function ChangeConfig(Text:string;const Config:TConfig):string;
+    class procedure ParseScenario(SCN:TScenario);
     procedure ReadDepot;
     constructor Create;
     destructor Destroy; override;
@@ -42,7 +43,6 @@ type
     procedure ParseConfig(var Config: TConfig);
     function ParseTrain: TTrain;
     function ParseVehicle(const TrainSet: Boolean=True): TVehicle;
-    function ParseScenario(const Path: string): TScenario;
     procedure ParseTextures(const Path: string);
     procedure ParseTrainset(var Scenariusz: TScenario;
       const TrainFile: TStringList);
@@ -59,11 +59,12 @@ type
     procedure SkipComment;
     procedure ParseAtmo(var Config: TConfig);
     procedure LoadWeights;
+    function ScenarioName(const Path: string): TScenario;
   end;
 
 implementation
 
-uses SysUtils, uMain, Character, Math
+uses SysUtils, uMain, Character, Math, System.Generics.Collections, System.Generics.Defaults
 {$IFDEF DEBUG},System.Diagnostics{$ENDIF};
 
 function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
@@ -181,7 +182,7 @@ begin
     while (Ilosc = 0) do
     begin
       if Pos('$',SR.Name) <> 1 then
-        Main.Scenarios.Add(ParseScenario(Main.DIR + '\scenery\' + SR.Name));
+        Main.Scenarios.Add(ScenarioName(Main.DIR + 'scenery\' + SR.Name));
       Ilosc := FindNext(SR);
     end;
     FindClose(SR);
@@ -583,7 +584,7 @@ begin
           /////////////////
           if SameText(Lexer.Token, 'time') then
           begin
-            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-5);
+            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-1);
             while not SameText(Lexer.Token, 'endtime') do
               Lexer.NextNoJunk;
             GetToken;
@@ -611,7 +612,7 @@ begin
       Insert(#13#10 + 'time ' + FormatDateTime('h:MM',Config.StartTime) + ' 0 0 endtime ',Result, ConfigPos + 11);
 
       AtmoStr := #13#10 + 'atmo 0 0 0 ' + IntToStr(Config.FogEnd) + ' ' + IntToStr(Config.FogEnd) + ' 0 0 0';
-      AtmoStr := AtmoStr + ' ' + FloatToStr(Config.Overcast * 0.1) + ' endatmo';
+      AtmoStr := AtmoStr + ' ' + FloatToStr(Config.Overcast) + ' endatmo';
       Insert(AtmoStr,Result, ConfigPos + 11);
 
       Insert(#13#10 + Config.Other ,Result, ConfigPos);
@@ -661,46 +662,30 @@ begin
     Lexer.NextNoSpace;
 
     if Lexer.Token <> 'endatmo' then
-      Config.Overcast := Round(StrToFloat(GetToken) * 10);
+      Config.Overcast := StrToFloat(GetToken);
   except
     Main.Errors.Add('B³¹d parsowania wpisu atmo.');
   end;
 end;
 
-function TParser.ParseScenario(const Path:string):TScenario;
+function TParser.ScenarioName(const Path:string):TScenario;
 var
-  Plik, FirstInit, IncFirstInit : TStringList;
-  FirstInitPos : integer;
-  IncludeStr : string;
-  Config : TConfig;
+  Plik : TStringList;
 begin
-  try
-    Result := TScenario.Create;
-    Result.ID := '-';
-    Result.Name := ExtractFileName( Copy(Path,0,Pos('.scn',Path)-1));
+  Result := TScenario.Create;
+  Result.ID := '-';
+  Result.Path := Path;
+  Result.Name := ExtractFileName( Copy(Path,0,Pos('.scn',Path)-1));
 
-    Plik := TStringList.Create;
-    Plik.LoadFromFile(Path);
+  Plik := TStringList.Create;
+  Plik.LoadFromFile(Path);
 
-    FirstInitPos := Pos('FirstInit',Plik.Text);
+  Lexer.Origin := PChar(Plik.Text);
+  Lexer.Init;
 
-    Result.Other.Text := Copy(Plik.Text,0,FirstInitPos-1);
-
-    Config.Day := 0;
-    Config.Temperature := 15;
-    Config.Time := Now;
-    Config.StartTime := StrToTime('10:30');
-
-    FirstInit := TStringList.Create;
-    FirstInit.Text := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
-
-    Lexer.Origin := PChar(Plik.Text);
-    Lexer.Init;
-
-    Lexer.NextNoSpace;
-    While Lexer.TokenID <> ptNull do
-    begin
-      if Lexer.TokenID = ptSlashesComment then
+  While Lexer.TokenID <> ptNull do
+  begin
+    if Lexer.TokenID = ptSlashesComment then
       begin
         if Pos('$n', Lexer.Token) > 0 then Result.Title := Copy(Lexer.Token,6,Lexer.TokenLen)
         else
@@ -714,58 +699,105 @@ begin
       end
       else
         if Lexer.TokenID = ptSlash then
+          SkipComment;
+
+    Lexer.NextNoSpace;
+  end;
+end;
+
+class procedure TParser.ParseScenario(SCN:TScenario);
+var
+  Plik, FirstInit, IncFirstInit : TStringList;
+  FirstInitPos, i : integer;
+  IncludeStr : string;
+  Config : TConfig;
+begin
+  with TParser.Create do
+  try
+    try
+      Plik := TStringList.Create;
+      Plik.LoadFromFile(SCN.Path);
+
+      FirstInitPos := Pos('FirstInit',Plik.Text);
+      SCN.Other.Text := Copy(Plik.Text,0,FirstInitPos-1);
+
+      SCN.Trains.Free;
+      SCN.Trains := TObjectList<TTrain>.Create;
+      SCN.Vehicles.Free;
+      SCN.Vehicles := TObjectList<TVehicle>.Create;
+
+      Config.Day          := 0;
+      Config.Temperature  := 15;
+      Config.Time         := Now;
+      Config.StartTime    := StrToTime('10:30');
+      Config.Overcast     := 0;
+
+      FirstInit := TStringList.Create;
+      FirstInit.Text := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
+
+      Lexer.Origin := PChar(Plik.Text);
+      Lexer.Init;
+
+      Lexer.NextNoSpace;
+      While Lexer.TokenID <> ptNull do
+      begin
+        if Lexer.TokenID = ptSlash then
           SkipComment
         else
         begin
-          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token, 'description')) then
+          if Lexer.TokenID = ptIdentifier then
           begin
-            while not SameText(Lexer.Token, 'enddescription') and (Lexer.TokenID <> ptNull) do
-              Lexer.Next;
-          end;
+            if SameText(Lexer.Token, 'description') then
+              while not SameText(Lexer.Token, 'enddescription') and (Lexer.TokenID <> ptNull) do
+                Lexer.Next;
 
-          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token,'config')) then
-            ParseConfig(Config);
+            if SameText(Lexer.Token,'config') then
+              ParseConfig(Config);
 
-          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token,'atmo')) then
-            ParseAtmo(Config);
+            if SameText(Lexer.Token,'atmo') then
+              ParseAtmo(Config);
 
-          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token,'time')) then
-          begin
-            Lexer.NextNoJunk;
-            Config.Time := StrToTime(GetToken);
-            Config.StartTime := Config.Time;
-          end;
-
-          Result.Config := Config;
-
-          if (Lexer.TokenID = ptIdentifier) and (SameText(Lexer.Token, 'include')) and (Lexer.TokenPos > FirstInitPos) then
-          begin
-            Lexer.NextNoJunk;
-
-            IncludeStr := EmptyStr;
-            while (not Lexer.IsJunk) and (Lexer.TokenID <> ptNull) do
+            if SameText(Lexer.Token,'time') then
             begin
-              IncludeStr := IncludeStr + Lexer.Token;
-              Lexer.Next;
+              Lexer.NextNoJunk;
+              Config.Time := StrToTime(GetToken);
+              Config.StartTime := Config.Time;
             end;
 
-            if FileExists(Main.DIR + '\scenery\' + IncludeStr) then
+            SCN.Config := Config;
+
+            if (SameText(Lexer.Token, 'include')) and (Lexer.TokenPos > FirstInitPos) then
             begin
-              IncFirstInit := TStringList.Create;
-              IncFirstInit.LoadFromFile(Main.DIR + '\scenery\' + IncludeStr);
-              FirstInit.Add(IncFirstInit.Text);
-              IncFirstInit.Free;
+              Lexer.NextNoJunk;
+
+              IncludeStr := EmptyStr;
+              while (not Lexer.IsJunk) and (Lexer.TokenID <> ptNull) do
+              begin
+                IncludeStr := IncludeStr + Lexer.Token;
+                Lexer.Next;
+              end;
+
+              if FileExists(Main.DIR + '\scenery\' + IncludeStr) then
+              begin
+                IncFirstInit := TStringList.Create;
+                IncFirstInit.LoadFromFile(Main.DIR + '\scenery\' + IncludeStr);
+                FirstInit.Add(IncFirstInit.Text);
+                IncFirstInit.Free;
+              end;
             end;
           end;
         end;
 
-      Lexer.NextNoSpace;
-    end;
+        Lexer.NextNoSpace;
+      end;
 
-    ParseTrainset(Result,FirstInit);
-    Plik.Free;
-  except
-    Main.Errors.Add('B³¹d parsowania ' + Path + ', linia: ' + IntToStr(Lexer.LineNumber));
+      ParseTrainset(SCN,FirstInit);
+      Plik.Free;
+    except
+      Main.Errors.Add('B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber));
+    end;
+  finally
+    Free;
   end;
 end;
 
@@ -986,8 +1018,8 @@ begin
             if FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') or
                FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz') then
             begin
-              Tex.Fiz := IsPhysics(Tex.Dir,Tex.Models[y].Model);
-              if Tex.Fiz < 0 then
+              Tex.Models[y].Fiz := IsPhysics(Tex.Dir,Tex.Models[y].Model);
+              if Tex.Models[y].Fiz < 0 then
               begin
                 Physics := TPhysics.Create;
 
@@ -997,13 +1029,13 @@ begin
                 Physics.Name := Tex.Models[y].Model;
                 Physics.Dir  := Tex.Dir;
                 Main.Physics.Add(Physics);
-                Tex.Fiz := Main.Physics.Count-1;
+                Tex.Models[y].Fiz := Main.Physics.Count-1;
               end;
             end
             else
             begin
               Include(Tex.Errors,teNoPhysics);
-              Tex.Fiz := -1;
+              Tex.Models[y].Fiz := -1;
             end;
 
             if not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then

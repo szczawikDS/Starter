@@ -40,9 +40,9 @@ type
     procedure Update(const UpdateFile: TStringList);
   public
     const
-      AppVersion = 25;
-      procedure CheckUpdate;
-      class procedure UpdateProgram;
+      AppVersion = 31;
+      procedure CheckUpdate(const Beta:Bool);
+      class procedure UpdateProgram(const Beta:Bool=False);
   end;
 
 implementation
@@ -66,7 +66,7 @@ begin
     end;
 end;
 
-procedure TfrmUpdater.CheckUpdate;
+procedure TfrmUpdater.CheckUpdate(const Beta:Bool);
 var
   UpdateFile : TStringList;
   Version : Integer;
@@ -76,7 +76,10 @@ begin
     Show;
     Application.ProcessMessages;
 
-    UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/ver.txt');
+    if Beta then
+      UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/ver_beta.txt')
+    else
+      UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/ver.txt');
 
     if TryStrToInt(UpdateFile[0],Version) then
     begin
@@ -126,11 +129,11 @@ begin
   end;
 end;
 
-class procedure TfrmUpdater.UpdateProgram;
+class procedure TfrmUpdater.UpdateProgram(const Beta:Bool=False);
 begin
   with TfrmUpdater.Create(nil) do
   try
-    CheckUpdate;
+    CheckUpdate(Beta);
   finally
     Free;
   end;

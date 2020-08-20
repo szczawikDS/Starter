@@ -12,7 +12,10 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   uStart in 'src\uStart.pas' {frmStart},
-  uUpdater in 'src\uUpdater.pas' {frmUpdater};
+  uUpdater in 'src\uUpdater.pas' {frmUpdater},
+  uSearch in 'src\uSearch.pas' {frmSearch},
+  uDepo in 'src\uDepo.pas' {frmDepo},
+  uAbout in 'src\uAbout.pas' {frmAbout};
 
 {$R *.res}
 

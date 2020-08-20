@@ -59,7 +59,6 @@ type
     sbAttachments: TScrollBox;
     lbTrains: TListBox;
     pnlTextures: TPanel;
-    cbTypes: TComboBox;
     cbModels: TComboBox;
     lbTextures: TListBox;
     Label32: TLabel;
@@ -247,15 +246,6 @@ type
     Panel27: TPanel;
     Panel23: TPanel;
     pnlOvercast: TPanel;
-    tbOvercast: TTrackBar;
-    Panel24: TPanel;
-    Panel28: TPanel;
-    btnCloudless: TButton;
-    Button2: TButton;
-    btnCloudy: TButton;
-    pnlFullCloudy: TButton;
-    btnSmallRain: TButton;
-    btnBigRain: TButton;
     tbTemperature: TTrackBar;
     tbFog: TTrackBar;
     pnlVisibility: TPanel;
@@ -271,12 +261,6 @@ type
     actAutumn: TAction;
     actWinter: TAction;
     actCurrentDate: TAction;
-    actCloudless: TAction;
-    actPartlyCloudy: TAction;
-    actCloudy: TAction;
-    actFullCloudy: TAction;
-    actLittleRain: TAction;
-    actBigRain: TAction;
     tvSCN: TTreeView;
     actOpenVehicleDir: TAction;
     Usuwszystkiepojazdyzeskadu1: TMenuItem;
@@ -364,6 +348,26 @@ type
     lbTrainBruttoCaption: TLabel;
     lbTrainBrutto: TLabel;
     chDebugLogVis: TCheckBox;
+    cbOvercast: TComboBox;
+    pmTextures: TPopupMenu;
+    miCopyTexture: TMenuItem;
+    actCopyTextureName: TAction;
+    pmScenarios: TPopupMenu;
+    miReloadScenario: TMenuItem;
+    actReloadScenarios: TAction;
+    actOpenTexDir: TAction;
+    miOpenTexDir: TMenuItem;
+    actOpenScenarioDir: TAction;
+    miOpenScenarioDir: TMenuItem;
+    pnlTypes: TPanel;
+    btnSearch: TButton;
+    cbTypes: TComboBox;
+    btnCopyLoadAll: TButton;
+    actCopyLoadToAll: TAction;
+    miDepo: TMenuItem;
+    actOpenDepo: TAction;
+    btnAbout: TButton;
+    actAbout: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -425,18 +429,11 @@ type
     procedure actCopyLoadUpdate(Sender: TObject);
     procedure actCopyLoadExecute(Sender: TObject);
     procedure lbTexturesDblClick(Sender: TObject);
-    procedure ConfigChange(Sender: TObject);
     procedure actCurrentDateExecute(Sender: TObject);
     procedure actSpringExecute(Sender: TObject);
     procedure actSummerExecute(Sender: TObject);
     procedure actAutumnExecute(Sender: TObject);
     procedure actWinterExecute(Sender: TObject);
-    procedure actCloudlessExecute(Sender: TObject);
-    procedure actPartlyCloudyExecute(Sender: TObject);
-    procedure actCloudyExecute(Sender: TObject);
-    procedure actFullCloudyExecute(Sender: TObject);
-    procedure actLittleRainExecute(Sender: TObject);
-    procedure actBigRainExecute(Sender: TObject);
     procedure cbModelsDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
     procedure imMiniMouseDown(Sender: TObject; Button: TMouseButton;
@@ -459,6 +456,22 @@ type
     procedure actReplaceTrainExecute(Sender: TObject);
     procedure pcTrainsChange(Sender: TObject);
     procedure chSoundenabledClick(Sender: TObject);
+    procedure cbOvercastChange(Sender: TObject);
+    procedure ConfigChange(Sender: TObject);
+    procedure actCopyTextureNameExecute(Sender: TObject);
+    procedure actReloadScenariosExecute(Sender: TObject);
+    procedure actOpenTexDirExecute(Sender: TObject);
+    procedure actOpenScenarioDirExecute(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    function PaintVehicle(const Tex:TTexture; const ModelID:Integer=0):TBitmap;
+    procedure SelectModel(const Tex: TTexture; const ModelID: Integer=0);
+    procedure FormDeactivate(Sender: TObject);
+    procedure btnCheckUpdateMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure actCopyLoadToAllUpdate(Sender: TObject);
+    procedure actCopyLoadToAllExecute(Sender: TObject);
+    procedure actOpenDepoExecute(Sender: TObject);
+    procedure actAboutExecute(Sender: TObject);
   private
     SCN : TScenario;
     SelTrain : Integer;
@@ -473,7 +486,6 @@ type
     procedure LoadMagazine;
     procedure ChangePange(const PageIndex: Integer);
     procedure DrawVehicle(const Vehicle: TVehicle);
-    function PaintVehicle(const Tex:TTexture; const ModelID:Integer=0):TBitmap;
     function SelImage: TImage;
     function GetSelList: TTrain;
     procedure SetSelList(const Value: TTrain);
@@ -514,7 +526,7 @@ type
     procedure miTrainClick(Sender: TObject);
     function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
     procedure Connect(const LeftVehicle: Integer);
-    procedure SelectModel(const Tex: TTexture; const ModelID: Integer=0);
+
     procedure ReplaceTrain(const Vehicles: TObjectList<TVehicle>);
     function CommonCoupler(C1,C2:Integer):Integer;
     function CheckFlag(Flag:Integer):TFlags;
@@ -527,6 +539,7 @@ type
     procedure NoSelection;
     procedure CheckInstallation;
     function IsVehicleName(const Name: string): Integer;
+    procedure LoadScenery(aSCN: TScenario);
   public
     Scenarios   : TObjectList<TScenario>;
     Textures    : TObjectList<TTexture>;
@@ -549,9 +562,19 @@ var
 
 implementation
 
-uses DateUtils, JPEG, ShellApi, uParser, uUpdater, Clipbrd;
+uses DateUtils, JPEG, ShellApi, uParser, uUpdater, uSearch, uDepo, uAbout, Clipbrd, StrUtils;
 
 {$R *.dfm}
+
+procedure TMain.actAboutExecute(Sender: TObject);
+begin
+  with TfrmAbout.Create(self) do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
 
 procedure TMain.actAddToDepoExecute(Sender: TObject);
 var
@@ -752,16 +775,16 @@ begin
     if LeftCoupler then
     begin
       if Vehicle.Dist >= 0 then
-        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagA
+        Result := Physics[Vehicle.Texture.Models[Vehicle.ModelID].Fiz].AllowedFlagA
       else
-        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagB;
+        Result := Physics[Vehicle.Texture.Models[Vehicle.ModelID].Fiz].AllowedFlagB;
     end
     else
     begin
       if Vehicle.Dist >= 0 then
-        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagB
+        Result := Physics[Vehicle.Texture.Models[Vehicle.ModelID].Fiz].AllowedFlagB
       else
-        Result := Physics[Vehicle.Texture.Fiz].AllowedFlagA;
+        Result := Physics[Vehicle.Texture.Models[Vehicle.ModelID].Fiz].AllowedFlagA;
     end;
   end
   else
@@ -798,24 +821,9 @@ begin
   tbDay.Position := 297;
 end;
 
-procedure TMain.actBigRainExecute(Sender: TObject);
-begin
-  tbOvercast.Position := 15;
-end;
-
 procedure TMain.actCheckUpdateExecute(Sender: TObject);
 begin
   TfrmUpdater.UpdateProgram;
-end;
-
-procedure TMain.actCloudlessExecute(Sender: TObject);
-begin
-  tbOvercast.Position := 0;
-end;
-
-procedure TMain.actCloudyExecute(Sender: TObject);
-begin
-  tbOvercast.Position := 7;
 end;
 
 procedure TMain.actCopyCouplerExecute(Sender: TObject);
@@ -845,9 +853,34 @@ begin
   end;
 end;
 
+procedure TMain.actCopyLoadToAllExecute(Sender: TObject);
+var
+  i : Integer;
+begin
+  for i := SelVehicle + 1 to Train.Vehicles.Count-1 do
+  begin
+    if ContainsText(Physics[Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz].LoadAccepted,cbLoadType.Text) then
+    begin
+      Train.Vehicles[i].LoadType := cbLoadType.Text;
+      Train.Vehicles[i].Loadquantity := StrToFloat(edLoadCount.Text);
+    end;
+  end;
+end;
+
+procedure TMain.actCopyLoadToAllUpdate(Sender: TObject);
+begin
+  actCopyLoadToAll.Enabled := (Train <> nil) and (Train.Vehicles.Count-1 > SelVehicle);
+end;
+
 procedure TMain.actCopyLoadUpdate(Sender: TObject);
 begin
   actCopyLoad.Enabled := SelVehicle > 0;
+end;
+
+procedure TMain.actCopyTextureNameExecute(Sender: TObject);
+begin
+  if lbTextures.Count > 0 then
+    Clipboard.AsText := lbTextures.Items[lbTextures.ItemIndex];
 end;
 
 procedure TMain.actCopyToClipboardExecute(Sender: TObject);
@@ -904,7 +937,7 @@ begin
   chDebuglog.Checked                    := True;
   chDebugLogVis.Checked                 := True;
   chMultiplelogs.Checked                := False;
-  chInputgamepad.Checked                := True;
+  chInputgamepad.Checked                := False;
   chMotionBlur.Checked                  := True;
   chEnvmap.Checked                      := True;
   chSmoke.Checked                       := True;
@@ -952,11 +985,6 @@ begin
   ChangePange(1);
 end;
 
-procedure TMain.actFullCloudyExecute(Sender: TObject);
-begin
-  tbOvercast.Position := 10;
-end;
-
 procedure TMain.actKeyboardExecute(Sender: TObject);
 begin
   Settings.ReadKeyboard;
@@ -964,14 +992,29 @@ begin
   ChangePange(3);
 end;
 
-procedure TMain.actLittleRainExecute(Sender: TObject);
+procedure TMain.actOpenDepoExecute(Sender: TObject);
+var
+  Form : TForm;
 begin
-  tbOvercast.Position := 11;
+  Form := Application.FindComponent('frmDepo') as TForm;
+
+  if Form <> nil then
+    Form.Show
+  else
+    with TfrmDepo.Create(Application) do
+      Show;
 end;
 
-procedure TMain.actPartlyCloudyExecute(Sender: TObject);
+procedure TMain.actOpenScenarioDirExecute(Sender: TObject);
 begin
-  tbOvercast.Position := 3;
+  if tvSCN.Selected <> nil then
+    OpenDir(ExtractFileDir( TScenario(tvSCN.Selected.Data).Path));
+end;
+
+procedure TMain.actOpenTexDirExecute(Sender: TObject);
+begin
+  if lbTextures.Count > 0 then
+    OpenDir(DIR + 'dynamic\' + (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Dir);
 end;
 
 procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
@@ -986,6 +1029,16 @@ end;
 procedure TMain.actPasteFromClipboardUpdate(Sender: TObject);
 begin
   actPasteFromClipboard.Visible := (Clipboard.AsText.Length > 50);
+end;
+
+procedure TMain.actReloadScenariosExecute(Sender: TObject);
+var
+  i : Integer;
+begin
+  for i := 0 to Scenarios.Count-1 do
+    TParser.ParseScenario(Scenarios[i]);
+  if tvSCN.Selected <> nil then
+    LoadScenery(TScenario(tvSCN.Selected.Data));
 end;
 
 procedure TMain.actRemoveFromDepotExecute(Sender: TObject);
@@ -1094,7 +1147,6 @@ begin
   Config := SCN.Config;
   Config.FogEnd       := (tbFog.Max - tbFog.Position) + tbFog.Min;
   Config.Day          := tbDay.Position;
-  Config.Overcast     := tbOvercast.Position;
   Config.Temperature  := tbTemperature.Position;
   Config.Time         := dtTime.Time;
   SCN.Config := Config;
@@ -1141,6 +1193,13 @@ begin
   tbDay.Position := 15;
 end;
 
+procedure TMain.btnCheckUpdateMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if ssRight in Shift then
+    TfrmUpdater.UpdateProgram(True);
+end;
+
 procedure TMain.btnHelpClick(Sender: TObject);
 var
   Param : TParam;
@@ -1152,6 +1211,19 @@ begin
       OpenFile('\readme.html')
     else
       OpenFile('\en-readme.html');
+end;
+
+procedure TMain.btnSearchClick(Sender: TObject);
+var
+  Form : TForm;
+begin
+  Form := Application.FindComponent('frmSearch') as TForm;
+
+  if Form <> nil then
+    Form.Show
+  else
+    with TfrmSearch.Create(Application) do
+      Show;
 end;
 
 procedure TMain.OpenFile(const Path:string);
@@ -1452,6 +1524,26 @@ begin
   end;
 end;
 
+procedure TMain.cbOvercastChange(Sender: TObject);
+var
+  Config : TConfig;
+begin
+  if SCN <> nil then
+  begin
+    Config := SCN.Config;
+    case cbOvercast.ItemIndex of
+      0: Config.Overcast := -1.5;
+      1: Config.Overcast := 0;
+      2: Config.Overcast := 0.3;
+      3: Config.Overcast := 0.7;
+      4: Config.Overcast := 1.0;
+      5: Config.Overcast := 1.1;
+      6: Config.Overcast := 1.5;
+    end;
+    SCN.Config := Config;
+  end;
+end;
+
 procedure TMain.cbTypesClick(Sender: TObject);
 var
   i, y : Integer;
@@ -1698,6 +1790,12 @@ begin
     ShowMessage('Wykryto braki katalogów: ' + Str + '. Mo¿liwa b³êdna instalacja symulatora.');
 end;
 
+procedure TMain.ConfigChange(Sender:TObject);
+begin
+  lbDay.Caption := IntToStr(tbDay.Position);
+  lbTemperature.Caption := IntToStr(tbTemperature.Position) + '°C';
+end;
+
 procedure TMain.FormCreate(Sender: TObject);
 begin
   Errors := TStringList.Create;
@@ -1739,6 +1837,7 @@ begin
   Pages.Pages[1].TabVisible := False;
   Pages.Pages[2].TabVisible := False;
   Pages.ActivePageIndex := 0;
+  pcVehicleInfo.Left := 0;
 
   if tvSCN.Items.Count > 0 then
   begin
@@ -1757,7 +1856,7 @@ var
 begin
   i := 0;
 
-  while i < Scenarios.Count-1 do
+  while i < Scenarios.Count do
   begin
     if Scenarios[i].ID = '-' then
     begin
@@ -1845,6 +1944,7 @@ procedure TMain.AppActivate(Sender: TObject);
 begin
   RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
   RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
+  //RegisterHotKey(Handle, VK_RETURN, 0, VK_RETURN);
   btnStart.Enabled := True;
 end;
 
@@ -1852,7 +1952,13 @@ procedure TMain.AppDeactivate(Sender: TObject);
 begin
   UnRegisterHotKey(Handle, VK_DELETE);
   UnRegisterHotKey(Handle, VK_INSERT);
+  //UnRegisterHotKey(Handle, VK_RETURN);
   btnStart.Enabled := False;
+end;
+
+procedure TMain.FormDeactivate(Sender: TObject);
+begin
+  AppDeactivate(Application);
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
@@ -1923,19 +2029,18 @@ begin
   Accept := (Source is TImage) and ((Source as TImage).Name = 'imMini');
 end;
 
-procedure TMain.tvSCNChange(Sender: TObject; Node: TTreeNode);
+procedure TMain.LoadScenery(aSCN:TScenario);
 var
   i : Integer;
   Mini : TJPEGImage;
   Attachment : TButton;
 begin
-  if not Assigned(tvSCN.Selected) then exit;
-  if tvSCN.Selected.Data = nil then exit;
-
-  if (SCN = TScenario(tvSCN.Selected.Data)) and (Sender <> chOnlyForDriving) then Exit;
   SelTrain := -1;
 
-  SCN := TScenario(tvSCN.Selected.Data);
+  SCN := aSCN;
+
+  if (SCN.Vehicles.Count = 0) and (SCN.Trains.Count = 0) then
+    TParser.ParseScenario(SCN);
 
   while sbAttachments.ControlCount > 0 do
     sbAttachments.Controls[0].Free;
@@ -1956,6 +2061,7 @@ begin
     Mini := TJPEGImage.Create;
     Mini.LoadFromFile(DIR + '\scenery\images\' + SCN.Image);
     imScenario.Picture.Bitmap.Assign(Mini);
+    Mini.Free;
   end;
 
   lbTrains.Items.BeginUpdate;
@@ -1992,11 +2098,33 @@ begin
     tbTemperature.Position := 15;
 
   tbFog.Position := (tbFog.Max - SCN.Config.FogEnd) + tbFog.Min;
-  tbOvercast.Position := Round(SCN.Config.Overcast);
+
+  if SCN.Config.Overcast >= 0 then
+  begin
+    cbOvercast.ItemIndex := 6;
+    if SCN.Config.Overcast < 1.4 then cbOvercast.ItemIndex := 5;
+    if SCN.Config.Overcast < 1.1 then cbOvercast.ItemIndex := 4;
+    if SCN.Config.Overcast < 0.9 then cbOvercast.ItemIndex := 3;
+    if SCN.Config.Overcast < 0.6 then cbOvercast.ItemIndex := 2;
+    if SCN.Config.Overcast < 0.3 then cbOvercast.ItemIndex := 1;
+  end
+  else
+    cbOvercast.ItemIndex := 0;
 
   dtTime.Time := SCN.Config.Time;
 
   lbTrainsClick(self);
+end;
+
+procedure TMain.tvSCNChange(Sender: TObject; Node: TTreeNode);
+var
+  i : Integer;
+  Mini : TJPEGImage;
+  Attachment : TButton;
+begin
+  if (not Assigned(tvSCN.Selected)) or (tvSCN.Selected.Data = nil) then exit;
+  if (SCN = TScenario(tvSCN.Selected.Data)) and (Sender <> chOnlyForDriving) then Exit;
+  LoadScenery(TScenario(tvSCN.Selected.Data));
 end;
 
 procedure TMain.OnMouseDown(Sender: TObject; Button: TMouseButton;
@@ -2349,7 +2477,7 @@ begin
   cbModels.ItemIndex := cbModels.Items.IndexOf(Tex.Models[ModelID].Mini);
   cbModelsClick(self);
 
-  LoadModelData(Tex.Fiz);
+  LoadModelData(Tex.Models[ModelID].Fiz);
   LoadTexData(Tex,ModelID);
 end;
 
@@ -2364,7 +2492,7 @@ begin
     SelectModel(Vehicle.Texture,Vehicle.ModelID);
 
     cbLoadType.Items.Clear;
-    ExtractStrings([','],[],PChar(Physics[Vehicle.Texture.Fiz].LoadAccepted),cbLoadType.Items);
+    ExtractStrings([','],[],PChar(Physics[Vehicle.Texture.Models[Vehicle.ModelID].Fiz].LoadAccepted),cbLoadType.Items);
 
     if not SameText(Vehicle.TypeChk,Vehicle.Texture.Models[Vehicle.ModelID].Model) then
       lbModel.Caption := lbModel.Caption + ' (!)';
@@ -2418,14 +2546,14 @@ begin
   ClearTrainScroll;
   for i := Train.Vehicles.Count-1 downto 0 do
   begin
-    if (Train.Vehicles[i].Texture <> nil) and (Train.Vehicles[i].Texture.Fiz >= 0) then
+    if (Train.Vehicles[i].Texture <> nil) and (Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz >= 0) then
     begin
       if (Train.Vehicles[i].CabOccupancy > coRearDriver) or ((Train.Vehicles[i].Texture.Typ = tyEZT)
       or (Train.Vehicles[i].Texture.Typ = tySZYNOBUS))
       or ((Train.Vehicles[i].Texture.Typ <= tyPAROWOZ) and (Train.Vehicles.Count = 1)) then
       begin
-        TrainLength := TrainLength + Physics[Train.Vehicles[i].Texture.Fiz].Length;
-        TrainMass := TrainMass + Physics[Train.Vehicles[i].Texture.Fiz].Mass;
+        TrainLength := TrainLength + Physics[Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz].Length;
+        TrainMass := TrainMass + Physics[Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz].Mass;
       end;
     end;
 
@@ -2522,17 +2650,14 @@ begin
     Depot[SelTrain] := Value;
 end;
 
-procedure TMain.ConfigChange(Sender:TObject);
-begin
-  lbDay.Caption := IntToStr(tbDay.Position);
-  lbTemperature.Caption := IntToStr(tbTemperature.Position) + '°C';
-end;
-
 procedure TMain.WMHotKey(var Msg: TWMHotKey);
 begin
   if Msg.HotKey = VK_DELETE then btnRemoveVehicle.Click
   else
   if Msg.HotKey = VK_INSERT then btnAddVehicle.Click;
+  //else
+  //if Msg.HotKey = VK_RETURN then btnAddVehicle.Click;
+  
 end;
 
 function TMain.PaintVehicle(const Tex:TTexture; const ModelID:Integer=0):TBitmap;
@@ -2743,13 +2868,12 @@ var
 begin
   if lbTextures.ItemIndex >= 0 then
   begin
-    LoadModelData((lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Fiz);
-
     Tex := lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture;
 
     for i := 0 to Tex.Models.Count-1 do
       if SameText(cbModels.Items[cbModels.ItemIndex],Tex.Models[i].Mini) then
       begin
+        LoadModelData(Tex.Models[i].Fiz);
         PaintVehicle(Tex,i);
         LoadTexData(Tex,i);
         Break;
@@ -2766,7 +2890,7 @@ begin
   if (lbTextures.ItemIndex <> -1) and (Train <> nil) and (Train.Vehicles.Count > 0) then
   begin
     Tex := (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
-    LoadModelData(Tex.Fiz);
+    LoadModelData(Tex.Models[Train.Vehicles[SelVehicle].ModelID].Fiz);
 
     if (SelVehicle >= 0) then
     begin

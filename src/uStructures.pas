@@ -51,17 +51,15 @@ type
     Model : string;
     Mini  : string;
     MiniD : string;
+    Fiz   : Integer;
   end;
 
   TTexture = class
     Plik  : string;
-    Model   : string;
     Models  : TObjectList<TModel>;
     Mini  : string;
-    MiniD : string;
     Opis  : string;
     Dir   : string;
-    Fiz   : Integer;
     Mmd   : Boolean;
     Typ    : TTyp;
     Errors : TTexErrors;
@@ -168,7 +166,7 @@ type
     Temperature : Double;
     FogStart    : Integer;
     FogEnd      : Integer;
-    Overcast    : Integer;
+    Overcast    : Double;
     StartTime   : TTime;
     Time        : TTime;
     Other       : string;
@@ -177,6 +175,7 @@ type
   TScenario = class
   private
     FID          : string;       // $id - dla grupowania scenariuszy
+    FPath        : string;
     FName        : string;
     FTitle       : string;       // $n
     FDesc        : TStringList;  // $d
@@ -193,6 +192,7 @@ type
     procedure SetOther(const Value: TStringList);
   public
     property ID          : string read FID write FID;
+    property Path        : string read FPath write FPath;
     property Name        : string read FName write FName;
     property Title       : string read FTitle write FTitle;         // $n
     property Desc        : TStringList read FDesc write SetDesc;    // $d
