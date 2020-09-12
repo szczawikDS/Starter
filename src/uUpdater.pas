@@ -26,23 +26,26 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, IdIOHandler, IdIOHandlerSocket,
-  IdIOHandlerStack;
+  IdTCPConnection, IdTCPClient, IdHTTP, uIdHTTPProgress, IdIOHandler, IdIOHandlerSocket,
+  IdIOHandlerStack, Vcl.ComCtrls;
 
 type
   TfrmUpdater = class(TForm)
-    Label1: TLabel;
-    HTTP: TIdHTTP;
+    lbUpdate: TLabel;
     SSL: TIdSSLIOHandlerSocketOpenSSL;
+    pbProgress: TProgressBar;
+    procedure FormCreate(Sender: TObject);
   private
     procedure AutoUpdate;
     function Ask(const Text: string): Boolean;
     procedure Update(const UpdateFile: TStringList);
+    procedure IdHTTPProgressOnChange(Sender : TObject);
   public
+    IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 31;
-      procedure CheckUpdate(const Beta:Bool);
-      class procedure UpdateProgram(const Beta:Bool=False);
+      AppVersion = 40;
+      procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
+      class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
 
 implementation
@@ -66,7 +69,7 @@ begin
     end;
 end;
 
-procedure TfrmUpdater.CheckUpdate(const Beta:Bool);
+procedure TfrmUpdater.CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
 var
   UpdateFile : TStringList;
   Version : Integer;
@@ -77,18 +80,21 @@ begin
     Application.ProcessMessages;
 
     if Beta then
-      UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/ver_beta.txt')
+      UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver_beta2.txt')
     else
-      UpdateFile.Text := HTTP.Get('https://www.szczawik.net/maszyna/ver.txt');
+      UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver.txt');
 
     if TryStrToInt(UpdateFile[0],Version) then
     begin
       if Version <= AppVersion then
-        ShowMessage('Posiadasz najnowsz¹ wersjê.')
+      begin
+        if ReturnInfo then
+          ShowMessage('Posiadasz najnowsz¹ wersjê.');
+      end
       else
       begin
         Hide;
-        if Ask('Zaktualizowaæ program?') then
+        if Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
           Update(UpdateFile);
       end;
     end;
@@ -98,42 +104,57 @@ begin
   end;
 end;
 
+procedure TfrmUpdater.FormCreate(Sender: TObject);
+begin
+  IdHTTPProgress := TIdHTTPProgress.Create(Self);
+  IdHTTPProgress.IOHandler := SSL;
+  IdHTTPProgress.Request.Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
+  IdHTTPProgress.Request.UserAgent := 'Mozilla/3.0 (compatible; Indy Library)';
+end;
+
+procedure TfrmUpdater.IdHTTPProgressOnChange(Sender: TObject);
+begin
+  pbProgress.Position := TIdHTTPProgress(Sender).Progress;
+  Application.ProcessMessages;
+end;
+
 procedure TfrmUpdater.Update(const UpdateFile:TStringList);
 var
   Par : TStringList;
-  Stream: TMemoryStream;
   i : Integer;
 begin
+  pbProgress.Visible := True;
   Show;
   Par := TStringList.Create;
-  Stream := TMemoryStream.Create;
   try
+    lbUpdate.Caption := 'Aktualizujê...';
     Main.Cursor := crHourGlass;
     Application.ProcessMessages;
 
     Par.Delimiter := ' ';
     for i := 1 to UpdateFile.Count-1 do
     begin
+      IdHTTPProgress.OnChange := IdHTTPProgressOnChange;
+
       Par.DelimitedText := UpdateFile[i];
-      Stream.Clear;
-      HTTP.Get('https://www.szczawik.net/maszyna/'+Par[0], Stream);
-      Stream.SaveToFile(Main.DIR + '\' + Par[1]);
+      IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[0], Main.DIR + '\' + Par[1]);
     end;
 
     if FileExists(Main.DIR + '\StarterNew.exe') then
       AutoUpdate;
   finally
+    pbProgress.Visible := False;
     Main.Cursor := crDefault;
-    Stream.Free;
     Par.Free;
+    ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.');
   end;
 end;
 
-class procedure TfrmUpdater.UpdateProgram(const Beta:Bool=False);
+class procedure TfrmUpdater.UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
 begin
   with TfrmUpdater.Create(nil) do
   try
-    CheckUpdate(Beta);
+    CheckUpdate(Beta,ReturnInfo);
   finally
     Free;
   end;

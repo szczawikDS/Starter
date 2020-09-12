@@ -15,7 +15,9 @@ uses
   uUpdater in 'src\uUpdater.pas' {frmUpdater},
   uSearch in 'src\uSearch.pas' {frmSearch},
   uDepo in 'src\uDepo.pas' {frmDepo},
-  uAbout in 'src\uAbout.pas' {frmAbout};
+  uAbout in 'src\uAbout.pas' {frmAbout},
+  uIdHTTPProgress in 'components\uIdHTTPProgress.pas',
+  uUART in 'src\uUART.pas' {frmUART};
 
 {$R *.res}
 

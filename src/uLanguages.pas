@@ -22,100 +22,86 @@ unit uLanguages;
 
 interface
 
-type
+uses VCL.Forms;
 
+type
   TLanguages = class
   private
-    //class procedure SaveLanguage; static;
+    //class procedure SaveLanguage(Form:TForm;const Lang:string); static;
   public
     class function LoadLanguages:string;
-    class procedure ChangeLanguage(const Lang:string);
+    class procedure ChangeLanguage(Form:TForm;const Lang: string); overload;
   end;
 
 implementation
 
-uses System.SysUtils, uMain, System.Classes,
-     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst, ExtCtrls;
+uses System.SysUtils, uMain, System.Classes, StrUtils,
+     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst, ExtCtrls, typinfo;
 
 { TLanguages }
 
-class procedure TLanguages.ChangeLanguage(const Lang: string);
+class procedure TLanguages.ChangeLanguage(Form:TForm;const Lang: string);
 var
+  Comp : TComponent;
   LangFile : TStringList;
-  i, s : Integer;
-  Value : string;
-  Component : TComponent;
+  Value, Prop : string;
+  i : Integer;
 begin
   if FileExists(Main.DIR + '\starter\lang-' + Lang + '.txt') then
   begin
     LangFile := TStringList.Create;
     LangFile.LoadFromFile(Main.DIR + '\starter\lang-' + Lang + '.txt');
 
-    s := -1;
-    i := 0;
-    while i < LangFile.Count-1 do
+    while (Pos('[' + Form.Name,LangFile[i]) = 0) and (i < LangFile.Count-1) do
+        Inc(i);
+
+    if Pos('[' + Form.Name,LangFile[i]) > 0 then
     begin
-      if Pos('[/',LangFile[i]) > 0 then
-        s := -1
-      else
-      begin
-        Component := Main.FindComponent(Copy(LangFile[i],0,Pos('=',LangFile[i])-1));
-        Value := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
-      end;
-
-      if (s >= 0) and (Component <> nil) then
-      begin
-        if s = 0 then
-          (Component as TLabel).Caption := Value
-        else
-        if s = 1 then
-          (Component as TAction).Caption := Value
-        else
-        if s = 2 then
-          (Component as TTabSheet).Caption := Value
-        else
-        if s = 3 then
-          (Component as TCheckBox).Caption := Value
-        else
-        if s = 4 then
-        begin
-          (Component as TComboBox).Items.BeginUpdate;
-          (Component as TComboBox).Clear;
-          ExtractStrings(['|'],[],PChar(Value),(Component as TComboBox).Items);
-          (Component as TComboBox).Items.EndUpdate;
-        end
-        else
-        if s = 5 then
-        begin
-          (Component as TCheckListBox).Items.BeginUpdate;
-          (Component as TCheckListBox).Clear;
-          ExtractStrings(['|'],[],PChar(Value),(Component as TCheckListBox).Items);
-          (Component as TCheckListBox).Items.EndUpdate;
-        end
-        else
-        if s = 6 then
-        begin
-          (Component as TPanel).Caption := Value;
-        end;
-      end;
-
-      if LangFile[i] = '[labels]' then s := 0
-      else
-      if LangFile[i] = '[actions]' then s := 1
-      else
-      if LangFile[i] = '[tabs]' then s := 2
-      else
-      if LangFile[i] = '[checks]' then s := 3
-      else
-      if LangFile[i] = '[combos]' then s := 4
-      else
-      if LangFile[i] = '[checklists]' then s := 5
-      else
-      if LangFile[i] = '[panels]' then s := 6;
-
       Inc(i);
+      Form.Caption := LangFile[i];
+      Inc(i);
+
+      while (i < LangFile.Count) and (Pos('=',LangFile[i]) > 0) do
+      begin
+        Comp := Form.FindComponent(Copy(LangFile[i],0,Pos('.',LangFile[i])-1));
+        if Comp <> nil then
+        begin
+          Prop := Copy(LangFile[i],Pos('.',LangFile[i])+1,PosEx('=',LangFile[i],Pos('.',LangFile[i])+1) - Pos('.',LangFile[i])-1  );
+          if Prop = 'Items.Text' then
+          begin
+            if Comp.ClassType = TComboBox then
+            begin
+              Value := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
+              (Comp as TComboBox).Items.Text := StringReplace(Value,'|',#13#10,[rfReplaceAll]);
+            end
+            else
+            if Comp.ClassType = TListBox then
+            begin
+              Value := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
+              (Comp as TListBox).Items.Text := StringReplace(Value,'|',#13#10,[rfReplaceAll]);
+            end
+            else
+            if Comp.ClassType = TRadioGroup then
+            begin
+              Value := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
+              (Comp as TRadioGroup).Items.Text := StringReplace(Value,'|',#13#10,[rfReplaceAll]);
+            end
+            else
+            if Comp.ClassType = TCheckListBox then
+            begin
+              Value := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
+              (Comp as TCheckListBox).Items.Text := StringReplace(Value,'|',#13#10,[rfReplaceAll]);
+            end
+          end
+          else
+          begin
+            Value := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
+            SetStrProp(Comp,Prop,Value);
+          end;
+        end;
+        Inc(i);
+      end;
     end;
-    LangFile.Free;
   end;
 end;
 
@@ -135,67 +121,69 @@ begin
   end;
 end;
 
-{class procedure TLanguages.SaveLanguage;
+{class procedure TLanguages.SaveLanguage(Form:TForm;const Lang:string);
 var
-  LangFile : TStringList;
-  i, y : Integer;
-  str : string;
+  i : integer;
+  sl : tstringlist;
 begin
-  LangFile := TStringList.Create;
-  LangFile.Add('[labels]');
-  for i := 0 to Main.ComponentCount -1 do
+  sl := tstringlist.Create;
+
+  for i := 0 to Form.ComponentCount-1 do
   begin
-    if Main.Components[i].ClassType = TLabel then
-      LangFile.Add(Main.Components[i].Name + '=' + (Main.Components[i] as TLabel).Caption  );
-  end;
-  LangFile.Add('[/labels]');
-  LangFile.Add('[actions]');
-  for i := 0 to Main.ComponentCount -1 do
-  begin
-    if Main.Components[i].ClassType = TAction then
-      LangFile.Add(Main.Components[i].Name + '=' + (Main.Components[i] as TAction).Caption);
-  end;
-  LangFile.Add('[/actions]');
-  LangFile.Add('[tabs]');
-  for i := 0 to Main.ComponentCount -1 do
-  begin
-    if Main.Components[i].ClassType = TTabSheet then
-      LangFile.Add(Main.Components[i].Name + '=' + (Main.Components[i] as TTabSheet).Caption);
-  end;
-  LangFile.Add('[/tabs]');
-  LangFile.Add('[checks]');
-  for i := 0 to Main.ComponentCount -1 do
-  begin
-    if Main.Components[i].ClassType = TCheckBox then
-      LangFile.Add(Main.Components[i].Name + '=' + (Main.Components[i] as TCheckBox).Caption);
-  end;
-  LangFile.Add('[/checks]');
-  LangFile.Add('[combos]');
-  for i := 0 to Main.ComponentCount -1 do
-  begin
-    if Main.Components[i].ClassType = TComboBox then
+    if Form.Components[i].ClassType = TLabel then
     begin
-      str := Main.Components[i].Name + '=';
-      for y := 0 to (Main.Components[i] as TComboBox).Items.Count-1 do
-        str := str + '|' + (Main.Components[i] as TComboBox).Items[y];
-      LangFile.Add(str);
+      sl.Add( Form.Components[i].Name + '.Caption=' + (Form.Components[i] as TLabel).Caption);
+      if (Form.Components[i] as TLabel).Hint.Length > 0 then
+        sl.Add( Form.Components[i].Name + '.Hint=' + (Form.Components[i] as TLabel).Hint);
+    end;
+    if Form.Components[i].ClassType = TAction then
+    begin
+      sl.Add( Form.Components[i].Name + '.Caption=' + (Form.Components[i] as TAction).Caption);
+      if (Form.Components[i] as TAction).Hint.Length > 0 then
+        sl.Add( Form.Components[i].Name + '.Hint=' + (Form.Components[i] as TAction).Hint);
+    end;
+    if Form.Components[i].ClassType = TTabSheet then
+    begin
+      sl.Add( Form.Components[i].Name + '.Caption=' + (Form.Components[i] as TTabSheet).Caption);
+    end;
+    if Form.Components[i].ClassType = TCheckBox then
+    begin
+      sl.Add( Form.Components[i].Name + '.Caption=' + (Form.Components[i] as TCheckBox).Caption);
+      if (Form.Components[i] as TCheckBox).Hint.Length > 0 then
+        sl.Add( Form.Components[i].Name + '.Hint=' + (Form.Components[i] as TCheckBox).Hint);
+    end;
+    if Form.Components[i].ClassType = TComboBox then
+    begin
+      if (Form.Components[i] as TComboBox).Items.Count > 0 then
+        sl.Add( Form.Components[i].Name + '.Items.Text=' + StringReplace((Form.Components[i] as TComboBox).Items.Text,#13#10,'|',[rfReplaceAll]));
+    end;
+    if Form.Components[i].ClassType = TCheckListBox then
+    begin
+      if (Form.Components[i] as TCheckListBox).Items.Count > 0 then
+        sl.Add( Form.Components[i].Name + '.Items.Text=' + StringReplace((Form.Components[i] as TCheckListBox).Items.Text,#13#10,'|',[rfReplaceAll]));
+    end;
+    if Form.Components[i].ClassType = TRadioGroup then
+    begin
+      if (Form.Components[i] as TRadioGroup).Items.Count > 0 then
+        sl.Add( Form.Components[i].Name + '.Items.Text=' + StringReplace((Form.Components[i] as TRadioGroup).Items.Text,#13#10,'|',[rfReplaceAll]));
+    end;
+    if Form.Components[i].ClassType = TPanel then
+    begin
+      if ((Form.Components[i] as TPanel).ShowCaption) and (Length((Form.Components[i] as TPanel).Caption)>0) then
+      begin
+        sl.Add( Form.Components[i].Name + '.Caption=' + (Form.Components[i] as TPanel).Caption);
+        if (Form.Components[i] as TPanel).Hint.Length > 0 then
+          sl.Add( Form.Components[i].Name + '.Hint=' + (Form.Components[i] as TPanel).Hint);
+      end;
+    end;
+    if Form.Components[i].ClassType = TListBox then
+    begin
+      if (Form.Components[i] as TListBox).Items.Count > 0 then
+        sl.Add( Form.Components[i].Name + '.Items.Text=' + StringReplace((Form.Components[i] as TListBox).Items.Text,#13#10,'|',[rfReplaceAll]));
     end;
   end;
-  LangFile.Add('[/combo]');
-  LangFile.Add('[checklists]');
-  for i := 0 to Main.ComponentCount -1 do
-  begin
-    if Main.Components[i].ClassType = TCheckListBox then
-    begin
-      str := Main.Components[i].Name + '=';
-      for y := 0 to (Main.Components[i] as TCheckListBox).Items.Count-1 do
-        str := str + '|' + (Main.Components[i] as TCheckListBox).Items[y];
-      LangFile.Add(str);
-    end;
-  end;
-  LangFile.Add('[/checklists]');
-  LangFile.SaveToFile(Main.DIR + '\starter\lang-pl.txt');
-  LangFile.Free;
+
+  sl.SaveToFile(Main.DIR + '\starter\' + Lang + '.txt');
 end;}
 
 end.

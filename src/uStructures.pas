@@ -31,7 +31,7 @@ type
 
 
   TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
-          tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
+          tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
           tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
           tyINNE, tyUNKNOWN);
 
@@ -57,7 +57,6 @@ type
   TTexture = class
     Plik  : string;
     Models  : TObjectList<TModel>;
-    Mini  : string;
     Opis  : string;
     Dir   : string;
     Mmd   : Boolean;

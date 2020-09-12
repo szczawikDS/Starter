@@ -3,7 +3,7 @@ object frmUpdater: TfrmUpdater
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Aktualizator'
-  ClientHeight = 79
+  ClientHeight = 61
   ClientWidth = 269
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,32 +13,29 @@ object frmUpdater: TfrmUpdater
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 104
-    Top = 32
-    Width = 64
-    Height = 13
-    Caption = 'Aktualizuj'#281'...'
+  object lbUpdate: TLabel
+    Left = 0
+    Top = 0
+    Width = 269
+    Height = 38
+    Align = alClient
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'Sprawdzam aktualizacje...'
+    Layout = tlCenter
   end
-  object HTTP: TIdHTTP
-    IOHandler = SSL
-    AllowCookies = True
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = -1
-    Request.ContentRangeStart = -1
-    Request.ContentRangeInstanceLength = -1
-    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    Request.Ranges.Units = 'bytes'
-    Request.Ranges = <>
-    HTTPOptions = [hoForceEncodeParams]
-    Left = 208
-    Top = 24
+  object pbProgress: TProgressBar
+    AlignWithMargins = True
+    Left = 3
+    Top = 41
+    Width = 263
+    Height = 17
+    Align = alBottom
+    TabOrder = 0
+    Visible = False
   end
   object SSL: TIdSSLIOHandlerSocketOpenSSL
     MaxLineAction = maException

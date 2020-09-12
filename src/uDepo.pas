@@ -64,6 +64,8 @@ type
     Panel8: TPanel;
     edModel: TEdit;
     cbModel: TCheckBox;
+    pmMenu: TPopupMenu;
+    miOpenDir: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure sgModelsClick(Sender: TObject);
     procedure lbTypesClick(Sender: TObject);
@@ -78,13 +80,18 @@ type
     procedure FormShow(Sender: TObject);
     procedure edModelChange(Sender: TObject);
     procedure edStationChange(Sender: TObject);
+    procedure sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+      State: TGridDrawState);
+    procedure miOpenDirClick(Sender: TObject);
+    procedure pmMenuPopup(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     const
-      TYPES : array[0..30] of String = (
+      TYPES : array[0..31] of String = (
         ('Elektrowóz'), ('Spalinowóz'), ('Parowóz'), ('Szynobus'), ('EZT'), ('Roboczy'),
         ('Drezyna'), ('Tramwaj'), ('Wagon A'), ('Wagon B'), ('Wagon D'), ('Wagon E'),
-        ('Wagon F'), ('Wagon G'), ('Wagon H'), ('Wagon L'), ('Wagon P'), ('Wagon R'),
+        ('Wagon F'), ('Wagon G'), ('Wagon H'), ('Wagon I'), ('Wagon L'), ('Wagon P'), ('Wagon R'),
         ('Wagon S'), ('Wagon U'), ('Wagon V'), ('Wagon W'), ('Wagon X'), ('Wagon Z'),
         ('Ciê¿arówka'), ('Autobus'), ('Samochód'), ('Cz³owiek'), ('Zwierzê'), ('Inny'), ('Nieznany')
         );
@@ -99,7 +106,7 @@ var
 
 implementation
 
-uses uMain, strUtils;
+uses uMain, strUtils, uLanguages;
 
 {$R *.dfm}
 
@@ -150,20 +157,25 @@ begin
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.FormCreate(Sender: TObject);
-var
-  i, y, z, l : Integer;
-  f : Boolean;
+procedure TfrmDepo.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FreeAndNil(self);
+end;
+
+procedure TfrmDepo.FormCreate(Sender: TObject);
+begin
+  TLanguages.ChangeLanguage(Self,Main.Lang);
+
   sgDepo.Cells[0,0] := 'Lp.';
   sgDepo.Cells[1,0] := 'Tekstura';
   sgDepo.Cells[2,0] := 'Miniatura';
-  sgDepo.Cells[3,0] := 'Model';
-  sgDepo.Cells[4,0] := 'Operator';
-  sgDepo.Cells[5,0] := 'Stacja';
-  sgDepo.Cells[6,0] := 'Data rewizji';
-  sgDepo.Cells[7,0] := 'Autor';
-  sgDepo.Cells[8,0] := 'Zdjêcia';
+  sgDepo.Cells[3,0] := 'Podgl¹d';
+  sgDepo.Cells[4,0] := 'Model';
+  sgDepo.Cells[5,0] := 'Operator';
+  sgDepo.Cells[6,0] := 'Stacja';
+  sgDepo.Cells[7,0] := 'Data rewizji';
+  sgDepo.Cells[8,0] := 'Autor';
+  sgDepo.Cells[9,0] := 'Zdjêcia';
 
   sgModels.Cells[0,0] := 'Lp.';
   sgModels.Cells[1,0] := 'Kategoria';
@@ -255,6 +267,40 @@ begin
   sgModelsClick(self);
 end;
 
+procedure TfrmDepo.miOpenDirClick(Sender: TObject);
+begin
+  Main.OpenDir(Main.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
+end;
+
+procedure TfrmDepo.pmMenuPopup(Sender: TObject);
+begin
+  miOpenDir.Visible := sgModels.RowCount > 1;
+end;
+
+procedure TfrmDepo.sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer;
+  Rect: TRect; State: TGridDrawState);
+var
+  ACanvas : TCanvas;
+  B : TBitmap;
+begin
+  if (ACol = 3) and (ARow > 0) then
+  begin
+    aCanvas := (Sender as TStringGrid).Canvas;
+    aCanvas.FillRect(Rect);
+
+    B := TBitmap.Create;
+
+
+
+    if sgDepo.Cells[2,ARow].Length > 0 then
+      B.LoadFromFile(Main.DIR + '\textures\mini\' + sgDepo.Cells[2,ARow] + '.bmp')
+    else
+      B.LoadFromFile(Main.DIR + '\textures\mini\other.bmp');
+
+    aCanvas.Draw(Rect.Left, Rect.Top, B);
+  end;
+end;
+
 procedure TfrmDepo.sgModelsClick(Sender: TObject);
 var
   i, y : Integer;
@@ -269,13 +315,19 @@ begin
           sgDepo.RowCount := sgDepo.RowCount + 1;
           sgDepo.Cells[0,sgDepo.RowCount-1] := IntToStr(sgDepo.RowCount-1) + '.';
           sgDepo.Cells[1,sgDepo.RowCount-1] := Main.Textures[i].Plik;
-          sgDepo.Cells[2,sgDepo.RowCount-1] := Main.Textures[i].Models[y].MiniD;
-          sgDepo.Cells[3,sgDepo.RowCount-1] := Main.Textures[i].Models[y].Model;
-          sgDepo.Cells[4,sgDepo.RowCount-1] := Main.Textures[i].Owner;
-          sgDepo.Cells[5,sgDepo.RowCount-1] := Main.Textures[i].Station;
-          sgDepo.Cells[6,sgDepo.RowCount-1] := Main.Textures[i].Revision;
-          sgDepo.Cells[7,sgDepo.RowCount-1] := Main.Textures[i].Author;
-          sgDepo.Cells[8,sgDepo.RowCount-1] := Main.Textures[i].Photos;
+
+          if FileExists(Main.DIR + '\textures\mini\' + Main.Textures[i].Models[y].MiniD + '.bmp') then
+            sgDepo.Cells[2,sgDepo.RowCount-1] := Main.Textures[i].Models[y].MiniD
+          else
+            if FileExists(Main.DIR + '\textures\mini\' + Main.Textures[i].Models[y].Mini + '.bmp') then
+              sgDepo.Cells[2,sgDepo.RowCount-1] := Main.Textures[i].Models[y].Mini;
+
+          sgDepo.Cells[4,sgDepo.RowCount-1] := Main.Textures[i].Models[y].Model;
+          sgDepo.Cells[5,sgDepo.RowCount-1] := Main.Textures[i].Owner;
+          sgDepo.Cells[6,sgDepo.RowCount-1] := Main.Textures[i].Station;
+          sgDepo.Cells[7,sgDepo.RowCount-1] := Main.Textures[i].Revision;
+          sgDepo.Cells[8,sgDepo.RowCount-1] := Main.Textures[i].Author;
+          sgDepo.Cells[9,sgDepo.RowCount-1] := Main.Textures[i].Photos;
         end;
     end;
   if sgDepo.RowCount > 1 then

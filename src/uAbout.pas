@@ -37,6 +37,9 @@ type
     Label8: TLabel;
     Label9: TLabel;
     Label5: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,6 +51,14 @@ var
 
 implementation
 
+uses uMain, uLanguages;
+
 {$R *.dfm}
+
+procedure TfrmAbout.FormCreate(Sender: TObject);
+begin
+  if Main.Lang <> 'pl' then
+    TLanguages.ChangeLanguage(Self,Main.Lang);
+end;
 
 end.

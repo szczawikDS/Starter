@@ -27,6 +27,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure lbListDblClick(Sender: TObject);
     procedure cbSearchTypeChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     VehicleType : set of TTyp;
@@ -41,7 +42,7 @@ var
 
 implementation
 
-uses uMain, StrUtils;
+uses uMain, StrUtils, uLanguages;
 
 {$R *.dfm}
 
@@ -87,7 +88,6 @@ end;
 procedure TfrmSearch.edTextChange(Sender: TObject);
 var
   i, y : Integer;
-  s : string;
   Rev : TDate;
 begin
   lbList.Items.BeginUpdate;
@@ -138,6 +138,13 @@ end;
 procedure TfrmSearch.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FreeAndNil(self);
+end;
+
+procedure TfrmSearch.FormCreate(Sender: TObject);
+begin
+  if Main.Lang <> 'pl' then
+    TLanguages.ChangeLanguage(Self,Main.Lang);
+  cbSearchType.ItemIndex := 0;
 end;
 
 procedure TfrmSearch.lbListClick(Sender: TObject);

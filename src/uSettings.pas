@@ -59,7 +59,7 @@ type
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
 
-    procedure ReadOwnSettings;
+    procedure ReadOwnSettings(const FirstRun:boolean=False);
     procedure ReadSettings;
     procedure ReadKeyboard;
     procedure SaveSettings;
@@ -72,7 +72,7 @@ type
 
 implementation
 
-uses uMain, Classes, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs;
+uses uMain, Classes, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs, DateUtils, uUpdater;
 
 constructor TSettings.Create;
 begin
@@ -419,28 +419,6 @@ begin
           Main.chDebugLogVis.Checked := True;
       end
       else
-      ///////////////////////////////// UART ///////////////////////////////////
-      {if Params[i].Name = 'uart' then
-        Main.edUART.Text := Params[i].Value
-      else
-      if Params[i].Name = 'uarttune' then
-        Main.edUARTtune.Text := Params[i].Value
-      else
-      if Params[i].Name = 'uartdebug' then
-        Main.chUARTDebug.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'uartfeature' then
-      begin
-        Par := TStringList.Create;
-        ExtractStrings([' '],[],PChar(Params[i].Value),Par);
-        Main.chMainenable.Checked   := Par[0] = 'yes';
-        Main.chScndenable.Checked   := Par[1] = 'yes';
-        Main.chTrainenable.Checked  := Par[2] = 'yes';
-        Main.chLocalenable.Checked  := Par[3] = 'yes';
-        Par.Free;
-      end
-      else}
-      //////////////////////////////////////////////////////////////////////////
       if Params[i].Name = 'mousescale' then
       begin
         Par := TStringList.Create;
@@ -460,6 +438,7 @@ begin
       begin
         Main.cbFeedbackmode.ItemIndex := StrToInt(Params[i].Value);
         Main.pnlFeedbackport.Visible := Main.cbFeedbackmode.ItemIndex = 3;
+        Main.actCOM.Visible := Main.cbFeedbackmode.ItemIndex = 5;
       end
       else
       if Params[i].Name = 'feedbackport' then Main.edFeedbackport.Text := Params[i].Value else
@@ -477,6 +456,27 @@ begin
         if StrToFloat(Params[i].Value) < 0.6 then Main.cbRadioVolume.ItemIndex := 1;
         if StrToFloat(Params[i].Value) > 0.5 then Main.cbRadioVolume.ItemIndex := 0;
         if StrToFloat(Params[i].Value) = 1.0 then Main.cbRadioVolume.ItemIndex := 2;
+      end
+      else
+      if Params[i].Name = 'sound.volume.vehicle' then
+      begin
+        if StrToFloat(Params[i].Value) < 0.7 then Main.cbVehiclesSounds.ItemIndex := 2;
+        if StrToFloat(Params[i].Value) < 0.4 then Main.cbVehiclesSounds.ItemIndex := 1;
+        if StrToFloat(Params[i].Value) > 0.6 then Main.cbVehiclesSounds.ItemIndex := 0;
+      end
+      else
+      if Params[i].Name = 'sound.volume.positional' then
+      begin
+        if StrToFloat(Params[i].Value) < 0.7 then Main.cbPositionalsSounds.ItemIndex := 2;
+        if StrToFloat(Params[i].Value) < 0.4 then Main.cbPositionalsSounds.ItemIndex := 1;
+        if StrToFloat(Params[i].Value) > 0.6 then Main.cbPositionalsSounds.ItemIndex := 0;
+      end
+      else
+      if Params[i].Name = 'sound.volume.ambient' then
+      begin
+        if StrToFloat(Params[i].Value) > 0.6 then Main.cbGlobalSounds.ItemIndex := 0;
+        if StrToFloat(Params[i].Value) > 0.9 then Main.cbGlobalSounds.ItemIndex := 2;
+        if StrToFloat(Params[i].Value) < 0.7 then Main.cbGlobalSounds.ItemIndex := 1;
       end
       else
       if Params[i].Name = 'gfx.reflections.framerate' then
@@ -634,45 +634,82 @@ begin
   if Main.WindowState = wsMaximized then
     Settings.Add('WindowMaximized=yes');
 
+  Settings.Add('Battery=' + Main.cbBattery.ItemIndex.ToString);
+  Settings.Add('LastUpdate=' + IntToStr(Main.lbVersion.Tag));
+  Settings.Add('UpdateInterval=' + Main.edUpdateInterval.Text);
+
   if ForceDirectories(Main.DIR + '\starter') then
     Settings.SaveToFile(Main.DIR + '\starter\starter.ini');
   Settings.Free;
 end;
 
-procedure TSettings.ReadOwnSettings;
+procedure TSettings.ReadOwnSettings(const FirstRun:boolean=False);
 var
   Settings : TStringList;
   ParName, ParValue : string;
   i : Integer;
 begin
-  LoadEXE;
+  try
+    LoadEXE;
 
-  if FileExists(Main.DIR + '\starter\starter.ini') then
-  begin
-    Settings := TStringList.Create;
-    Settings.LoadFromFile(Main.DIR + '\starter\starter.ini');
-    for i := 0 to Settings.Count-1 do
+    if FileExists(Main.DIR + '\starter\starter.ini') then
     begin
-      ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
-      ParValue := Copy(Settings[i],Pos('=',Settings[i])+1,Settings[i].Length);
+      Settings := TStringList.Create;
+      Settings.LoadFromFile(Main.DIR + '\starter\starter.ini');
+      for i := 0 to Settings.Count-1 do
+      begin
+        ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
+        ParValue := Copy(Settings[i],Pos('=',Settings[i])+1,Settings[i].Length);
 
-      if SameText(ParName,'lang') then
-        TLanguages.ChangeLanguage(ParValue)
-      else if SameText(ParName,'AutoClosingApp') then
-        Main.cbCloseApp.Checked := ParValue = 'yes'
-      else if SameText(ParName,'MiniPic') then
-        Main.cbBigThumbnail.Checked := ParValue = 'yes'
-      else if SameText(ParName,'exe') then
-        Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
-      else if SameText(ParName,'WindowMaximized') then
-        if ParValue = 'yes' then Main.WindowState := wsMaximized;
+        if SameText(ParName,'lang') then
+        begin
+          Main.Lang := ParValue;
+          if not ((FirstRun) and (ParValue = 'pl')) then
+            TLanguages.ChangeLanguage(Main,ParValue);
+        end
+        else if SameText(ParName,'AutoClosingApp') then
+          Main.cbCloseApp.Checked := ParValue = 'yes'
+        else if SameText(ParName,'MiniPic') then
+          Main.cbBigThumbnail.Checked := ParValue = 'yes'
+        else if SameText(ParName,'exe') then
+          Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
+        else if SameText(Parname,'Battery') then
+          Main.cbBattery.ItemIndex := StrToInt(ParValue)
+        else
+        if SameText(ParName,'WindowMaximized') then
+         begin
+           if ParValue = 'yes' then Main.WindowState := wsMaximized;
+         end
+        else if SameText(ParName,'LastUpdate') then
+          Main.lbVersion.Tag := StrToInt(ParValue)
+        else if SameText(ParName,'UpdateInterval') then
+          Main.edUpdateInterval.Value := StrToInt(ParValue);
+      end;
+
+      Settings.Free;
     end;
 
-    Settings.Free;
-  end;
+    if Main.lbVersion.Tag < DaysBetween(Now,0)- Abs(StrToInt(Main.edUpdateInterval.Text))+1 then
+    begin
+      if StrToInt(Main.edUpdateInterval.Text) >= 0 then
+        TfrmUpdater.UpdateProgram(False,False)
+      else
+        TfrmUpdater.UpdateProgram(True,False);
 
-  if Main.cbEXE.ItemIndex < 0 then
-    Main.cbEXE.ItemIndex := 0;
+      Main.lbVersion.Tag := DaysBetween(Now,0);
+    end;
+
+    if Main.cbEXE.ItemIndex < 0 then
+      Main.cbEXE.ItemIndex := 0;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
+                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
+      Main.Errors.Add('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
+                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
+    end;
+  end;
 end;
 
 procedure TSettings.AddParam(const Name:String;const Desc:string);
@@ -742,6 +779,9 @@ begin
   FindParameter('friction','(1.0) mno¿nik dla wspó³czynnika tarcia');
   FindParameter('fieldofview','(45) 15-75 k¹t widzenia kamery w pionie');
   FindParameter('sound.volume','globalna g³oœnoœæ dŸwiêków');
+  FindParameter('sound.volume.vehicle','wzgledna glosnosc dzwiekow wydawanych przez pojazdy, gdzie X jest mnoznikiem w przedziale 0-1');
+  FindParameter('sound.volume.positional','wzgledna glosnosc pozycjonowanych dzwiekow emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
+  FindParameter('sound.volume.ambient','wzgledna glosnosc dzwiekow globalnych (o ujemnym zakresie) emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
   FindParameter('maxtexturesize','(16384) skalowanie zbyt du¿ych tekstur do podanego rozmiaru');
   FindParameter('multisampling','(2) wyg³adzanie krawêdzi (poprawia obraz, ale obni¿a FPS): 0 - wy³aczone, 1 - dwukrotne, 2 - czterokrotne, 3 - oœmiokrotne');
   FindParameter('convertmodels','(135) tworzenie plików modeli binarnych E3D z T3D: 0 - wy³¹czone, +1 - nowe Opacity, +2 - z optymalizacj¹, +4 - z bananami, +128 - rozszerzony pod exe C++, niekompatybilny ze starymi');
@@ -759,7 +799,7 @@ end;
 procedure TSettings.SaveSettings;
 var
   Settings, Par : TStringList;
-  i, Value : Integer;
+  i, Value, l : Integer;
 begin
   SaveOwnSettings;
   Settings := TStringList.Create;
@@ -851,6 +891,33 @@ begin
       case Main.cbRadioVolume.ItemIndex of
         0: Params[i].Value := '0.6';
         1: Params[i].Value := '0.3';
+        2: Params[i].Value := '1.0';
+      end;
+    end
+    else
+    if Params[i].Name = 'sound.volume.vehicle' then
+    begin
+      case Main.cbVehiclesSounds.ItemIndex of
+        0: Params[i].Value := '1.0';
+        1: Params[i].Value := '0.3';
+        2: Params[i].Value := '0.6';
+      end;
+    end
+    else
+    if Params[i].Name = 'sound.volume.positional' then
+    begin
+      case Main.cbPositionalsSounds.ItemIndex of
+        0: Params[i].Value := '1.0';
+        1: Params[i].Value := '0.3';
+        2: Params[i].Value := '0.6';
+      end;
+    end
+    else
+    if Params[i].Name = 'sound.volume.ambient' then
+    begin
+      case Main.cbGlobalSounds.ItemIndex of
+        0: Params[i].Value := '0.8';
+        1: Params[i].Value := '0.6';
         2: Params[i].Value := '1.0';
       end;
     end
@@ -952,7 +1019,17 @@ begin
       if Params[i].Name.Length = 0 then
         Settings.Add(Params[i].Desc)
       else
-        Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + Params[i].Desc);
+      begin
+        case Params[i].Name.Length + Trim(Params[i].Value).Length + 1 of
+           0..7: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9#9#9#9#9 + Params[i].Desc);
+          8..15: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +   #9#9#9#9#9 + Params[i].Desc);
+         16..23: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +     #9#9#9#9 + Params[i].Desc);
+         24..31: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +       #9#9#9 + Params[i].Desc);
+         32..39: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +         #9#9 + Params[i].Desc);
+         40..47: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +           #9 + Params[i].Desc);
+         48..99: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + ' ' + Params[i].Desc);
+        end;
+      end;
     end
     else
       Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);

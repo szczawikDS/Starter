@@ -12,6 +12,7 @@ object frmDepo: TfrmDepo
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -31,21 +32,25 @@ object frmDepo: TfrmDepo
     Width = 1094
     Height = 322
     Align = alClient
-    ColCount = 9
+    ColCount = 10
+    DefaultRowHeight = 30
     FixedCols = 0
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect]
+    PopupMenu = pmMenu
     TabOrder = 0
+    OnDrawCell = sgDepoDrawCell
     ColWidths = (
       32
       133
-      130
-      131
-      64
-      199
-      69
-      139
-      153)
+      116
+      167
+      108
+      59
+      117
+      70
+      129
+      132)
   end
   object pnlSelect: TPanel
     Left = 0
@@ -68,6 +73,7 @@ object frmDepo: TfrmDepo
       RowCount = 1
       FixedRows = 0
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect]
+      PopupMenu = pmMenu
       TabOrder = 1
       OnClick = sgModelsClick
       ColWidths = (
@@ -96,6 +102,7 @@ object frmDepo: TfrmDepo
         'Wagony F'
         'Wagony G'
         'Wagony H'
+        'Wagony I'
         'Wagony L'
         'Wagony P'
         'Wagony R'
@@ -314,7 +321,7 @@ object frmDepo: TfrmDepo
             Height = 21
             Align = alLeft
             Date = 44062.000000000000000000
-            Time = 0.647236898148548800
+            Time = 0.647236898148548700
             TabOrder = 1
             OnChange = dtRevStartChange
           end
@@ -345,7 +352,7 @@ object frmDepo: TfrmDepo
             Height = 21
             Align = alLeft
             Date = 44062.000000000000000000
-            Time = 0.647236898148548800
+            Time = 0.647236898148548700
             TabOrder = 1
             OnChange = dtRevEndChange
           end
@@ -409,6 +416,15 @@ object frmDepo: TfrmDepo
           end
         end
       end
+    end
+  end
+  object pmMenu: TPopupMenu
+    OnPopup = pmMenuPopup
+    Left = 400
+    Top = 304
+    object miOpenDir: TMenuItem
+      Caption = 'Otw'#243'rz katalog'
+      OnClick = miOpenDirClick
     end
   end
 end

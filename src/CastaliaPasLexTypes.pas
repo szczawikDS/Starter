@@ -34,6 +34,7 @@ type
     ptStar,
     ptSymbol,
     ptUnknown);
+  TptTokenKinds = set of TptTokenKind;
 
 TmwPasLexStatus = record
   LineNumber: Integer;

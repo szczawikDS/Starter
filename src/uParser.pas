@@ -31,15 +31,16 @@ type
   public
     class procedure LoadData;
     class procedure SaveDepot;
-    class function ChangeConfig(Text:string;const Config:TConfig):string;
+    class function ChangeConfig(const Text:string;const Config:TConfig):string;
     class procedure ParseScenario(SCN:TScenario);
-    procedure ReadDepot;
+    procedure ReadDepot(const Path:string='');
     constructor Create;
     destructor Destroy; override;
     class function ParseTrainFromClipBoard(const Trainset:string):TTrain;
   private
     function GetToken: string; overload;
     function GetToken(const Params: TStringList): string; overload;
+    function GetToken(const Stoppers:TptTokenKinds): string; overload;
     procedure ParseConfig(var Config: TConfig);
     function ParseTrain: TTrain;
     function ParseVehicle(const TrainSet: Boolean=True): TVehicle;
@@ -50,7 +51,7 @@ type
     procedure LoadSceneries;
     procedure ParseCoupler(var Vehicle: TVehicle);
     function GetBrakeValue(const Settings:string;Pos:Integer):string;
-    procedure ParsePhysics(Physics:TPhysics;Path:string='';aParams:TStringList=nil);
+    procedure ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
     function IsPhysics(const Dir:string;const Name: string): Integer;
     procedure LoadPhysics;
     procedure FindTexture(var Vehicle:TVehicle);
@@ -76,8 +77,8 @@ begin
     if Value > Max then
       Result := Max;
 end;
-{$IFDEF DEBUG}
 
+{$IFDEF DEBUG}
 procedure Measure;
 var
   Stopwatch: TStopwatch;
@@ -107,6 +108,16 @@ function TParser.GetToken:string;
 begin
   Result := '';
   while (not Lexer.IsSpace) and (Lexer.TokenID <> ptNull) do
+  begin
+    Result := Result + Lexer.Token;
+    Lexer.Next;
+  end;
+end;
+
+function TParser.GetToken(const Stoppers:TptTokenKinds):string;
+begin
+  Result := '';
+  while (not (Lexer.TokenID in Stoppers)) and (Lexer.TokenID <> ptNull) do
   begin
     Result := Result + Lexer.Token;
     Lexer.Next;
@@ -181,7 +192,7 @@ begin
 
     while (Ilosc = 0) do
     begin
-      if Pos('$',SR.Name) <> 1 then
+      if SR.Name[1] <> '$' then
         Main.Scenarios.Add(ScenarioName(Main.DIR + 'scenery\' + SR.Name));
       Ilosc := FindNext(SR);
     end;
@@ -366,12 +377,7 @@ begin
     Lexer.NextNoJunk;
     if TrainSet then
     begin
-      while (Lexer.TokenID <> ptSpace) and (Lexer.TokenID <> ptCRLF) and (Lexer.TokenID <> ptNull) do
-      begin
-        Result.Settings := Result.Settings + Lexer.Token;
-        Lexer.Next;
-      end;
-
+      Result.Settings := GetToken([ptSpace,ptCRLF]);
       ParseCoupler(Result);
     end
     else
@@ -496,7 +502,7 @@ begin
         if (SameText(Lexer.Token, 'movelight')) then
         begin
           Lexer.NextNoJunk;
-          Config.Day := StrToInt(Lexer.Token);
+          Config.Day := StrToInt(GetToken);
         end
         else
         if SameText(Lexer.Token, 'scenario') then
@@ -526,7 +532,7 @@ begin
   end;
 end;
 
-class function TParser.ChangeConfig(Text:string;const Config:TConfig):string;
+class function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
 var
   EndPointer, ConfigPos : integer;
   AtmoStr, Token : string;
@@ -702,13 +708,16 @@ begin
           SkipComment;
 
     Lexer.NextNoSpace;
+
+    if (Lexer.TokenID = ptIdentifier) and (Lexer.Token = 'FirstInit') then
+      Exit;
   end;
 end;
 
 class procedure TParser.ParseScenario(SCN:TScenario);
 var
   Plik, FirstInit, IncFirstInit : TStringList;
-  FirstInitPos, i : integer;
+  FirstInitPos : integer;
   IncludeStr : string;
   Config : TConfig;
 begin
@@ -854,7 +863,6 @@ end;
 
 procedure TParser.ParseTextureModels(var Tex:TTexture);
 var
-  Token : string;
   Sign : Char;
   Model : TModel;
 begin
@@ -864,59 +872,38 @@ begin
       Lexer.NextNoSpace;
 
       Model := TModel.Create;
-
-      while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull) do
-      begin
-        Token := Token + Lexer.Token;
-        Lexer.Next;
-      end;
-      Model.Model := Token;
-      Token := EmptyStr;
+      Model.Model := GetToken([ptComma]);
       Lexer.NextNoSpace;
-
-      while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull)
-        and (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptEqual) do
-      begin
-        Token := Token + Lexer.Token;
-        Lexer.Next;
-      end;
-      Model.Mini := Token;
-      Token := EmptyStr;
+      Model.Mini := GetToken([ptComma,ptSlashesComment,ptEqual]);
 
       if Tex.Typ = tyUnknown then
       begin
         Sign := Model.Mini[1];
         Sign := UpperCase(Sign)[1];
 
-        if Sign = 'A' then Tex.Typ := tyA else
         if Sign = 'B' then Tex.Typ := tyB else
-        if Sign = 'D' then Tex.Typ := tyD else
         if Sign = 'E' then Tex.Typ := tyE else
+        if Sign = 'A' then Tex.Typ := tyA else
+        if Sign = 'S' then Tex.Typ := tyS else
         if Sign = 'F' then Tex.Typ := tyF else
         if Sign = 'G' then Tex.Typ := tyG else
-        if Sign = 'H' then Tex.Typ := tyH else
-        if Sign = 'L' then Tex.Typ := tyL else
-        if Sign = 'P' then Tex.Typ := tyP else
         if Sign = 'R' then Tex.Typ := tyR else
-        if Sign = 'S' then Tex.Typ := tyS else
         if Sign = 'U' then Tex.Typ := tyU else
-        if Sign = 'V' then Tex.Typ := tyV else
         if Sign = 'W' then Tex.Typ := tyW else
         if Sign = 'X' then Tex.Typ := tyX else
-        if Sign = 'Z' then Tex.Typ := tyZ;
+        if Sign = 'Z' then Tex.Typ := tyZ else
+        if Sign = 'D' then Tex.Typ := tyD else
+        if Sign = 'H' then Tex.Typ := tyH else
+        if Sign = 'I' then Tex.Typ := tyI else
+        if Sign = 'L' then Tex.Typ := tyL else
+        if Sign = 'P' then Tex.Typ := tyP else
+        if Sign = 'V' then Tex.Typ := tyV;
       end;
 
       if Lexer.TokenID = ptComma then
       begin
         Lexer.NextNoSpace;
-        while (Lexer.TokenID <> ptComma) and (Lexer.TokenID <> ptNull)
-              and (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptEqual) do
-        begin
-          Token := Token + Lexer.Token;
-          Lexer.Next;
-        end;
-        Model.MiniD := Token;
-        Token := EmptyStr;
+        Model.MiniD := GetToken([ptComma,ptSlashesComment,ptEqual]);
       end;
 
       Tex.Models.Add(Model);
@@ -951,36 +938,36 @@ begin
 
           if Token = '*' then
             Grupa := tyUnknown else
-          if SameStr(Token,'A') then Grupa := tyA else
-          if SameStr(Token,'B') then Grupa := tyB else
-          if SameStr(Token,'D') then Grupa := tyD else
-          if SameStr(Token,'E') then Grupa := tyE else
-          if SameStr(Token,'F') then Grupa := tyF else
-          if SameStr(Token,'G') then Grupa := tyG else
-          if SameStr(Token,'H') then Grupa := tyH else
-          if SameStr(Token,'L') then Grupa := tyL else
-          if SameStr(Token,'P') then Grupa := tyP else
-          if SameStr(Token,'R') then Grupa := tyR else
-          if SameStr(Token,'S') then Grupa := tyS else
-          if SameStr(Token,'U') then Grupa := tyU else
-          if SameStr(Token,'V') then Grupa := tyV else
-          if SameStr(Token,'W') then Grupa := tyW else
-          if SameStr(Token,'X') then Grupa := tyX else
-          if SameStr(Token,'Z') then Grupa := tyZ else
-
-          if SameText(Token,'e') then Grupa := tyELEKTROWOZ else
-          if SameText(Token,'s') then Grupa := tySPALINOWOZ else
-          if SameText(Token,'p') then Grupa := tyPAROWOZ    else
-          if SameText(Token,'z') then Grupa := tyEZT        else
-          if SameText(Token,'a') then Grupa := tySZYNOBUS   else
-          if SameText(Token,'r') then Grupa := tyROBOCZY    else
-          if SameText(Token,'d') then Grupa := tyDREZYNA    else
-          if SameText(Token,'t') then Grupa := tyTRAMWAJ    else
-          if SameText(Token,'o') then Grupa := tySAMOCHOD   else
-          if SameText(Token,'b') then Grupa := tyAUTOBUS    else
-          if SameText(Token,'c') then Grupa := tyCIEZAROWKA else
-          if SameText(Token,'h') then Grupa := tyOSOBA      else
-          if SameText(Token,'f') then Grupa := tyZWIERZE    else
+          if Token='z' then Grupa := tyEZT        else
+          if Token='e' then Grupa := tyELEKTROWOZ else
+          if Token='s' then Grupa := tySPALINOWOZ else
+          if Token='a' then Grupa := tySZYNOBUS   else
+          if Token='B' then Grupa := tyB else
+          if Token='E' then Grupa := tyE else
+          if Token='A' then Grupa := tyA else
+          if Token='S' then Grupa := tyS else
+          if Token='F' then Grupa := tyF else
+          if Token='G' then Grupa := tyG else
+          if Token='R' then Grupa := tyR else
+          if Token='U' then Grupa := tyU else
+          if Token='r' then Grupa := tyROBOCZY    else
+          if Token='W' then Grupa := tyW else
+          if Token='X' then Grupa := tyX else
+          if Token='d' then Grupa := tyDREZYNA    else
+          if Token='o' then Grupa := tySAMOCHOD   else
+          if Token='b' then Grupa := tyAUTOBUS    else
+          if Token='c' then Grupa := tyCIEZAROWKA else
+          if Token='Z' then Grupa := tyZ else
+          if Token='D' then Grupa := tyD else
+          if Token='H' then Grupa := tyH else
+          if Token='I' then Grupa := tyI else
+          if Token='L' then Grupa := tyL else
+          if Token='P' then Grupa := tyP else
+          if Token='V' then Grupa := tyV else
+          if Token='t' then Grupa := tyTRAMWAJ    else
+          if Token='h' then Grupa := tyOSOBA      else
+          if Token='f' then Grupa := tyZWIERZE    else
+          if Token='p' then Grupa := tyPAROWOZ    else
           Grupa := tyINNE;
           Continue;
         end;
@@ -995,12 +982,7 @@ begin
           Lexer.Origin := PChar(Plik[i]);
           Lexer.Init;
 
-          while (Lexer.TokenID <> ptEqual) and (Lexer.TokenID <> ptNull) do
-          begin
-            Token := Token + Lexer.Token;
-            Lexer.Next;
-          end;
-          Tex.Plik := Token;
+          Tex.Plik := GetToken([ptEqual]);
           Tex.Plik := ChangeFileExt(Tex.Plik,'');
 
           Token := EmptyStr;
@@ -1093,7 +1075,7 @@ begin
     end;
 end;
 
-procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';aParams:TStringList=nil);
+procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
 var
   PhysicsFile : TStringList;
   Section : TPhysicsSections;
@@ -1113,17 +1095,15 @@ begin
     PhysicsFile := TStringList.Create;
     if Path.Length = 0 then
     begin
-    if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
-      PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
-    else
-      if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz') then
-        PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz');
+      if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
+        PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
+      else
+        if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz') then
+          PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz');
     end
     else
-    begin
       if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Path) then
         PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Path);
-    end;
 
     Lexer.Origin := PChar(PhysicsFile.Text);
     Lexer.Init;
@@ -1245,48 +1225,71 @@ begin
     ParsePhysics(Main.Physics[i]);
 end;
 
-procedure TParser.ReadDepot;
+procedure TParser.ReadDepot(const Path:string='');
 var
   DepotFile : TStringList;
   Pociag : TTrain;
+  TrainName : string;
 begin
   try
     DepotFile := TStringList.Create;
 
-    if FileExists(Main.DIR + '\starter\magazyn.ini') then
-      DepotFile.LoadFromFile(Main.DIR + '\starter\magazyn.ini')
-    else
-      if FileExists(Main.DIR + '\starter.ini') then
-        DepotFile.LoadFromFile(Main.DIR + '\starter.ini')
+    if Path.IsEmpty then
+    begin
+      if FileExists(Main.DIR + '\starter\magazyn.ini') then
+        DepotFile.LoadFromFile(Main.DIR + '\starter\magazyn.ini')
       else
-        if FileExists(Main.DIR + '\RAINSTED.INI') then
-          DepotFile.LoadFromFile(Main.DIR + '\RAINSTED.INI');
+        if FileExists(Main.DIR + '\starter.ini') then
+          DepotFile.LoadFromFile(Main.DIR + '\starter.ini')
+        else
+          if FileExists(Main.DIR + '\RAINSTED.INI') then
+            DepotFile.LoadFromFile(Main.DIR + '\RAINSTED.INI');
+    end
+    else
+      if FileExists(Path) then
+            DepotFile.LoadFromFile(Path);
 
     Lexer.Origin := PChar(DepotFile.Text);
     Lexer.Init;
 
+    Lexer.NextNoJunk;
+
     While Lexer.TokenID <> ptNull do
     begin
-      if (Lexer.TokenID = ptIdentifier) and (Pos('TRAINSET',Lexer.Token) > 0) and (Lexer.Token.Length > 8) then
+      if Lexer.TokenID = ptSquareOpen then
       begin
-        Lexer.Next;
-        if Lexer.TokenID = ptSquareClose then
+        Lexer.NextNoJunk;
+        if (Lexer.TokenID = ptIdentifier) and (Pos('TRAINSET',Lexer.Token) > 0) and (Lexer.Token.Length > 8) then
         begin
           Pociag := TTrain.Create;
-          Pociag.TrainName := 'test';
+
+          Lexer.Next;
+          if Lexer.TokenID = ptEqual then
+          begin
+            TrainName := GetToken([ptSquareClose]);
+            Pociag.TrainName := Copy(TrainName,2,TrainName.Length);
+          end
+          else
+            Pociag.TrainName := '';
+
+          Lexer.NextNoJunk;
           Lexer.NextID(ptIdentifier);
 
           while Lexer.Token = 'node' do
           begin
             Pociag.Vehicles.Add(ParseVehicle);
             Lexer.NextID(ptIdentifier);
-            Lexer.NextID(ptIdentifier);
+            Lexer.NextNoJunk;
+            if Lexer.TokenID <> ptSquareOpen then
+              Lexer.NextID(ptIdentifier);
           end;
           Main.Depot.Add(Pociag);
-        end;
+        end
+        else
+          Lexer.NextNoJunk;
       end
       else
-        Lexer.NextNoJunk;
+        Lexer.Next;
     end;
   except
     Main.Errors.Add('B³¹d parsowania magazynu. Linia: ' + IntToStr(Lexer.LineNumber));
@@ -1305,7 +1308,7 @@ begin
     begin
       if Main.Depot[i].Vehicles.Count > 0 then
       begin
-        DepotFile.Add('[TRAINSET' + IntToStr(i) + ']');
+        DepotFile.Add('[TRAINSET' + IntToStr(i) + '=' + Main.Depot[i].TrainName + ']');
         for y := 0 to Main.Depot[i].Vehicles.Count-1 do
           DepotFile.Add(Format('%.2d=',[y]) + Main.PrepareNode(Main.Depot[i].Vehicles[y]));
       end;

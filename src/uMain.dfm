@@ -285,10 +285,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(20.08.2020)'
+      Hint = '(12.09.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '5.0'
+      Caption = '5.4'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -305,7 +305,9 @@ object Main: TMain
       Top = 0
       Width = 48
       Height = 50
-      Hint = '(20.08.2020)'
+      Hint = '(12.09.2020)'
+      HelpType = htKeyword
+      HelpKeyword = ' '
       Align = alLeft
       Alignment = taCenter
       AutoSize = False
@@ -953,6 +955,16 @@ object Main: TMain
                       'Lekkie opady'
                       'Du'#380'e opady')
                   end
+                  object btnRestoreWeather: TButton
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 152
+                    Width = 248
+                    Height = 25
+                    Action = actRestoreWeather
+                    Align = alBottom
+                    TabOrder = 1
+                  end
                 end
               end
               object pnlLabelDay: TPanel
@@ -985,22 +997,33 @@ object Main: TMain
             OnClick = lbTrainsClick
           end
         end
-        object tvSCN: TTreeView
+        object pnlLeft: TPanel
           Left = 0
           Top = 0
           Width = 230
           Height = 442
           Align = alLeft
-          BevelInner = bvNone
           BevelOuter = bvNone
-          HideSelection = False
-          Indent = 19
-          PopupMenu = pmScenarios
-          ReadOnly = True
-          RowSelect = True
-          ShowLines = False
+          ShowCaption = False
           TabOrder = 1
-          OnChange = tvSCNChange
+          object tvSCN: TTreeView
+            Left = 0
+            Top = 0
+            Width = 230
+            Height = 442
+            Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            HideSelection = False
+            Indent = 19
+            PopupMenu = pmScenarios
+            ReadOnly = True
+            RowSelect = True
+            ShowLines = False
+            TabOrder = 0
+            OnChange = tvSCNChange
+            OnChanging = tvSCNChanging
+          end
         end
       end
       object tsMagazine: TTabSheet
@@ -1143,6 +1166,7 @@ object Main: TMain
                     'Wagony F'
                     'Wagony G'
                     'Wagony H'
+                    'Wagony I'
                     'Wagony L'
                     'Wagony P'
                     'Wagony R'
@@ -1268,7 +1292,9 @@ object Main: TMain
                   Margins.Top = 0
                   Margins.Bottom = 0
                   Align = alClient
+                  ParentShowHint = False
                   PopupMenu = pmDepot
+                  ShowHint = True
                   TabOrder = 1
                   OnClick = lbDepotClick
                 end
@@ -1641,9 +1667,9 @@ object Main: TMain
                   ShowCaption = False
                   TabOrder = 1
                   object btnCopyCoupler: TButton
-                    Left = 1
+                    Left = 49
                     Top = 1
-                    Width = 135
+                    Width = 125
                     Height = 22
                     Action = actCopyCoupler
                     Align = alClient
@@ -1657,13 +1683,13 @@ object Main: TMain
                     ShowHint = True
                     TabOrder = 0
                   end
-                  object btnCouplerEZT: TButton
-                    Left = 136
+                  object btnAutoCoupler: TButton
+                    Left = 1
                     Top = 1
-                    Width = 38
+                    Width = 48
                     Height = 22
-                    Action = actCouplerEZT
-                    Align = alRight
+                    Action = actAutoCoupler
+                    Align = alLeft
                     Font.Charset = DEFAULT_CHARSET
                     Font.Color = clWindowText
                     Font.Height = -11
@@ -2237,68 +2263,29 @@ object Main: TMain
           ActivePage = tsMain
           Align = alClient
           TabOrder = 1
+          OnResize = pcSettingsResize
           object tsMain: TTabSheet
             Caption = 'Og'#243'lne'
             object pnlPhysic: TPanel
               AlignWithMargins = True
-              Left = 270
-              Top = 0
+              Left = 438
+              Top = 3
               Width = 235
-              Height = 370
-              Margins.Left = 50
-              Margins.Top = 0
-              Margins.Right = 50
+              Height = 367
+              Margins.Left = 30
+              Margins.Right = 30
               Margins.Bottom = 0
               Align = alLeft
               BevelOuter = bvNone
               ParentBackground = False
               ShowCaption = False
               TabOrder = 0
-              object Label16: TLabel
-                AlignWithMargins = True
-                Left = 3
-                Top = 10
-                Width = 229
-                Height = 16
-                Margins.Top = 10
-                Align = alTop
-                Alignment = taCenter
-                AutoSize = False
-                Caption = 'D'#378'wi'#281'k'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -13
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label6: TLabel
-                AlignWithMargins = True
-                Left = 3
-                Top = 52
-                Width = 229
-                Height = 16
-                Align = alTop
-                AutoSize = False
-                Caption = 'G'#322'o'#347'no'#347#263' d'#378'wi'#281'k'#243'w:'
-              end
-              object Label31: TLabel
-                AlignWithMargins = True
-                Left = 3
-                Top = 101
-                Width = 229
-                Height = 16
-                Align = alTop
-                AutoSize = False
-                Caption = 'G'#322'o'#347'no'#347#263' radia:'
-              end
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 187
+                Top = 3
                 Width = 229
                 Height = 16
-                Margins.Top = 40
                 Align = alTop
                 Alignment = taCenter
                 AutoSize = False
@@ -2313,7 +2300,7 @@ object Main: TMain
               object Label1: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 206
+                Top = 22
                 Width = 229
                 Height = 16
                 Align = alTop
@@ -2323,96 +2310,75 @@ object Main: TMain
               object Label8: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 255
+                Top = 71
                 Width = 229
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'Generowanie E3D:'
               end
-              object chSoundenabled: TCheckBox
+              object lbBattery: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 29
+                Top = 143
                 Width = 229
-                Height = 17
+                Height = 16
                 Align = alTop
-                Caption = 'D'#378'wi'#281'ki'
-                Checked = True
-                State = cbChecked
-                TabOrder = 0
-                OnClick = chSoundenabledClick
+                AutoSize = False
+                Caption = 'Bateria w poje'#378'dzie u'#380'ytkownika:'
               end
-              object cbSoundvolume: TComboBox
+              object lbStarter: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 71
+                Top = 209
                 Width = 229
-                Height = 24
+                Height = 16
+                Margins.Top = 20
                 Align = alTop
-                Style = csDropDownList
-                DoubleBuffered = False
-                ItemIndex = 0
-                ParentDoubleBuffered = False
-                TabOrder = 1
-                Text = 'Standardowa'
-                Items.Strings = (
-                  'Standardowa'
-                  'Niska'
-                  'Wysoka')
-              end
-              object cbRadioVolume: TComboBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 120
-                Width = 229
-                Height = 24
-                Align = alTop
-                Style = csDropDownList
-                DoubleBuffered = False
-                ItemIndex = 0
-                ParentDoubleBuffered = False
-                TabOrder = 2
-                Text = 'Standardowa'
-                Items.Strings = (
-                  'Standardowa'
-                  'Niska'
-                  'Wysoka')
+                Alignment = taCenter
+                AutoSize = False
+                Caption = 'Starter'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
               end
               object chDebugmode: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 304
+                Top = 120
                 Width = 229
                 Height = 17
                 Align = alTop
                 Caption = 'Tryb testowy'
                 Checked = True
                 State = cbChecked
-                TabOrder = 3
+                TabOrder = 0
               end
               object cbEXE: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 225
+                Top = 41
                 Width = 229
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
                 Sorted = True
-                TabOrder = 4
+                TabOrder = 1
               end
               object cbConvertmodels: TComboBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 274
+                Top = 90
                 Width = 229
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
                 DoubleBuffered = False
                 ParentDoubleBuffered = False
-                TabOrder = 5
+                TabOrder = 2
                 Items.Strings = (
                   'Wy'#322#261'czone'
                   'Nowe Opacity'
@@ -2420,13 +2386,100 @@ object Main: TMain
                   'Z bananami'
                   'Rozszerzone')
               end
+              object cbBattery: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 162
+                Width = 229
+                Height = 24
+                Hint = 'Okre'#347'la, czy pojazd u'#380'ytkownika ma powietrze i w'#322#261'czon'#261' bateri'#281'.'
+                Align = alTop
+                Style = csDropDownList
+                DoubleBuffered = False
+                ItemIndex = 0
+                ParentDoubleBuffered = False
+                ParentShowHint = False
+                ShowHint = True
+                TabOrder = 3
+                Text = 'Domy'#347'lnie'
+                Items.Strings = (
+                  'Domy'#347'lnie'
+                  'Zawsze wy'#322#261'czona'
+                  'Zawsze w'#322#261'czona')
+              end
+              object cbCloseApp: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 228
+                Width = 229
+                Height = 17
+                Align = alTop
+                Caption = 'Zamknij starter automatycznie'
+                Checked = True
+                State = cbChecked
+                TabOrder = 4
+              end
+              object cbBigThumbnail: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 251
+                Width = 229
+                Height = 17
+                Align = alTop
+                Caption = 'Du'#380'e miniaturki'
+                TabOrder = 5
+                OnClick = cbBigThumbnailClick
+              end
+              object pnlUpdate: TPanel
+                Left = 0
+                Top = 271
+                Width = 235
+                Height = 32
+                Align = alTop
+                BevelOuter = bvNone
+                ParentBackground = False
+                ShowCaption = False
+                TabOrder = 6
+                object Label34: TLabel
+                  Left = 0
+                  Top = 0
+                  Width = 145
+                  Height = 32
+                  Align = alLeft
+                  Caption = 'Sprawd'#378' now'#261' wersj'#281' co'
+                  Layout = tlCenter
+                end
+                object Label39: TLabel
+                  Left = 195
+                  Top = 0
+                  Width = 34
+                  Height = 32
+                  Align = alLeft
+                  AutoSize = False
+                  Caption = 'dni'
+                  Layout = tlCenter
+                end
+                object edUpdateInterval: TSpinEdit
+                  AlignWithMargins = True
+                  Left = 148
+                  Top = 3
+                  Width = 44
+                  Height = 26
+                  Align = alLeft
+                  MaxValue = 0
+                  MinValue = 0
+                  TabOrder = 0
+                  Value = 10
+                end
+              end
             end
             object pnlGeneral: TPanel
               AlignWithMargins = True
-              Left = 3
+              Left = 164
               Top = 3
               Width = 214
               Height = 364
+              Margins.Right = 30
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -2601,382 +2654,26 @@ object Main: TMain
                   Text = '888'
                 end
               end
-              object pnlUART: TPanel
-                Left = 0
-                Top = 298
-                Width = 214
-                Height = 161
+              object btnCOM: TButton
+                AlignWithMargins = True
+                Left = 3
+                Top = 301
+                Width = 208
+                Height = 25
+                Action = actCOM
                 Align = alTop
-                BevelOuter = bvNone
-                Enabled = False
-                ParentBackground = False
-                ShowCaption = False
                 TabOrder = 7
-                Visible = False
-                object pnlCOM: TPanel
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 3
-                  Width = 208
-                  Height = 27
-                  Align = alTop
-                  BevelOuter = bvNone
-                  ParentBackground = False
-                  ShowCaption = False
-                  TabOrder = 0
-                  object Label12: TLabel
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 3
-                    Width = 39
-                    Height = 24
-                    Align = alClient
-                    Alignment = taRightJustify
-                    AutoSize = False
-                    Caption = 'UART:'
-                    Layout = tlCenter
-                  end
-                  object edUART: TEdit
-                    AlignWithMargins = True
-                    Left = 48
-                    Top = 3
-                    Width = 157
-                    Height = 21
-                    Align = alRight
-                    TabOrder = 0
-                    Text = 'COM3 115200 0.03 0.03'
-                  end
-                end
-                object pnlUARTtune: TPanel
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 36
-                  Width = 208
-                  Height = 27
-                  Align = alTop
-                  BevelOuter = bvNone
-                  ParentBackground = False
-                  ShowCaption = False
-                  TabOrder = 1
-                  object Label33: TLabel
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 3
-                    Width = 70
-                    Height = 24
-                    Align = alLeft
-                    Alignment = taRightJustify
-                    AutoSize = False
-                    Caption = 'UARTTUNE:'
-                    Layout = tlCenter
-                  end
-                  object edUARTtune: TEdit
-                    AlignWithMargins = True
-                    Left = 79
-                    Top = 3
-                    Width = 126
-                    Height = 21
-                    Align = alClient
-                    TabOrder = 0
-                    Text = '26 225 71 236 1.4 255 0.8 255 0.8 255 4000 255 800 255 150 255'
-                  end
-                end
-                object chTrainenable: TCheckBox
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 86
-                  Width = 208
-                  Height = 17
-                  Align = alTop
-                  Caption = 'Hamulec'
-                  TabOrder = 2
-                end
-                object chUARTDebug: TCheckBox
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 132
-                  Width = 208
-                  Height = 17
-                  Align = alTop
-                  Caption = 'UART debug'
-                  TabOrder = 3
-                end
-                object chLocalenable: TCheckBox
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 109
-                  Width = 208
-                  Height = 17
-                  Align = alTop
-                  Caption = 'Hamulec lokomotywy'
-                  TabOrder = 4
-                end
-                object Panel4: TPanel
-                  Left = 0
-                  Top = 66
-                  Width = 214
-                  Height = 17
-                  Align = alTop
-                  BevelOuter = bvNone
-                  ParentBackground = False
-                  ShowCaption = False
-                  TabOrder = 5
-                  object chMainenable: TCheckBox
-                    AlignWithMargins = True
-                    Left = 3
-                    Top = 3
-                    Width = 86
-                    Height = 11
-                    Align = alLeft
-                    Caption = 'Nastawnik'
-                    TabOrder = 0
-                  end
-                  object chScndenable: TCheckBox
-                    AlignWithMargins = True
-                    Left = 95
-                    Top = 3
-                    Width = 90
-                    Height = 11
-                    Align = alLeft
-                    Caption = 'Bocznik'
-                    TabOrder = 1
-                  end
-                end
               end
             end
-            object Panel11: TPanel
-              AlignWithMargins = True
-              Left = 558
-              Top = 3
-              Width = 245
-              Height = 364
+            object pnlLeftMargin2: TPanel
+              Left = 0
+              Top = 0
+              Width = 161
+              Height = 370
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 2
-              object Label19: TLabel
-                AlignWithMargins = True
-                Left = 3
-                Top = 3
-                Width = 239
-                Height = 16
-                Align = alTop
-                Alignment = taCenter
-                AutoSize = False
-                Caption = 'Fizyka'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -13
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object lbStarter: TLabel
-                AlignWithMargins = True
-                Left = 3
-                Top = 306
-                Width = 239
-                Height = 16
-                Margins.Top = 20
-                Align = alTop
-                Alignment = taCenter
-                AutoSize = False
-                Caption = 'Starter'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -13
-                Font.Name = 'Tahoma'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object chFullphysics: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 22
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Zwi'#281'kszona dok'#322'adno'#347#263' fizyki'
-                Checked = True
-                State = cbChecked
-                TabOrder = 0
-              end
-              object chEnabletraction: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 45
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Mo'#380'liwo'#347#263' z'#322'amania pantografu'
-                Checked = True
-                State = cbChecked
-                TabOrder = 1
-              end
-              object chLivetraction: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 68
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Zasilanie tylko pod sieci'#261' trakcyjn'#261
-                Checked = True
-                State = cbChecked
-                TabOrder = 2
-              end
-              object chPhysicslog: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 91
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Zapisuj parametry fizyczne pojazd'#243'w'
-                Checked = True
-                State = cbChecked
-                TabOrder = 3
-              end
-              object chDebuglog: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 114
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Zapisuj przebieg symulacji'
-                Checked = True
-                State = cbChecked
-                TabOrder = 4
-              end
-              object chMultiplelogs: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 160
-                Width = 239
-                Height = 34
-                Align = alTop
-                Caption = 'Zachowuj poprzednie przebiegi symulacji'
-                Checked = True
-                State = cbChecked
-                TabOrder = 5
-                WordWrap = True
-              end
-              object pnlFriction: TPanel
-                AlignWithMargins = True
-                Left = 3
-                Top = 223
-                Width = 239
-                Height = 27
-                Align = alTop
-                BevelOuter = bvNone
-                ParentBackground = False
-                ShowCaption = False
-                TabOrder = 6
-                object Label3: TLabel
-                  Left = 0
-                  Top = 0
-                  Width = 200
-                  Height = 27
-                  Align = alClient
-                  Alignment = taRightJustify
-                  AutoSize = False
-                  Caption = 'Tarcie:'
-                  Layout = tlCenter
-                end
-                object edFriction: TEdit
-                  AlignWithMargins = True
-                  Left = 203
-                  Top = 3
-                  Width = 33
-                  Height = 21
-                  Align = alRight
-                  TabOrder = 0
-                  Text = '1'
-                end
-              end
-              object pnlFieldOfView: TPanel
-                AlignWithMargins = True
-                Left = 3
-                Top = 256
-                Width = 239
-                Height = 27
-                Align = alTop
-                BevelOuter = bvNone
-                ParentBackground = False
-                ShowCaption = False
-                TabOrder = 7
-                object Label4: TLabel
-                  Left = 0
-                  Top = 0
-                  Width = 200
-                  Height = 27
-                  Align = alClient
-                  Alignment = taRightJustify
-                  AutoSize = False
-                  Caption = 'K'#261't widzenia:'
-                  Layout = tlCenter
-                end
-                object edFieldofview: TEdit
-                  AlignWithMargins = True
-                  Left = 203
-                  Top = 3
-                  Width = 33
-                  Height = 21
-                  Align = alRight
-                  NumbersOnly = True
-                  TabOrder = 0
-                  Text = '1'
-                  OnExit = edFieldofviewExit
-                end
-              end
-              object cbCloseApp: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 325
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Zamknij starter automatycznie'
-                Checked = True
-                State = cbChecked
-                TabOrder = 8
-              end
-              object cbBigThumbnail: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 348
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Du'#380'e miniaturki'
-                TabOrder = 9
-                OnClick = cbBigThumbnailClick
-              end
-              object chCrashDamage: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 200
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Uszkodzenia przy zderzeniu'
-                Checked = True
-                State = cbChecked
-                TabOrder = 10
-              end
-              object chDebugLogVis: TCheckBox
-                AlignWithMargins = True
-                Left = 3
-                Top = 137
-                Width = 239
-                Height = 17
-                Align = alTop
-                Caption = 'Wy'#347'wietlaj przebieg symulacji'
-                Checked = True
-                State = cbChecked
-                TabOrder = 11
-              end
             end
           end
           object tsGraphics: TTabSheet
@@ -2984,11 +2681,11 @@ object Main: TMain
             ImageIndex = 1
             object pnlGraphic: TPanel
               AlignWithMargins = True
-              Left = 3
+              Left = 8
               Top = 3
-              Width = 662
+              Width = 857
               Height = 364
-              Align = alLeft
+              Align = alClient
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 0
@@ -2996,7 +2693,7 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 200
+                Width = 160
                 Height = 358
                 Align = alLeft
                 BevelOuter = bvNone
@@ -3007,7 +2704,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 52
-                  Width = 194
+                  Width = 154
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3017,7 +2714,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 101
-                  Width = 194
+                  Width = 154
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3027,7 +2724,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 150
-                  Width = 194
+                  Width = 154
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3037,7 +2734,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 199
-                  Width = 194
+                  Width = 154
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3047,7 +2744,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 248
-                  Width = 194
+                  Width = 154
                   Height = 32
                   Align = alTop
                   AutoSize = False
@@ -3058,7 +2755,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 3
-                  Width = 194
+                  Width = 154
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3068,11 +2765,10 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 71
-                  Width = 150
+                  Width = 154
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
-                  Constraints.MaxWidth = 150
                   DoubleBuffered = False
                   ParentDoubleBuffered = False
                   TabOrder = 0
@@ -3088,11 +2784,10 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 120
-                  Width = 150
+                  Width = 154
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
-                  Constraints.MaxWidth = 150
                   DoubleBuffered = False
                   ParentDoubleBuffered = False
                   TabOrder = 1
@@ -3106,11 +2801,10 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 169
-                  Width = 150
+                  Width = 154
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
-                  Constraints.MaxWidth = 150
                   DoubleBuffered = False
                   ParentDoubleBuffered = False
                   TabOrder = 2
@@ -3125,11 +2819,10 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 218
-                  Width = 150
+                  Width = 154
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
-                  Constraints.MaxWidth = 150
                   DoubleBuffered = False
                   ParentDoubleBuffered = False
                   TabOrder = 3
@@ -3144,11 +2837,10 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 22
-                  Width = 150
+                  Width = 154
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
-                  Constraints.MaxWidth = 150
                   DoubleBuffered = False
                   ParentDoubleBuffered = False
                   TabOrder = 4
@@ -3157,11 +2849,10 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 283
-                  Width = 150
+                  Width = 154
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
-                  Constraints.MaxWidth = 150
                   DoubleBuffered = False
                   ParentDoubleBuffered = False
                   TabOrder = 5
@@ -3175,11 +2866,12 @@ object Main: TMain
               end
               object Panel1: TPanel
                 AlignWithMargins = True
-                Left = 459
+                Left = 399
                 Top = 3
                 Width = 200
                 Height = 358
-                Align = alRight
+                Margins.Left = 15
+                Align = alLeft
                 BevelOuter = bvNone
                 ParentBackground = False
                 ShowCaption = False
@@ -3310,10 +3002,11 @@ object Main: TMain
               end
               object Panel12: TPanel
                 AlignWithMargins = True
-                Left = 209
+                Left = 181
                 Top = 3
-                Width = 204
+                Width = 200
                 Height = 358
+                Margins.Left = 15
                 Align = alLeft
                 BevelOuter = bvNone
                 ParentBackground = False
@@ -3323,7 +3016,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 98
-                  Width = 198
+                  Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3333,7 +3026,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 3
-                  Width = 198
+                  Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3343,7 +3036,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 147
-                  Width = 198
+                  Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3352,8 +3045,8 @@ object Main: TMain
                 object Label43: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 190
-                  Width = 198
+                  Top = 196
+                  Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3362,8 +3055,8 @@ object Main: TMain
                 object Label53: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 233
-                  Width = 198
+                  Top = 245
+                  Width = 194
                   Height = 16
                   Align = alTop
                   AutoSize = False
@@ -3390,8 +3083,8 @@ object Main: TMain
                 object chExtraEffects: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 299
-                  Width = 198
+                  Top = 317
+                  Width = 194
                   Height = 17
                   Align = alTop
                   Caption = 'Dodatkowe efekty shader'#243'w'
@@ -3402,8 +3095,8 @@ object Main: TMain
                 object chShadowMap: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 276
-                  Width = 198
+                  Top = 294
+                  Width = 194
                   Height = 17
                   Align = alTop
                   Caption = 'Cienie (shadery)'
@@ -3431,9 +3124,10 @@ object Main: TMain
                     'Stary')
                 end
                 object cbShadowMapSize: TComboBox
-                  Left = 0
-                  Top = 163
-                  Width = 198
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 166
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -3448,9 +3142,10 @@ object Main: TMain
                     'Bardzo wysoka')
                 end
                 object cbShadowRange: TComboBox
-                  Left = 0
-                  Top = 206
-                  Width = 198
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 215
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -3466,9 +3161,10 @@ object Main: TMain
                     'Bardzo wysoki (400m)')
                 end
                 object cbShadowsCabRange: TComboBox
-                  Left = 0
-                  Top = 249
-                  Width = 198
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 264
+                  Width = 194
                   Height = 24
                   Align = alTop
                   Style = csDropDownList
@@ -3487,8 +3183,8 @@ object Main: TMain
                 object chChromaticAberration: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 345
-                  Width = 198
+                  Top = 363
+                  Width = 194
                   Height = 17
                   Align = alTop
                   Caption = 'Aberracja chromatyczna'
@@ -3499,8 +3195,8 @@ object Main: TMain
                 object chMotionBlur: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 322
-                  Width = 198
+                  Top = 340
+                  Width = 194
                   Height = 17
                   Align = alTop
                   Caption = 'Rozmycie podczas ruchu'
@@ -3512,7 +3208,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 75
-                  Width = 198
+                  Width = 194
                   Height = 17
                   Align = alTop
                   Caption = 'Odbicia jako cubemapa'
@@ -3524,7 +3220,7 @@ object Main: TMain
                   AlignWithMargins = True
                   Left = 3
                   Top = 52
-                  Width = 198
+                  Width = 194
                   Height = 17
                   Align = alTop
                   Caption = 'SkipPipeline'
@@ -3532,26 +3228,105 @@ object Main: TMain
                   Visible = False
                 end
               end
+              object Panel22: TPanel
+                AlignWithMargins = True
+                Left = 617
+                Top = 3
+                Width = 200
+                Height = 358
+                Margins.Left = 15
+                Align = alLeft
+                BevelOuter = bvNone
+                ShowCaption = False
+                TabOrder = 3
+                object Label35: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 3
+                  Width = 194
+                  Height = 16
+                  Align = alTop
+                  Alignment = taCenter
+                  AutoSize = False
+                  Caption = 'Skrypty Python'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -13
+                  Font.Name = 'Tahoma'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object chPythonThreadedUpload: TCheckBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 45
+                  Width = 194
+                  Height = 17
+                  Align = alTop
+                  Caption = 'Ekrany w osobnym w'#261'tku'
+                  Checked = True
+                  State = cbChecked
+                  TabOrder = 0
+                end
+                object chPythonEnabled: TCheckBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 22
+                  Width = 194
+                  Height = 17
+                  Align = alTop
+                  Caption = 'Skrypty za'#322#261'czone'
+                  Checked = True
+                  State = cbChecked
+                  TabOrder = 1
+                end
+                object pnlShadowCabRange: TPanel
+                  Left = 0
+                  Top = 65
+                  Width = 200
+                  Height = 47
+                  Align = alTop
+                  BevelOuter = bvNone
+                  ShowCaption = False
+                  TabOrder = 2
+                end
+              end
             end
-            object Panel22: TPanel
-              Left = 668
+            object pnlLeftMargin3: TPanel
+              Left = 0
               Top = 0
-              Width = 205
+              Width = 5
               Height = 370
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 1
-              object Label35: TLabel
+            end
+          end
+          object tsSoundPhysics: TTabSheet
+            Caption = 'D'#378'wi'#281'k | Fizyka'
+            ImageIndex = 2
+            object Panel11: TPanel
+              AlignWithMargins = True
+              Left = 469
+              Top = 3
+              Width = 245
+              Height = 364
+              Margins.Left = 30
+              Align = alLeft
+              BevelOuter = bvNone
+              ShowCaption = False
+              TabOrder = 0
+              object Label19: TLabel
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 199
+                Width = 239
                 Height = 16
                 Align = alTop
                 Alignment = taCenter
                 AutoSize = False
-                Caption = 'Skrypty Python'
+                Caption = 'Fizyka'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -13
@@ -3559,40 +3334,351 @@ object Main: TMain
                 Font.Style = [fsBold]
                 ParentFont = False
               end
-              object chPythonThreadedUpload: TCheckBox
+              object chFullphysics: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 45
-                Width = 199
+                Top = 22
+                Width = 239
                 Height = 17
                 Align = alTop
-                Caption = 'Ekrany w osobnym w'#261'tku'
+                Caption = 'Zwi'#281'kszona dok'#322'adno'#347#263' fizyki'
                 Checked = True
                 State = cbChecked
                 TabOrder = 0
               end
-              object chPythonEnabled: TCheckBox
+              object chEnabletraction: TCheckBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 22
-                Width = 199
+                Top = 45
+                Width = 239
                 Height = 17
                 Align = alTop
-                Caption = 'Skrypty za'#322#261'czone'
+                Caption = 'Mo'#380'liwo'#347#263' z'#322'amania pantografu'
                 Checked = True
                 State = cbChecked
                 TabOrder = 1
               end
-              object pnlShadowCabRange: TPanel
-                Left = 0
-                Top = 65
-                Width = 205
-                Height = 47
+              object chLivetraction: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 68
+                Width = 239
+                Height = 17
                 Align = alTop
-                BevelOuter = bvNone
-                ShowCaption = False
+                Caption = 'Zasilanie tylko pod sieci'#261' trakcyjn'#261
+                Checked = True
+                State = cbChecked
                 TabOrder = 2
               end
+              object chPhysicslog: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 91
+                Width = 239
+                Height = 17
+                Align = alTop
+                Caption = 'Zapisuj parametry fizyczne pojazd'#243'w'
+                Checked = True
+                State = cbChecked
+                TabOrder = 3
+              end
+              object chDebuglog: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 114
+                Width = 239
+                Height = 17
+                Align = alTop
+                Caption = 'Zapisuj przebieg symulacji'
+                Checked = True
+                State = cbChecked
+                TabOrder = 4
+              end
+              object chMultiplelogs: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 160
+                Width = 239
+                Height = 34
+                Align = alTop
+                Caption = 'Zachowuj poprzednie przebiegi symulacji'
+                Checked = True
+                State = cbChecked
+                TabOrder = 5
+                WordWrap = True
+              end
+              object pnlFriction: TPanel
+                AlignWithMargins = True
+                Left = 3
+                Top = 223
+                Width = 239
+                Height = 27
+                Align = alTop
+                BevelOuter = bvNone
+                ParentBackground = False
+                ShowCaption = False
+                TabOrder = 6
+                object Label3: TLabel
+                  Left = 144
+                  Top = 0
+                  Width = 56
+                  Height = 27
+                  Align = alRight
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = 'Tarcie:'
+                  Layout = tlCenter
+                end
+                object Label4: TLabel
+                  Left = 16
+                  Top = 0
+                  Width = 89
+                  Height = 27
+                  Align = alRight
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = 'K'#261't widzenia:'
+                  Layout = tlCenter
+                end
+                object edFriction: TEdit
+                  AlignWithMargins = True
+                  Left = 203
+                  Top = 3
+                  Width = 33
+                  Height = 21
+                  Align = alRight
+                  TabOrder = 0
+                  Text = '1'
+                end
+                object edFieldofview: TEdit
+                  AlignWithMargins = True
+                  Left = 108
+                  Top = 3
+                  Width = 33
+                  Height = 21
+                  Align = alRight
+                  NumbersOnly = True
+                  TabOrder = 1
+                  Text = '1'
+                  OnExit = edFieldofviewExit
+                end
+              end
+              object chCrashDamage: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 200
+                Width = 239
+                Height = 17
+                Align = alTop
+                Caption = 'Uszkodzenia przy zderzeniu'
+                Checked = True
+                State = cbChecked
+                TabOrder = 7
+              end
+              object chDebugLogVis: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 137
+                Width = 239
+                Height = 17
+                Align = alTop
+                Caption = 'Wy'#347'wietlaj przebieg symulacji'
+                Checked = True
+                State = cbChecked
+                TabOrder = 8
+              end
+            end
+            object pnlSound: TPanel
+              AlignWithMargins = True
+              Left = 164
+              Top = 3
+              Width = 245
+              Height = 364
+              Margins.Right = 30
+              Align = alLeft
+              BevelOuter = bvNone
+              ShowCaption = False
+              TabOrder = 1
+              object Label16: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 239
+                Height = 16
+                Align = alTop
+                Alignment = taCenter
+                AutoSize = False
+                Caption = 'D'#378'wi'#281'k'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label6: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 45
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'G'#322'o'#347'no'#347#263' d'#378'wi'#281'k'#243'w:'
+              end
+              object lbRadioVolume: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 94
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'G'#322'o'#347'no'#347#263' radia:'
+              end
+              object lbGlobalSounds: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 241
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'G'#322'o'#347'no'#347#263' otoczenia:'
+              end
+              object lbPositionalsSounds: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 192
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'G'#322'o'#347'no'#347#263' d'#378'wi'#281'k'#243'w pozycjonowanych:'
+              end
+              object lbVehiclesSounds: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 143
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'G'#322'o'#347'no'#347#263' d'#378'wi'#281'k'#243'w pojazd'#243'w:'
+              end
+              object chSoundenabled: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 22
+                Width = 239
+                Height = 17
+                Align = alTop
+                Caption = 'D'#378'wi'#281'ki'
+                Checked = True
+                State = cbChecked
+                TabOrder = 0
+                OnClick = chSoundenabledClick
+              end
+              object cbSoundvolume: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 64
+                Width = 239
+                Height = 24
+                Align = alTop
+                Style = csDropDownList
+                DoubleBuffered = False
+                ItemIndex = 0
+                ParentDoubleBuffered = False
+                TabOrder = 1
+                Text = 'Standardowa'
+                Items.Strings = (
+                  'Standardowa'
+                  'Niska'
+                  'Wysoka')
+              end
+              object cbVehiclesSounds: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 162
+                Width = 239
+                Height = 24
+                Align = alTop
+                Style = csDropDownList
+                DoubleBuffered = False
+                ItemIndex = 0
+                ParentDoubleBuffered = False
+                TabOrder = 2
+                Text = 'Standardowa'
+                Items.Strings = (
+                  'Standardowa'
+                  'Bardzo niska'
+                  'Niska')
+              end
+              object cbPositionalsSounds: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 211
+                Width = 239
+                Height = 24
+                Align = alTop
+                Style = csDropDownList
+                DoubleBuffered = False
+                ItemIndex = 0
+                ParentDoubleBuffered = False
+                TabOrder = 3
+                Text = 'Standardowa'
+                Items.Strings = (
+                  'Standardowa'
+                  'Bardzo niska'
+                  'Niska')
+              end
+              object cbGlobalSounds: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 260
+                Width = 239
+                Height = 24
+                Align = alTop
+                Style = csDropDownList
+                DoubleBuffered = False
+                ItemIndex = 0
+                ParentDoubleBuffered = False
+                TabOrder = 4
+                Text = 'Standardowa'
+                Items.Strings = (
+                  'Standardowa'
+                  'Niska'
+                  'Wysoka')
+              end
+              object cbRadioVolume: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 113
+                Width = 239
+                Height = 24
+                Align = alTop
+                Style = csDropDownList
+                DoubleBuffered = False
+                ItemIndex = 0
+                ParentDoubleBuffered = False
+                TabOrder = 5
+                Text = 'Standardowa'
+                Items.Strings = (
+                  'Standardowa'
+                  'Niska'
+                  'Wysoka')
+              end
+            end
+            object pnlLeftMargin1: TPanel
+              Left = 0
+              Top = 0
+              Width = 161
+              Height = 370
+              Align = alLeft
+              BevelOuter = bvNone
+              ShowCaption = False
+              TabOrder = 2
             end
           end
         end
@@ -3854,7 +3940,7 @@ object Main: TMain
     OwnerDraw = True
     OnPopup = pmTrainsetsPopup
     Left = 784
-    Top = 381
+    Top = 357
     object miPasteFromClipboard: TMenuItem
       Action = actPasteFromClipboard
     end
@@ -3863,7 +3949,6 @@ object Main: TMain
     end
     object miAddToDepo: TMenuItem
       Action = actAddToDepo
-      Caption = 'Dodaj sk'#322'ad do magazynu'
     end
     object Usuwszystkiepojazdyzeskadu1: TMenuItem
       Action = actRemoveTrain
@@ -3873,8 +3958,8 @@ object Main: TMain
     end
   end
   object AL: TActionList
-    Left = 692
-    Top = 383
+    Left = 732
+    Top = 311
     object actAddToDepo: TAction
       Caption = 'Dodaj do magazynu'
       OnExecute = actAddToDepoExecute
@@ -3928,7 +4013,7 @@ object Main: TMain
       OnExecute = actDefaultSettingsExecute
     end
     object actCheckUpdate: TAction
-      Caption = 'Aktualizuj starer'
+      Caption = 'Aktualizuj starter'
       OnExecute = actCheckUpdateExecute
     end
     object actSaveKeyboard: TAction
@@ -3938,11 +4023,6 @@ object Main: TMain
     object actKeyboard: TAction
       Caption = 'Klawiszologia'
       OnExecute = actKeyboardExecute
-    end
-    object actCouplerEZT: TAction
-      Caption = 'EZT'
-      OnExecute = actCouplerEZTExecute
-      OnUpdate = actCouplerEZTUpdate
     end
     object actRemoveTrain: TAction
       Caption = 'Usu'#324' wszystkie pojazdy ze sk'#322'adu'
@@ -4037,16 +4117,51 @@ object Main: TMain
       Caption = 'O Starterze'
       OnExecute = actAboutExecute
     end
+    object actCOM: TAction
+      Category = 'menu'
+      Caption = 'Konfiguracja COM'
+      OnExecute = actCOMExecute
+    end
+    object actRestoreWeather: TAction
+      Category = 'menu'
+      Caption = 'Przywr'#243#263' domy'#347'ln'#261' pogod'#281
+      OnExecute = actRestoreWeatherExecute
+      OnUpdate = actRestoreWeatherUpdate
+    end
+    object actLoadDepoFromFile: TAction
+      Category = 'menu'
+      Caption = 'Dodaj sk'#322'ady z pliku...'
+      OnExecute = actLoadDepoFromFileExecute
+    end
+    object actChangeName: TAction
+      Category = 'menu'
+      Caption = 'Zmie'#324' nazw'#281'...'
+      OnExecute = actChangeNameExecute
+      OnUpdate = actChangeNameUpdate
+    end
+    object actAutoCoupler: TAction
+      Category = 'menu'
+      Caption = 'Auto'
+      Hint = 'Automatycznie ustaw sprz'#281'g'
+      OnExecute = actAutoCouplerExecute
+      OnUpdate = actAutoCouplerUpdate
+    end
   end
   object pmDepot: TPopupMenu
-    OnPopup = pmDepotPopup
     Left = 783
-    Top = 337
+    Top = 313
     object miCopyToClipboard2: TMenuItem
       Action = actCopyToClipboard
     end
+    object miLoadDepoFromFile: TMenuItem
+      Action = actLoadDepoFromFile
+    end
+    object miChangeName: TMenuItem
+      Action = actChangeName
+    end
   end
   object pmTextures: TPopupMenu
+    OnPopup = pmTexturesPopup
     Left = 108
     Top = 195
     object miCopyTexture: TMenuItem
@@ -4068,5 +4183,12 @@ object Main: TMain
     object miOpenScenarioDir: TMenuItem
       Action = actOpenScenarioDir
     end
+  end
+  object OD: TOpenDialog
+    DefaultExt = '*.ini'
+    FileName = 'magazyn.ini'
+    Filter = 'Pliki INI|*.ini|Wszystkie pliki|*.*'
+    Left = 734
+    Top = 361
   end
 end
