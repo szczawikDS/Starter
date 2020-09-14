@@ -285,10 +285,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(12.09.2020)'
+      Hint = '(13.09.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '5.4'
+      Caption = '5.4.1'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -305,7 +305,7 @@ object Main: TMain
       Top = 0
       Width = 48
       Height = 50
-      Hint = '(12.09.2020)'
+      Hint = '(13.09.2020)'
       HelpType = htKeyword
       HelpKeyword = ' '
       Align = alLeft
@@ -2381,10 +2381,7 @@ object Main: TMain
                 TabOrder = 2
                 Items.Strings = (
                   'Wy'#322#261'czone'
-                  'Nowe Opacity'
-                  'Z optymalizacj'#261
-                  'Z bananami'
-                  'Rozszerzone')
+                  'Konwersja')
               end
               object cbBattery: TComboBox
                 AlignWithMargins = True

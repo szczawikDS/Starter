@@ -519,7 +519,14 @@ begin
       else
       if Params[i].Name = 'multisampling' then Main.cbMultisampling.ItemIndex := StrToInt(Params[i].Value) else
       if Params[i].Name = 'gfx.smoke.fidelity' then Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
-      if Params[i].Name = 'convertmodels' then Main.cbConvertmodels.ItemIndex := StrToInt(Params[i].Value) else
+      if Params[i].Name = 'convertmodels' then
+      begin
+        case StrToInt(Params[i].Value) of
+          0:      Main.cbConvertmodels.ItemIndex := 0;
+          1..135: Main.cbConvertmodels.ItemIndex := 1;
+        end;
+      end
+      else
       if Params[i].Name = 'anisotropicfiltering' then
       begin
         case StrToInt(Params[i].Value) of
@@ -935,7 +942,13 @@ begin
     end
     else
     if Params[i].Name = 'multisampling'         then Params[i].Value := IntToStr(Main.cbMultisampling.ItemIndex) else
-    if Params[i].Name = 'convertmodels'         then Params[i].Value := IntToStr(Main.cbConvertmodels.ItemIndex) else
+    if Params[i].Name = 'convertmodels'         then
+    begin
+      case Main.cbConvertmodels.ItemIndex of
+        0: Params[i].Value := '0';
+        1: Params[i].Value := '135';
+      end;
+    end;
     if Params[i].Name = 'gfx.smoke.fidelity'    then Params[i].Value := IntToStr(Main.cbSmokeFidelity.ItemIndex+1)
     else
     if Params[i].Name = 'anisotropicfiltering'  then
