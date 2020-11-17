@@ -55,6 +55,7 @@ type
     procedure FindParameter(const Name: string;const Desc:string='');
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
+    procedure RemoveParam(const Name: String);
   public
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
@@ -72,7 +73,7 @@ type
 
 implementation
 
-uses uMain, Classes, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs, DateUtils, uUpdater;
+uses uMain, uSettingsAdv, Classes, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs, DateUtils, uUpdater;
 
 constructor TSettings.Create;
 begin
@@ -305,6 +306,9 @@ begin
     begin
       if Params[i].Name = 'width' then ParWidth := Params[i].Value else
       if Params[i].Name = 'height' then ParHeight := Params[i].Value else
+      if Params[i].Name = 'fullscreenwindowed' then
+        Main.chFullScreenWindowed.Checked := Params[i].Value = 'yes'
+      else
       if Params[i].Name = 'fullscreen' then
         Main.chFullScreen.Checked := Params[i].Value = 'yes'
       else
@@ -366,7 +370,7 @@ begin
         Main.chExtraEffects.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'scalespeculars' then
-        Main.chScaleSpeculars.Checked := Params[i].Value = 'yes'
+        frmSettingsAdv.chScaleSpeculars.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'gfx.shadowmap.enabled' then
         Main.chShadowMap.Checked := Params[i].Value = 'yes'
@@ -388,6 +392,9 @@ begin
       else
       if Params[i].Name = 'gfx.skippipeline' then
         Main.chSkipPipeline.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'compresstex' then
+        frmSettingsAdv.chCompressTex.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'debuglog' then
       begin
@@ -412,11 +419,11 @@ begin
         end;
         if ValInt >= 2 then
         begin
-          Main.chDebuglog.Checked := True;
+          Main.chDebugLogVis.Checked := True;
           Dec(ValInt,2);
         end;
         if ValInt >= 1 then
-          Main.chDebugLogVis.Checked := True;
+          Main.chDebuglog.Checked := True;
       end
       else
       if Params[i].Name = 'mousescale' then
@@ -424,13 +431,17 @@ begin
         Par := TStringList.Create;
         ExtractStrings([' '],[],PChar(Params[i].Value),Par);
         Main.cbMouseScale.ItemIndex := 0;
-        if StrToFloat(Par[0]) < 1.3 then
+        if Abs(StrToFloat(Par[0])) < 1.3 then
           Main.cbMouseScale.ItemIndex := 1
         else
-        if StrToFloat(Par[0]) > 1.9 then
+        if Abs(StrToFloat(Par[0])) > 1.9 then
           Main.cbMouseScale.ItemIndex := 2;
-        if StrToFloat(Par[0]) > 2.7 then
+        if Abs(StrToFloat(Par[0])) > 2.7 then
           Main.cbMouseScale.ItemIndex := 3;
+
+        Main.chMouseInversionHorizontal.Checked := StrToFloat(Par[0]) < 0;
+        Main.chMouseInversionVertical.Checked   := StrToFloat(Par[1]) < 0;
+
         Par.Free;
       end
       else
@@ -445,39 +456,19 @@ begin
       if Params[i].Name = 'friction' then Main.edFriction.Text := Params[i].Value else
       if Params[i].Name = 'fieldofview' then Main.edFieldofview.Text := Params[i].Value else
       if Params[i].Name = 'sound.volume' then
-      begin
-        if StrToFloat(Params[i].Value) < 1.2 then Main.cbSoundvolume.ItemIndex := 1;
-        if StrToFloat(Params[i].Value) < 1.8 then Main.cbSoundvolume.ItemIndex := 0;
-        if StrToFloat(Params[i].Value) > 1.7 then Main.cbSoundvolume.ItemIndex := 2;
-      end
+        Main.tbSoundVolume.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'sound.volume.radio' then
-      begin
-        if StrToFloat(Params[i].Value) < 0.6 then Main.cbRadioVolume.ItemIndex := 1;
-        if StrToFloat(Params[i].Value) > 0.5 then Main.cbRadioVolume.ItemIndex := 0;
-        if StrToFloat(Params[i].Value) = 1.0 then Main.cbRadioVolume.ItemIndex := 2;
-      end
+        Main.tbRadioVolume.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'sound.volume.vehicle' then
-      begin
-        if StrToFloat(Params[i].Value) < 0.7 then Main.cbVehiclesSounds.ItemIndex := 2;
-        if StrToFloat(Params[i].Value) < 0.4 then Main.cbVehiclesSounds.ItemIndex := 1;
-        if StrToFloat(Params[i].Value) > 0.6 then Main.cbVehiclesSounds.ItemIndex := 0;
-      end
+        Main.tbVehiclesSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'sound.volume.positional' then
-      begin
-        if StrToFloat(Params[i].Value) < 0.7 then Main.cbPositionalsSounds.ItemIndex := 2;
-        if StrToFloat(Params[i].Value) < 0.4 then Main.cbPositionalsSounds.ItemIndex := 1;
-        if StrToFloat(Params[i].Value) > 0.6 then Main.cbPositionalsSounds.ItemIndex := 0;
-      end
+        Main.tbPositionalsSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'sound.volume.ambient' then
-      begin
-        if StrToFloat(Params[i].Value) > 0.6 then Main.cbGlobalSounds.ItemIndex := 0;
-        if StrToFloat(Params[i].Value) > 0.9 then Main.cbGlobalSounds.ItemIndex := 2;
-        if StrToFloat(Params[i].Value) < 0.7 then Main.cbGlobalSounds.ItemIndex := 1;
-      end
+        Main.tbGlobalSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'gfx.reflections.framerate' then
       begin
@@ -517,13 +508,27 @@ begin
         end;
       end
       else
+      if Params[i].Name = 'maxcabtexturesize' then
+      begin
+        case StrToInt(Params[i].Value) of
+          512:    Main.cbMaxcabtexturesize.ItemIndex := 1;
+          1024:   Main.cbMaxcabtexturesize.ItemIndex := 2;
+          2048:   Main.cbMaxcabtexturesize.ItemIndex := 3;
+          4096:   Main.cbMaxcabtexturesize.ItemIndex := 4;
+        end;
+        if Main.cbMaxcabtexturesize.ItemIndex <= 0 then
+          Main.cbMaxcabtexturesize.ItemIndex := 0;
+      end
+      else
+      if Params[i].Name = 'gfx.reflections.fidelity' then
+        Main.cbReflectionsFidelity.ItemIndex := StrToInt(Params[i].Value) else
       if Params[i].Name = 'multisampling' then Main.cbMultisampling.ItemIndex := StrToInt(Params[i].Value) else
       if Params[i].Name = 'gfx.smoke.fidelity' then Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
       if Params[i].Name = 'convertmodels' then
       begin
         case StrToInt(Params[i].Value) of
-          0:      Main.cbConvertmodels.ItemIndex := 0;
-          1..135: Main.cbConvertmodels.ItemIndex := 1;
+          0:      frmSettingsAdv.cbConvertmodels.ItemIndex := 0;
+          1..135: frmSettingsAdv.cbConvertmodels.ItemIndex := 1;
         end;
       end
       else
@@ -553,7 +558,13 @@ begin
       else
       if Params[i].Name = 'splinefidelity' then Main.cbSplinefidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
       if Params[i].Name = 'lang' then
-        Main.cbLang.ItemIndex := Main.cbLang.Items.IndexOf(UpperCase(Params[i].Value)) else
+      begin
+        if Main.cbLang.Items.IndexOf(UpperCase(Params[i].Value)) < 0 then
+          Main.cbLang.Items.Add(UpperCase(Params[i].Value));
+
+        Main.cbLang.ItemIndex := Main.cbLang.Items.IndexOf(UpperCase(Params[i].Value))
+      end
+      else
       if Params[i].Name = 'shadowtune' then
       begin
         Par := TStringList.Create;
@@ -729,6 +740,18 @@ begin
   Params.Add(Param);
 end;
 
+procedure TSettings.RemoveParam(const Name:String);
+var
+  i : Integer;
+begin
+  i := 0;
+  while (Params[i].Name <> Name) and (i < Params.Count-1) do
+    Inc(i);
+
+  if Params[i].Name = Name then
+    Params.Extract(Params[i]);
+end;
+
 procedure TSettings.FindParameter(const Name:string;const Desc:string='');
 var
   i : Integer;
@@ -750,6 +773,7 @@ procedure TSettings.CheckParams;
 begin
   FindParameter('width','(800) szerokoœæ ekranu');
   FindParameter('height','(600) wysokoœæ ekranu');
+  FindParameter('fullscreenwindowed','(no) yes: automatyczna rozdzielczosc');
   FindParameter('fullscreen','(no) yes: tryb pe³noekranowy');
   FindParameter('inactivepause','(yes) zatrzymanie programu, jeœli nie jest aktywnym oknem');
   FindParameter('pause','(no) yes: zatrzymanie symulacji zaraz po wczytaniu');
@@ -801,6 +825,13 @@ begin
   FindParameter('gfx.skiprendering','(domyslnie no) wylacza w ogole wizualizacje symulacji, pozostawiajac jedynie ui');
   FindParameter('crashdamage','(domyslnie yes) w³¹cza uszkodzenia sprzêgów i wykolejenia od zderzeñ');
   FindParameter('gfx.postfx.chromaticaberration.enabled','(domyslnie no) Efekt aberracji chromatycznej');
+  FindParameter('compresstex','(yes) ¿¹da od sterownika kompresji ³adowanych tekstur tga');
+  FindParameter('gfx.reflections.fidelity','(0) malowanie odbic. 1: +modele stat. 2:+modele stat. i pojazdy');
+
+  if Main.cbMaxcabtexturesize.ItemIndex > 0 then
+    FindParameter('maxcabtexturesize','skalowanie tekstur kabiny do podanego rozmiaru')
+  else
+    RemoveParam('maxcabtexturesize');
 end;
 
 procedure TSettings.SaveSettings;
@@ -833,6 +864,7 @@ begin
       Par.Free;
     end
     else
+    if Params[i].Name = 'fullscreenwindowed'            then SetCheckState(Main.chFullScreenWindowed.Checked,i) else
     if Params[i].Name = 'fullscreen'                    then SetCheckState(Main.chFullScreen.Checked,i) else
     if Params[i].Name = 'inactivepause'                 then SetCheckState(Main.chInactivepause.Checked,i) else
     if Params[i].Name = 'pause'                         then SetCheckState(Main.chPause.Checked,i) else
@@ -853,7 +885,7 @@ begin
     if Params[i].Name = 'gfx.envmap.enabled'            then SetCheckState(Main.chEnvmap.Checked,i) else
     if Params[i].Name = 'gfx.smoke'                     then SetCheckState(Main.chSmoke.Checked,i) else
     if Params[i].Name = 'gfx.extraeffects'              then SetCheckState(Main.chExtraEffects.Checked,i) else
-    if Params[i].Name = 'scalespeculars'                then SetCheckState(Main.chScaleSpeculars.Checked,i) else
+    if Params[i].Name = 'scalespeculars'                then SetCheckState(frmSettingsAdv.chScaleSpeculars.Checked,i) else
     if Params[i].Name = 'gfx.shadowmap.enabled'         then SetCheckState(Main.chShadowMap.Checked,i) else
     if Params[i].Name = 'python.threadedupload'         then SetCheckState(Main.chPythonThreadedUpload.Checked,i) else
     if Params[i].Name = 'python.enabled'                then SetCheckState(Main.chPythonEnabled.Checked,i) else
@@ -861,14 +893,25 @@ begin
     if Params[i].Name = 'crashdamage'                   then SetCheckState(Main.chCrashDamage.Checked,i) else
     if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled'  then SetCheckState(Main.chChromaticAberration.Checked,i) else
     if Params[i].Name = 'gfx.skippipeline'              then SetCheckState(Main.chSkipPipeline.Checked,i) else
+    if Params[i].Name = 'compresstex'                   then SetCheckState(frmSettingsAdv.chCompressTex.Checked,i) else
     if Params[i].Name = 'mousescale' then
     begin
+      if Main.chMouseInversionHorizontal.Checked then
+        Params[i].Value := '-'
+      else
+        Params[i].Value := '';
+
       case Main.cbMouseScale.ItemIndex of
-        0: Params[i].Value := '1.5 0.5';
-        1: Params[i].Value := '1.0 0.5';
-        2: Params[i].Value := '2.3 0.5';
-        3: Params[i].Value := '3.2 0.5';
+        0: Params[i].Value := Params[i].Value + '1.5';
+        1: Params[i].Value := Params[i].Value + '1.0';
+        2: Params[i].Value := Params[i].Value + '2.3';
+        3: Params[i].Value := Params[i].Value + '3.2';
       end;
+
+      if Main.chMouseInversionVertical.Checked then
+        Params[i].Value := Params[i].Value + ' -0.5'
+      else
+        Params[i].Value := Params[i].Value + ' 0.5';
     end
     else
     if Params[i].Name = 'feedbackmode'  then Params[i].Value := IntToStr(Main.cbFeedbackmode.ItemIndex) else
@@ -885,49 +928,19 @@ begin
     end
     else
     if Params[i].Name = 'sound.volume'  then
-    begin
-      case Main.cbSoundvolume.ItemIndex of
-        0: Params[i].Value := '1.5';
-        1: Params[i].Value := '1.0';
-        2: Params[i].Value := '2.0';
-      end;
-    end
+      Params[i].Value := FloatToStr(Main.tbSoundVolume.Position / 10)
     else
     if Params[i].Name = 'sound.volume.radio' then
-    begin
-      case Main.cbRadioVolume.ItemIndex of
-        0: Params[i].Value := '0.6';
-        1: Params[i].Value := '0.3';
-        2: Params[i].Value := '1.0';
-      end;
-    end
+      Params[i].Value := FloatToStr(Main.tbRadioVolume.Position / 10)
     else
     if Params[i].Name = 'sound.volume.vehicle' then
-    begin
-      case Main.cbVehiclesSounds.ItemIndex of
-        0: Params[i].Value := '1.0';
-        1: Params[i].Value := '0.3';
-        2: Params[i].Value := '0.6';
-      end;
-    end
+      Params[i].Value := FloatToStr(Main.tbVehiclesSounds.Position / 10)
     else
     if Params[i].Name = 'sound.volume.positional' then
-    begin
-      case Main.cbPositionalsSounds.ItemIndex of
-        0: Params[i].Value := '1.0';
-        1: Params[i].Value := '0.3';
-        2: Params[i].Value := '0.6';
-      end;
-    end
+      Params[i].Value := FloatToStr(Main.tbPositionalsSounds.Position / 10)
     else
     if Params[i].Name = 'sound.volume.ambient' then
-    begin
-      case Main.cbGlobalSounds.ItemIndex of
-        0: Params[i].Value := '0.8';
-        1: Params[i].Value := '0.6';
-        2: Params[i].Value := '1.0';
-      end;
-    end
+      Params[i].Value := FloatToStr(Main.tbGlobalSounds.Position / 10)
     else
     if Params[i].Name = 'maxtexturesize' then
     begin
@@ -941,10 +954,20 @@ begin
       end;
     end
     else
+    if Params[i].Name = 'maxcabtexturesize' then
+    begin
+      case Main.cbMaxcabtexturesize.ItemIndex of
+        1: Params[i].Value := '512';
+        2: Params[i].Value := '1024';
+        3: Params[i].Value := '2048';
+        4: Params[i].Value := '4096';
+      end;
+    end
+    else
     if Params[i].Name = 'multisampling'         then Params[i].Value := IntToStr(Main.cbMultisampling.ItemIndex) else
     if Params[i].Name = 'convertmodels'         then
     begin
-      case Main.cbConvertmodels.ItemIndex of
+      case frmSettingsAdv.cbConvertmodels.ItemIndex of
         0: Params[i].Value := '0';
         1: Params[i].Value := '135';
       end;
@@ -1024,6 +1047,7 @@ begin
       Params[i].Value :=  IntToStr(Value);
     end
     else
+    if Params[i].Name = 'gfx.reflections.fidelity' then Params[i].Value := IntToStr(Main.cbReflectionsFidelity.ItemIndex) else
     if Params[i].Name = 'splinefidelity' then Params[i].Value := IntToStr(Main.cbSplinefidelity.ItemIndex+1) else
     if Params[i].Name = 'lang' then Params[i].Value := LowerCase(Main.cbLang.Text);
 

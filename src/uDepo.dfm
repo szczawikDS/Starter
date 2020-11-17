@@ -39,6 +39,7 @@ object frmDepo: TfrmDepo
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect]
     PopupMenu = pmMenu
     TabOrder = 0
+    OnDblClick = sgDepoDblClick
     OnDrawCell = sgDepoDrawCell
     ColWidths = (
       32
@@ -321,7 +322,7 @@ object frmDepo: TfrmDepo
             Height = 21
             Align = alLeft
             Date = 44062.000000000000000000
-            Time = 0.647236898148548700
+            Time = 0.647236898148548800
             TabOrder = 1
             OnChange = dtRevStartChange
           end
@@ -352,7 +353,7 @@ object frmDepo: TfrmDepo
             Height = 21
             Align = alLeft
             Date = 44062.000000000000000000
-            Time = 0.647236898148548700
+            Time = 0.647236898148548800
             TabOrder = 1
             OnChange = dtRevEndChange
           end

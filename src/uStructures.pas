@@ -55,6 +55,7 @@ type
   end;
 
   TTexture = class
+    ID    : Integer;
     Plik  : string;
     Models  : TObjectList<TModel>;
     Opis  : string;
@@ -70,6 +71,8 @@ type
     Works     : string;
     Author    : string;
     Photos    : string;
+    NextTexID : Integer;
+    PrevTexID : Integer;
   public
     constructor Create;
   end;
@@ -81,6 +84,7 @@ type
     VMax          : Double;
     Length        : Double;
     LoadAccepted  : string;
+    MaxLoad       : Integer;
     AllowedFlagA  : Integer;
     AllowedFlagB  : Integer;
   end;
@@ -107,7 +111,7 @@ type
     FlatnessRand    : Integer; // podkucie losowe 0-x mm
     FlatnessProb    : Integer; // prawdopodobienstwo poducia
     Wheel           : Char;
-    Loadquantity    : Double;
+    Loadquantity    : Integer;
     LoadType        : string;
     ThermoDynamic   : Boolean;
     Texture         : TTexture;

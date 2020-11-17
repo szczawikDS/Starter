@@ -85,6 +85,7 @@ type
     procedure miOpenDirClick(Sender: TObject);
     procedure pmMenuPopup(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure sgDepoDblClick(Sender: TObject);
   private
     { Private declarations }
     const
@@ -275,6 +276,19 @@ end;
 procedure TfrmDepo.pmMenuPopup(Sender: TObject);
 begin
   miOpenDir.Visible := sgModels.RowCount > 1;
+end;
+
+procedure TfrmDepo.sgDepoDblClick(Sender: TObject);
+var
+  i, y : Integer;
+begin
+  for i := 0 to Main.Textures.Count-1 do
+    for y := 0 to Main.Textures[i].Models.Count-1 do
+      if (Main.Textures[i].Plik = sgDepo.Cells[1,sgDepo.Row])
+      and (Main.Textures[i].Models[y].Model = sgDepo.Cells[4,sgDepo.Row]) then
+        Main.SelectTexture(Main.Textures[i],y);
+
+  Self.Close;
 end;
 
 procedure TfrmDepo.sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer;

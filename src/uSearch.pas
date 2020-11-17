@@ -148,16 +148,9 @@ begin
 end;
 
 procedure TfrmSearch.lbListClick(Sender: TObject);
-var
-  Tex : TTexture;
 begin
   if lbList.ItemIndex >= 0 then
-  begin
-    Tex := TTexture(lbList.Items.Objects[lbList.ItemIndex]);
-    Main.SelectModel(Tex);
-    Main.lbTextures.ItemIndex := Main.lbTextures.Items.IndexOf(Tex.Plik);
-    Main.lbTexturesClick(self);
-  end;
+    Main.SelectTexture(TTexture(lbList.Items.Objects[lbList.ItemIndex]));
 end;
 
 procedure TfrmSearch.lbListDblClick(Sender: TObject);

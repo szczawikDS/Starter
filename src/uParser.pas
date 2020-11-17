@@ -178,7 +178,8 @@ begin
     end;
     FindClose(SR);
   except
-    Main.Errors.Add('B³¹d wczytywania taboru.');
+    on E: Exception do
+      Main.Errors.Add('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -196,6 +197,7 @@ begin
         Main.Scenarios.Add(ScenarioName(Main.DIR + 'scenery\' + SR.Name));
       Ilosc := FindNext(SR);
     end;
+
     FindClose(SR);
   except
     Main.Errors.Add('B³¹d wczytywania scenerii ' + SR.Name);
@@ -237,6 +239,9 @@ begin
 
     while (not SameText(Lexer.Token, 'endtrainset')) and (Lexer.TokenID <> ptNull) do
     begin
+      if Lexer.TokenID = ptSlash then
+          SkipComment;
+
       if (Lexer.TokenID = ptIdentifier) and (Pos('node',Lexer.Token) > 0) then
         Result.Vehicles.Add(ParseVehicle);
 
@@ -252,7 +257,8 @@ begin
       Lexer.NextNoSpace;
     end;
   except
-    Main.Errors.Add('B³¹d parsowania sk³adu, linia ' + IntToStr(Lexer.LineNumber));
+    on E: Exception do
+      Main.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -384,7 +390,7 @@ begin
       Result.Vel := StrToFloat(GetToken);
 
     Lexer.NextNoJunk;
-    Result.Loadquantity := StrToFloat(GetToken);
+    Result.Loadquantity := StrToInt(GetToken);
 
     if Result.Loadquantity > 0 then
     begin
@@ -394,7 +400,8 @@ begin
 
     FindTexture(Result);
   except
-    Main.Errors.Add('B³¹d parsowania wpisu pojazdu ' + Result.Name);
+    on E: Exception do
+      Main.Errors.Add('B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -528,7 +535,8 @@ begin
       Lexer.NextNoSpace;
     end;
   except
-    Main.Errors.Add('B³¹d parsowania sekcji config.');
+    on E: Exception do
+      Main.Errors.Add('B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -670,7 +678,8 @@ begin
     if Lexer.Token <> 'endatmo' then
       Config.Overcast := StrToFloat(GetToken);
   except
-    Main.Errors.Add('B³¹d parsowania wpisu atmo.');
+    on E: Exception do
+      Main.Errors.Add('B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -681,7 +690,11 @@ begin
   Result := TScenario.Create;
   Result.ID := '-';
   Result.Path := Path;
-  Result.Name := ExtractFileName( Copy(Path,0,Pos('.scn',Path)-1));
+
+  if Pos('scn',Path) > 0 then
+    Result.Name := ExtractFileName( Copy(Path,0,Pos('.scn',Path)-1))
+  else
+    Result.Name := ExtractFileName( Copy(Path,0,Pos('.SCN',Path)-1));
 
   Plik := TStringList.Create;
   Plik.LoadFromFile(Path);
@@ -803,7 +816,8 @@ begin
       ParseTrainset(SCN,FirstInit);
       Plik.Free;
     except
-      Main.Errors.Add('B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber));
+      on E: Exception do
+        Main.Errors.Add('B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message);
     end;
   finally
     Free;
@@ -857,7 +871,8 @@ begin
       Lexer.NextNoJunk;
     end;
   except
-    Main.Errors.Add('B³¹d parsowania sk³adu. Linia ' + IntToStr(Lexer.LineNumber));
+    on E: Exception do
+      Main.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -916,7 +931,7 @@ end;
 procedure TParser.ParseTextures(const Path:string);
 var
   Plik : TStringList;
-  i, y : Integer;
+  i, y, Crew, CrewCount : Integer;
   Tex : TTexture;
   Physics : TPhysics;
   Token : string;
@@ -926,12 +941,20 @@ begin
     Plik := TStringList.Create;
     Plik.LoadFromFile(Path);
 
+    Crew := 0;
+
     try
       for i := 0 to Plik.Count-1 do
       begin
         if Pos('#',Plik[i]) = 1 then Continue else
         if Pos('@',Plik[i]) = 1 then Continue else
         if Pos('*',Plik[i]) = 1 then Continue else
+        if Pos('^',Plik[i]) = 1 then
+        begin
+          Crew := StrToInt(Copy(Plik[i],2,1))-1;
+          CrewCount := 0;
+        end
+        else
         if Pos('!=',Plik[i]) = 1 then
         begin
           Token := Copy(Plik[i],3,1);
@@ -976,6 +999,21 @@ begin
         if Pos('=',Plik[i]) > 0 then
         begin
           Tex := TTexture.Create;
+          Tex.ID := Main.Textures.Count;
+          Tex.NextTexID := -1;
+          Tex.PrevTexID := -1;
+          if Crew > 0 then
+          begin
+            if (CrewCount > 0) and (CrewCount <= Crew) then
+            begin
+              Tex.PrevTexID := Main.Textures.Count-1;
+              Main.Textures[Main.Textures.Count-1].NextTexID := Main.Textures.Count;
+            end;
+            Inc(CrewCount);
+
+            if CrewCount > Crew then
+                CrewCount := 0;
+          end;
 
           Tex.Typ := Grupa;
           Tex.Dir := ExtractFileDir(Copy(Path,Pos('dynamic',Path)+8,Length(Path)));
@@ -1031,7 +1069,8 @@ begin
       Plik.Free;
     end;
   except
-    Main.Errors.Add('B³¹d parsowania ' + Path + ', linia: ' + IntToStr(Lexer.LineNumber));
+    on E: Exception do
+      Main.Errors.Add('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -1154,8 +1193,14 @@ begin
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-
             Physics.LoadAccepted := GetToken(Params);
+          end
+          else
+          if Lexer.Token = 'MaxLoad' then
+          begin
+            Lexer.NextNoJunk;
+            Lexer.NextNoJunk;
+            Physics.MaxLoad := Trunc(StrToFloat(GetToken(Params)));
           end;
           psDimension:
           if Lexer.Token = 'L' then

@@ -17,7 +17,8 @@ uses
   uDepo in 'src\uDepo.pas' {frmDepo},
   uAbout in 'src\uAbout.pas' {frmAbout},
   uIdHTTPProgress in 'components\uIdHTTPProgress.pas',
-  uUART in 'src\uUART.pas' {frmUART};
+  uUART in 'src\uUART.pas' {frmUART},
+  uSettingsAdv in 'src\uSettingsAdv.pas' {frmSettingsAdv};
 
 {$R *.res}
 
@@ -30,6 +31,7 @@ begin
   Application.Title := 'Starter MaSzyna';
   TStyleManager.TrySetStyle('Carbon');
   Application.CreateForm(TMain, Main);
+  Application.CreateForm(TfrmSettingsAdv, frmSettingsAdv);
   frmStart.Destroy;
 
   Application.Run;

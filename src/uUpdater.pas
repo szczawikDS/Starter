@@ -43,7 +43,7 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 41;
+      AppVersion = 55;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -76,27 +76,32 @@ var
 begin
   UpdateFile := TStringList.Create;
   try
-    Show;
-    Application.ProcessMessages;
+    try
+      Show;
+      Application.ProcessMessages;
 
-    if Beta then
-      UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver_beta2.txt')
-    else
-      UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver.txt');
-
-    if TryStrToInt(UpdateFile[0],Version) then
-    begin
-      if Version <= AppVersion then
-      begin
-        if ReturnInfo then
-          ShowMessage('Posiadasz najnowsz¹ wersjê.');
-      end
+      if Beta then
+        UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver_beta.txt')
       else
+        UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver.txt');
+
+      if TryStrToInt(UpdateFile[0],Version) then
       begin
-        Hide;
-        if Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
-          Update(UpdateFile);
+        if Version <= AppVersion then
+        begin
+          if ReturnInfo then
+            ShowMessage('Posiadasz najnowsz¹ wersjê.');
+        end
+        else
+        begin
+          Hide;
+          if Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
+            Update(UpdateFile);
+        end;
       end;
+    except
+      on E: Exception do
+        ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
     end;
   finally
     UpdateFile.Free;
@@ -127,26 +132,30 @@ begin
   Show;
   Par := TStringList.Create;
   try
-    lbUpdate.Caption := 'Aktualizujê...';
-    Main.Cursor := crHourGlass;
-    Application.ProcessMessages;
+    try
+      lbUpdate.Caption := 'Aktualizujê...';
+      Main.Cursor := crHourGlass;
+      Application.ProcessMessages;
 
-    Par.Delimiter := ' ';
-    for i := 1 to UpdateFile.Count-1 do
-    begin
-      IdHTTPProgress.OnChange := IdHTTPProgressOnChange;
+      Par.Delimiter := ' ';
+      for i := 1 to UpdateFile.Count-1 do
+      begin
+        IdHTTPProgress.OnChange := IdHTTPProgressOnChange;
 
-      Par.DelimitedText := UpdateFile[i];
-      IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[0], Main.DIR + '\' + Par[1]);
+        Par.DelimitedText := UpdateFile[i];
+        IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[0], Main.DIR + '\' + Par[1]);
+      end;
+
+      if FileExists(Main.DIR + '\StarterNew.exe') then
+        AutoUpdate;
+    except
+      on E: Exception do
+        ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
     end;
-
-    if FileExists(Main.DIR + '\StarterNew.exe') then
-      AutoUpdate;
   finally
     pbProgress.Visible := False;
     Main.Cursor := crDefault;
     Par.Free;
-    ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.');
   end;
 end;
 
@@ -178,7 +187,8 @@ begin
       ShellExecute(Main.Handle, 'open', 'update.bat', nil, nil, SW_HIDE);
     Bat.Free;
   except
-
+    on E: Exception do
+      ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
