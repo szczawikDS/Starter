@@ -2155,8 +2155,8 @@ end;
 
 procedure TMain.AppActivate(Sender: TObject);
 begin
-  RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
-  RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
+  //RegisterHotKey(Handle, VK_DELETE, 0, VK_DELETE);
+  //RegisterHotKey(Handle, VK_INSERT, 0, VK_INSERT);
   btnStart.Enabled := True;
 end;
 

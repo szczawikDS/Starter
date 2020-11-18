@@ -48,10 +48,10 @@ object frmAbout: TfrmAbout
       Top = 62
       Width = 300
       Height = 13
-      Hint = '(16.11.2020)'
+      Hint = '(17.11.2020)'
       Align = alTop
       Alignment = taCenter
-      Caption = '6.1.1'
+      Caption = '6.1.2'
       ParentShowHint = False
       ShowHint = True
     end

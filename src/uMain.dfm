@@ -289,10 +289,10 @@ object Main: TMain
       Top = 0
       Width = 42
       Height = 50
-      Hint = '(16.11.2020)'
+      Hint = '(17.11.2020)'
       Align = alLeft
       AutoSize = False
-      Caption = '6.1.1'
+      Caption = '6.1.2'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -1923,10 +1923,10 @@ object Main: TMain
                   end
                   object lbTexPhoto: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 339
                     Top = 3
-                    Width = 264
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -1955,10 +1955,10 @@ object Main: TMain
                   end
                   object lbTexRevision: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 339
                     Top = 3
-                    Width = 264
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -1987,10 +1987,10 @@ object Main: TMain
                   end
                   object lbTexStation: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 339
                     Top = 3
-                    Width = 264
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2019,10 +2019,10 @@ object Main: TMain
                   end
                   object lbTexOwner: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 339
                     Top = 3
-                    Width = 264
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2051,10 +2051,10 @@ object Main: TMain
                   end
                   object lbTexAuthor: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 339
                     Top = 3
-                    Width = 264
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ShowAccelChar = False
@@ -2083,10 +2083,10 @@ object Main: TMain
                   end
                   object lbTexWorks: TLabel
                     AlignWithMargins = True
-                    Left = 79
+                    Left = 339
                     Top = 3
-                    Width = 264
-                    Height = 20
+                    Width = 4
+                    Height = 16
                     Align = alClient
                     Alignment = taRightJustify
                     ParentShowHint = False
@@ -2315,7 +2315,7 @@ object Main: TMain
                   Left = 0
                   Top = 0
                   Width = 145
-                  Height = 32
+                  Height = 16
                   Align = alLeft
                   Caption = 'Sprawd'#378' now'#261' wersj'#281' co'
                   Layout = tlCenter
@@ -3704,7 +3704,7 @@ object Main: TMain
             Left = 1
             Top = 1
             Width = 104
-            Height = 24
+            Height = 33
             Align = alLeft
             Style = csDropDownList
             TabOrder = 0
@@ -3787,7 +3787,7 @@ object Main: TMain
             Left = 105
             Top = 1
             Width = 72
-            Height = 24
+            Height = 33
             Align = alLeft
             Style = csDropDownList
             TabOrder = 1
@@ -3801,7 +3801,7 @@ object Main: TMain
             Left = 177
             Top = 1
             Width = 72
-            Height = 24
+            Height = 33
             Align = alLeft
             Style = csDropDownList
             TabOrder = 2
