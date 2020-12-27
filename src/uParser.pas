@@ -51,8 +51,8 @@ type
     procedure LoadSceneries;
     procedure ParseCoupler(var Vehicle: TVehicle);
     function GetBrakeValue(const Settings:string;Pos:Integer):string;
-    procedure ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
-    function IsPhysics(const Dir:string;const Name: string): Integer;
+    procedure ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil;Buff2Found:Boolean=False);
+    function IsPhysics(const Dir:string;const Name: string):TPhysics;
     procedure LoadPhysics;
     procedure FindTexture(var Vehicle:TVehicle);
     procedure ParseTextDesc(Tex: TTexture);
@@ -126,7 +126,6 @@ end;
 
 function TParser.GetToken(const Params:TStringList):string;
 begin
-  Result := '';
   if Lexer.Token = '(' then
   begin
     Lexer.Next;
@@ -156,19 +155,19 @@ var
   Ilosc, Ilosc2 : Integer;
 begin
   try
-    Ilosc := FindFirst(Main.DIR + '\dynamic\*',faDirectory,SR);
+    Ilosc := FindFirst(Main.DIR + 'dynamic\*',faDirectory,SR);
 
     while (Ilosc = 0) do
     begin
       if (SR.Name <> '.') and (SR.Name <> '..') then
       begin
-        Ilosc2 := FindFirst(Main.DIR + '\dynamic\'+SR.Name+'\*',faDirectory,SR2);
+        Ilosc2 := FindFirst(Main.DIR + 'dynamic\'+SR.Name+'\*',faDirectory,SR2);
 
         while (Ilosc2 = 0) do
         begin
           if (SR2.Name <> '.') and (SR2.Name <> '..') then
-            if FileExists(Main.DIR + '\dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt') then
-              ParseTextures(Main.DIR + '\dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt');
+            if FileExists(Main.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt') then
+              ParseTextures(Main.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt');
 
           Ilosc2 := FindNext(SR2);
         end;
@@ -189,7 +188,7 @@ var
   Ilosc : Integer;
 begin
   try
-    Ilosc := FindFirst(Main.DIR + '\scenery\*.scn',faAnyFile,SR);
+    Ilosc := FindFirst(Main.DIR + 'scenery\*.scn',faAnyFile,SR);
 
     while (Ilosc = 0) do
     begin
@@ -211,7 +210,9 @@ begin
     try
       Lexer.Origin := PChar(Trainset);
       Lexer.Init;
+
       Lexer.NextNoJunk;
+
       Result := ParseTrain;
     finally
       Free;
@@ -253,6 +254,9 @@ begin
         end
         else
           Result.Desc := Copy(Lexer.Token,6,Lexer.TokenLen);
+
+      if Pos('//$r',Lexer.Token) > 0 then
+        Result.TimeTable := Copy(Lexer.Token,6,Lexer.TokenLen);
 
       Lexer.NextNoSpace;
     end;
@@ -306,9 +310,9 @@ var
 begin
   LoadWeights := TStringList.Create;
   try
-    if FileExists(Main.DIR + '/data/load_weights.txt') then
+    if FileExists(Main.DIR + 'data\load_weights.txt') then
     begin
-      LoadWeights.LoadFromFile(Main.DIR + '/data/load_weights.txt');
+      LoadWeights.LoadFromFile(Main.DIR + 'data\load_weights.txt');
 
       Lexer.Origin := PChar(LoadWeights.Text);
       Lexer.Init;
@@ -421,14 +425,15 @@ var
   Wheels, Brakes : Boolean;
 begin
   try
-    if Pos('.',Vehicle.Settings) = 0 then
+    i := Pos('.',Vehicle.Settings);
+
+    if i = 0 then
       Vehicle.Coupler := StrToInt(Vehicle.Settings)
     else
     begin
-      Vehicle.Coupler := StrToInt(Copy(Vehicle.Settings,0,Pos('.',Vehicle.Settings)-1));
+      Vehicle.Coupler := StrToInt(Copy(Vehicle.Settings,0,i-1));
 
-      i := Pos('.',Vehicle.Settings) + 1;
-
+      Inc(i);
       Vehicle.Sway := -1;
       Vehicle.Flatness := -1;
       Vehicle.FlatnessRand := -1;
@@ -690,11 +695,8 @@ begin
   Result := TScenario.Create;
   Result.ID := '-';
   Result.Path := Path;
-
-  if Pos('scn',Path) > 0 then
-    Result.Name := ExtractFileName( Copy(Path,0,Pos('.scn',Path)-1))
-  else
-    Result.Name := ExtractFileName( Copy(Path,0,Pos('.SCN',Path)-1));
+  Result.Name := ExtractFileName(Path);
+  Result.Name := Copy(Result.Name,0,Result.Name.Length-4);
 
   Plik := TStringList.Create;
   Plik.LoadFromFile(Path);
@@ -751,6 +753,7 @@ begin
       Config.Day          := 0;
       Config.Temperature  := 15;
       Config.Time         := Now;
+
       Config.StartTime    := StrToTime('10:30');
       Config.Overcast     := 0;
 
@@ -774,11 +777,11 @@ begin
                 Lexer.Next;
 
             if SameText(Lexer.Token,'config') then
-              ParseConfig(Config);
-
+              ParseConfig(Config)
+            else
             if SameText(Lexer.Token,'atmo') then
-              ParseAtmo(Config);
-
+              ParseAtmo(Config)
+            else
             if SameText(Lexer.Token,'time') then
             begin
               Lexer.NextNoJunk;
@@ -799,10 +802,10 @@ begin
                 Lexer.Next;
               end;
 
-              if FileExists(Main.DIR + '\scenery\' + IncludeStr) then
+              if FileExists(Main.DIR + 'scenery\' + IncludeStr) then
               begin
                 IncFirstInit := TStringList.Create;
-                IncFirstInit.LoadFromFile(Main.DIR + '\scenery\' + IncludeStr);
+                IncFirstInit.LoadFromFile(Main.DIR + 'scenery\' + IncludeStr);
                 FirstInit.Add(IncFirstInit.Text);
                 IncFirstInit.Free;
               end;
@@ -835,15 +838,7 @@ begin
     While Lexer.TokenID <> ptNull do
     begin
       if Lexer.TokenID = ptSlash then
-      begin
-        Lexer.InitAhead;
-        if Lexer.AheadTokenID = ptStar then
-          while not ((Lexer.TokenID = ptStar) and (Lexer.AheadTokenID = ptSlash)) and (Lexer.TokenID <> ptNull) do
-          begin
-            Lexer.NextNoJunk;
-            Lexer.AheadNext;
-          end;
-      end;
+        SkipComment;
 
       if Lexer.TokenID = ptIdentifier then
       begin
@@ -918,7 +913,7 @@ begin
       if Lexer.TokenID = ptComma then
       begin
         Lexer.NextNoSpace;
-        Model.MiniD := GetToken([ptComma,ptSlashesComment,ptEqual]);
+        Model.MiniD := GetToken([ptComma,ptSlashesComment,ptEqual,ptSpace]);
       end;
 
       Tex.Models.Add(Model);
@@ -1035,30 +1030,30 @@ begin
 
           for y := 0 to Tex.Models.Count-1 do
           begin
-            if FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') or
-               FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz') then
+            if FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') or
+               FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz') then
             begin
               Tex.Models[y].Fiz := IsPhysics(Tex.Dir,Tex.Models[y].Model);
-              if Tex.Models[y].Fiz < 0 then
+              if Tex.Models[y].Fiz = nil then
               begin
                 Physics := TPhysics.Create;
 
-                if not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') then
+                if not FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') then
                   Tex.Models[y].Model := Tex.Models[y].Model + 'dumb';
 
                 Physics.Name := Tex.Models[y].Model;
                 Physics.Dir  := Tex.Dir;
                 Main.Physics.Add(Physics);
-                Tex.Models[y].Fiz := Main.Physics.Count-1;
+                Tex.Models[y].Fiz := Main.Physics.Last;
               end;
             end
             else
             begin
               Include(Tex.Errors,teNoPhysics);
-              Tex.Models[y].Fiz := -1;
+              Tex.Models[y].Fiz := nil;
             end;
 
-            if not FileExists(Main.DIR + '\dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then
+            if not FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then
                 Include(Tex.Errors,teNoMultimedia);
           end;
 
@@ -1100,25 +1095,24 @@ begin
   end;
 end;
 
-function TParser.IsPhysics(const Dir:string;const Name:string):Integer;
+function TParser.IsPhysics(const Dir:string;const Name:string):TPhysics;
 var
   i : Integer;
 begin
-  Result := -1;
+  Result := nil;
 
-  for i := 0 to Main.Physics.Count-1 do
+  for i := Main.Physics.Count-1 downto 0 do
     if (CompareText(Main.Physics[i].Name,Name) = 0) and (CompareText(Main.Physics[i].Dir,Dir) = 0) then
     begin
-      Result := i;
+      Result := Main.Physics[i];
       Break;
     end;
 end;
 
-procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
+procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil;Buff2Found:Boolean=False);
 var
   PhysicsFile : TStringList;
   Section : TPhysicsSections;
-  Buff2Found : Boolean;
   Params : TStringList;
   Include : string;
 begin
@@ -1129,20 +1123,19 @@ begin
       Params := aParams;
 
     Include := '';
-    Buff2Found := False;
 
     PhysicsFile := TStringList.Create;
     if Path.Length = 0 then
     begin
-      if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
-        PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
+      if FileExists(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
+        PhysicsFile.LoadFromFile(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
       else
-        if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz') then
-          PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz');
+        if FileExists(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz') then
+          PhysicsFile.LoadFromFile(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz');
     end
     else
-      if FileExists(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Path) then
-        PhysicsFile.LoadFromFile(Main.DIR + '\dynamic\' + Physics.Dir + '\' + Path);
+      if FileExists(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Path) then
+        PhysicsFile.LoadFromFile(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Path);
 
     Lexer.Origin := PChar(PhysicsFile.Text);
     Lexer.Init;
@@ -1218,6 +1211,13 @@ begin
 
             if Physics.AllowedFlagA < 0 then
               Physics.AllowedFlagA := Abs(Physics.AllowedFlagA) + 128
+          end
+          else
+          if Lexer.Token = 'ControlType' then
+          begin
+            Lexer.NextNoJunk;
+            Lexer.NextNoJunk;
+            Physics.ControlTypeA := GetToken;
           end;
           psBuffCouplB:
           if Lexer.Token = 'AllowedFlag' then
@@ -1230,6 +1230,13 @@ begin
               Physics.AllowedFlagB := Abs(Physics.AllowedFlagB) + 128;
 
             Buff2Found := True;
+          end
+          else
+          if Lexer.Token = 'ControlType' then
+          begin
+            Lexer.NextNoJunk;
+            Lexer.NextNoJunk;
+            Physics.ControlTypeB := GetToken;
           end;
         end;
       end
@@ -1250,10 +1257,13 @@ begin
     end;
 
     if not Buff2Found then
+    begin
       Physics.AllowedFlagB := Physics.AllowedFlagA;
+      Physics.ControlTypeB := Physics.ControlTypeA;
+    end;
 
     if Include.Length > 0 then
-      ParsePhysics(Physics,Include,Params);
+      ParsePhysics(Physics,Include,Params,Buff2Found);
 
     if aParams = nil then
       Params.Free;
@@ -1281,14 +1291,14 @@ begin
 
     if Path.IsEmpty then
     begin
-      if FileExists(Main.DIR + '\starter\magazyn.ini') then
-        DepotFile.LoadFromFile(Main.DIR + '\starter\magazyn.ini')
+      if FileExists(Main.DIR + 'starter\magazyn.ini') then
+        DepotFile.LoadFromFile(Main.DIR + 'starter\magazyn.ini')
       else
-        if FileExists(Main.DIR + '\starter.ini') then
-          DepotFile.LoadFromFile(Main.DIR + '\starter.ini')
+        if FileExists(Main.DIR + 'starter.ini') then
+          DepotFile.LoadFromFile(Main.DIR + 'starter.ini')
         else
-          if FileExists(Main.DIR + '\RAINSTED.INI') then
-            DepotFile.LoadFromFile(Main.DIR + '\RAINSTED.INI');
+          if FileExists(Main.DIR + 'RAINSTED.INI') then
+            DepotFile.LoadFromFile(Main.DIR + 'RAINSTED.INI');
     end
     else
       if FileExists(Path) then
@@ -1359,7 +1369,7 @@ begin
       end;
     end;
 
-    DepotFile.SaveToFile(Main.DIR + '\starter\magazyn.ini');
+    DepotFile.SaveToFile(Main.DIR + 'starter\magazyn.ini');
   except
     Main.Errors.Add('B³¹d zapisu magazynu.');
   end;

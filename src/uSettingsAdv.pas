@@ -9,10 +9,11 @@ uses
 type
   TfrmSettingsAdv = class(TForm)
     pnlMain: TPanel;
-    Label8: TLabel;
+    lbe3d: TLabel;
     cbConvertmodels: TComboBox;
     chCompressTex: TCheckBox;
     chScaleSpeculars: TCheckBox;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -24,6 +25,14 @@ var
 
 implementation
 
+uses uMain, uLanguages;
+
 {$R *.dfm}
+
+procedure TfrmSettingsAdv.FormCreate(Sender: TObject);
+begin
+  if Main.Lang <> 'pl' then
+    TLanguages.ChangeLanguage(Self,Main.Lang);
+end;
 
 end.

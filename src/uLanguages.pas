@@ -47,10 +47,10 @@ var
   Value, Prop : string;
   i : Integer;
 begin
-  if FileExists(Main.DIR + '\starter\lang-' + Lang + '.txt') then
+  if FileExists(Main.DIR + 'starter\lang-' + Lang + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Main.DIR + '\starter\lang-' + Lang + '.txt');
+    LangFile.LoadFromFile(Main.DIR + 'starter\lang-' + Lang + '.txt');
 
     while (Pos('[' + Form.Name,LangFile[i]) = 0) and (i < LangFile.Count-1) do
         Inc(i);
@@ -99,6 +99,8 @@ begin
             SetStrProp(Comp,Prop,Value);
           end;
         end;
+        //else
+        //  Value := Copy(LangFile[i],0,Pos('.',LangFile[i])-1);
         Inc(i);
       end;
     end;

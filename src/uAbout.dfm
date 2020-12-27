@@ -3,7 +3,7 @@ object frmAbout: TfrmAbout
   Top = 0
   BorderStyle = bsDialog
   Caption = 'O programie'
-  ClientHeight = 322
+  ClientHeight = 336
   ClientWidth = 594
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object frmAbout: TfrmAbout
     Left = 294
     Top = 0
     Width = 300
-    Height = 322
+    Height = 336
     Align = alRight
     BevelOuter = bvNone
     ShowCaption = False
@@ -45,44 +45,34 @@ object frmAbout: TfrmAbout
     end
     object Label10: TLabel
       Left = 0
-      Top = 62
+      Top = 36
       Width = 300
       Height = 13
-      Hint = '(17.11.2020)'
+      Hint = '23.12.2020'
       Align = alTop
       Alignment = taCenter
-      Caption = '6.1.2'
+      Caption = 'Wersja: 6.6.1'
       ParentShowHint = False
       ShowHint = True
+      ExplicitWidth = 67
     end
     object Label11: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 33
+      Top = 49
       Width = 294
       Height = 13
       Margins.Top = 0
-      Margins.Bottom = 3
       Align = alTop
       Alignment = taCenter
       Caption = 'dla symulatora MaSzyna'
       WordWrap = True
-    end
-    object Label2: TLabel
-      Left = 0
-      Top = 49
-      Width = 300
-      Height = 13
-      Align = alTop
-      Alignment = taCenter
-      Caption = 'Wersja:'
-      ParentShowHint = False
-      ShowHint = False
+      ExplicitWidth = 116
     end
     object Label3: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 132
+      Top = 118
       Width = 294
       Height = 29
       Hint = 'damian.skrzek@szczawik.net'
@@ -98,11 +88,12 @@ object frmAbout: TfrmAbout
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
+      ExplicitTop = 132
     end
     object Label4: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 116
+      Top = 99
       Width = 294
       Height = 13
       Margins.Top = 10
@@ -110,22 +101,24 @@ object frmAbout: TfrmAbout
       Alignment = taCenter
       Caption = 'G'#322#243'wny programista:'
       Layout = tlBottom
+      ExplicitWidth = 100
     end
     object Label5: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 78
+      Top = 68
       Width = 294
       Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Wydany na licencji GNU GPL v3.0.'
       WordWrap = True
+      ExplicitWidth = 163
     end
     object Label6: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 171
+      Top = 160
       Width = 294
       Height = 13
       Margins.Top = 10
@@ -133,30 +126,31 @@ object frmAbout: TfrmAbout
       Alignment = taCenter
       Caption = 'Testy, sugestie:'
       Layout = tlBottom
+      ExplicitWidth = 78
     end
     object Label7: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 261
+      Top = 275
       Width = 294
       Height = 13
       Margins.Top = 10
-      Margins.Bottom = 3
       Align = alBottom
       Alignment = taCenter
       Caption = 'T'#322'umaczenie na j'#281'zyk czeski:'
       Layout = tlBottom
+      ExplicitWidth = 137
     end
     object Label8: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 187
+      Top = 179
       Width = 294
-      Height = 64
+      Height = 83
       Align = alBottom
       Alignment = taCenter
       AutoSize = False
-      Caption = '@jakubg1'#13#10'@matek123'#13#10'@Stele'#13#10'@Turbokibel'
+      Caption = '@DzordZ'#13#10'@jakubg1'#13#10'@Joachimowicz'#13#10'@matek123'#13#10'@Stele'#13#10'@Turbokibel'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -167,7 +161,7 @@ object frmAbout: TfrmAbout
     object Label9: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 280
+      Top = 294
       Width = 294
       Height = 32
       Margins.Bottom = 10
@@ -181,13 +175,14 @@ object frmAbout: TfrmAbout
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+      ExplicitTop = 280
     end
   end
   object pnlLog: TPanel
     Left = 0
     Top = 0
     Width = 294
-    Height = 322
+    Height = 336
     Align = alClient
     BevelOuter = bvNone
     ShowCaption = False
@@ -200,17 +195,61 @@ object frmAbout: TfrmAbout
       Height = 13
       Align = alTop
       Caption = 'Lista zmian:'
+      ExplicitWidth = 56
     end
     object meLog: TMemo
       AlignWithMargins = True
       Left = 3
-      Top = 19
+      Top = 22
       Width = 288
-      Height = 300
+      Height = 311
       Align = alClient
       Lines.Strings = (
-        '6.1.1 (16.11.2020)'
+        '6.6.1 (23.12.2020)'
+        '*poprawiona obs'#322'uga wpis'#243'w include w fizyce'
+        ''
+        '6.6 (22.12.2020)'
+        '*obs'#322'uga ControlType sprz'#281'gu'
+        '*zmienione pobieranie nowszych wersji'
+        '*poprawiona obs'#322'uga pojazd'#243'w z brakami'
+        '*poprawiona obs'#322'uga schowka'
+        ''
+        '6.5.1 (13.12.2020)'
+        '*korekty losowania tekstur'
+        '*losowanie tekstur- tak'#380'e ze zmian'#261' ilo'#347'ci cz'#322'on'#243'w'
+        '*uniezale'#380'nienie od systemowego formatu godziny'
+        ''
+        '6.5 (10.12.2020)'
+        '*poprawione losowanie tekstur'
+        '*zmienione grupowanie pojazd'#243'w w opisach'
+        '*uzupe'#322'nione t'#322'umaczenia j'#281'zykowe'
+        '*poprawiona obs'#322'uga schowka'
+        ''
+        '6.4! (3.12.2020)'
+        '*dodawanie pojazdu za wszystkimi cz'#322'onami '
+        'bie'#380#261'cego pojazdu'
+        '*usuwanie pojazdu usuwa wszystkie powi'#261'zane '
+        'cz'#322'ony'
+        '*poprawki dotycz'#261'ce obs'#322'ugi pojazd'#243'w z brakami'
+        '*zmiany algorytmu losuj'#261'cego tekstury'
+        ''
+        '6.3! (1.12.2020)'
+        '*sortowanie bazy taboru'
+        '*uproszczenie panelu pogody'
+        '*narz'#281'dzia wymiany tekstur taboru'
+        '*poprawione nadawanie nazw pojazdom'
+        '*poprawione kopiowanie do schowka sk'#322'adu z '
+        'magazynu'
+        ''
+        '6.2 (27.11.2020)'
+        '*zmienione liczenie mas poci'#261'gu'
+        '*zmienione opcje '#322'adunku'
+        ''
+        '6.1.* (19.11.2020)'
         '*poprawka aktywacji przycisku START'
+        '*poprawka dzia'#322'ania przycisk'#243'w INS, DEL'
+        '*poprawki napis'#243'w'
+        '*//$r w trainset- plik rozk'#322'adu'
         ''
         '6.1 (15.11.2020)'
         '*informacje o sk'#322'adzie przy podgl'#261'dzie graficznym'
@@ -226,37 +265,6 @@ object frmAbout: TfrmAbout
         '*automatyczna zmiana tekstury we wszystkich '
         'cz'#322'onach pojazdu'
         '*'#322#261'czenie bie'#380#261'cego sk'#322'adu ze sk'#322'adem z magazynu'
-        ''
-        '5.10 (01.11.2020)'
-        '*obs'#322'uga parametru maxcabtexturesize'
-        '*reorganizacja ustawie'#324' pogodowych'
-        '*poprawiona obs'#322'uga komentarzy wewn'#261'trz wpis'#243'w '
-        'trainset'
-        ''
-        '5.9 (21.10.2020)'
-        '*obs'#322'uga compresstex oraz gfx.reflections.fidelity'
-        '*okno zaawansowanych ustawie'#324' (PPM na przycisku '
-        'ustawie'#324')'
-        ''
-        '5.8.2 (05.10.2020)'
-        '*baza taboru- wybieranie taboru do edycji przez '
-        'dwuklik'
-        ''
-        '5.8.1 (30.09.2020)'
-        '*wy'#347'wietlanie katalogu modelu- poprawka'
-        ''
-        '5.8 (29.09.2020)'
-        '*obs'#322'uga parametru automatycznej rozdzielczo'#347'ci'
-        '*wy'#347'wietlanie katalogu modelu'
-        '*poprawka na niezdefiniowany j'#281'zyk w starterze'
-        '*@Traktor175: rozszerzone t'#322'umaczenie j'#281'zyka '
-        'czeskiego'
-        ''
-        '5.7 (24.09.2020)'
-        '*opcja usuwania pojazdu z poziomu miniaturki'
-        ''
-        '5.6.1 (22.09.2020)'
-        '*poprawiony proces aktualizacji programu'
         ''
         '...')
       ReadOnly = True

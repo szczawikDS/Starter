@@ -29,6 +29,12 @@ type
   TFlag = (F128 = 128,F64 = 64,F32 = 32,F16 = 16,F8 = 8,F4 = 4,F2 = 2,F1 = 1);
   TFlags = set of TFlag;
 
+  TTrainParams = record
+    Length        : Double;
+    Mass          : Double;
+    LoadMass      : Double;
+    CountVehicles : Integer;
+  end;
 
   TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
           tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
@@ -47,11 +53,25 @@ type
   TModifierKey = (mkShift, mkCtrl);
   TModifierKeys = set of TModifierKey;
 
+  TPhysics = class
+    Name          : string;
+    Dir           : string;
+    Mass          : Double;
+    VMax          : Double;
+    Length        : Double;
+    LoadAccepted  : string;
+    MaxLoad       : Integer;
+    AllowedFlagA  : Integer;
+    AllowedFlagB  : Integer;
+    ControlTypeA  : string;
+    ControlTypeB  : string;
+  end;
+
   TModel = class
     Model : string;
     Mini  : string;
     MiniD : string;
-    Fiz   : Integer;
+    Fiz   : TPhysics;
   end;
 
   TTexture = class
@@ -77,16 +97,18 @@ type
     constructor Create;
   end;
 
-  TPhysics = class
-    Name          : string;
-    Dir           : string;
-    Mass          : Double;
-    VMax          : Double;
-    Length        : Double;
-    LoadAccepted  : string;
-    MaxLoad       : Integer;
-    AllowedFlagA  : Integer;
-    AllowedFlagB  : Integer;
+  TVehicleParams = record
+    Brake           : string;
+    BrakeState      : string;
+    BrakeAdjust     : string;
+    Sway            : Integer; // wezykowanie
+    Flatness        : Integer; // podkucie x mm
+    FlatnessRand    : Integer; // podkucie losowe 0-x mm
+    FlatnessProb    : Integer; // prawdopodobienstwo poducia
+    Wheel           : Char;
+    Loadquantity    : Integer;
+    LoadType        : string;
+    ThermoDynamic   : Boolean;
   end;
 
   TVehicle = class(TPersistent)
@@ -145,15 +167,16 @@ type
   end;
 
   TTrain = class(TPersistent)
-  private
-    FTrainName : string;
-    FTrack     : string;
-    FDist      : Double;
-    FVel       : Double;
-    FVehicles  : TObjectList<TVehicle>;
-    FDesc      : string; // $o
-    FAI        : Boolean;
   public
+    TrainName : string;
+    Track     : string;
+    Dist      : Double;
+    Vel       : Double;
+    Vehicles  : TObjectList<TVehicle>;
+    Desc      : string; // $o
+    AI        : Boolean;
+    TimeTable : string;
+  {public
     property TrainName  : string read FTrainName write FTrainName;
     property Track      : string read FTrack write FTrack;
     property Dist       : Double read FDist write FDist;
@@ -161,6 +184,7 @@ type
     property Vehicles   : TObjectList<TVehicle> read FVehicles write FVehicles;
     property Desc       : string read FDesc write FDesc;
     property AI         : Boolean read FAI write FAI;
+    property TimeTable  : string read FTimeTable write FTimeTable;}
     constructor Create;
   end;
 

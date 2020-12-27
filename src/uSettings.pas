@@ -608,16 +608,14 @@ begin
   except
     on E: Exception do
     begin
-      ShowMessage('B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
+      Token := 'B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
                                     + 'Parametr: ' + Params[i].Name + #13#10
                                     + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10
-                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
-      Main.Errors.Add('B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
-                                    + 'Parametr: ' + Params[i].Name + #13#10
-                                    + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10
-                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
-    end;
+                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message;
 
+      ShowMessage(Token);
+      Main.Errors.Add(Token);
+    end;
   end;
 end;
 
@@ -656,8 +654,8 @@ begin
   Settings.Add('LastUpdate=' + IntToStr(Main.lbVersion.Tag));
   Settings.Add('UpdateInterval=' + Main.edUpdateInterval.Text);
 
-  if ForceDirectories(Main.DIR + '\starter') then
-    Settings.SaveToFile(Main.DIR + '\starter\starter.ini');
+  if ForceDirectories(Main.DIR + 'starter') then
+    Settings.SaveToFile(Main.DIR + 'starter\starter.ini');
   Settings.Free;
 end;
 
@@ -670,10 +668,10 @@ begin
   try
     LoadEXE;
 
-    if FileExists(Main.DIR + '\starter\starter.ini') then
+    if FileExists(Main.DIR + 'starter\starter.ini') then
     begin
       Settings := TStringList.Create;
-      Settings.LoadFromFile(Main.DIR + '\starter\starter.ini');
+      Settings.LoadFromFile(Main.DIR + 'starter\starter.ini');
       for i := 0 to Settings.Count-1 do
       begin
         ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
@@ -837,7 +835,7 @@ end;
 procedure TSettings.SaveSettings;
 var
   Settings, Par : TStringList;
-  i, Value, l : Integer;
+  i, Value : Integer;
 begin
   SaveOwnSettings;
   Settings := TStringList.Create;

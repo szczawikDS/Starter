@@ -36,11 +36,12 @@ object frmDepo: TfrmDepo
     DefaultRowHeight = 30
     FixedCols = 0
     RowCount = 2
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goFixedColClick]
     PopupMenu = pmMenu
     TabOrder = 0
     OnDblClick = sgDepoDblClick
     OnDrawCell = sgDepoDrawCell
+    OnMouseDown = sgDepoMouseDown
     ColWidths = (
       32
       133
@@ -426,6 +427,10 @@ object frmDepo: TfrmDepo
     object miOpenDir: TMenuItem
       Caption = 'Otw'#243'rz katalog'
       OnClick = miOpenDirClick
+    end
+    object miCopy: TMenuItem
+      Caption = 'Kopiuj'
+      OnClick = miCopyClick
     end
   end
 end

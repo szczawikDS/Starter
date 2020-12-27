@@ -66,6 +66,7 @@ type
     cbModel: TCheckBox;
     pmMenu: TPopupMenu;
     miOpenDir: TMenuItem;
+    miCopy: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure sgModelsClick(Sender: TObject);
     procedure lbTypesClick(Sender: TObject);
@@ -86,8 +87,13 @@ type
     procedure pmMenuPopup(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure sgDepoDblClick(Sender: TObject);
+    procedure sgDepoMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure miCopyClick(Sender: TObject);
   private
     { Private declarations }
+    SortColumn : Integer;
+    Cell : string;
     const
       TYPES : array[0..31] of String = (
         ('Elektrowóz'), ('Spalinowóz'), ('Parowóz'), ('Szynobus'), ('EZT'), ('Roboczy'),
@@ -107,7 +113,7 @@ var
 
 implementation
 
-uses uMain, strUtils, uLanguages;
+uses uMain, strUtils, uLanguages, Clipbrd;
 
 {$R *.dfm}
 
@@ -268,6 +274,11 @@ begin
   sgModelsClick(self);
 end;
 
+procedure TfrmDepo.miCopyClick(Sender: TObject);
+begin
+  Clipboard.AsText := Cell;
+end;
+
 procedure TfrmDepo.miOpenDirClick(Sender: TObject);
 begin
   Main.OpenDir(Main.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
@@ -282,13 +293,16 @@ procedure TfrmDepo.sgDepoDblClick(Sender: TObject);
 var
   i, y : Integer;
 begin
-  for i := 0 to Main.Textures.Count-1 do
-    for y := 0 to Main.Textures[i].Models.Count-1 do
-      if (Main.Textures[i].Plik = sgDepo.Cells[1,sgDepo.Row])
-      and (Main.Textures[i].Models[y].Model = sgDepo.Cells[4,sgDepo.Row]) then
-        Main.SelectTexture(Main.Textures[i],y);
+  if sgDepo.Row > 1 then
+  begin
+    for i := 0 to Main.Textures.Count-1 do
+      for y := 0 to Main.Textures[i].Models.Count-1 do
+        if (Main.Textures[i].Plik = sgDepo.Cells[1,sgDepo.Row])
+        and (Main.Textures[i].Models[y].Model = sgDepo.Cells[4,sgDepo.Row]) then
+          Main.SelectTexture(Main.Textures[i],y);
 
-  Self.Close;
+    Self.Close;
+  end;
 end;
 
 procedure TfrmDepo.sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -296,6 +310,9 @@ procedure TfrmDepo.sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer;
 var
   ACanvas : TCanvas;
   B : TBitmap;
+
+  S: string;
+  RectForText: TRect;
 begin
   if (ACol = 3) and (ARow > 0) then
   begin
@@ -303,15 +320,78 @@ begin
     aCanvas.FillRect(Rect);
 
     B := TBitmap.Create;
-
-
-
     if sgDepo.Cells[2,ARow].Length > 0 then
       B.LoadFromFile(Main.DIR + '\textures\mini\' + sgDepo.Cells[2,ARow] + '.bmp')
     else
       B.LoadFromFile(Main.DIR + '\textures\mini\other.bmp');
 
     aCanvas.Draw(Rect.Left, Rect.Top, B);
+  end;
+
+  if (ACol = SortColumn) and (ARow = 0) then
+  begin
+    S := sgDepo.Cells[ACol, ARow];
+    sgDepo.Canvas.FillRect(Rect);
+    sgDepo.Canvas.Font.Color := clYellow;
+    RectForText := Rect;
+    InflateRect(RectForText, -6, -8);
+    sgDepo.Canvas.TextRect(RectForText,S);
+  end;
+end;
+
+procedure SortStringGrid(var GenStrGrid: TStringGrid; ThatCol: Integer);
+const
+  TheSeparator = '@';
+var
+  CountItem, I, J, K, ThePosition: integer;
+  MyList: TStringList;
+  MyString, TempString: string;
+begin
+  CountItem := GenStrGrid.RowCount;
+
+  MyList        := TStringList.Create;
+  MyList.Sorted := False;
+  try
+    for I := 1 to (CountItem - 1) do
+      MyList.Add(GenStrGrid.Rows[I].Strings[ThatCol] + TheSeparator +
+        GenStrGrid.Rows[I].Text);
+
+    Mylist.Sort;
+
+    for K := 1 to Mylist.Count do
+    begin
+      MyString := MyList.Strings[(K - 1)];
+      ThePosition := Pos(TheSeparator, MyString);
+      TempString  := '';
+      TempString := Copy(MyString, (ThePosition + 1), Length(MyString));
+      MyList.Strings[(K - 1)] := '';
+      MyList.Strings[(K - 1)] := TempString;
+    end;
+
+    for J := 1 to (CountItem - 1) do
+      GenStrGrid.Rows[J].Text := IntToStr(J) + '.' + Copy(MyList.Strings[(J - 1)],Pos('.',MyList.Strings[(J - 1)])+1,200);
+  finally
+    MyList.Free;
+  end;
+end;
+
+procedure TfrmDepo.sgDepoMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  ACol, ARow: Integer;
+begin
+  if sgDepo <> nil then
+  begin
+    sgDepo.MouseToCell(X, Y, ACol, ARow);
+
+    if ARow <= sgDepo.FixedRows-1 then
+    begin
+      SortColumn := ACol;
+      SortStringGrid(sgDepo,ACol);
+    end;
+
+    miCopy.Visible := ARow > 0;
+    Cell := sgDepo.Cells[ACol,ARow];
   end;
 end;
 
@@ -346,6 +426,8 @@ begin
     end;
   if sgDepo.RowCount > 1 then
     sgDepo.FixedRows := 1;
+
+  SortStringGrid(sgDepo,SortColumn);
 end;
 
 end.

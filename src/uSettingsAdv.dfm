@@ -13,6 +13,7 @@ object frmSettingsAdv: TfrmSettingsAdv
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object pnlMain: TPanel
@@ -23,7 +24,7 @@ object frmSettingsAdv: TfrmSettingsAdv
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    object Label8: TLabel
+    object lbe3d: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 3
@@ -36,7 +37,7 @@ object frmSettingsAdv: TfrmSettingsAdv
     object cbConvertmodels: TComboBox
       AlignWithMargins = True
       Left = 3
-      Top = 22
+      Top = 25
       Width = 239
       Height = 21
       Align = alTop
@@ -51,7 +52,7 @@ object frmSettingsAdv: TfrmSettingsAdv
     object chCompressTex: TCheckBox
       AlignWithMargins = True
       Left = 3
-      Top = 49
+      Top = 52
       Width = 239
       Height = 17
       Align = alTop
@@ -63,7 +64,7 @@ object frmSettingsAdv: TfrmSettingsAdv
     object chScaleSpeculars: TCheckBox
       AlignWithMargins = True
       Left = 3
-      Top = 72
+      Top = 75
       Width = 239
       Height = 17
       Align = alTop

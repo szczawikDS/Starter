@@ -1,0 +1,8 @@
+ep07,ep07-10xx,eu06,eu07,eu07-15xx,et22,et22_v2,et22_v3,e6act
+181,182,et21
+ep09,ep05
+6dg,sm31,sm42,sp42,su42
+st43,st44,tem2,tem2s,tem2u,tem2s
+su45,su46
+en57-2000-ra,en57-akl-ra,en57-ra
+en71aks-ra,en71-ra

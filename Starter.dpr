@@ -18,7 +18,8 @@ uses
   uAbout in 'src\uAbout.pas' {frmAbout},
   uIdHTTPProgress in 'components\uIdHTTPProgress.pas',
   uUART in 'src\uUART.pas' {frmUART},
-  uSettingsAdv in 'src\uSettingsAdv.pas' {frmSettingsAdv};
+  uSettingsAdv in 'src\uSettingsAdv.pas' {frmSettingsAdv},
+  uTexRandomizer in 'src\uTexRandomizer.pas' {frmTexRandomizer};
 
 {$R *.res}
 
