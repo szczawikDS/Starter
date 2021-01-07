@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -22,28 +22,24 @@ unit uParser;
 
 interface
 
-uses CastaliaPasLex, CastaliaPasLexTypes, uStructures, Classes;
+uses CastaliaPasLexTypes, uStructures, uLexer, Classes;
 
 type
 
-  TParser = class
-    Lexer:TmwPasLex;
+  TParser = class(TLexer)
   public
     class procedure LoadData;
-    class procedure SaveDepot;
     class function ChangeConfig(const Text:string;const Config:TConfig):string;
     class procedure ParseScenario(SCN:TScenario);
-    procedure ReadDepot(const Path:string='');
-    constructor Create;
-    destructor Destroy; override;
     class function ParseTrainFromClipBoard(const Trainset:string):TTrain;
+  protected
+    function ParseVehicle(const TrainSet: Boolean=True): TVehicle;
   private
-    function GetToken: string; overload;
-    function GetToken(const Params: TStringList): string; overload;
-    function GetToken(const Stoppers:TptTokenKinds): string; overload;
     procedure ParseConfig(var Config: TConfig);
     function ParseTrain: TTrain;
-    function ParseVehicle(const TrainSet: Boolean=True): TVehicle;
+    procedure ParseAtmo(var Config: TConfig);
+    procedure LoadWeights;
+    function ScenarioName(const Path: string): TScenario;
     procedure ParseTextures(const Path: string);
     procedure ParseTrainset(var Scenariusz: TScenario;
       const TrainFile: TStringList);
@@ -51,32 +47,18 @@ type
     procedure LoadSceneries;
     procedure ParseCoupler(var Vehicle: TVehicle);
     function GetBrakeValue(const Settings:string;Pos:Integer):string;
-    procedure ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil;Buff2Found:Boolean=False);
+    procedure ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
     function IsPhysics(const Dir:string;const Name: string):TPhysics;
     procedure LoadPhysics;
     procedure FindTexture(var Vehicle:TVehicle);
     procedure ParseTextDesc(Tex: TTexture);
     procedure ParseTextureModels(var Tex: TTexture);
-    procedure SkipComment;
-    procedure ParseAtmo(var Config: TConfig);
-    procedure LoadWeights;
-    function ScenarioName(const Path: string): TScenario;
   end;
 
 implementation
 
-uses SysUtils, uMain, Character, Math, System.Generics.Collections, System.Generics.Defaults
-{$IFDEF DEBUG},System.Diagnostics{$ENDIF};
-
-function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
-begin
-  Result := Value;
-  if Value < Min then
-    Result := Min
-  else
-    if Value > Max then
-      Result := Max;
-end;
+uses SysUtils, uMain, uUtilities, Character, Math, System.Generics.Collections,
+    System.Generics.Defaults {$IFDEF DEBUG},System.Diagnostics{$ENDIF};
 
 {$IFDEF DEBUG}
 procedure Measure;
@@ -91,50 +73,6 @@ begin
 end;
 {$ENDIF}
 
-constructor TParser.Create;
-begin
-  {$IFDEF DEBUG}
-  Measure;
-  {$ENDIF}
-  Lexer := TmwPasLex.Create;
-end;
-
-destructor TParser.Destroy;
-begin
-  Lexer.Free;
-end;
-
-function TParser.GetToken:string;
-begin
-  Result := '';
-  while (not Lexer.IsSpace) and (Lexer.TokenID <> ptNull) do
-  begin
-    Result := Result + Lexer.Token;
-    Lexer.Next;
-  end;
-end;
-
-function TParser.GetToken(const Stoppers:TptTokenKinds):string;
-begin
-  Result := '';
-  while (not (Lexer.TokenID in Stoppers)) and (Lexer.TokenID <> ptNull) do
-  begin
-    Result := Result + Lexer.Token;
-    Lexer.Next;
-  end;
-end;
-
-function TParser.GetToken(const Params:TStringList):string;
-begin
-  if Lexer.Token = '(' then
-  begin
-    Lexer.Next;
-    Result := Params[StrToInt(Lexer.Token[2])-1];
-  end
-  else
-    Result := GetToken;
-end;
-
 class procedure TParser.LoadData;
 begin
   with TParser.Create do
@@ -142,7 +80,6 @@ begin
     LoadModels;
     LoadPhysics;
     LoadSceneries;
-    ReadDepot;
     LoadWeights;
   finally
     Free;
@@ -204,8 +141,12 @@ begin
 end;
 
 class function TParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
+var
+  Loader : TParser;
 begin
   try
+    Loader := TParser.Create;
+
     with TParser.Create do
     try
       Lexer.Origin := PChar(Trainset);
@@ -490,6 +431,10 @@ begin
         Inc(i);
       end;
     end;
+
+    if Vehicle.Coupler < 0 then
+      Vehicle.Coupler := Abs(Vehicle.Coupler) + 128;
+
   except
     Main.Errors.Add('B³¹d parsowania sprzêgu ' + Vehicle.Name + ', linia ' + IntToStr(Lexer.LineNumber));
   end;
@@ -643,19 +588,6 @@ begin
     end;
   except
     Result := Text;
-  end;
-end;
-
-procedure TParser.SkipComment;
-begin
-  Lexer.InitAhead;
-  if Lexer.AheadTokenID = ptStar then
-  begin
-    while not ((Lexer.TokenID = ptStar) and (Lexer.AheadTokenID = ptSlash)) and (Lexer.TokenID <> ptNull) do
-    begin
-      Lexer.NextNoJunk;
-      Lexer.AheadNext;
-    end;
   end;
 end;
 
@@ -1024,7 +956,7 @@ begin
 
           if Lexer.TokenID = ptSlashesComment then
           begin
-            Tex.Opis := Copy(Lexer.Token,3,Lexer.TokenLen);
+            Tex.Desc := Copy(Lexer.Token,3,Lexer.TokenLen);
             ParseTextDesc(Tex);
           end;
 
@@ -1077,7 +1009,7 @@ begin
   try
     try
       Par.Delimiter := ',';
-      Par.DelimitedText := Tex.Opis;
+      Par.DelimitedText := Tex.Desc;
 
       Tex.Version   := Par[0];
       Tex.Mark      := Par[1];
@@ -1088,7 +1020,7 @@ begin
       Tex.Author    := StringReplace(Par[6],'_',' ',[rfReplaceAll]);
       Tex.Photos    := StringReplace(Par[7],'_',' ',[rfReplaceAll]);
     except
-      Main.Errors.Add('B³¹d przetwarzania opisu tekstury: ' + Tex.Opis);
+      Main.Errors.Add('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
     end;
   finally
     Par.Free;
@@ -1109,20 +1041,19 @@ begin
     end;
 end;
 
-procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil;Buff2Found:Boolean=False);
+procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
 var
   PhysicsFile : TStringList;
   Section : TPhysicsSections;
-  Params : TStringList;
-  Include : string;
+  Params : TList<TPhysicsInc>;
+  Par : TPhysicsInc;
+  i : Integer;
 begin
   try
-    Params := TStringList.Create;
+    Params := TList<TPhysicsInc>.Create;
 
-    if aParams <> nil then
-      Params := aParams;
-
-    Include := '';
+    if aParams = nil then
+      Physics.AllowedFlagB := -1;
 
     PhysicsFile := TStringList.Create;
     if Path.Length = 0 then
@@ -1147,14 +1078,17 @@ begin
         if Lexer.Token = 'include' then
         begin
           Lexer.NextNoJunk;
-          Include := GetToken;
+
+          Par := TPhysicsInc.Create;
+          Par.Path := GetToken;
 
           Lexer.NextNoJunk;
           while Lexer.Token <> 'end' do
           begin
-            Params.Add(GetToken);
+            Par.Params.Add(GetToken);
             Lexer.NextNoJunk;
           end;
+          Params.Add(Par);
         end;
 
         if Lexer.Token = 'Param'      then Section := psParam       else
@@ -1171,14 +1105,14 @@ begin
             begin
               Lexer.NextNoJunk;
               Lexer.NextNoJunk;
-              Physics.Mass := StrToFloat(GetToken(Params));
+              Physics.Mass := StrToFloat(GetToken(aParams));
             end
             else
             if Lexer.Token = 'Vmax' then
             begin
               Lexer.NextNoJunk;
               Lexer.NextNoJunk;
-              Physics.VMax := StrToFloat(GetToken(Params));
+              Physics.VMax := StrToFloat(GetToken(aParams));
             end;
           end;
           psLoad:
@@ -1186,28 +1120,28 @@ begin
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.LoadAccepted := GetToken(Params);
+            Physics.LoadAccepted := GetToken(aParams);
           end
           else
           if Lexer.Token = 'MaxLoad' then
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.MaxLoad := Trunc(StrToFloat(GetToken(Params)));
+            Physics.MaxLoad := Trunc(StrToFloat(GetToken(aParams)));
           end;
           psDimension:
           if Lexer.Token = 'L' then
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.Length := StrToFloat(GetToken(Params));
+            Physics.Length := StrToFloat(GetToken(aParams));
           end;
           psBuffCoupl..psBuffCouplA:
           if Lexer.Token = 'AllowedFlag' then
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.AllowedFlagA := StrToInt(GetToken(Params));
+            Physics.AllowedFlagA := StrToInt(GetToken(aParams));
 
             if Physics.AllowedFlagA < 0 then
               Physics.AllowedFlagA := Abs(Physics.AllowedFlagA) + 128
@@ -1217,26 +1151,24 @@ begin
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.ControlTypeA := GetToken;
+            Physics.ControlTypeA := GetToken(aParams);
           end;
           psBuffCouplB:
           if Lexer.Token = 'AllowedFlag' then
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.AllowedFlagB := StrToInt(GetToken(Params));
+            Physics.AllowedFlagB := StrToInt(GetToken(aParams));
 
             if Physics.AllowedFlagB < 0 then
               Physics.AllowedFlagB := Abs(Physics.AllowedFlagB) + 128;
-
-            Buff2Found := True;
           end
           else
           if Lexer.Token = 'ControlType' then
           begin
             Lexer.NextNoJunk;
             Lexer.NextNoJunk;
-            Physics.ControlTypeB := GetToken;
+            Physics.ControlTypeB := GetToken(aParams);
           end;
         end;
       end
@@ -1256,17 +1188,19 @@ begin
       Lexer.NextNoJunk;
     end;
 
-    if not Buff2Found then
+    for i := 0 to Params.Count-1 do
+      ParsePhysics(Physics,Params[i].Path,Params[i].Params);
+
+    if (aParams = nil) and (Physics.AllowedFlagB = -1) then
     begin
       Physics.AllowedFlagB := Physics.AllowedFlagA;
       Physics.ControlTypeB := Physics.ControlTypeA;
     end;
 
-    if Include.Length > 0 then
-      ParsePhysics(Physics,Include,Params,Buff2Found);
+    if aParams <> nil then
+      aParams.Free;
 
-    if aParams = nil then
-      Params.Free;
+    Params.Free;
   except
     Main.Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
   end;
@@ -1278,101 +1212,6 @@ var
 begin
   for i := 0 to Main.Physics.Count-1 do
     ParsePhysics(Main.Physics[i]);
-end;
-
-procedure TParser.ReadDepot(const Path:string='');
-var
-  DepotFile : TStringList;
-  Pociag : TTrain;
-  TrainName : string;
-begin
-  try
-    DepotFile := TStringList.Create;
-
-    if Path.IsEmpty then
-    begin
-      if FileExists(Main.DIR + 'starter\magazyn.ini') then
-        DepotFile.LoadFromFile(Main.DIR + 'starter\magazyn.ini')
-      else
-        if FileExists(Main.DIR + 'starter.ini') then
-          DepotFile.LoadFromFile(Main.DIR + 'starter.ini')
-        else
-          if FileExists(Main.DIR + 'RAINSTED.INI') then
-            DepotFile.LoadFromFile(Main.DIR + 'RAINSTED.INI');
-    end
-    else
-      if FileExists(Path) then
-            DepotFile.LoadFromFile(Path);
-
-    Lexer.Origin := PChar(DepotFile.Text);
-    Lexer.Init;
-
-    Lexer.NextNoJunk;
-
-    While Lexer.TokenID <> ptNull do
-    begin
-      if Lexer.TokenID = ptSquareOpen then
-      begin
-        Lexer.NextNoJunk;
-        if (Lexer.TokenID = ptIdentifier) and (Pos('TRAINSET',Lexer.Token) > 0) and (Lexer.Token.Length > 8) then
-        begin
-          Pociag := TTrain.Create;
-
-          Lexer.Next;
-          if Lexer.TokenID = ptEqual then
-          begin
-            TrainName := GetToken([ptSquareClose]);
-            Pociag.TrainName := Copy(TrainName,2,TrainName.Length);
-          end
-          else
-            Pociag.TrainName := '';
-
-          Lexer.NextNoJunk;
-          Lexer.NextID(ptIdentifier);
-
-          while Lexer.Token = 'node' do
-          begin
-            Pociag.Vehicles.Add(ParseVehicle);
-            Lexer.NextID(ptIdentifier);
-            Lexer.NextNoJunk;
-            if Lexer.TokenID <> ptSquareOpen then
-              Lexer.NextID(ptIdentifier);
-          end;
-          Main.Depot.Add(Pociag);
-        end
-        else
-          Lexer.NextNoJunk;
-      end
-      else
-        Lexer.Next;
-    end;
-  except
-    Main.Errors.Add('B³¹d parsowania magazynu. Linia: ' + IntToStr(Lexer.LineNumber));
-  end;
-end;
-
-class procedure TParser.SaveDepot;
-var
-  DepotFile : TStringList;
-  i, y : Integer;
-begin
-  try
-    DepotFile := TStringList.Create;
-
-    for i := 0 to Main.Depot.Count-1 do
-    begin
-      if Main.Depot[i].Vehicles.Count > 0 then
-      begin
-        DepotFile.Add('[TRAINSET' + IntToStr(i) + '=' + Main.Depot[i].TrainName + ']');
-        for y := 0 to Main.Depot[i].Vehicles.Count-1 do
-          DepotFile.Add(Format('%.2d=',[y]) + Main.PrepareNode(Main.Depot[i].Vehicles[y]));
-      end;
-    end;
-
-    DepotFile.SaveToFile(Main.DIR + 'starter\magazyn.ini');
-  except
-    Main.Errors.Add('B³¹d zapisu magazynu.');
-  end;
 end;
 
 end.

@@ -19,7 +19,10 @@ uses
   uIdHTTPProgress in 'components\uIdHTTPProgress.pas',
   uUART in 'src\uUART.pas' {frmUART},
   uSettingsAdv in 'src\uSettingsAdv.pas' {frmSettingsAdv},
-  uTexRandomizer in 'src\uTexRandomizer.pas' {frmTexRandomizer};
+  uTexRandomizer in 'src\uTexRandomizer.pas' {frmTexRandomizer},
+  uDepot in 'src\uDepot.pas',
+  uLexer in 'src\uLexer.pas',
+  uUtilities in 'src\uUtilities.pas';
 
 {$R *.res}
 

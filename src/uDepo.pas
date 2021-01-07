@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -113,7 +113,7 @@ var
 
 implementation
 
-uses uMain, strUtils, uLanguages, Clipbrd;
+uses uMain, strUtils, uLanguages, Clipbrd, uUtilities;
 
 {$R *.dfm}
 
@@ -281,7 +281,7 @@ end;
 
 procedure TfrmDepo.miOpenDirClick(Sender: TObject);
 begin
-  Main.OpenDir(Main.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
+  OpenDir(Main.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
 end;
 
 procedure TfrmDepo.pmMenuPopup(Sender: TObject);

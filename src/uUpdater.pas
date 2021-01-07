@@ -38,12 +38,12 @@ type
   private
     procedure AutoUpdate;
     function Ask(const Text: string): Boolean;
-    procedure Update(const UpdateFile: TStringList);
+    procedure UpdateApp(const UpdateFile: TStringList);
     procedure IdHTTPProgressOnChange(Sender : TObject);
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 65;
+      AppVersion = 68;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -72,19 +72,13 @@ end;
 procedure TfrmUpdater.CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
 var
   UpdateFile : TStringList;
-  Version, i : Integer;
-  VersionStr : string;
+  Version : Integer;
 begin
   UpdateFile := TStringList.Create;
   try
     try
       Show;
       Application.ProcessMessages;
-
-      {if Beta then
-        UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver_beta.txt')
-      else
-        UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/ver.txt');}
 
       if Beta then
         UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version_beta.txt')
@@ -102,7 +96,7 @@ begin
         begin
           Hide;
           if Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
-            Update(UpdateFile);
+            UpdateApp(UpdateFile);
         end;
       end;
     except
@@ -134,7 +128,7 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TfrmUpdater.Update(const UpdateFile:TStringList);
+procedure TfrmUpdater.UpdateApp(const UpdateFile:TStringList);
 var
   Par : TStringList;
   Version, i : Integer;
@@ -186,22 +180,10 @@ begin
 end;
 
 procedure TfrmUpdater.AutoUpdate;
-//var
-//  Bat : TStringList;
 begin
   try
-    {Bat := TStringList.Create;
-    Bat.Add('@echo off');
-    Bat.Add('taskkill /im Starter.exe');
-    Bat.Add('rename Starter.exe StarterOld.exe');
-    Bat.Add('rename StarterNew.exe Starter.exe');
-    Bat.Add('start Starter.exe');
-    Bat.Add('taskkill /im update.bat');
-    Bat.Add('del update.bat');
-    Bat.SaveToFile(Main.DIR + 'update.bat');}
     if FileExists(Main.DIR + 'update.bat') then
       ShellExecute(Main.Handle, 'open', 'update.bat', nil, nil, SW_HIDE);
-    //Bat.Free;
   except
     on E: Exception do
       ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);

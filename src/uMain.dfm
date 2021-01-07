@@ -287,12 +287,12 @@ object Main: TMain
     object lbVersion: TLabel
       Left = 545
       Top = 0
-      Width = 42
+      Width = 92
       Height = 50
-      Hint = '(23.12.2020)'
+      Hint = '(10.01.2021)'
       Align = alLeft
       AutoSize = False
-      Caption = '6.6.1'
+      Caption = '6.6.5'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -945,10 +945,12 @@ object Main: TMain
             BevelOuter = bvNone
             TabOrder = 0
             object pnlTextures: TPanel
-              Left = 0
-              Top = 0
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
               Width = 230
-              Height = 289
+              Height = 282
+              Margins.Bottom = 4
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -972,7 +974,7 @@ object Main: TMain
                 Left = 0
                 Top = 77
                 Width = 230
-                Height = 152
+                Height = 139
                 Align = alClient
                 ParentShowHint = False
                 PopupMenu = pmTextures
@@ -982,9 +984,10 @@ object Main: TMain
                 OnDblClick = lbTexturesDblClick
               end
               object btnAddVehicle: TButton
-                Left = 0
-                Top = 260
-                Width = 230
+                AlignWithMargins = True
+                Left = 3
+                Top = 250
+                Width = 224
                 Height = 29
                 Action = actAddVehicle
                 Align = alBottom
@@ -992,7 +995,7 @@ object Main: TMain
               end
               object pnlMini: TPanel
                 Left = 0
-                Top = 229
+                Top = 216
                 Width = 230
                 Height = 31
                 Align = alBottom
@@ -1049,7 +1052,7 @@ object Main: TMain
                   DropDownCount = 16
                   ParentDoubleBuffered = False
                   TabOrder = 0
-                  OnClick = cbTypesClick
+                  OnChange = cbTypesChange
                   Items.Strings = (
                     'Elektrowozy'
                     'Spalinowozy'
@@ -1085,9 +1088,9 @@ object Main: TMain
             end
             object pcTrains: TPageControl
               AlignWithMargins = True
-              Left = 233
+              Left = 239
               Top = 3
-              Width = 640
+              Width = 634
               Height = 283
               ActivePage = tsSCNTrains
               Align = alClient
@@ -1099,7 +1102,7 @@ object Main: TMain
                 object Panel26: TPanel
                   Left = 0
                   Top = 0
-                  Width = 632
+                  Width = 626
                   Height = 252
                   Align = alClient
                   BevelOuter = bvNone
@@ -1108,10 +1111,11 @@ object Main: TMain
                   object lbTrains2: TListBox
                     Left = 0
                     Top = 0
-                    Width = 632
+                    Width = 626
                     Height = 207
                     Margins.Bottom = 0
                     Align = alClient
+                    BevelInner = bvNone
                     DoubleBuffered = False
                     ParentDoubleBuffered = False
                     ParentShowHint = False
@@ -1123,7 +1127,7 @@ object Main: TMain
                   object btnAddToDepo: TButton
                     Left = 0
                     Top = 223
-                    Width = 632
+                    Width = 626
                     Height = 29
                     Margins.Top = 0
                     Margins.Bottom = 0
@@ -1134,14 +1138,14 @@ object Main: TMain
                   object pnlTrainsTop: TPanel
                     Left = 0
                     Top = 207
-                    Width = 632
+                    Width = 626
                     Height = 16
                     Align = alBottom
                     BevelOuter = bvNone
                     ShowCaption = False
                     TabOrder = 1
                     DesignSize = (
-                      632
+                      626
                       16)
                     object chOnlyForDriving: TCheckBox
                       Left = 3
@@ -1155,7 +1159,7 @@ object Main: TMain
                       OnClick = chOnlyForDrivingClick
                     end
                     object chShowAI: TCheckBox
-                      Left = 467
+                      Left = 461
                       Top = -1
                       Width = 169
                       Height = 17
@@ -1173,7 +1177,7 @@ object Main: TMain
                 object btnRemoveFromDepot: TButton
                   Left = 0
                   Top = 223
-                  Width = 632
+                  Width = 626
                   Height = 29
                   Margins.Top = 0
                   Margins.Bottom = 0
@@ -1184,7 +1188,7 @@ object Main: TMain
                 object lbDepot: TListBox
                   Left = 0
                   Top = 0
-                  Width = 632
+                  Width = 626
                   Height = 223
                   Margins.Top = 0
                   Margins.Bottom = 0
@@ -1217,7 +1221,7 @@ object Main: TMain
               Align = alLeft
               TabOrder = 1
               object tsConfig: TTabSheet
-                Caption = 'Konfigurcja'
+                Caption = 'Konfiguracja'
                 object pnlConfig: TPanel
                   AlignWithMargins = True
                   Left = 3
@@ -1525,7 +1529,7 @@ object Main: TMain
                   ParentShowHint = False
                   ShowHint = True
                   TabOrder = 0
-                  OnClick = clCouplersClick
+                  OnMouseUp = clCouplersMouseUp
                 end
                 object pnlCouplerButtons: TPanel
                   Left = 0
@@ -4122,9 +4126,6 @@ object Main: TMain
     object actCurrentDate: TAction
       Category = 'weather'
       Caption = 'Aktualna data'
-    end
-    object actOpenVehicleDir: TAction
-      Caption = 'Otw'#243'rz folder zawieraj'#261'cy'
     end
     object actCopyToClipboard: TAction
       Category = 'menu'

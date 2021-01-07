@@ -46,7 +46,7 @@ object frmTexRandomizer: TfrmTexRandomizer
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 246
+      Width = 36
       Height = 13
       Align = alTop
       Alignment = taCenter
@@ -57,7 +57,6 @@ object frmTexRandomizer: TfrmTexRandomizer
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 36
     end
     object Panel1: TPanel
       AlignWithMargins = True

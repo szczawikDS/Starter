@@ -22,7 +22,7 @@ unit uSettings;
 
 interface
 
-uses CastaliaPasLex, CastaliaPasLexTypes, System.Generics.Collections, System.Generics.Defaults;
+uses CastaliaPasLex, CastaliaPasLexTypes, System.Generics.Collections, System.Generics.Defaults, Classes;
 
 type
   TParam = class
@@ -39,7 +39,7 @@ type
     Key3  : string;
   end;
 
-  TSettings = class
+  TSettings = class(TThread)
   private
     DebugLogTrack : Boolean;
     DebugLogSpeed : Boolean;
@@ -65,23 +65,27 @@ type
     procedure ReadKeyboard;
     procedure SaveSettings;
     procedure SaveKeyboardSettings;
-    constructor Create;
+    //constructor Create;
     destructor Destroy; override;
     function FindKey(const Key:string):Integer;
     function FindParam(const Name: string): TParam;
+  protected
+    procedure Execute; override;
   end;
 
 implementation
 
-uses uMain, uSettingsAdv, Classes, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs, DateUtils, uUpdater;
+uses uMain, uSettingsAdv, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs, DateUtils, uUpdater;
 
-constructor TSettings.Create;
+{constructor TSettings.Create;
 begin
+  inherited;
   Params := TObjectList<TParam>.Create;
-end;
+end;}
 
 destructor TSettings.Destroy;
 begin
+  inherited;
   SaveSettings;
   Params.Free;
 end;
@@ -1085,6 +1089,13 @@ begin
     Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
 
   Settings.SaveToFile(Main.DIR + 'eu07_input-keyboard.ini');
+end;
+
+procedure TSettings.Execute;
+begin
+  Params := TObjectList<TParam>.Create;
+  ReadSettings;
+  Terminate;
 end;
 
 end.

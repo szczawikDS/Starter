@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -18,7 +18,7 @@
   along with Starter.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-{$O+}
+//{$O+}
 {$INLINE AUTO}
 
 unit uMain;
@@ -201,7 +201,6 @@ type
     Panel27: TPanel;
     Panel23: TPanel;
     pnlOvercast: TPanel;
-    actOpenVehicleDir: TAction;
     Usuwszystkiepojazdyzeskadu1: TMenuItem;
     actCopyToClipboard: TAction;
     pmDepot: TPopupMenu;
@@ -397,8 +396,6 @@ type
     procedure cbDriverTypeChange(Sender: TObject);
     procedure cbLoadTypeChange(Sender: TObject);
     procedure chReversedClick(Sender: TObject);
-    procedure clCouplersClick(Sender: TObject);
-    procedure cbTypesClick(Sender: TObject);
     procedure cbModelsClick(Sender: TObject);
     procedure edSwayChange(Sender: TObject);
     procedure edFlatnessChange(Sender: TObject);
@@ -510,6 +507,9 @@ type
     procedure actRandomTexExecute(Sender: TObject);
     procedure actRandomTexUpdate(Sender: TObject);
     procedure actAddTrainUpdate(Sender: TObject);
+    procedure cbTypesChange(Sender: TObject);
+    procedure clCouplersMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     SCN : TScenario;
 
@@ -517,10 +517,9 @@ type
 
     procedure OpenAttachment(Sender: TObject);
     procedure DrawTrain(const Train: TTrain);
-    procedure RunSimulator;
+    procedure LaunchSimulator;
     procedure SelectVehicle(const Sender: TObject;const SelectTex:Boolean=True);
     function PrepareTrainsetDesc(const Trainset: TTrain): string;
-    procedure LoadMagazine;
     procedure ChangePage(const PageIndex: Integer);
     procedure DrawVehicle(const Vehicle: TVehicle);
     function SelImage: TImage;
@@ -529,15 +528,11 @@ type
     procedure SelectTrain;
     function GetCoupler: Integer;
     procedure SelectTexture(const Vehicle: TVehicle); overload;
-
     procedure SelectCoupler(Coupler: Integer);
     procedure LoadModelData(const Physics:TPhysics);
     procedure ClearTrainScroll;
-    procedure RemoveOldVersion;
     procedure LoadKeysComponents;
     procedure LoadTexData(const Tex: TTexture;const ModelID:Integer=-1);
-    procedure OpenFile(const Path: string);
-    procedure PrepareLoadingScreen;
     procedure DefaultSettings;
     procedure AdaptMiniSize;
     procedure SetItemDesc(const Trainset: TTrain);
@@ -570,7 +565,6 @@ type
     procedure AssignBrakeState(Vehicle: TVehicle);
     procedure TrainDesc;
     procedure NoSelection;
-    procedure CheckInstallation;
     procedure LoadScenery(const aSCN: TScenario);
     procedure RemoveFromDepot(const Index: Integer);
     procedure LoadWeather(const aSCN: TScenario);
@@ -609,7 +603,7 @@ type
     procedure AddVehicle(const Position: Integer;Tex:TTexture=nil;const CheckPrev:Boolean=True;const CheckNext:Boolean=True);
     procedure RemoveVehicles(const Index: Integer;Vehicles:TList<TVehicle>=nil);
     procedure Connect(const LeftVehicle: Integer);
-    procedure OpenDir(const Path: string);
+    procedure LoadMagazine;
   end;
 
 var
@@ -617,8 +611,8 @@ var
 
 implementation
 
-uses DateUtils, JPEG, ShellApi, uParser, uSettingsAdv, uUpdater, uSearch, uDepo,
-     uUART, uAbout, Clipbrd, StrUtils, CommCtrl, uTexRandomizer{, uInstaller};
+uses DateUtils, JPEG, uParser, uSettingsAdv, uUpdater, uSearch, uDepo, uDepot,
+     uUART, uAbout, Clipbrd, StrUtils, uTexRandomizer, uUtilities{, uInstaller};
 
 {$R *.dfm}
 
@@ -648,7 +642,7 @@ begin
   end;
   Depot.Add(DepoTrain);
 
-  TParser.SaveDepot;
+  TDepot.SaveDepot;
   LoadMagazine;
 end;
 
@@ -732,6 +726,9 @@ begin
   Vehicle.TypeChk   := Tex.Models[ModelID].Model;
   Vehicle.PathName  := Tex.Dir;
   Vehicle.Name      := UniqueVehicleName(Vehicle);
+
+  if Tex.Typ < tySZYNOBUS then
+    Vehicle.Loadquantity := 0;
 end;
 
 procedure TMain.MatchOccupancy(Vehicle:TVehicle;const Position:Integer);
@@ -985,7 +982,7 @@ begin
     else
       Depot[lbDepot.ItemIndex].TrainName := '';
 
-    TParser.SaveDepot;
+    TDepot.SaveDepot;
     LoadMagazine;
   end;
 end;
@@ -1194,14 +1191,9 @@ procedure TMain.actLoadDepoFromFileExecute(Sender: TObject);
 begin
   if OD.Execute then
   begin
-    with TParser.Create do
-    try
-      ReadDepot(OD.FileName);
-      LoadMagazine;
-      SaveDepot;
-    finally
-      Free;
-    end;
+    TDepot.ReadDepot(OD.FileName);
+    LoadMagazine;
+    TDepot.SaveDepot;
   end;
 end;
 
@@ -1286,7 +1278,7 @@ end;
 procedure TMain.RemoveFromDepot(const Index:Integer);
 begin
   Depot.Extract(Depot[Index]);
-  TParser.SaveDepot;
+  TDepot.SaveDepot;
   LoadMagazine;
   if Depot.Count > 0 then
   begin
@@ -1374,35 +1366,31 @@ var
   Indexes : TList<Integer>;
   i : Integer;
 begin
-  try
-    if Vehicles = nil then Vehicles := Train.Vehicles;
+  if Vehicles = nil then Vehicles := Train.Vehicles;
 
-    Indexes := TList<Integer>.Create;
-    Indexes.Add(Index);
+  Indexes := TList<Integer>.Create;
+  Indexes.Add(Index);
 
-    if Vehicles[Index].Texture <> nil then
-    begin
-      i := 0;
-      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
-        and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
-        begin
-          Indexes.Add(Index-i-1);
-          Inc(i);
-        end;
+  if Vehicles[Index].Texture <> nil then
+  begin
+    i := 0;
+    while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
+      and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
+      begin
+        Indexes.Add(Index-i-1);
+        Inc(i);
+      end;
 
-      i := 0;
-      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
-        and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
-        begin
-          Indexes.Add(Index+i+1);
-          Inc(i);
-        end;
-    end;
-
-    RemoveVehicle(Index,Indexes);
-  except
-    ShowMessage(Index.ToString);
+    i := 0;
+    while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
+      and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
+      begin
+        Indexes.Add(Index+i+1);
+        Inc(i);
+      end;
   end;
+
+  RemoveVehicle(Index,Indexes);
 end;
 
 procedure TMain.actRemoveVehicleUpdate(Sender: TObject);
@@ -1506,8 +1494,8 @@ begin
     Starter.Add(PrepareNode(SCN.Vehicles[i],False));
 
   Starter.SaveToFile(DIR + 'scenery\$' + SCN.Name + '.scn');
-
-  RunSimulator;
+  Starter.Free;
+  LaunchSimulator;
 end;
 
 procedure TMain.actStartUpdate(Sender: TObject);
@@ -1565,93 +1553,31 @@ begin
   pmLoad.Popup(Point.X,Point.Y);
 end;
 
-procedure TMain.OpenFile(const Path:string);
-begin
-  if FileExists(DIR + Path) then
-    ShellExecute(Handle,'open',PChar(DIR + Path),nil,nil, SW_SHOWNORMAL)
-  else
-    ShowMessage('Nie znaleziono pliku: ' + Path);
-end;
-
-procedure TMain.PrepareLoadingScreen;
+procedure TMain.LaunchSimulator;
 var
-  SR : TSearchRec;
-  FoundFiles : Integer;
-  FilesList : TStringList;
-  JPG : TJPEGImage;
-  BMP: TBitmap;
-begin
-  JPG := TJPEGImage.Create;
-  FilesList := TStringList.Create;
-  Bmp := TBitmap.Create;
-  try
-    try
-      if FileExists(Self.DIR + 'textures\logo\' + SCN.Name + '.jpg') then
-        JPG.LoadFromFile(Self.DIR + 'textures\logo\' + SCN.Name + '.jpg')
-      else
-      begin
-        FoundFiles := FindFirst(Self.DIR + 'textures\logo\logo*.jpg',faAnyFile,SR);
-        while (FoundFiles = 0) do
-        begin
-          if (SR.Name <> '.') and (SR.Name <> '..') then
-            FilesList.Add(SR.Name);
-
-          FoundFiles := FindNext(SR);
-        end;
-        FindClose(SR);
-
-        JPG.LoadFromFile(Self.DIR + 'textures\logo\' + FilesList[Random(FilesList.Count)]);
-      end;
-
-      Bmp.PixelFormat := pf32bit;
-      Bmp.Assign(JPG);
-      Bmp.SaveToFile(Self.DIR + 'textures\logo.bmp');
-    except
-      on E: Exception do
-        Main.Errors.Add('B³¹d obs³ugi logo. Szczegó³y b³êdu: ' + E.Message);
-    end;
-  finally
-    JPG.Free;
-    BMP.Free;
-    FilesList.Free;
-  end;
-end;
-
-procedure TMain.RunSimulator;
-var
-  Parameters : string;
-  SEI : TShellExecuteInfo;
+  RunInfo : TRunInfo;
 begin
   Settings.SaveSettings;
 
-  PrepareLoadingScreen;
-
-  Parameters := '-s ' + '$' + SCN.Name + '.scn';
-  Parameters := Parameters + ' -v ' + Train.Vehicles[SelVehicle].Name;
-  ZeroMemory(@SEI, SizeOf(SEI));
-  SEI.cbSize := SizeOf(SEI);//
+  RunInfo.SceneryName := SCN.Name;
+  RunInfo.Vehicle     := Train.Vehicles[SelVehicle].Name;
 
   if cbEXE.ItemIndex = 0 then
-    SEI.lpFile := PChar(DIR + cbEXE.Items[cbEXE.Items.Count-1])
+    RunInfo.EXE := PChar(DIR + cbEXE.Items[cbEXE.Items.Count-1])
   else
-    SEI.lpFile := PChar(DIR + cbEXE.Text);
+    RunInfo.EXE := PChar(DIR + cbEXE.Text);
 
-  try
-    if not FileExists(SEI.lpFile) then
-    begin
-      raise Exception.Create('Nie znaleziono pliku wykonywalnego (eu07*.exe) symulatora.');
-      btnStart.Enabled := True;
-    end;
-
-    SEI.lpParameters := PChar(Parameters);
-    SEI.lpDirectory := PChar(DIR);
-    SEI.nShow := SW_SHOWNORMAL;
-    ShellExecuteEx(@SEI);
+  if FileExists(RunInfo.EXE) then
+  begin
+    RunSimulator(RunInfo);
 
     if cbCloseApp.Checked then
       Application.Terminate;
-  except
-    on E: Exception do ShowMessage(E.Message);
+  end
+  else
+  begin
+    btnStart.Enabled := True;
+    ShowMessage('Nie znaleziono pliku wykonywalnego (' + ExtractFileName( RunInfo.EXE) + ') symulatora.');
   end;
 end;
 
@@ -1876,8 +1802,9 @@ begin
 
       ItemWidth := (cbModels.Width-GetSystemMetrics(SM_CYHSCROLL)) shr 1;
 
-      if Images[Index].Handle <> 0 then
+      if (Images.Count > Index) and (Images[Index].Handle <> 0) then
         Draw(ItemWidth -(Images[Index].Width shr 1), Rect.Top, Images[Index]);
+
       Rect := Bounds(
         ItemWidth - (TextWidth(ComboBox.Items[Index]) shr 1),
         Rect.Top+15,
@@ -1890,7 +1817,9 @@ begin
         Rect,
         DT_VCENTER + DT_SINGLELINE);
     end;
-  finally
+  except
+    Errors.Add('B³¹d wewnêtrzny Startera. Index: ' + Index.ToString + ' Images.Count: '
+                + Images.Count.ToString + ' Combo.Count: ' + ComboBox.Items.Count.ToString);
   end;
 end;
 
@@ -1925,9 +1854,10 @@ begin
   end;
 end;
 
-procedure TMain.cbTypesClick(Sender: TObject);
+procedure TMain.cbTypesChange(Sender: TObject);
 var
   i, y : Integer;
+  OrdType : Integer;
   slModels : TStringList;
   Bitmap : TBitmap;
 begin
@@ -1937,9 +1867,12 @@ begin
     slModels.Duplicates := dupIgnore;
 
     for i := 0 to Textures.Count-1 do
-      if Ord(Textures[i].Typ) = cbTypes.ItemIndex then
+    begin
+      OrdType := Ord(Textures[i].Typ); // obejscie nieznanego bledu u niektorych
+      if OrdType = cbTypes.ItemIndex then
         for y := 0 to Textures[i].Models.Count-1 do
           slModels.Add(Textures[i].Models[y].Mini);
+    end;
 
     if Assigned(Images) then
       Images.Free;
@@ -2005,15 +1938,18 @@ begin
   ReloadSettingsState;
 end;
 
-procedure TMain.clCouplersClick(Sender: TObject);
+procedure TMain.clCouplersMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 var
   CouplerOld, Coupler, SelectCouplerMax, NextCouplerMax : Integer;
   Flag : TFlag;
   ConType1, ConType2 : string;
 begin
+  Coupler := GetCoupler;
+  clCouplers.Hint := Coupler.ToString;
+
   if (SelVehicle = -1) or (Train.Vehicles.Count-1 <= SelVehicle) then exit;
 
-  Coupler := GetCoupler;
   CouplerOld := Train.Vehicles[SelVehicle].Coupler;
 
   if Coupler > CouplerOld then
@@ -2037,23 +1973,18 @@ begin
     Flag := TFlag(Coupler-CouplerOld);
 
     if (Flag in CheckFlag(SelectCouplerMax)) and (Flag in CheckFlag(NextCouplerMax))
-      and ((not (F4 in CheckFlag(Coupler))) or (ConType1 = ConType2)) then
-    begin
-      Train.Vehicles[SelVehicle].Coupler := Coupler;
-      clCouplers.Hint := Train.Vehicles[SelVehicle].Coupler.ToString
-    end
+      and ((not (F4 in CheckFlag(Coupler))) or (ConType1 = ConType2)) or (ssCtrl in Shift) then
+      Train.Vehicles[SelVehicle].Coupler := Coupler
     else
     begin
       Train.Vehicles[SelVehicle].Coupler := CouplerOld;
       SelectCoupler(CouplerOld);
+      clCouplers.Hint := CouplerOld.ToString;
       ShowMessage('Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.');
     end;
   end
   else
-  begin
     Train.Vehicles[SelVehicle].Coupler := Coupler;
-    clCouplers.Hint := Coupler.ToString;
-  end;
 end;
 
 function TMain.GetCoupler:Integer;
@@ -2137,17 +2068,6 @@ begin
   Result := Result + ' enddynamic';
 end;
 
-procedure TMain.RemoveOldVersion;
-begin
-  try
-    if FileExists(DIR + 'StarterOld.exe') then
-      DeleteFile(DIR + 'StarterOld.exe');
-  except
-    on E: Exception do
-      Errors.Add('Nie uda³o siê usun¹æ poprzedniej wersji Startera. Szczegó³y b³êdu: ' + E.Message);
-  end;
-end;
-
 procedure TMain.LoadKeysComponents;
 var
   i : Integer;
@@ -2178,49 +2098,6 @@ begin
   Settings.SaveSettings;
 end;
 
-procedure TMain.CheckInstallation;
-var
-  Err : string;
-begin
-  if DirectoryExists(DIR + 'dynamic') = False then
-    Err := Err + 'Brak katalogu /dynamic ' + #13#10;
-
-  if DirectoryExists(DIR + 'sounds') = False then
-    Err := Err + 'Brak katalogu /sounds ' + #13#10;
-
-  if DirectoryExists(DIR + 'models') = False then
-    Err := Err + 'Brak katalogu /models ' + #13#10;
-
-  if DirectoryExists(DIR + 'scenery') = False then
-    Err := Err + 'Brak katalogu /scenery ' + #13#10;
-
-  if DirectoryExists(DIR + 'textures') = False then
-    Err := Err + 'Brak katalogu /textures ' + #13#10;
-
-  if FileExists(DIR + 'data/load_weights.txt') = False then
-    Err := Err + 'Brak informacji o wagach ³adunków.' + #13#10;
-
-  if Scenarios.Count = 0 then
-    Err := Err + 'Nie znaleziono scenariuszy.' + #13#10;
-
-  if Textures.Count = 0 then
-    Err := Err + 'Nie znaleziono pojazdów.' + #13#10;
-
-  if Physics.Count = 0 then
-    Err := Err + 'Nie znaleziono danych taboru.' + #13#10;
-
-  if cbEXE.Items.Count = 0 then
-    Err := Err + 'Nie znaleziono pliku wykonywalnego symulatora.' + #13#10;
-
-  if Err.Length > 0 then
-    ShowMessage(Err + 'Mo¿liwa b³êdna instalacja symulatora.');
-
-  if Pos('\Program Files',DIR) > 0 then
-    Err := Err + 'Program zainstalowany w katalogu Program Files.';
-
-  Errors.Add(Err);
-end;
-
 procedure TMain.ConfigChange(Sender:TObject);
 begin
   lbTemperature.Caption := IntToStr(tbTemperature.Position) + '°C';
@@ -2235,6 +2112,7 @@ begin
   DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\MaSzyna2009\';
   //DIR := 'G:\MaSzyna\pctga\';
+  //DIR := 'C:\Users\damia\Desktop';
 
   RemoveOldVersion;
 
@@ -2250,8 +2128,7 @@ begin
   Loads     := TList<TLoad>.Create;
 
   TParser.LoadData;
-
-  Settings := TSettings.Create;
+  Settings := TSettings.Create(True);
   Settings.ReadOwnSettings(True);
 end;
 
@@ -2357,7 +2234,7 @@ begin
   except
     on E: Exception do
     begin
-      ShowMessage('B³¹d wczytywania sk³adów z magazynu. Szczegó³y b³êdu: ' + E.Message);
+      ShowMessage('B³¹d wczytywania magazynu. Szczegó³y b³êdu: ' + E.Message);
       Errors.Add('B³¹d wczytywania magazynu. Szczegó³y b³êdu: ' + E.Message);
     end;
   end;
@@ -2411,9 +2288,12 @@ begin
 end;
 
 procedure TMain.FormShow(Sender: TObject);
+var
+  DepotThread : TDepotThread;
 begin
+  DepotThread := TDepotThread.Create;
   DefaultSettings;
-  Settings.ReadSettings;
+  Settings.Start;
   ReloadSettingsState;
   AdaptMiniSize;
 
@@ -2436,7 +2316,6 @@ begin
     tvSCN.SetFocus;
   end;
 
-  LoadMagazine;
   CheckInstallation;
 end;
 
@@ -2453,7 +2332,7 @@ end;
 
 procedure TMain.imFacebookClick(Sender: TObject);
 begin
-  ShellExecute(Handle,'open',PChar('https://www.facebook.com/MaSzynaeu07pl/'),nil,nil, SW_SHOWNORMAL)
+  OpenURL('https://www.facebook.com/MaSzynaeu07pl/');
 end;
 
 procedure TMain.imLangClick(Sender: TObject);
@@ -2467,7 +2346,7 @@ end;
 
 procedure TMain.imMaszynaClick(Sender: TObject);
 begin
-  ShellExecute(Handle,'open',PChar('https://eu07.pl/'),nil,nil, SW_SHOWNORMAL)
+  OpenURL('https://eu07.pl/');
 end;
 
 procedure TMain.BitmapDragOver(Sender, Source: TObject; X, Y: Integer;
@@ -2965,7 +2844,7 @@ end;
 procedure TMain.SelectModel(const Tex:TTexture;const ModelID:Integer=0);
 begin
   cbTypes.ItemIndex := Ord(Tex.Typ);
-  cbTypesClick(self);
+  cbTypesChange(self);
 
   cbModels.ItemIndex := cbModels.Items.IndexOf(Tex.Models[ModelID].Mini);
   cbModelsClick(self);
@@ -3380,16 +3259,6 @@ begin
   OpenFile((Sender as TButton).Hint);
 end;
 
-procedure TMain.OpenDir(const Path:string);
-begin
-  ShellExecute(Application.Handle,
-    PChar('explore'),
-    PChar(Path),
-    nil,
-    nil,
-    SW_SHOWNORMAL);
-end;
-
 function TMain.PrepareTrainsetDesc(const Trainset:TTrain):string;
 var
   i, c : Integer;
@@ -3447,8 +3316,6 @@ begin
         Break;
       end;
   end;
-
-  lbTextures.Tag := lbTextures.ItemIndex;
 end;
 
 procedure TMain.lbTexturesDblClick(Sender: TObject);
@@ -3471,6 +3338,7 @@ begin
         DrawTrain(Train);
 
       TrainDesc;
+      LoadTrainParams;
     end
     else
       LoadTexData(Tex);

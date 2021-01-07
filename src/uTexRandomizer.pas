@@ -18,6 +18,7 @@ type
     RevTolerance  : Integer;
     Multiple      : Boolean;
     Model         : string;
+    Wreck         : Boolean;
     constructor Create;
   end;
 
@@ -214,6 +215,9 @@ begin
         TexFilter.Mini.Add(Vehicles[i].Texture.Models[Vehicles[i].ModelID].Mini);
         TexFilter.ModelID       := Vehicles[i].ModelID;
 
+        TexFilter.Wreck := (Pos('wreck',Vehicles[i].Texture.Plik) > 0)
+                        or (Pos('wrak',Vehicles[i].Texture.Plik) > 0);
+
         if (TexFilter.Typ <> tyEZT) and (TexFilter.Typ <> tySZYNOBUS) then
           TexFilter.Owner       := Vehicles[i].Texture.Owner;
 
@@ -290,7 +294,10 @@ begin
     begin
       RandomTex(Trains[i].Vehicles);
       for y := 0 to Trains[i].Vehicles.Count-1 do
-        Main.Connect(y);
+        if ((Trains[i].Vehicles[y].Texture <> nil)
+          and (Trains[i].Vehicles[y].Texture.Typ = tyEZT))
+         or (Trains[i].Vehicles[y].CabOccupancy = coHeadDriver) then
+            Main.Connect(y);
       Inc(Main.SelTrain);
     end;
 end;

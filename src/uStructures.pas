@@ -53,6 +53,13 @@ type
   TModifierKey = (mkShift, mkCtrl);
   TModifierKeys = set of TModifierKey;
 
+  TPhysicsInc = class
+    Path    : string;
+    Params  : TStringList;
+    constructor Create;
+    //destructor Destroy;
+  end;
+
   TPhysics = class
     Name          : string;
     Dir           : string;
@@ -78,7 +85,7 @@ type
     ID    : Integer;
     Plik  : string;
     Models  : TObjectList<TModel>;
-    Opis  : string;
+    Desc  : string;
     Dir   : string;
     Mmd   : Boolean;
     Typ    : TTyp;
@@ -321,5 +328,18 @@ begin
   MyDestObj.ThermoDynamic  := Self.ThermoDynamic;
   ModelID                  := Self.ModelID;
 end;
+
+{ TPhysicsInc }
+
+constructor TPhysicsInc.Create;
+begin
+  Params := TStringList.Create;
+end;
+
+{destructor TPhysicsInc.Destroy;
+begin
+  Params.Free;
+  inherited;
+end;}
 
 end.
