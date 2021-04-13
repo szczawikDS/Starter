@@ -22,6 +22,8 @@ unit uUtilities;
 
 interface
 
+uses Classes;
+
 type
 
   TRunInfo = record
@@ -30,18 +32,37 @@ type
     Vehicle     : string;
   end;
 
+  TUtil = class
+    Dir     : string;
+    Lang    : string;
+    InitSCN : string;
+    Errors  : TStringList;
+    constructor Create;
+    procedure CheckInstallation(const EXECount:Integer);
+    procedure OpenFile(const Path:string);
+    procedure PrepareLoadingScreen(const LogoPath:string);
+  end;
+
 function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
 procedure OpenDir(const Path:string);
 procedure OpenURL(const URL:string);
-procedure OpenFile(const Path:string);
+
 procedure RemoveOldVersion;
-procedure CheckInstallation;
-procedure PrepareLoadingScreen(const LogoPath:string);
+
 procedure RunSimulator(const RunInfo:TRunInfo);
+
+function CompareVehicleNames(Item1, Item2: Pointer): Integer;
+function CompareTrainNames(Item1, Item2: Pointer): Integer;
+
+
+
+var
+  Util  : TUtil;
 
 implementation
 
-uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, Classes, uMain;
+uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, uMain,
+    uData, uStructures;
 
 function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
 begin
@@ -68,10 +89,10 @@ begin
   ShellExecute(Application.Handle,'open',PChar(URL),nil,nil, SW_SHOWNORMAL);
 end;
 
-procedure OpenFile(const Path:string);
+procedure TUtil.OpenFile(const Path:string);
 begin
-  if FileExists(Main.DIR + Path) then
-    ShellExecute(Application.Handle,'open',PChar(Main.DIR + Path),nil,nil, SW_SHOWNORMAL)
+  if FileExists(Util.DIR + Path) then
+    ShellExecute(Application.Handle,'open',PChar(Util.DIR + Path),nil,nil, SW_SHOWNORMAL)
   else
     ShowMessage('Nie znaleziono pliku: ' + Path);
 end;
@@ -79,58 +100,58 @@ end;
 procedure RemoveOldVersion;
 begin
   try
-    if FileExists(Main.DIR + 'StarterOld.exe') then
-      DeleteFile(Main.DIR + 'StarterOld.exe');
+    if FileExists(Util.DIR + 'StarterOld.exe') then
+      DeleteFile(Util.DIR + 'StarterOld.exe');
   except
     on E: Exception do
-      Main.Errors.Add('Nie uda³o siê usun¹æ poprzedniej wersji Startera. Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('Nie uda³o siê usun¹æ poprzedniej wersji Startera. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
-procedure CheckInstallation;
+procedure TUtil.CheckInstallation(const EXECount:Integer);
 var
   Err : string;
 begin
-  if DirectoryExists(Main.DIR + 'dynamic') = False then
+  if DirectoryExists(Util.DIR + 'dynamic') = False then
     Err := Err + 'Brak katalogu /dynamic ' + #13#10;
 
-  if DirectoryExists(Main.DIR + 'sounds') = False then
+  if DirectoryExists(Util.DIR + 'sounds') = False then
     Err := Err + 'Brak katalogu /sounds ' + #13#10;
 
-  if DirectoryExists(Main.DIR + 'models') = False then
+  if DirectoryExists(Util.DIR + 'models') = False then
     Err := Err + 'Brak katalogu /models ' + #13#10;
 
-  if DirectoryExists(Main.DIR + 'scenery') = False then
+  if DirectoryExists(Util.DIR + 'scenery') = False then
     Err := Err + 'Brak katalogu /scenery ' + #13#10;
 
-  if DirectoryExists(Main.DIR + 'textures') = False then
+  if DirectoryExists(Util.DIR + 'textures') = False then
     Err := Err + 'Brak katalogu /textures ' + #13#10;
 
-  if FileExists(Main.DIR + 'data/load_weights.txt') = False then
+  if FileExists(Util.DIR + 'data/load_weights.txt') = False then
     Err := Err + 'Brak informacji o wagach ³adunków.' + #13#10;
 
-  if Main.Scenarios.Count = 0 then
+  if Data.Scenarios.Count = 0 then
     Err := Err + 'Nie znaleziono scenariuszy.' + #13#10;
 
-  if Main.Textures.Count = 0 then
+  if Data.Textures.Count = 0 then
     Err := Err + 'Nie znaleziono pojazdów.' + #13#10;
 
-  if Main.Physics.Count = 0 then
+  if Data.Physics.Count = 0 then
     Err := Err + 'Nie znaleziono danych taboru.' + #13#10;
 
-  if Main.cbEXE.Items.Count = 0 then
+  if EXECount = 0 then
     Err := Err + 'Nie znaleziono pliku wykonywalnego symulatora.' + #13#10;
 
   if Err.Length > 0 then
     ShowMessage(Err + 'Mo¿liwa b³êdna instalacja symulatora.');
 
-  if Pos('\Program Files',Main.DIR) > 0 then
+  if Pos('\Program Files',Util.DIR) > 0 then
     Err := Err + 'Program zainstalowany w katalogu Program Files.';
 
-  Main.Errors.Add(Err);
+  Util.Errors.Add(Err);
 end;
 
-procedure PrepareLoadingScreen(const LogoPath:string);
+procedure TUtil.PrepareLoadingScreen(const LogoPath:string);
 var
   SR : TSearchRec;
   FoundFiles : Integer;
@@ -143,11 +164,11 @@ begin
   Bmp := Vcl.Graphics.TBitmap.Create;
   try
     try
-      if FileExists(Main.DIR + 'textures\logo\' + LogoPath + '.jpg') then
-        JPG.LoadFromFile(Main.DIR + 'textures\logo\' + LogoPath + '.jpg')
+      if FileExists(Util.DIR + 'textures\logo\' + LogoPath + '.jpg') then
+        JPG.LoadFromFile(Util.DIR + 'textures\logo\' + LogoPath + '.jpg')
       else
       begin
-        FoundFiles := FindFirst(Main.DIR + 'textures\logo\logo*.jpg',faAnyFile,SR);
+        FoundFiles := FindFirst(Util.DIR + 'textures\logo\logo*.jpg',faAnyFile,SR);
         while (FoundFiles = 0) do
         begin
           if (SR.Name <> '.') and (SR.Name <> '..') then
@@ -157,15 +178,15 @@ begin
         end;
         FindClose(SR);
 
-        JPG.LoadFromFile(Main.DIR + 'textures\logo\' + FilesList[Random(FilesList.Count)]);
+        JPG.LoadFromFile(Util.DIR + 'textures\logo\' + FilesList[Random(FilesList.Count)]);
       end;
 
       Bmp.PixelFormat := pf32bit;
       Bmp.Assign(JPG);
-      Bmp.SaveToFile(Main.DIR + 'textures\logo.bmp');
+      Bmp.SaveToFile(Util.DIR + 'textures\logo.bmp');
     except
       on E: Exception do
-        Main.Errors.Add('B³¹d obs³ugi logo. Szczegó³y b³êdu: ' + E.Message);
+        Util.Errors.Add('B³¹d obs³ugi logo. Szczegó³y b³êdu: ' + E.Message);
     end;
   finally
     JPG.Free;
@@ -179,7 +200,7 @@ var
   Parameters : string;
   SEI : TShellExecuteInfo;
 begin
-  PrepareLoadingScreen(RunInfo.SceneryName);
+  Util.PrepareLoadingScreen(RunInfo.SceneryName);
 
   try
     Parameters := '-s ' + '$' + RunInfo.SceneryName + '.scn';
@@ -194,6 +215,36 @@ begin
   except
     on E: Exception do ShowMessage(E.Message);
   end;
+end;
+
+function CompareVehicleNames(Item1, Item2: Pointer): Integer;
+begin
+  if (TTrain(Item1).Vehicles.Count > 0) and (TTrain(Item2).Vehicles.Count > 0) then
+    Result := CompareText(TTrain(Item1).Vehicles[0].Name, TTrain(Item2).Vehicles[0].Name)
+  else
+    Result := -1;
+end;
+
+function CompareTrainNames(Item1, Item2: Pointer): Integer;
+begin
+  if (TTrain(Item1).Vehicles.Count > 0) and (TTrain(Item2).Vehicles.Count > 0) then
+    Result := CompareText(TTrain(Item1).TrainName, TTrain(Item2).TrainName)
+  else
+    Result := -1;
+end;
+
+{ TUtil }
+
+constructor TUtil.Create;
+begin
+  DIR := ExtractFilePath(ParamStr(0));
+  //DIR := 'G:\MaSzyna\pctga\';
+  Errors := TStringList.Create;
+
+  FormatSettings.DecimalSeparator := '.';
+  FormatSettings.TimeSeparator    := ':';
+  FormatSettings.ShortTimeFormat  := 'GG:mm';
+  FormatSettings.LongTimeFormat   := 'GG:mm:ss';
 end;
 
 end.

@@ -58,7 +58,7 @@ type
 implementation
 
 uses SysUtils, uMain, uUtilities, Character, Math, System.Generics.Collections,
-    System.Generics.Defaults {$IFDEF DEBUG},System.Diagnostics{$ENDIF};
+    System.Generics.Defaults {$IFDEF DEBUG},System.Diagnostics{$ENDIF}, uData, uStart;
 
 {$IFDEF DEBUG}
 procedure Measure;
@@ -92,19 +92,19 @@ var
   Ilosc, Ilosc2 : Integer;
 begin
   try
-    Ilosc := FindFirst(Main.DIR + 'dynamic\*',faDirectory,SR);
+    Ilosc := FindFirst(Util.DIR + 'dynamic\*',faDirectory,SR);
 
     while (Ilosc = 0) do
     begin
       if (SR.Name <> '.') and (SR.Name <> '..') then
       begin
-        Ilosc2 := FindFirst(Main.DIR + 'dynamic\'+SR.Name+'\*',faDirectory,SR2);
+        Ilosc2 := FindFirst(Util.DIR + 'dynamic\'+SR.Name+'\*',faDirectory,SR2);
 
         while (Ilosc2 = 0) do
         begin
           if (SR2.Name <> '.') and (SR2.Name <> '..') then
-            if FileExists(Main.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt') then
-              ParseTextures(Main.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt');
+            if FileExists(Util.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt') then
+              ParseTextures(Util.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt');
 
           Ilosc2 := FindNext(SR2);
         end;
@@ -115,7 +115,7 @@ begin
     FindClose(SR);
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -125,27 +125,25 @@ var
   Ilosc : Integer;
 begin
   try
-    Ilosc := FindFirst(Main.DIR + 'scenery\*.scn',faAnyFile,SR);
+    Ilosc := FindFirst(Util.DIR + 'scenery\*.scn',faAnyFile,SR);
 
     while (Ilosc = 0) do
     begin
       if SR.Name[1] <> '$' then
-        Main.Scenarios.Add(ScenarioName(Main.DIR + 'scenery\' + SR.Name));
+        Data.Scenarios.Add(ScenarioName(Util.DIR + 'scenery\' + SR.Name));
       Ilosc := FindNext(SR);
     end;
 
     FindClose(SR);
   except
-    Main.Errors.Add('B³¹d wczytywania scenerii ' + SR.Name);
+    Util.Errors.Add('B³¹d wczytywania scenerii ' + SR.Name);
   end;
 end;
 
 class function TParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
-var
-  Loader : TParser;
 begin
   try
-    Loader := TParser.Create;
+    TParser.Create;
 
     with TParser.Create do
     try
@@ -203,7 +201,7 @@ begin
     end;
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -215,16 +213,16 @@ begin
   Vehicle.Texture := nil;
   Found := False;
 
-  for i := 0 to Main.Textures.Count-1 do
-    if (CompareText(Vehicle.ReplacableSkin,Main.Textures[i].Plik)=0) and
-       (CompareText(Vehicle.Dir,Main.Textures[i].Dir)=0) then
+  for i := 0 to Data.Textures.Count-1 do
+    if (CompareText(Vehicle.ReplacableSkin,Data.Textures[i].Plik)=0) and
+       (CompareText(Vehicle.Dir,Data.Textures[i].Dir)=0) then
     begin
-      for y := 0 to Main.Textures[i].Models.Count-1 do
+      for y := 0 to Data.Textures[i].Models.Count-1 do
       begin
-        Vehicle.Texture := Main.Textures[i];
-        if CompareText(Vehicle.TypeChk,Main.Textures[i].Models[y].Model) = 0 then
+        Vehicle.Texture := Data.Textures[i];
+        if CompareText(Vehicle.TypeChk,Data.Textures[i].Models[y].Model) = 0 then
         begin
-          Vehicle.Texture := Main.Textures[i];
+          Vehicle.Texture := Data.Textures[i];
           Vehicle.ModelID := y;
           Found := True;
           Break;
@@ -237,9 +235,9 @@ begin
 
   if not Found then
   begin
-    Main.Errors.Add('');
-    Main.Errors.Add('B³¹d sparowania tekstura/model:');
-    Main.Errors.Add(Main.PrepareNode(Vehicle,True));
+    Util.Errors.Add('');
+    Util.Errors.Add('B³¹d sparowania tekstura/model:');
+    Util.Errors.Add(PrepareNode(Vehicle,True));
   end;
 end;
 
@@ -251,9 +249,9 @@ var
 begin
   LoadWeights := TStringList.Create;
   try
-    if FileExists(Main.DIR + 'data\load_weights.txt') then
+    if FileExists(Util.DIR + 'data\load_weights.txt') then
     begin
-      LoadWeights.LoadFromFile(Main.DIR + 'data\load_weights.txt');
+      LoadWeights.LoadFromFile(Util.DIR + 'data\load_weights.txt');
 
       Lexer.Origin := PChar(LoadWeights.Text);
       Lexer.Init;
@@ -268,18 +266,20 @@ begin
           Load.Name := Copy(LoadName,0,Pos(':',LoadName)-1);
           Lexer.NextNoJunk;
           Load.Weight := StrToInt(Lexer.Token);
-          Main.Loads.Add(Load);
+          Data.Loads.Add(Load);
         end;
         Lexer.NextNoSpace;
       end;
     end;
   except
-    Main.Errors.Add('B³¹d wczytywania wag jednostek ³adunków.');
+    Util.Errors.Add('B³¹d wczytywania wag jednostek ³adunków.');
     LoadWeights.Free;
   end;
 end;
 
 function TParser.ParseVehicle(const TrainSet:Boolean=True):TVehicle;
+var
+  Position : Integer;
 begin
   try
     Result := TVehicle.Create;
@@ -293,10 +293,19 @@ begin
     Lexer.NextNoJunk;
     Result.Name := GetToken;
 
+    Position := Pos('#',Result.Name);
+    if Position > 0 then
+    begin
+      Result.Number := StrToInt(Copy(Result.Name,Position+1,Result.Name.Length));
+      Result.Name := Copy(Result.Name,0,Position-1);
+    end
+    else
+      Result.Number := 0;
+
     Lexer.NextID(ptIdentifier);
 
     if not SameText('dynamic',Lexer.Token) then
-      Main.Errors.Add('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
+      Util.Errors.Add('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
 
     Lexer.NextID(ptIdentifier);
     Result.Dir := GetToken;
@@ -346,7 +355,7 @@ begin
     FindTexture(Result);
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -436,7 +445,7 @@ begin
       Vehicle.Coupler := Abs(Vehicle.Coupler) + 128;
 
   except
-    Main.Errors.Add('B³¹d parsowania sprzêgu ' + Vehicle.Name + ', linia ' + IntToStr(Lexer.LineNumber));
+    Util.Errors.Add('B³¹d parsowania sprzêgu ' + Vehicle.Name + ', linia ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -486,7 +495,7 @@ begin
     end;
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -616,7 +625,7 @@ begin
       Config.Overcast := StrToFloat(GetToken);
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -734,10 +743,10 @@ begin
                 Lexer.Next;
               end;
 
-              if FileExists(Main.DIR + 'scenery\' + IncludeStr) then
+              if FileExists(Util.DIR + 'scenery\' + IncludeStr) then
               begin
                 IncFirstInit := TStringList.Create;
-                IncFirstInit.LoadFromFile(Main.DIR + 'scenery\' + IncludeStr);
+                IncFirstInit.LoadFromFile(Util.DIR + 'scenery\' + IncludeStr);
                 FirstInit.Add(IncFirstInit.Text);
                 IncFirstInit.Free;
               end;
@@ -752,7 +761,7 @@ begin
       Plik.Free;
     except
       on E: Exception do
-        Main.Errors.Add('B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message);
+        Util.Errors.Add('B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message);
     end;
   finally
     Free;
@@ -799,7 +808,7 @@ begin
     end;
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -851,7 +860,7 @@ begin
       Tex.Models.Add(Model);
     end;
   except
-    Main.Errors.Add('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik + ', linia: ' + IntToStr(Lexer.LineNumber));
+    Util.Errors.Add('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik + ', linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -918,6 +927,7 @@ begin
           if Token='h' then Grupa := tyOSOBA      else
           if Token='f' then Grupa := tyZWIERZE    else
           if Token='p' then Grupa := tyPAROWOZ    else
+          if Token='x' then Grupa := tyPROTOTYP   else
           Grupa := tyINNE;
           Continue;
         end;
@@ -926,15 +936,15 @@ begin
         if Pos('=',Plik[i]) > 0 then
         begin
           Tex := TTexture.Create;
-          Tex.ID := Main.Textures.Count;
+          Tex.ID := Data.Textures.Count;
           Tex.NextTexID := -1;
           Tex.PrevTexID := -1;
           if Crew > 0 then
           begin
             if (CrewCount > 0) and (CrewCount <= Crew) then
             begin
-              Tex.PrevTexID := Main.Textures.Count-1;
-              Main.Textures[Main.Textures.Count-1].NextTexID := Main.Textures.Count;
+              Tex.PrevTexID := Data.Textures.Count-1;
+              Data.Textures[Data.Textures.Count-1].NextTexID := Data.Textures.Count;
             end;
             Inc(CrewCount);
 
@@ -962,21 +972,21 @@ begin
 
           for y := 0 to Tex.Models.Count-1 do
           begin
-            if FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') or
-               FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz') then
+            if FileExists(Util.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') or
+               FileExists(Util.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + 'dumb.fiz') then
             begin
               Tex.Models[y].Fiz := IsPhysics(Tex.Dir,Tex.Models[y].Model);
               if Tex.Models[y].Fiz = nil then
               begin
                 Physics := TPhysics.Create;
 
-                if not FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') then
+                if not FileExists(Util.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.fiz') then
                   Tex.Models[y].Model := Tex.Models[y].Model + 'dumb';
 
                 Physics.Name := Tex.Models[y].Model;
                 Physics.Dir  := Tex.Dir;
-                Main.Physics.Add(Physics);
-                Tex.Models[y].Fiz := Main.Physics.Last;
+                Data.Physics.Add(Physics);
+                Tex.Models[y].Fiz := Data.Physics.Last;
               end;
             end
             else
@@ -985,11 +995,11 @@ begin
               Tex.Models[y].Fiz := nil;
             end;
 
-            if not FileExists(Main.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then
+            if not FileExists(Util.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then
                 Include(Tex.Errors,teNoMultimedia);
           end;
 
-          Main.Textures.Add(Tex);
+          Data.Textures.Add(Tex);
         end;
       end;
     finally
@@ -997,7 +1007,7 @@ begin
     end;
   except
     on E: Exception do
-      Main.Errors.Add('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' + E.Message);
+      Util.Errors.Add('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -1020,7 +1030,7 @@ begin
       Tex.Author    := StringReplace(Par[6],'_',' ',[rfReplaceAll]);
       Tex.Photos    := StringReplace(Par[7],'_',' ',[rfReplaceAll]);
     except
-      Main.Errors.Add('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
+      Util.Errors.Add('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
     end;
   finally
     Par.Free;
@@ -1033,10 +1043,10 @@ var
 begin
   Result := nil;
 
-  for i := Main.Physics.Count-1 downto 0 do
-    if (CompareText(Main.Physics[i].Name,Name) = 0) and (CompareText(Main.Physics[i].Dir,Dir) = 0) then
+  for i := Data.Physics.Count-1 downto 0 do
+    if (CompareText(Data.Physics[i].Name,Name) = 0) and (CompareText(Data.Physics[i].Dir,Dir) = 0) then
     begin
-      Result := Main.Physics[i];
+      Result := Data.Physics[i];
       Break;
     end;
 end;
@@ -1058,15 +1068,15 @@ begin
     PhysicsFile := TStringList.Create;
     if Path.Length = 0 then
     begin
-      if FileExists(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
-        PhysicsFile.LoadFromFile(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
+      if FileExists(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then
+        PhysicsFile.LoadFromFile(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz')
       else
-        if FileExists(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz') then
-          PhysicsFile.LoadFromFile(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz');
+        if FileExists(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz') then
+          PhysicsFile.LoadFromFile(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + 'dumb.fiz');
     end
     else
-      if FileExists(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Path) then
-        PhysicsFile.LoadFromFile(Main.DIR + 'dynamic\' + Physics.Dir + '\' + Path);
+      if FileExists(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Path) then
+        PhysicsFile.LoadFromFile(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Path);
 
     Lexer.Origin := PChar(PhysicsFile.Text);
     Lexer.Init;
@@ -1202,7 +1212,7 @@ begin
 
     Params.Free;
   except
-    Main.Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
+    Util.Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -1210,8 +1220,8 @@ procedure TParser.LoadPhysics;
 var
   i : Integer;
 begin
-  for i := 0 to Main.Physics.Count-1 do
-    ParsePhysics(Main.Physics[i]);
+  for i := 0 to Data.Physics.Count-1 do
+    ParsePhysics(Data.Physics[i]);
 end;
 
 end.

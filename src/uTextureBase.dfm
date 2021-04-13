@@ -1,4 +1,4 @@
-object frmDepo: TfrmDepo
+object frmTextureBase: TfrmTextureBase
   Left = 0
   Top = 0
   Caption = 'Baza taboru'

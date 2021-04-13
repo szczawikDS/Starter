@@ -54,14 +54,14 @@ var
 
 implementation
 
-uses uMain, uLanguages;
+uses uUtilities, uLanguages;
 
 {$R *.dfm}
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
-  if Main.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Main.Lang);
+  if Util.Lang <> 'pl' then
+    TLanguages.ChangeLanguage(Self,Util.Lang);
 end;
 
 end.

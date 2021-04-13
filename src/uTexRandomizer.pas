@@ -63,7 +63,7 @@ type
 
 implementation
 
-uses uMain;
+uses uMain, uData, uUtilities;
 
 {$R *.dfm}
 
@@ -76,10 +76,10 @@ var
   i : Integer;
 begin
   try
-    if FileExists(Main.DIR + 'starter\reguly.txt') then
+    if FileExists(Util.DIR + 'starter\reguly.txt') then
     begin
       TexStockFile := TStringList.Create;
-      TexStockFile.LoadFromFile(Main.DIR + 'starter\reguly.txt');
+      TexStockFile.LoadFromFile(Util.DIR + 'starter\reguly.txt');
 
       for i := 0 to TexStockFile.Count-1 do
       begin
@@ -93,7 +93,7 @@ begin
     end;
   except
     on E: Exception do
-        Main.Errors.Add('B³¹d wczytywania regu³ (starter\reguly.txt). Szczegó³y b³êdu: ' + E.Message);
+        Util.Errors.Add('B³¹d wczytywania regu³ (starter\reguly.txt). Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -106,14 +106,14 @@ var
 begin
   Result := TList<Integer>.Create;
     try
-    for i := 0 to Main.Textures.Count-1 do
-      if (Main.Textures[i].Typ = TexFilter.Typ) and (Main.Textures[i].Errors = []) then
-        Result.Add(Main.Textures[i].ID);
+    for i := 0 to Data.Textures.Count-1 do
+      if (Data.Textures[i].Typ = TexFilter.Typ) and (Data.Textures[i].Errors = []) then
+        Result.Add(Data.Textures[i].ID);
 
     i := 0;
     while i < Result.Count do
     begin
-      if Main.Textures[Result[i]].Models.Count > TexFilter.ModelID then
+      if Data.Textures[Result[i]].Models.Count > TexFilter.ModelID then
         ModelID := TexFilter.ModelID
       else
         ModelID := 0;
@@ -122,7 +122,7 @@ begin
       y := 0;
       while y < TexFilter.Mini.Count do
       begin
-        if {(not TexFilter.Multiple) and} (SameText(TexFilter.Mini[y],Main.Textures[Result[i]].Models[ModelID].Mini))
+        if {(not TexFilter.Multiple) and} (SameText(TexFilter.Mini[y],Data.Textures[Result[i]].Models[ModelID].Mini))
           {or (TexFilter.Multiple) and (SameText(TexFilter.Model,Main.Textures[Result[i]].Models[ModelID].Model))} then
         begin
           Accept := True;
@@ -142,7 +142,7 @@ begin
     begin
       i := 0;
       while i < Result.Count do
-        if TexFilter.Owner <> Main.Textures[Result[i]].Owner then
+        if TexFilter.Owner <> Data.Textures[Result[i]].Owner then
           Result.Delete(i)
         else
           Inc(i);
@@ -155,7 +155,7 @@ begin
           if RevYear > 0 then
             TexFilter.RevDate := RevYear;
 
-          if (TryStrToInt(Copy(Main.Textures[Result[i]].Revision,7,4),RevDate)) then
+          if (TryStrToInt(Copy(Data.Textures[Result[i]].Revision,7,4),RevDate)) then
           begin
             if (RevDate >= TexFilter.RevDate - TexFilter.RevTolerance)
                 and (RevDate <= TexFilter.RevDate + TexFilter.RevTolerance) then
@@ -175,7 +175,7 @@ begin
     ShowMessage(s);}
   except
     on E: Exception do
-        Main.Errors.Add('B³¹d wyszukiwania tekstur. Szczegó³y b³êdu: ' + E.Message);
+        Util.Errors.Add('B³¹d wyszukiwania tekstur. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -193,6 +193,7 @@ begin
     while i < Vehicles.Count-1 do
     begin
       Inc(i);
+      TexFilter.Mini.Clear;
       TexFilter.Owner := EmptyStr;
       TexFilter.Drive := Vehicles[i].CabOccupancy in [coHeadDriver,coRearDriver];
       if Vehicles[i].Texture <> nil then
@@ -275,7 +276,7 @@ begin
       MatchTextures := FindSimilarTex(TexFilter);
 
       if MatchTextures.Count > 1 then
-        MultipleAssign(Vehicles,i,Main.Textures[MatchTextures[Random(MatchTextures.Count)]]);
+        MultipleAssign(Vehicles,i,Data.Textures[MatchTextures[Random(MatchTextures.Count)]]);
     end;
   finally
     TexFilter.Free;
@@ -297,7 +298,7 @@ begin
         if ((Trains[i].Vehicles[y].Texture <> nil)
           and (Trains[i].Vehicles[y].Texture.Typ = tyEZT))
          or (Trains[i].Vehicles[y].CabOccupancy = coHeadDriver) then
-            Main.Connect(y);
+            Connect(Main.Train,y);
       Inc(Main.SelTrain);
     end;
 end;
@@ -353,13 +354,13 @@ begin
     Inc(Index);
     if (Tex.NextTexID >= 0) then
       if Vehicles.Count = Index then
-        Main.AddVehicle(Index,Main.Textures[Tex.NextTexID],False,True)
+        Main.AddVehicle(Index,Data.Textures[Tex.NextTexID],False,True)
       else
         if (Vehicles[Index].Texture <> nil) then
           if (Vehicles[Index].Texture.PrevTexID < 0) then
-            Main.AddVehicle(Index,Main.Textures[Tex.NextTexID],False,True)
+            Main.AddVehicle(Index,Data.Textures[Tex.NextTexID],False,True)
           else
-            MultipleAssign(Vehicles,Index,Main.Textures[Tex.NextTexID]);
+            MultipleAssign(Vehicles,Index,Data.Textures[Tex.NextTexID]);
 
     Index := 0;
     while (Vehicles.Count-1 > Index) do
@@ -371,7 +372,7 @@ begin
     end;
   except
     on E: Exception do
-        Main.Errors.Add('B³¹d edycji pojazdu. Szczegó³y b³êdu: ' + E.Message);
+        Util.Errors.Add('B³¹d edycji pojazdu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 

@@ -37,12 +37,9 @@ type
     { Public declarations }
   end;
 
-var
-  frmSearch: TfrmSearch;
-
 implementation
 
-uses uMain, StrUtils, uLanguages;
+uses uMain, StrUtils, uLanguages, uData, uUtilities;
 
 {$R *.dfm}
 
@@ -94,34 +91,35 @@ begin
   lbList.Clear;
   if (Length(edText.Text) > 1) or (cbSearchType.ItemIndex = 5) then
   begin
-    for i := 0 to Main.Textures.Count-1 do
-      for y := 0 to Main.Textures[i].Models.Count-1 do
-        if (rgFilters.ItemIndex = 0) or (Main.Textures[i].Typ in VehicleType) then
-          case cbSearchType.ItemIndex of
-            0: if ContainsText(Main.Textures[i].Plik,edText.Text) then
-              AddItem(Main.Textures[i]);
+    for i := 0 to Data.Textures.Count-1 do
+      if (rgFilters.ItemIndex = 0) or (Data.Textures[i].Typ in VehicleType) then
+        case cbSearchType.ItemIndex of
+          0: if ContainsText(Data.Textures[i].Plik,edText.Text) then
+            AddItem(Data.Textures[i]);
 
-            1: if ContainsText(Main.Textures[i].Models[y].MiniD,edText.Text) then
-              AddItem(Main.Textures[i]);
+          1: for y := 0 to Data.Textures[i].Models.Count-1 do
+               if ContainsText(Data.Textures[i].Models[y].MiniD,edText.Text) then
+                 AddItem(Data.Textures[i]);
 
-            2: if SameText(Main.Textures[i].Owner,edText.Text) then
-              AddItem(Main.Textures[i]);
+          2: if SameText(Data.Textures[i].Owner,edText.Text) then
+            AddItem(Data.Textures[i]);
 
-            3: if ContainsText(Main.Textures[i].Author,edText.Text) then
-              AddItem(Main.Textures[i]);
+          3: if ContainsText(Data.Textures[i].Author,edText.Text) then
+            AddItem(Data.Textures[i]);
 
-            4: if ContainsText(Main.Textures[i].Photos,edText.Text) then
-              AddItem(Main.Textures[i]);
+          4: if ContainsText(Data.Textures[i].Photos,edText.Text) then
+            AddItem(Data.Textures[i]);
 
-            5:begin
-                Rev := AdaptRevDate(Main.Textures[i].Revision);
-                if (Rev >= dtRevStart.Date) and (Rev <= dtRevEnd.Date) then
-                  AddItem(Main.Textures[i]);
-              end;
+          5:begin
+              Rev := AdaptRevDate(Data.Textures[i].Revision);
+              if (Rev >= dtRevStart.Date) and (Rev <= dtRevEnd.Date) then
+                AddItem(Data.Textures[i]);
+            end;
 
-            6: if SameText(Main.Textures[i].Models[y].Model,edText.Text) then
-              AddItem(Main.Textures[i]);
-          end;
+          6: for y := 0 to Data.Textures[i].Models.Count-1 do
+               if SameText(Data.Textures[i].Models[y].Model,edText.Text) then
+                 AddItem(Data.Textures[i]);
+        end;
   end;
 
   lbList.Items.EndUpdate;
@@ -142,8 +140,8 @@ end;
 
 procedure TfrmSearch.FormCreate(Sender: TObject);
 begin
-  if Main.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Main.Lang);
+  if Util.Lang <> 'pl' then
+    TLanguages.ChangeLanguage(Self,Util.Lang);
   cbSearchType.ItemIndex := 0;
 end;
 

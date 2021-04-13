@@ -1,3 +1,23 @@
+{
+  Starter
+  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
+
+  This file is part of Starter.
+
+  Starter is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  Starter is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Starter.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit uLexer;
 
 interface
@@ -19,7 +39,7 @@ type
 
 implementation
 
-uses SysUtils, uMain;
+uses SysUtils, uMain, uUtilities;
 
 constructor TLexer.Create;
 begin
@@ -65,7 +85,7 @@ begin
     else
       Result := GetToken;
   except
-    Main.Errors.Add('B³¹d prztwarzania elementu fizyki. Token: ' + Lexer.Token);
+    Util.Errors.Add('B³¹d prztwarzania elementu fizyki. Token: ' + Lexer.Token);
   end;
 end;
 

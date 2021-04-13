@@ -3,7 +3,7 @@ object frmSettingsAdv: TfrmSettingsAdv
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Ustawienia zaawansowane'
-  ClientHeight = 184
+  ClientHeight = 208
   ClientWidth = 245
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,10 +20,11 @@ object frmSettingsAdv: TfrmSettingsAdv
     Left = 0
     Top = 0
     Width = 245
-    Height = 184
+    Height = 208
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 184
     object lbe3d: TLabel
       AlignWithMargins = True
       Left = 3
@@ -72,6 +73,47 @@ object frmSettingsAdv: TfrmSettingsAdv
       Checked = True
       State = cbChecked
       TabOrder = 2
+    end
+    object chUseGLES: TCheckBox
+      AlignWithMargins = True
+      Left = 3
+      Top = 98
+      Width = 239
+      Height = 17
+      Align = alTop
+      Caption = 'U'#380'yj OpenGL ES'
+      Checked = True
+      State = cbChecked
+      TabOrder = 3
+      ExplicitTop = 121
+    end
+    object chShaderGamma: TCheckBox
+      AlignWithMargins = True
+      Left = 3
+      Top = 121
+      Width = 239
+      Height = 17
+      Align = alTop
+      Caption = 'Gamma w shaderach'
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+      ExplicitLeft = 6
+      ExplicitTop = 154
+    end
+    object chMipmaps: TCheckBox
+      AlignWithMargins = True
+      Left = 3
+      Top = 144
+      Width = 239
+      Height = 17
+      Align = alTop
+      Caption = 'Mipmapy ekran'#243'w'
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+      ExplicitLeft = 0
+      ExplicitTop = 167
     end
   end
 end

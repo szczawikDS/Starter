@@ -48,10 +48,10 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '10.01.2021'
+      Hint = '13.04.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 6.6.5'
+      Caption = 'Wersja: 7.1.1'
       ParentShowHint = False
       ShowHint = True
       ExplicitWidth = 67
@@ -205,8 +205,34 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
-        '6.6.5 (10.01.2021)'
+        '7.1.1 (13.04.2021)'
+        '*poprawione prze'#322'adowywanie scenerii'
+        '*opcja auto-rozwijania drzewka'
+        ''
+        '7.1 (12.04.2021)'
+        '*sortowanie listy scenerii (wg grup)'
+        '*podgl'#261'd i nadawanie numeru wagonu [CTRL + N]'
+        '*definiowanie startowo wybranej scenerii'
+        ''
+        '7.0 (10.03.2021)'
+        '*obs'#322'uga zestaw'#243'w ustawie'#324
+        '*obs'#322'uga wirtualnego manewrowego'
+        '*obs'#322'uga ANGLE'
+        '*usuni'#281'cie multisamplingu x16'
+        '*poprawione kopiowanie sk'#322'adu do schowka'
+        ''
+        '6.8 (06.02.2021)'
+        '*poprawione losowanie tekstur'
+        '*dodana kategoria "prototypy"'
+        '*sortowanie magazynu wg nazwy pojazdu lub '
+        'poci'#261'gu'
+        ''
+        '6.7 (30.01.2021)'
         '*refaktoryzacja'
+        '*poprawione wyszukiwanie tekstur'
+        '*poprawione przechodzenie pomi'#281'dzy grupami '
+        'pojazd'#243'w'
+        '*zapami'#281'tywanie opcji widoczno'#347'ci sk'#322'ad'#243'w'
         ''
         '6.6.4 (04.01.2021)'
         '*poprawiona obs'#322'uga wpi'#243'w include w fizyce'
@@ -231,33 +257,6 @@ object frmAbout: TfrmAbout
         '*zmienione pobieranie nowszych wersji'
         '*poprawiona obs'#322'uga pojazd'#243'w z brakami'
         '*poprawiona obs'#322'uga schowka'
-        ''
-        '6.5.1 (13.12.2020)'
-        '*korekty losowania tekstur'
-        '*losowanie tekstur- tak'#380'e ze zmian'#261' ilo'#347'ci cz'#322'on'#243'w'
-        '*uniezale'#380'nienie od systemowego formatu godziny'
-        ''
-        '6.5 (10.12.2020)'
-        '*poprawione losowanie tekstur'
-        '*zmienione grupowanie pojazd'#243'w w opisach'
-        '*uzupe'#322'nione t'#322'umaczenia j'#281'zykowe'
-        '*poprawiona obs'#322'uga schowka'
-        ''
-        '6.4! (3.12.2020)'
-        '*dodawanie pojazdu za wszystkimi cz'#322'onami '
-        'bie'#380#261'cego pojazdu'
-        '*usuwanie pojazdu usuwa wszystkie powi'#261'zane '
-        'cz'#322'ony'
-        '*poprawki dotycz'#261'ce obs'#322'ugi pojazd'#243'w z brakami'
-        '*zmiany algorytmu losuj'#261'cego tekstury'
-        ''
-        '6.3! (1.12.2020)'
-        '*sortowanie bazy taboru'
-        '*uproszczenie panelu pogody'
-        '*narz'#281'dzia wymiany tekstur taboru'
-        '*poprawione nadawanie nazw pojazdom'
-        '*poprawione kopiowanie do schowka sk'#322'adu z '
-        'magazynu'
         ''
         '...')
       ReadOnly = True

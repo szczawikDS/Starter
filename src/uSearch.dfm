@@ -20,16 +20,17 @@ object frmSearch: TfrmSearch
   object lbSearch: TLabel
     AlignWithMargins = True
     Left = 3
-    Top = 123
+    Top = 126
     Width = 344
     Height = 13
     Align = alTop
     Caption = 'Szukany element:'
+    ExplicitWidth = 85
   end
   object lbExample: TLabel
     AlignWithMargins = True
     Left = 3
-    Top = 193
+    Top = 199
     Width = 344
     Height = 13
     Align = alTop
@@ -41,6 +42,7 @@ object frmSearch: TfrmSearch
     Font.Name = 'Tahoma'
     Font.Style = [fsItalic]
     ParentFont = False
+    ExplicitWidth = 250
   end
   object Label1: TLabel
     AlignWithMargins = True
@@ -50,11 +52,12 @@ object frmSearch: TfrmSearch
     Height = 13
     Align = alTop
     Caption = 'Szukaj wed'#322'ug:'
+    ExplicitWidth = 73
   end
   object edText: TEdit
     AlignWithMargins = True
     Left = 3
-    Top = 139
+    Top = 145
     Width = 344
     Height = 21
     Align = alTop
@@ -64,9 +67,9 @@ object frmSearch: TfrmSearch
   object lbList: TListBox
     AlignWithMargins = True
     Left = 3
-    Top = 209
+    Top = 218
     Width = 344
-    Height = 154
+    Height = 145
     Align = alClient
     ItemHeight = 13
     TabOrder = 4
@@ -95,7 +98,7 @@ object frmSearch: TfrmSearch
   object cbSearchType: TComboBox
     AlignWithMargins = True
     Left = 3
-    Top = 96
+    Top = 99
     Width = 344
     Height = 21
     Align = alTop
@@ -116,7 +119,7 @@ object frmSearch: TfrmSearch
   object pnlDate: TPanel
     AlignWithMargins = True
     Left = 3
-    Top = 166
+    Top = 172
     Width = 344
     Height = 21
     Align = alTop
@@ -129,20 +132,22 @@ object frmSearch: TfrmSearch
       Left = 162
       Top = 3
       Width = 56
-      Height = 18
+      Height = 15
       Align = alLeft
       Caption = 'Rewizja do:'
       Layout = tlCenter
+      ExplicitHeight = 13
     end
     object Label2: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 3
       Width = 56
-      Height = 18
+      Height = 15
       Align = alLeft
       Caption = 'Rewizja od:'
       Layout = tlCenter
+      ExplicitHeight = 13
     end
     object dtRevEnd: TDateTimePicker
       Left = 221

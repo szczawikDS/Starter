@@ -87,14 +87,13 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1045</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=6.6.4.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=7.1.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <UWP_DelphiLogo44>img\m.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>img\m.png</UWP_DelphiLogo150>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
-        <VerInfo_MajorVer>6</VerInfo_MajorVer>
+        <VerInfo_MajorVer>7</VerInfo_MajorVer>
         <DCC_Inlining>auto</DCC_Inlining>
-        <VerInfo_MinorVer>6</VerInfo_MinorVer>
-        <VerInfo_Release>4</VerInfo_Release>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -108,10 +107,11 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1045</VerInfo_Locale>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
-        <VerInfo_MajorVer>6</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=6.6.4.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_MinorVer>6</VerInfo_MinorVer>
-        <VerInfo_Release>4</VerInfo_Release>
+        <VerInfo_MajorVer>7</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.1.1.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_PreRelease>true</VerInfo_PreRelease>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -139,8 +139,8 @@
             <Form>frmSearch</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\uDepo.pas">
-            <Form>frmDepo</Form>
+        <DCCReference Include="src\uTextureBase.pas">
+            <Form>frmTextureBase</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="src\uAbout.pas">
@@ -163,6 +163,7 @@
         <DCCReference Include="src\uDepot.pas"/>
         <DCCReference Include="src\uLexer.pas"/>
         <DCCReference Include="src\uUtilities.pas"/>
+        <DCCReference Include="src\uData.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

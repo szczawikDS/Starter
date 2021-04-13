@@ -18,7 +18,7 @@
   along with Starter.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit uDepo;
+unit uTextureBase;
 
 interface
 
@@ -28,7 +28,7 @@ uses
   Vcl.StdCtrls, uStructures, Vcl.Menus;
 
 type
-  TfrmDepo = class(TForm)
+  TfrmTextureBase = class(TForm)
     sgDepo: TStringGrid;
     pnlSelect: TPanel;
     sgModels: TStringGrid;
@@ -108,70 +108,67 @@ type
     { Public declarations }
   end;
 
-var
-  frmDepo: TfrmDepo;
-
 implementation
 
-uses uMain, strUtils, uLanguages, Clipbrd, uUtilities;
+uses uMain, strUtils, uLanguages, Clipbrd, uUtilities, uData;
 
 {$R *.dfm}
 
-procedure TfrmDepo.cbOperatorClick(Sender: TObject);
+procedure TfrmTextureBase.cbOperatorClick(Sender: TObject);
 begin
   lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edAuthorChange(Sender: TObject);
+procedure TfrmTextureBase.edAuthorChange(Sender: TObject);
 begin
   if (cbAuthor.Checked) and (Length(edAuthor.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edMiniChange(Sender: TObject);
+procedure TfrmTextureBase.edMiniChange(Sender: TObject);
 begin
   if (cbMini.Checked) and (Length(edMini.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edModelChange(Sender: TObject);
+procedure TfrmTextureBase.edModelChange(Sender: TObject);
 begin
   if (cbModel.Checked) and (Length(edModel.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edOperatorChange(Sender: TObject);
+procedure TfrmTextureBase.edOperatorChange(Sender: TObject);
 begin
   if (cbOperator.Checked) and (Length(edOperator.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edPhotoChange(Sender: TObject);
+procedure TfrmTextureBase.edPhotoChange(Sender: TObject);
 begin
   if (cbPhoto.Checked) and (Length(edPhoto.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edStationChange(Sender: TObject);
+procedure TfrmTextureBase.edStationChange(Sender: TObject);
 begin
   if (cbStation.Checked) and (Length(edStation.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.edTexNameChange(Sender: TObject);
+procedure TfrmTextureBase.edTexNameChange(Sender: TObject);
 begin
   if (cbTexName.Checked) and (Length(edTexName.Text) > 1) then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TfrmTextureBase.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FreeAndNil(self);
 end;
 
-procedure TfrmDepo.FormCreate(Sender: TObject);
+procedure TfrmTextureBase.FormCreate(Sender: TObject);
 begin
-  TLanguages.ChangeLanguage(Self,Main.Lang);
+  TLanguages.ChangeLanguage(Self,Util.Lang);
 
   sgDepo.Cells[0,0] := 'Lp.';
   sgDepo.Cells[1,0] := 'Tekstura';
@@ -189,13 +186,13 @@ begin
   sgModels.Cells[2,0] := 'Œcie¿ka dostêpu';
 end;
 
-procedure TfrmDepo.FormShow(Sender: TObject);
+procedure TfrmTextureBase.FormShow(Sender: TObject);
 begin
   lbTypes.ItemIndex := 0;
   lbTypesClick(self);
 end;
 
-function tFrmDepo.AdaptRevDate(RevStr:string):TDate;
+function tfrmTextureBase.AdaptRevDate(RevStr:string):TDate;
 var
   fs: TFormatSettings;
 begin
@@ -215,7 +212,7 @@ begin
   end;
 end;
 
-function TfrmDepo.CheckFilters(const Tex:TTexture;const ModelID:Integer=0):Boolean;
+function TfrmTextureBase.CheckFilters(const Tex:TTexture;const ModelID:Integer=0):Boolean;
 var
   Rev : TDate;
 begin
@@ -234,39 +231,39 @@ begin
     Result := True;
 end;
 
-procedure TfrmDepo.dtRevEndChange(Sender: TObject);
+procedure TfrmTextureBase.dtRevEndChange(Sender: TObject);
 begin
   if cbRevEnd.Checked then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.dtRevStartChange(Sender: TObject);
+procedure TfrmTextureBase.dtRevStartChange(Sender: TObject);
 begin
   if cbRevStart.Checked then
     lbTypesClick(self);
 end;
 
-procedure TfrmDepo.lbTypesClick(Sender: TObject);
+procedure TfrmTextureBase.lbTypesClick(Sender: TObject);
 var
   i, y, z : Integer;
   f : Boolean;
 begin
   sgModels.RowCount := 1;
-  for i := 0 to Main.Textures.Count-1 do
-    for y := 0 to Main.Textures[i].Models.Count-1 do
-      if CheckFilters(Main.Textures[i],y) then
-        if Ord(Main.Textures[i].Typ) = lbTypes.ItemIndex then
+  for i := 0 to Data.Textures.Count-1 do
+    for y := 0 to Data.Textures[i].Models.Count-1 do
+      if CheckFilters(Data.Textures[i],y) then
+        if Ord(Data.Textures[i].Typ) = lbTypes.ItemIndex then
         begin
           f := False;
           for z := 1 to sgModels.RowCount-1 do
-              if SameText(Main.Textures[i].Models[y].Mini,sgModels.Cells[1,z]) then
+              if SameText(Data.Textures[i].Models[y].Mini,sgModels.Cells[1,z]) then
                 f := True;
           if not f then
           begin
             sgModels.RowCount := sgModels.RowCount + 1;
             sgModels.Cells[0,sgModels.RowCount-1] := IntToStr(sgModels.RowCount-1) + '.';
-            sgModels.Cells[1,sgModels.RowCount-1] := Main.Textures[i].Models[y].Mini;
-            sgModels.Cells[2,sgModels.RowCount-1] := Main.Textures[i].Dir;
+            sgModels.Cells[1,sgModels.RowCount-1] := Data.Textures[i].Models[y].Mini;
+            sgModels.Cells[2,sgModels.RowCount-1] := Data.Textures[i].Dir;
           end;
         end;
   if sgModels.RowCount > 1 then
@@ -274,38 +271,38 @@ begin
   sgModelsClick(self);
 end;
 
-procedure TfrmDepo.miCopyClick(Sender: TObject);
+procedure TfrmTextureBase.miCopyClick(Sender: TObject);
 begin
   Clipboard.AsText := Cell;
 end;
 
-procedure TfrmDepo.miOpenDirClick(Sender: TObject);
+procedure TfrmTextureBase.miOpenDirClick(Sender: TObject);
 begin
-  OpenDir(Main.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
+  OpenDir(Util.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
 end;
 
-procedure TfrmDepo.pmMenuPopup(Sender: TObject);
+procedure TfrmTextureBase.pmMenuPopup(Sender: TObject);
 begin
   miOpenDir.Visible := sgModels.RowCount > 1;
 end;
 
-procedure TfrmDepo.sgDepoDblClick(Sender: TObject);
+procedure TfrmTextureBase.sgDepoDblClick(Sender: TObject);
 var
   i, y : Integer;
 begin
   if sgDepo.Row > 1 then
   begin
-    for i := 0 to Main.Textures.Count-1 do
-      for y := 0 to Main.Textures[i].Models.Count-1 do
-        if (Main.Textures[i].Plik = sgDepo.Cells[1,sgDepo.Row])
-        and (Main.Textures[i].Models[y].Model = sgDepo.Cells[4,sgDepo.Row]) then
-          Main.SelectTexture(Main.Textures[i],y);
+    for i := 0 to Data.Textures.Count-1 do
+      for y := 0 to Data.Textures[i].Models.Count-1 do
+        if (Data.Textures[i].Plik = sgDepo.Cells[1,sgDepo.Row])
+        and (Data.Textures[i].Models[y].Model = sgDepo.Cells[4,sgDepo.Row]) then
+          Main.SelectTexture(Data.Textures[i],y);
 
     Self.Close;
   end;
 end;
 
-procedure TfrmDepo.sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer;
+procedure TfrmTextureBase.sgDepoDrawCell(Sender: TObject; ACol, ARow: Integer;
   Rect: TRect; State: TGridDrawState);
 var
   ACanvas : TCanvas;
@@ -321,9 +318,9 @@ begin
 
     B := TBitmap.Create;
     if sgDepo.Cells[2,ARow].Length > 0 then
-      B.LoadFromFile(Main.DIR + '\textures\mini\' + sgDepo.Cells[2,ARow] + '.bmp')
+      B.LoadFromFile(Util.DIR + '\textures\mini\' + sgDepo.Cells[2,ARow] + '.bmp')
     else
-      B.LoadFromFile(Main.DIR + '\textures\mini\other.bmp');
+      B.LoadFromFile(Util.DIR + '\textures\mini\other.bmp');
 
     aCanvas.Draw(Rect.Left, Rect.Top, B);
   end;
@@ -375,7 +372,7 @@ begin
   end;
 end;
 
-procedure TfrmDepo.sgDepoMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TfrmTextureBase.sgDepoMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
   ACol, ARow: Integer;
@@ -395,33 +392,33 @@ begin
   end;
 end;
 
-procedure TfrmDepo.sgModelsClick(Sender: TObject);
+procedure TfrmTextureBase.sgModelsClick(Sender: TObject);
 var
   i, y : Integer;
 begin
   sgDepo.RowCount := 1;
-  for i := 0 to Main.Textures.Count-1 do
-    for y := 0 to Main.Textures[i].Models.Count-1 do
+  for i := 0 to Data.Textures.Count-1 do
+    for y := 0 to Data.Textures[i].Models.Count-1 do
     begin
-      if CheckFilters(Main.Textures[i],y) then
-        if SameText(Main.Textures[i].Models[y].Mini,sgModels.Cells[1,sgModels.Row]) then
+      if CheckFilters(Data.Textures[i],y) then
+        if SameText(Data.Textures[i].Models[y].Mini,sgModels.Cells[1,sgModels.Row]) then
         begin
           sgDepo.RowCount := sgDepo.RowCount + 1;
           sgDepo.Cells[0,sgDepo.RowCount-1] := IntToStr(sgDepo.RowCount-1) + '.';
-          sgDepo.Cells[1,sgDepo.RowCount-1] := Main.Textures[i].Plik;
+          sgDepo.Cells[1,sgDepo.RowCount-1] := Data.Textures[i].Plik;
 
-          if FileExists(Main.DIR + '\textures\mini\' + Main.Textures[i].Models[y].MiniD + '.bmp') then
-            sgDepo.Cells[2,sgDepo.RowCount-1] := Main.Textures[i].Models[y].MiniD
+          if FileExists(Util.DIR + '\textures\mini\' + Data.Textures[i].Models[y].MiniD + '.bmp') then
+            sgDepo.Cells[2,sgDepo.RowCount-1] := Data.Textures[i].Models[y].MiniD
           else
-            if FileExists(Main.DIR + '\textures\mini\' + Main.Textures[i].Models[y].Mini + '.bmp') then
-              sgDepo.Cells[2,sgDepo.RowCount-1] := Main.Textures[i].Models[y].Mini;
+            if FileExists(Util.DIR + '\textures\mini\' + Data.Textures[i].Models[y].Mini + '.bmp') then
+              sgDepo.Cells[2,sgDepo.RowCount-1] := Data.Textures[i].Models[y].Mini;
 
-          sgDepo.Cells[4,sgDepo.RowCount-1] := Main.Textures[i].Models[y].Model;
-          sgDepo.Cells[5,sgDepo.RowCount-1] := Main.Textures[i].Owner;
-          sgDepo.Cells[6,sgDepo.RowCount-1] := Main.Textures[i].Station;
-          sgDepo.Cells[7,sgDepo.RowCount-1] := Main.Textures[i].Revision;
-          sgDepo.Cells[8,sgDepo.RowCount-1] := Main.Textures[i].Author;
-          sgDepo.Cells[9,sgDepo.RowCount-1] := Main.Textures[i].Photos;
+          sgDepo.Cells[4,sgDepo.RowCount-1] := Data.Textures[i].Models[y].Model;
+          sgDepo.Cells[5,sgDepo.RowCount-1] := Data.Textures[i].Owner;
+          sgDepo.Cells[6,sgDepo.RowCount-1] := Data.Textures[i].Station;
+          sgDepo.Cells[7,sgDepo.RowCount-1] := Data.Textures[i].Revision;
+          sgDepo.Cells[8,sgDepo.RowCount-1] := Data.Textures[i].Author;
+          sgDepo.Cells[9,sgDepo.RowCount-1] := Data.Textures[i].Photos;
         end;
     end;
   if sgDepo.RowCount > 1 then

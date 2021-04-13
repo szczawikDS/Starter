@@ -38,7 +38,7 @@ type
 
 implementation
 
-uses uMain, uStructures, SysUtils, CastaliaPasLexTypes;
+uses uMain, uStructures, SysUtils, CastaliaPasLexTypes, uData, uUtilities;
 
 { TDepot }
 
@@ -55,14 +55,14 @@ begin
 
       if Path.IsEmpty then
       begin
-        if FileExists(Main.DIR + 'starter\magazyn.ini') then
-          DepotFile.LoadFromFile(Main.DIR + 'starter\magazyn.ini')
+        if FileExists(Util.DIR + 'starter\magazyn.ini') then
+          DepotFile.LoadFromFile(Util.DIR + 'starter\magazyn.ini')
         else
-          if FileExists(Main.DIR + 'starter.ini') then
-            DepotFile.LoadFromFile(Main.DIR + 'starter.ini')
+          if FileExists(Util.DIR + 'starter.ini') then
+            DepotFile.LoadFromFile(Util.DIR + 'starter.ini')
           else
-            if FileExists(Main.DIR + 'RAINSTED.INI') then
-              DepotFile.LoadFromFile(Main.DIR + 'RAINSTED.INI');
+            if FileExists(Util.DIR + 'RAINSTED.INI') then
+              DepotFile.LoadFromFile(Util.DIR + 'RAINSTED.INI');
       end
       else
         if FileExists(Path) then
@@ -102,7 +102,7 @@ begin
               if Lexer.TokenID <> ptSquareOpen then
                 Lexer.NextID(ptIdentifier);
             end;
-            Main.Depot.Add(Pociag);
+            Data.Depot.Add(Pociag);
           end
           else
             Lexer.NextNoJunk;
@@ -111,7 +111,7 @@ begin
           Lexer.Next;
       end;
     except
-      Main.Errors.Add('B³¹d parsowania magazynu. Linia: ' + IntToStr(Lexer.LineNumber));
+      Util.Errors.Add('B³¹d parsowania magazynu. Linia: ' + IntToStr(Lexer.LineNumber));
     end;
   finally
     Free;
@@ -126,19 +126,19 @@ begin
   try
     DepotFile := TStringList.Create;
 
-    for i := 0 to Main.Depot.Count-1 do
+    for i := 0 to Data.Depot.Count-1 do
     begin
-      if Main.Depot[i].Vehicles.Count > 0 then
+      if Data.Depot[i].Vehicles.Count > 0 then
       begin
-        DepotFile.Add('[TRAINSET' + IntToStr(i) + '=' + Main.Depot[i].TrainName + ']');
-        for y := 0 to Main.Depot[i].Vehicles.Count-1 do
-          DepotFile.Add(Format('%.2d=',[y]) + Main.PrepareNode(Main.Depot[i].Vehicles[y]));
+        DepotFile.Add('[TRAINSET' + IntToStr(i) + '=' + Data.Depot[i].TrainName + ']');
+        for y := 0 to Data.Depot[i].Vehicles.Count-1 do
+          DepotFile.Add(Format('%.2d=',[y]) + PrepareNode(Data.Depot[i].Vehicles[y]));
       end;
     end;
 
-    DepotFile.SaveToFile(Main.DIR + 'starter\magazyn.ini');
+    DepotFile.SaveToFile(Util.DIR + 'starter\magazyn.ini');
   except
-    Main.Errors.Add('B³¹d zapisu magazynu.');
+    Util.Errors.Add('B³¹d zapisu magazynu.');
   end;
 end;
 

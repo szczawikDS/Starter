@@ -27,9 +27,6 @@ type
     { Public declarations }
   end;
 
-var
-  frmUART: TfrmUART;
-
 implementation
 
 uses uMain;

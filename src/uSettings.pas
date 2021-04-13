@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -39,7 +39,7 @@ type
     Key3  : string;
   end;
 
-  TSettings = class(TThread)
+  TSettings = class
   private
     DebugLogTrack : Boolean;
     DebugLogSpeed : Boolean;
@@ -56,32 +56,33 @@ type
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
     procedure RemoveParam(const Name: String);
+
   public
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
 
+    procedure LoadPresets;
     procedure ReadOwnSettings(const FirstRun:boolean=False);
-    procedure ReadSettings;
+    procedure ReadSettings(const Path:string='');
     procedure ReadKeyboard;
     procedure SaveSettings;
     procedure SaveKeyboardSettings;
-    //constructor Create;
+    constructor Create;
     destructor Destroy; override;
     function FindKey(const Key:string):Integer;
     function FindParam(const Name: string): TParam;
-  protected
-    procedure Execute; override;
   end;
 
 implementation
 
-uses uMain, uSettingsAdv, WinTypes, ShellApi, uLanguages, SysUtils, Vcl.Forms, Dialogs, DateUtils, uUpdater;
+uses uMain, uSettingsAdv, WinTypes, uLanguages, SysUtils, Vcl.Forms,
+     Dialogs, DateUtils, uUpdater, uUtilities;
 
-{constructor TSettings.Create;
+constructor TSettings.Create;
 begin
   inherited;
   Params := TObjectList<TParam>.Create;
-end;}
+end;
 
 destructor TSettings.Destroy;
 begin
@@ -145,10 +146,10 @@ var
 begin
   Main.cbEXE.Items.BeginUpdate;
   Main.cbEXE.Clear;
-  Ilosc := FindFirst(Main.DIR + 'eu07*.exe',faAnyFile,SR);
+  Ilosc := FindFirst(Util.DIR + 'eu07*.exe',faAnyFile,SR);
   while (Ilosc = 0) do
   begin
-    if FileExists(Main.DIR + SR.Name) then
+    if FileExists(Util.DIR + SR.Name) then
       Main.cbEXE.Items.Add(SR.Name);
 
     Ilosc := FindNext(SR);
@@ -202,8 +203,8 @@ begin
 
   Settings := TStringList.Create;
 
-  if FileExists(Main.DIR + 'eu07_input-keyboard.ini') then
-    Settings.LoadFromFile(Main.DIR + 'eu07_input-keyboard.ini');
+  if FileExists(Util.DIR + 'eu07_input-keyboard.ini') then
+    Settings.LoadFromFile(Util.DIR + 'eu07_input-keyboard.ini');
 
   for i := 0 to Settings.Count-1 do
   begin
@@ -257,7 +258,25 @@ begin
   end;
 end;
 
-procedure TSettings.ReadSettings;
+procedure TSettings.LoadPresets;
+var
+  SR : TSearchRec;
+  C : Integer;
+begin
+  C := FindFirst(Util.DIR + 'starter\#*.ini',faDirectory,SR);
+  while (C = 0) do
+  begin
+    if (SR.Name <> '.') and (SR.Name <> '..') then
+      Main.cbPreset.Items.Add(Copy(SR.Name,2,Length(SR.Name)-5));
+
+    C := FindNext(SR);
+  end;
+  SysUtils.FindClose(SR);
+
+  Main.pnlSettingsSet.Visible := Main.cbPreset.Items.Count > 0;
+end;
+
+procedure TSettings.ReadSettings(const Path:string='');
 var
   Token, ParWidth, ParHeight : string;
   Settings, Par : TStringList;
@@ -272,10 +291,16 @@ begin
     Settings := TStringList.Create;
     ResolutionList;
 
-    if FileExists(Main.DIR + 'eu07.ini') then
-      Settings.LoadFromFile(Main.DIR + 'eu07.ini')
+    if Path.IsEmpty then
+    begin
+      if FileExists(Util.DIR + 'eu07.ini') then
+        Settings.LoadFromFile(Util.DIR + 'eu07.ini')
+      else
+        Main.actDefaultSettingsExecute(self);
+    end
     else
-      Main.actDefaultSettingsExecute(self);
+      if FileExists(Util.DIR + 'eu07.ini') then
+        Settings.LoadFromFile(Util.DIR + 'starter\' + Path + '.ini');
 
     Lexer := TmwPasLex.Create;
 
@@ -343,6 +368,9 @@ begin
       if Params[i].Name = 'debugmode' then
         Main.chDebugmode.Checked := Params[i].Value = 'yes'
       else
+      if Params[i].Name = 'ai.trainman' then
+        Main.chTrainMan.Checked := Params[i].Value = 'yes'
+      else
       if Params[i].Name = 'soundenabled' then
         Main.chSoundenabled.Checked := Params[i].Value = 'yes'
       else
@@ -396,6 +424,9 @@ begin
       else
       if Params[i].Name = 'gfx.skippipeline' then
         Main.chSkipPipeline.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'gfx.angleplatform' then
+        Main.chAngle.Checked := Params[i].Value = 'vulkan'
       else
       if Params[i].Name = 'compresstex' then
         frmSettingsAdv.chCompressTex.Checked := Params[i].Value = 'yes'
@@ -618,7 +649,7 @@ begin
                                     + 'Szczegó³y b³êdu:' + #13#10 + E.Message;
 
       ShowMessage(Token);
-      Main.Errors.Add(Token);
+      Util.Errors.Add(Token);
     end;
   end;
 end;
@@ -648,6 +679,26 @@ begin
   else
     Settings.Add('MiniPic=no');
 
+  if Main.chOnlyForDriving.Checked then
+    Settings.Add('OnlyForDriving=yes')
+  else
+    Settings.Add('OnlyForDriving=no');
+
+  if Main.chShowAI.Checked then
+    Settings.Add('ShowAI=yes')
+  else
+    Settings.Add('ShowAI=no');
+
+    if Main.chAutoExpandTree.Checked then
+    Settings.Add('AutoExpandTree=yes')
+  else
+    Settings.Add('AutoExpandTree=no');
+
+  if Main.miSortByVehicleName.Checked then
+    Settings.Add('SortByVehicleName=yes')
+  else
+    Settings.Add('SortByVehicleName=no');
+
   if Main.cbEXE.ItemIndex >= 0 then
     Settings.Add('exe=' + Main.cbEXE.Items[Main.cbEXE.ItemIndex]);
 
@@ -657,9 +708,11 @@ begin
   Settings.Add('Battery=' + Main.cbBattery.ItemIndex.ToString);
   Settings.Add('LastUpdate=' + IntToStr(Main.lbVersion.Tag));
   Settings.Add('UpdateInterval=' + Main.edUpdateInterval.Text);
+  if Main.tvSCN.Selected <> nil then
+    Settings.Add('InitSCN=' + Main.tvSCN.Selected.Text);
 
-  if ForceDirectories(Main.DIR + 'starter') then
-    Settings.SaveToFile(Main.DIR + 'starter\starter.ini');
+  if ForceDirectories(Util.DIR + 'starter') then
+    Settings.SaveToFile(Util.DIR + 'starter\starter.ini');
   Settings.Free;
 end;
 
@@ -672,10 +725,10 @@ begin
   try
     LoadEXE;
 
-    if FileExists(Main.DIR + 'starter\starter.ini') then
+    if FileExists(Util.DIR + 'starter\starter.ini') then
     begin
       Settings := TStringList.Create;
-      Settings.LoadFromFile(Main.DIR + 'starter\starter.ini');
+      Settings.LoadFromFile(Util.DIR + 'starter\starter.ini');
       for i := 0 to Settings.Count-1 do
       begin
         ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
@@ -683,7 +736,7 @@ begin
 
         if SameText(ParName,'lang') then
         begin
-          Main.Lang := ParValue;
+          Util.Lang := ParValue;
           if not ((FirstRun) and (ParValue = 'pl')) then
             TLanguages.ChangeLanguage(Main,ParValue);
         end
@@ -691,6 +744,17 @@ begin
           Main.cbCloseApp.Checked := ParValue = 'yes'
         else if SameText(ParName,'MiniPic') then
           Main.cbBigThumbnail.Checked := ParValue = 'yes'
+        else if SameText(ParName,'OnlyForDriving') then
+          Main.chOnlyForDriving.Checked := ParValue = 'yes'
+        else if SameText(ParName,'ShowAI') then
+          Main.chShowAI.Checked := ParValue = 'yes'
+        else if SameText(ParName,'AutoExpandTree') then
+          Main.chAutoExpandTree.Checked := ParValue = 'yes'
+        else if SameText(ParName,'SortByVehicleName') then
+        begin
+          Main.miSortByTrackName.Checked    := ParValue = 'no';
+          Main.miSortByVehicleName.Checked  := ParValue = 'yes';
+        end
         else if SameText(ParName,'exe') then
           Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
         else if SameText(Parname,'Battery') then
@@ -703,7 +767,9 @@ begin
         else if SameText(ParName,'LastUpdate') then
           Main.lbVersion.Tag := StrToInt(ParValue)
         else if SameText(ParName,'UpdateInterval') then
-          Main.edUpdateInterval.Value := StrToInt(ParValue);
+          Main.edUpdateInterval.Value := StrToInt(ParValue)
+        else if SameText(ParName,'InitSCN') then
+          Util.InitSCN := ParValue;
       end;
 
       Settings.Free;
@@ -726,7 +792,7 @@ begin
     begin
       ShowMessage('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
                                     + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
-      Main.Errors.Add('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
+      Util.Errors.Add('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
                                     + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
     end;
   end;
@@ -799,6 +865,7 @@ begin
   FindParameter('gfx.resource.sweep','usuwanie nieu¿ywanych tekstur z opengl, zalecane wy³¹czenie gdy pamiêæ karty graficznej jest wystarczaj¹ca');
   FindParameter('gfx.resource.move','tryb konserwacji pamiêci przy usuwaniu nieu¿ywanych tekstur, mo¿e powodowaæ problemy na niektórych kartach');
   FindParameter('debugmode','(no) yes: wy³¹cza logikê rozmyt¹ s³u¿¹c¹ do detekcji awarii, w³¹cza klawisze pomocnicze');
+  FindParameter('ai.trainman','wirtualny manewrowy');
   FindParameter('soundenabled','(yes) no: wy³¹cza odgrywanie dŸwiêków przestrzennych');
   FindParameter('enabletraction','(yes) no: wy³¹cza ³amanie pantografu');
   FindParameter('livetraction','(yes) no: lokomotywy elektryczne bêd¹ mia³y zasilanie, jeœli tylko podnios¹ pantografy');
@@ -834,6 +901,9 @@ begin
     FindParameter('maxcabtexturesize','skalowanie tekstur kabiny do podanego rozmiaru')
   else
     RemoveParam('maxcabtexturesize');
+
+  if not Main.chAngle.Checked then
+    RemoveParam('gfx.angleplatform');
 end;
 
 procedure TSettings.SaveSettings;
@@ -877,6 +947,7 @@ begin
     if Params[i].Name = 'gfx.resource.sweep'            then SetCheckState(Main.chGfxresourcesweep.Checked,i) else
     if Params[i].Name = 'gfx.resource.move'             then SetCheckState(Main.chGfxresourcemove.Checked,i) else
     if Params[i].Name = 'debugmode'                     then SetCheckState(Main.chDebugmode.Checked,i) else
+    if Params[i].Name = 'ai.trainman'                   then SetCheckState(Main.chTrainMan.Checked,i) else
     if Params[i].Name = 'soundenabled'                  then SetCheckState(Main.chSoundenabled.Checked,i) else
     if Params[i].Name = 'enabletraction'                then SetCheckState(Main.chEnabletraction.Checked,i) else
     if Params[i].Name = 'livetraction'                  then SetCheckState(Main.chLivetraction.Checked,i) else
@@ -1074,7 +1145,7 @@ begin
       Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
   end;
 
-  Settings.SaveToFile(Main.DIR + 'eu07.ini');
+  Settings.SaveToFile(Util.DIR + 'eu07.ini');
   Settings.Free;
 end;
 
@@ -1088,14 +1159,7 @@ begin
   for i := 0 to KeyParams.Count-1 do
     Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
 
-  Settings.SaveToFile(Main.DIR + 'eu07_input-keyboard.ini');
-end;
-
-procedure TSettings.Execute;
-begin
-  Params := TObjectList<TParam>.Create;
-  ReadSettings;
-  Terminate;
+  Settings.SaveToFile(Util.DIR + 'eu07_input-keyboard.ini');
 end;
 
 end.

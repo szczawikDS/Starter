@@ -13,6 +13,9 @@ type
     cbConvertmodels: TComboBox;
     chCompressTex: TCheckBox;
     chScaleSpeculars: TCheckBox;
+    chUseGLES: TCheckBox;
+    chShaderGamma: TCheckBox;
+    chMipmaps: TCheckBox;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -25,14 +28,14 @@ var
 
 implementation
 
-uses uMain, uLanguages;
+uses uUtilities, uLanguages;
 
 {$R *.dfm}
 
 procedure TfrmSettingsAdv.FormCreate(Sender: TObject);
 begin
-  if Main.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Main.Lang);
+  if Util.Lang <> 'pl' then
+    TLanguages.ChangeLanguage(Self,Util.Lang);
 end;
 
 end.

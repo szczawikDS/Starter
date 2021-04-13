@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2020 Damian Skrzek (szczawik)
+  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -43,14 +43,14 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 68;
+      AppVersion = 74;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
 
 implementation
 
-uses uMain, ShellApi, System.UITypes;
+uses uMain, ShellApi, System.UITypes, uUtilities;
 
 {$R *.dfm}
 
@@ -102,7 +102,7 @@ begin
     except
       on E: Exception do
       begin
-        Main.Errors.Add('B³¹d aktualizacji ' + E.Message);
+        Util.Errors.Add('B³¹d aktualizacji ' + E.Message);
 
         if ReturnInfo then
           ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
@@ -151,10 +151,10 @@ begin
 
         if TryStrToInt(Par[0],Version) then
           if Version > AppVersion then
-          IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[1], Main.DIR + '\' + Par[2]);
+          IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[1], Util.DIR + '\' + Par[2]);
       end;
 
-      if FileExists(Main.DIR + 'update.bat') then
+      if FileExists(Util.DIR + 'update.bat') then
         AutoUpdate
       else
         ShowMessage('Program zosta³ zaktualizowany.');
@@ -182,7 +182,7 @@ end;
 procedure TfrmUpdater.AutoUpdate;
 begin
   try
-    if FileExists(Main.DIR + 'update.bat') then
+    if FileExists(Util.DIR + 'update.bat') then
       ShellExecute(Main.Handle, 'open', 'update.bat', nil, nil, SW_HIDE);
   except
     on E: Exception do

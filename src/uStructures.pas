@@ -39,7 +39,7 @@ type
   TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
           tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
           tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
-          tyINNE, tyUNKNOWN);
+          tyPROTOTYP, tyINNE, tyUNKNOWN);
 
   TCabOccupancy = (coHeadDriver,coRearDriver,coPassenger,coNobody);
 
@@ -145,6 +145,7 @@ type
     ThermoDynamic   : Boolean;
     Texture         : TTexture;
     ModelID         : Integer;
+    Number          : Integer;
   {public
     property MinDist  : Double read FMinDist write FMinDist;
     property MaxDist  : Double read FMaxDist write FMaxDist;

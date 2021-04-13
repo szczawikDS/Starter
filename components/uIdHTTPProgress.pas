@@ -44,6 +44,7 @@ begin
   HandleRedirects := True;
   IOHandler := IOHndl;
   ReadTimeout := 30000;
+  ConnectTimeout := 1000;
   OnWork := HTTPWork;
   OnWorkBegin := HTTPWorkBegin;
   OnWorkEnd := HTTPWorkEnd;

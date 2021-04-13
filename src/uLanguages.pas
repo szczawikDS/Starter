@@ -36,7 +36,7 @@ type
 implementation
 
 uses System.SysUtils, uMain, System.Classes, StrUtils,
-     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst, ExtCtrls, typinfo;
+     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst, ExtCtrls, typinfo, uUtilities;
 
 { TLanguages }
 
@@ -47,10 +47,10 @@ var
   Value, Prop : string;
   i : Integer;
 begin
-  if FileExists(Main.DIR + 'starter\lang-' + Lang + '.txt') then
+  if FileExists(Util.DIR + 'starter\lang-' + Lang + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Main.DIR + 'starter\lang-' + Lang + '.txt');
+    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + Lang + '.txt');
 
     while (Pos('[' + Form.Name,LangFile[i]) = 0) and (i < LangFile.Count-1) do
         Inc(i);
@@ -114,11 +114,11 @@ var
 begin
   Result := '';
 
-  Count := FindFirst(Main.DIR + '\starter\lang-*.txt',faDirectory,SR);
+  Count := FindFirst(Util.DIR + '\starter\lang-*.txt',faDirectory,SR);
   while (Count = 0) do
   begin
-    if FileExists(Main.DIR + '\starter\' + SR.Name) then
-      Result := Result + '|' + Main.DIR + '\starter\' + SR.Name;
+    if FileExists(Util.DIR + '\starter\' + SR.Name) then
+      Result := Result + '|' + Util.DIR + '\starter\' + SR.Name;
     Count := FindNext(SR);
   end;
 end;
@@ -185,7 +185,7 @@ begin
     end;
   end;
 
-  sl.SaveToFile(Main.DIR + '\starter\' + Lang + '.txt');
+  sl.SaveToFile(DIR + '\starter\' + Lang + '.txt');
 end;}
 
 end.
