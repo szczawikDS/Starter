@@ -26,6 +26,7 @@ lbTime.Caption=Hodina:
 tsMagazine.Caption=Sklad
 cbTypes.Items.Text=Elektrické lokomotivy|Motorové lokomotivy|Parní lokomotivy|Motorové vozy|Elektrické jednotky|Vagony A|Vagony B|Vagony D|Vagony E|Vagony F|Vagony G|Vagony H|Vagony I|Vagony L|Vagony P|Vagony R|Vagony S|Vagony U|Vagony V|Vagony W|Vagony X|Vagony Z|Pracovní vozy|Drezíny|Tramvaje|Automobily|Autobusy|Nákladní automobily|Ostatní|
 tsSCNTrains.Caption=Soupravy v scenérii
+chTrainMan.Caption=Virtual shunter
 chOnlyForDriving.Caption=Pouze øíditelné
 chShowAI.Caption=Zobrazit vlaky AI
 tsDepoTrains.Caption=Soupravy ve skladu
@@ -103,6 +104,7 @@ Label3.Caption=Tøení:
 Label4.Caption=Pozorovací úhel:
 cbCloseApp.Caption=Zavøi startér automaticky
 cbBigThumbnail.Caption=Velké miniatury
+chAutoExpandTree.Caption=Auto-expand scenery tree
 chCrashDamage.Caption=Poškození kolizí
 chDebugLogVis.Caption=Zobrazit log
 Label34.Caption=Zkontrolujte aktualizaci co
@@ -210,6 +212,9 @@ lbe3d.Caption=Generování E3D:
 cbConvertmodels.Items.Text=Vypnuté|Konverze
 chScaleSpeculars.Caption=Mìøítko zrcadlové složky
 chCompressTex.Caption=Komprese textury TGA
+chUseGLES.Caption=Use OpenGL ES
+chShaderGamma.Caption=Gamma in shaders
+chMipmaps.Caption=Screen mipmaps
 [frmSearch]
 Hledání vozidla
 rgFilters.Caption=Filtrování

@@ -26,6 +26,7 @@ lbTime.Caption=Time:
 tsMagazine.Caption=Depot
 cbTypes.Items.Text=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car I|Car L|Car P|Car R|Car S|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|Other|
 tsSCNTrains.Caption=Trains on scenery
+chTrainMan.Caption=Virtual shunter
 chOnlyForDriving.Caption=Only for driving
 chShowAI.Caption=Show AI trains
 tsDepoTrains.Caption=Trains in warehouse
@@ -103,6 +104,7 @@ Label3.Caption=Friction:
 Label4.Caption=View angle:
 cbCloseApp.Caption=Close the starter automatically
 cbBigThumbnail.Caption=Big thumbnails
+chAutoExpandTree.Caption=Auto-expand scenery tree
 chCrashDamage.Caption=Crash damage
 chDebugLogVis.Caption=Show log
 Label34.Caption=Check update every
@@ -211,6 +213,9 @@ lbe3d.Caption=Generating E3D:
 cbConvertmodels.Items.Text=Off|Conversion
 chScaleSpeculars.Caption=Scaling of specular component
 chCompressTex.Caption=TGA texture compression
+chUseGLES.Caption=Use OpenGL ES
+chShaderGamma.Caption=Gamma in shaders
+chMipmaps.Caption=Screen mipmaps
 [frmSearch]
 Search vehicle
 rgFilters.Caption=Filter

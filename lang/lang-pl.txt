@@ -26,6 +26,7 @@ lbTime.Caption=Godzina:
 tsMagazine.Caption=Magazyn
 cbTypes.Items.Text=Elektrowozy|Spalinowozy|Parowozy|Szynobusy|EZT|Wagony A|Wagony B|Wagony D|Wagony E|Wagony F|Wagony G|Wagony H|Wagony I|Wagony L|Wagony P|Wagony R|Wagony S|Wagony U|Wagony V|Wagony W|Wagony X|Wagony Z|Robocze|Drezyny|Tramwaje|Samochody|Autobusy|Ciê¿arówki|Inne|
 tsSCNTrains.Caption=Sk³ady na scenerii
+chTrainMan.Caption=Wirtualny manewrowy
 chOnlyForDriving.Caption=Tylko do prowadzenia
 chShowAI.Caption=Pokazuj poci¹gi AI
 tsDepoTrains.Caption=Sk³ady w magazynie
@@ -103,6 +104,7 @@ Label3.Caption=Tarcie:
 Label4.Caption=K¹t widzenia:
 cbCloseApp.Caption=Zamknij starter automatycznie
 cbBigThumbnail.Caption=Du¿e miniaturki
+chAutoExpandTree.Caption=Auto-rozwijanie drzewka scenerii
 chCrashDamage.Caption=Uszkodzenia przy zderzeniu
 chDebugLogVis.Caption=Wyœwietlaj przebieg symulacji
 Label34.Caption=SprawdŸ now¹ wersjê co
@@ -211,6 +213,9 @@ lbe3d.Caption=Generowanie E3D:
 cbConvertmodels.Items.Text=Wy³¹czone|Konwersja
 chScaleSpeculars.Caption=Skalowanie sk³adowej specular
 chCompressTex.Caption=Kompresja tekstur TGA
+chUseGLES.Caption=U¿yj OpenGL ES
+chShaderGamma.Caption=Gamma w shaderach
+chMipmaps.Caption=Mipmapy ekranów
 [frmSearch]
 Szukanie pojazdu
 rgFilters.Caption=Filtrowanie
