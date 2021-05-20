@@ -52,7 +52,7 @@ type
     procedure ResolutionList;
     procedure SaveOwnSettings;
     procedure LoadEXE;
-    procedure FindParameter(const Name: string;const Desc:string='');
+
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
     procedure RemoveParam(const Name: String);
@@ -61,16 +61,19 @@ type
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
 
+    UART : string;
+
     procedure LoadPresets;
     procedure ReadOwnSettings(const FirstRun:boolean=False);
     procedure ReadSettings(const Path:string='');
     procedure ReadKeyboard;
-    procedure SaveSettings;
+    procedure SaveSettings(const Path:string='eu07.ini');
     procedure SaveKeyboardSettings;
     constructor Create;
     destructor Destroy; override;
     function FindKey(const Key:string):Integer;
     function FindParam(const Name: string): TParam;
+    procedure FindParameter(const Name: string;const Desc:string='');
   end;
 
 implementation
@@ -263,6 +266,8 @@ var
   SR : TSearchRec;
   C : Integer;
 begin
+  Main.cbPreset.Items.BeginUpdate;
+  Main.cbPreset.Items.Clear;
   C := FindFirst(Util.DIR + 'starter\#*.ini',faDirectory,SR);
   while (C = 0) do
   begin
@@ -273,7 +278,10 @@ begin
   end;
   SysUtils.FindClose(SR);
 
-  Main.pnlSettingsSet.Visible := Main.cbPreset.Items.Count > 0;
+  Main.cbPreset.Items.EndUpdate;
+
+  if Main.cbPreset.Items.Count > 0 then
+    Main.cbPreset.ItemIndex := 0;
 end;
 
 procedure TSettings.ReadSettings(const Path:string='');
@@ -591,6 +599,9 @@ begin
         if Params[i].Value = 'off' then Main.cbPyscreenrendererpriority.ItemIndex := 4;
       end
       else
+      if Params[i].Name = 'gfx.framebuffer.fidelity' then
+        Main.cbBuffer.ItemIndex := StrToInt(Params[i].Value)-1
+      else
       if Params[i].Name = 'splinefidelity' then Main.cbSplinefidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
       if Params[i].Name = 'lang' then
       begin
@@ -640,6 +651,7 @@ begin
     if (Main.cbGfxrenderer.ItemIndex = 0) and (Main.chSkipPipeline.Checked) then
       Main.cbGfxrenderer.ItemIndex := 1;
 
+    if Main.cbBuffer.ItemIndex = -1 then Main.cbBuffer.ItemIndex := 3;
   except
     on E: Exception do
     begin
@@ -689,15 +701,23 @@ begin
   else
     Settings.Add('ShowAI=no');
 
-    if Main.chAutoExpandTree.Checked then
+  if Main.chAutoExpandTree.Checked then
     Settings.Add('AutoExpandTree=yes')
   else
     Settings.Add('AutoExpandTree=no');
+
+  if Main.chHideArchival.Checked then
+    Settings.Add('HideArchival=yes')
+  else
+    Settings.Add('HideArchival=no');
 
   if Main.miSortByVehicleName.Checked then
     Settings.Add('SortByVehicleName=yes')
   else
     Settings.Add('SortByVehicleName=no');
+
+  if UART.Length > 0 then
+    Settings.Add('UART=' + UART);
 
   if Main.cbEXE.ItemIndex >= 0 then
     Settings.Add('exe=' + Main.cbEXE.Items[Main.cbEXE.ItemIndex]);
@@ -750,6 +770,10 @@ begin
           Main.chShowAI.Checked := ParValue = 'yes'
         else if SameText(ParName,'AutoExpandTree') then
           Main.chAutoExpandTree.Checked := ParValue = 'yes'
+        else if SameText(ParName,'HideArchival') then
+          Main.chHideArchival.Checked := ParValue = 'yes'
+        else if SameText(ParName,'UART') then
+          UART := ParValue
         else if SameText(ParName,'SortByVehicleName') then
         begin
           Main.miSortByTrackName.Checked    := ParValue = 'no';
@@ -838,6 +862,8 @@ begin
 end;
 
 procedure TSettings.CheckParams;
+var
+  P : TParam;
 begin
   FindParameter('width','(800) szerokoœæ ekranu');
   FindParameter('height','(600) wysokoœæ ekranu');
@@ -904,9 +930,18 @@ begin
 
   if not Main.chAngle.Checked then
     RemoveParam('gfx.angleplatform');
+
+  if Main.cbBuffer.ItemIndex < 3 then
+    FindParameter('gfx.framebuffer.fidelity')
+  else
+  begin // wlasne, usuwamy fidelity, uzytkownik moze sobie recznie wpisac framebuffer
+    P := FindParam('gfx.framebuffer.fidelity');
+    if P <> nil then
+      Params.Remove(P);
+  end;
 end;
 
-procedure TSettings.SaveSettings;
+procedure TSettings.SaveSettings(const Path:string='eu07.ini');
 var
   Settings, Par : TStringList;
   i, Value : Integer;
@@ -1122,7 +1157,8 @@ begin
     else
     if Params[i].Name = 'gfx.reflections.fidelity' then Params[i].Value := IntToStr(Main.cbReflectionsFidelity.ItemIndex) else
     if Params[i].Name = 'splinefidelity' then Params[i].Value := IntToStr(Main.cbSplinefidelity.ItemIndex+1) else
-    if Params[i].Name = 'lang' then Params[i].Value := LowerCase(Main.cbLang.Text);
+    if Params[i].Name = 'lang' then Params[i].Value := LowerCase(Main.cbLang.Text) else
+    if Params[i].Name = 'gfx.framebuffer.fidelity' then Params[i].Value := IntToStr(Main.cbBuffer.ItemIndex+1);
 
     if Pos('//',Params[i].Desc) > 0 then
     begin
@@ -1145,7 +1181,7 @@ begin
       Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
   end;
 
-  Settings.SaveToFile(Util.DIR + 'eu07.ini');
+  Settings.SaveToFile(Util.DIR + Path);
   Settings.Free;
 end;
 

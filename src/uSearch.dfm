@@ -63,6 +63,7 @@ object frmSearch: TfrmSearch
     Align = alTop
     TabOrder = 2
     OnChange = edTextChange
+    ExplicitLeft = -2
   end
   object lbList: TListBox
     AlignWithMargins = True

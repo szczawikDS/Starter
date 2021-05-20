@@ -22,7 +22,8 @@ unit uData;
 
 interface
 
-uses System.Generics.Collections, System.Generics.Defaults, uStructures, uParser;
+uses System.Generics.Collections, System.Generics.Defaults, uStructures, uParser,
+     uUtilities;
 
 type
 
@@ -57,6 +58,7 @@ uses SysUtils;
 
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 begin
+  try
   if Vehicle.Texture <> nil then
   begin
     if LeftCoupler then
@@ -76,29 +78,40 @@ begin
   end
   else
     Result := 3;
+  except
+    Util.Errors.Add('B³¹d sprawdzania wartoœci AllowedFlag. ' +
+                    'Nale¿y sprawdziæ plik .fiz dla ' +
+                    Vehicle.Texture.Models[Vehicle.ModelID].Model);
+  end;
 end;
 
 function GetControlType(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):string;
 begin
-  if Vehicle.Texture <> nil then
-  begin
-    if LeftCoupler then
+  try
+    if Vehicle.Texture <> nil then
     begin
-      if Vehicle.Dist >= 0 then
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA
+      if LeftCoupler then
+      begin
+        if Vehicle.Dist >= 0 then
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA
+        else
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB;
+      end
       else
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB;
+      begin
+        if Vehicle.Dist >= 0 then
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB
+        else
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA;
+      end;
     end
     else
-    begin
-      if Vehicle.Dist >= 0 then
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB
-      else
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA;
-    end;
-  end
-  else
-    Result := EmptyStr;
+      Result := EmptyStr;
+  except
+    Util.Errors.Add('B³¹d sprawdzania wartoœci ControlType. ' +
+                    'Nale¿y sprawdziæ plik .fiz dla ' +
+                    Vehicle.Texture.Models[Vehicle.ModelID].Model);
+  end;
 end;
 
 function TData.LoadsIndex(const LoadName:string):Integer;

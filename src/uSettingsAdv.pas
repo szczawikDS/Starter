@@ -16,6 +16,8 @@ type
     chUseGLES: TCheckBox;
     chShaderGamma: TCheckBox;
     chMipmaps: TCheckBox;
+    chIgnoreIrrevelant: TCheckBox;
+    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

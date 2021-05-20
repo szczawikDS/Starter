@@ -30,6 +30,7 @@ type
     EXE         : string;
     SceneryName : string;
     Vehicle     : string;
+    Logo        : string;
   end;
 
   TUtil = class
@@ -43,18 +44,21 @@ type
     procedure PrepareLoadingScreen(const LogoPath:string);
   end;
 
-function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
+function Clamp(const Value, Min, Max:Integer):Integer;
 procedure OpenDir(const Path:string);
 procedure OpenURL(const URL:string);
 
 procedure RemoveOldVersion;
 
 procedure RunSimulator(const RunInfo:TRunInfo);
+procedure SetFormatSettings;
 
-function CompareVehicleNames(Item1, Item2: Pointer): Integer;
-function CompareTrainNames(Item1, Item2: Pointer): Integer;
+function CompareVehicleNames(const Item1, Item2: Pointer): Integer;
+function CompareTrainNames(const Item1, Item2: Pointer): Integer;
 
-
+function OmitAccents(const aStr: String): String;
+function ContainsOmitAccents(const S1,S2:string):Boolean;
+function SameTextOmitAccents(const S1,S2:string):Boolean;
 
 var
   Util  : TUtil;
@@ -62,9 +66,9 @@ var
 implementation
 
 uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, uMain,
-    uData, uStructures;
+    uData, uStructures, StrUtils;
 
-function Clamp(const Value:Integer;const Min:Integer; const Max:Integer):Integer;
+function Clamp(const Value, Min, Max:Integer):Integer;
 begin
   Result := Value;
   if Value < Min then
@@ -200,7 +204,10 @@ var
   Parameters : string;
   SEI : TShellExecuteInfo;
 begin
-  Util.PrepareLoadingScreen(RunInfo.SceneryName);
+  if RunInfo.Logo.Length > 0 then
+    Util.PrepareLoadingScreen(RunInfo.Logo)
+  else
+    Util.PrepareLoadingScreen(RunInfo.SceneryName);
 
   try
     Parameters := '-s ' + '$' + RunInfo.SceneryName + '.scn';
@@ -217,7 +224,7 @@ begin
   end;
 end;
 
-function CompareVehicleNames(Item1, Item2: Pointer): Integer;
+function CompareVehicleNames(const Item1, Item2: Pointer): Integer;
 begin
   if (TTrain(Item1).Vehicles.Count > 0) and (TTrain(Item2).Vehicles.Count > 0) then
     Result := CompareText(TTrain(Item1).Vehicles[0].Name, TTrain(Item2).Vehicles[0].Name)
@@ -225,12 +232,37 @@ begin
     Result := -1;
 end;
 
-function CompareTrainNames(Item1, Item2: Pointer): Integer;
+function CompareTrainNames(const Item1, Item2: Pointer): Integer;
 begin
   if (TTrain(Item1).Vehicles.Count > 0) and (TTrain(Item2).Vehicles.Count > 0) then
     Result := CompareText(TTrain(Item1).TrainName, TTrain(Item2).TrainName)
   else
     Result := -1;
+end;
+
+procedure SetFormatSettings;
+begin
+  FormatSettings.DecimalSeparator := '.';
+  FormatSettings.TimeSeparator    := ':';
+  FormatSettings.ShortTimeFormat  := 'GG:mm';
+  FormatSettings.LongTimeFormat   := 'GG:mm:ss';
+end;
+
+function OmitAccents(const aStr: String): String;
+type
+  ASCIIString = type AnsiString(1251);
+begin
+  Result := string(ASCIIString(aStr));
+end;
+
+function ContainsOmitAccents(const S1,S2:string):Boolean;
+begin
+  Result := ContainsText(OmitAccents(S1),OmitAccents(S2));
+end;
+
+function SameTextOmitAccents(const S1,S2:string):Boolean;
+begin
+  Result := SameText(OmitAccents(S1),OmitAccents(S2));
 end;
 
 { TUtil }
@@ -241,10 +273,7 @@ begin
   //DIR := 'G:\MaSzyna\pctga\';
   Errors := TStringList.Create;
 
-  FormatSettings.DecimalSeparator := '.';
-  FormatSettings.TimeSeparator    := ':';
-  FormatSettings.ShortTimeFormat  := 'GG:mm';
-  FormatSettings.LongTimeFormat   := 'GG:mm:ss';
+  SetFormatSettings;
 end;
 
 end.

@@ -184,6 +184,9 @@ type
     Desc      : string; // $o
     AI        : Boolean;
     TimeTable : string;
+    Logo      : string;
+    Mini      : string;
+    Irrelevant: Boolean;
   {public
     property TrainName  : string read FTrainName write FTrainName;
     property Track      : string read FTrack write FTrack;
@@ -220,6 +223,7 @@ type
     FVehicles    : TObjectList<TVehicle>;
     FOther       : TStringList;
     FConfig      : TConfig;
+    FOld         : Boolean;
     procedure SetDesc(const Value: TStringList);
     procedure SetFiles(const Value: TStringList);
     procedure SetTrains(const Value: TObjectList<TTrain>);
@@ -237,6 +241,7 @@ type
     property Vehicles    : TObjectList<TVehicle> read FVehicles write SetVehicles;
     property Other       : TStringList read FOther write SetOther;
     property Config      : TConfig read FConfig write FConfig;
+    property Old         : Boolean read FOld write FOld;
     constructor Create;
   end;
 
@@ -327,6 +332,7 @@ begin
   MyDestObj.LoadType       := Self.LoadType;
   MyDestObj.Texture        := Self.Texture;
   MyDestObj.ThermoDynamic  := Self.ThermoDynamic;
+  MyDestObj.Number         := Self.Number;
   ModelID                  := Self.ModelID;
 end;
 

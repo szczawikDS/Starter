@@ -111,14 +111,12 @@ type
     Label11: TLabel;
     Label9: TLabel;
     Label5: TLabel;
-    Label10: TLabel;
     Label14: TLabel;
     cbMaxtexturesize: TComboBox;
     cbSplinefidelity: TComboBox;
     cbAnisotropicfiltering: TComboBox;
     cbMultisampling: TComboBox;
     cbResolution: TComboBox;
-    cbPyscreenrendererpriority: TComboBox;
     pcConfig: TPageControl;
     pnlConfig: TPanel;
     Panel7: TPanel;
@@ -331,7 +329,6 @@ type
     Label35: TLabel;
     chPythonThreadedUpload: TCheckBox;
     chPythonEnabled: TCheckBox;
-    pnlShadowCabRange: TPanel;
     btnCurrentTime: TButton;
     actCurrentTime: TAction;
     chMouseInversionVertical: TCheckBox;
@@ -393,16 +390,26 @@ type
     miSortByVehicleName: TMenuItem;
     miSortByTrackName: TMenuItem;
     chTrainMan: TCheckBox;
-    pnlSettingsSet: TPanel;
-    cbPreset: TComboBox;
-    btnPreset: TButton;
     actPreset: TAction;
-    btnPresetShow: TButton;
-    actPresetShow: TAction;
     chAngle: TCheckBox;
     actANGLE: TAction;
     actSetNumber: TAction;
     chAutoExpandTree: TCheckBox;
+    btnKeyboard: TButton;
+    actKeyboardView: TAction;
+    chHideArchival: TCheckBox;
+    actHideArchival: TAction;
+    lbBufferRes: TLabel;
+    cbBuffer: TComboBox;
+    Label10: TLabel;
+    cbPyscreenrendererpriority: TComboBox;
+    pnlRightMargin: TPanel;
+    actPresetSave: TAction;
+    pnlSettingsSet: TPanel;
+    cbPreset: TComboBox;
+    btnPreset: TButton;
+    btnPresetSave: TButton;
+    Label8: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -527,13 +534,17 @@ type
     procedure miSortByVehicleNameClick(Sender: TObject);
     procedure miSortByTrackNameClick(Sender: TObject);
     procedure actPresetExecute(Sender: TObject);
-    procedure actPresetShowExecute(Sender: TObject);
     procedure actANGLEExecute(Sender: TObject);
     procedure pcSettingsChange(Sender: TObject);
     procedure actSetNumberExecute(Sender: TObject);
     procedure actSetNumberUpdate(Sender: TObject);
     procedure tvSCNCompare(Sender: TObject; Node1, Node2: TTreeNode;
       Data: Integer; var Compare: Integer);
+    procedure actKeyboardViewExecute(Sender: TObject);
+    procedure actKeyboardViewUpdate(Sender: TObject);
+    procedure actHideArchivalExecute(Sender: TObject);
+    procedure actPresetSaveExecute(Sender: TObject);
+    procedure actPresetUpdate(Sender: TObject);
   private
     SCN : TScenario;
 
@@ -597,6 +608,8 @@ type
     procedure RemoveVehicle(const Index:Integer;Indexes:TList<Integer>=nil);
     procedure MatchOccupancy(Vehicle: TVehicle;const Position: Integer);
     procedure BitmapMouseEnter(Sender: TObject);
+    procedure ViewKeyOnKeyboard;
+    procedure LoadMini(const Name: string);
   public
     Settings    : TSettings;
     MiniFactor  : Integer;
@@ -619,7 +632,7 @@ var
 implementation
 
 uses DateUtils, JPEG, uParser, uSettingsAdv, uUpdater, uSearch, uTextureBase, uDepot,
-     uUART, uAbout, Clipbrd, StrUtils, uTexRandomizer, uUtilities, uData {, uInstaller};
+     uUART, uAbout, Clipbrd, StrUtils, uTexRandomizer, uUtilities, uData, uKeyboard{, uInstaller};
 
 {$R *.dfm}
 
@@ -961,7 +974,8 @@ var
 begin
   for i := SelVehicle + 1 to Train.Vehicles.Count-1 do
   begin
-    if Train.Vehicles[i].Texture <> nil  then
+    if (Train.Vehicles[i].Texture <> nil)
+      and (Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz <> nil) then
       if ContainsText(Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.LoadAccepted,cbLoadType.Text) then
       begin
         Train.Vehicles[i].LoadType := cbLoadType.Text;
@@ -1106,6 +1120,27 @@ begin
   ChangePage(3);
 end;
 
+procedure TMain.actKeyboardViewExecute(Sender: TObject);
+var
+  Form : TForm;
+begin
+  Form := Application.FindComponent('frmKeyboard') as TForm;
+
+  if Form <> nil then
+    Form.Show
+  else
+    with TfrmKeyboard.Create(Application) do
+    begin
+      Show;
+      ViewKeys(cbKey1.Text,cbKey2.Text,cbKey3.Text);
+    end;
+end;
+
+procedure TMain.actKeyboardViewUpdate(Sender: TObject);
+begin
+  actKeyboardView.Enabled := KeysGrid.RowCount > 1;
+end;
+
 procedure TMain.actLoadDepoFromFileExecute(Sender: TObject);
 begin
   if OD.Execute then
@@ -1114,6 +1149,12 @@ begin
     LoadMagazine;
     TDepot.SaveDepot;
   end;
+end;
+
+procedure TMain.actHideArchivalExecute(Sender: TObject);
+begin
+  if Self.Active then
+    ScenariosList;
 end;
 
 procedure TMain.actOpenDepoExecute(Sender: TObject);
@@ -1157,14 +1198,35 @@ end;
 
 procedure TMain.actPresetExecute(Sender: TObject);
 begin
-  Settings.ReadSettings('#' + cbPreset.Items[cbPreset.ItemIndex]);
-  ReloadSettingsState;
+  if FileExists(Util.DIR + 'starter\#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini') then
+  begin
+    Settings.ReadSettings('#' + cbPreset.Items[cbPreset.ItemIndex]);
+    ReloadSettingsState;
+  end
+  else
+    ShowMessage('Nie znaleziono wybranego pliku.');
 end;
 
-procedure TMain.actPresetShowExecute(Sender: TObject);
+procedure TMain.actPresetSaveExecute(Sender: TObject);
+var
+  FileName : string;
 begin
-  cbPreset.Visible  := not cbPreset.Visible;
-  btnPreset.Visible := not btnPreset.Visible;
+  FileName := 'moje_ustawienia';
+
+  if InputQuery('Zapis presetu ustawieñ',
+             'Nadaj nazwê zetawu ustawieñ:',
+             FileName)
+  then
+    if Trim(FileName).Length > 0 then
+    begin
+      Settings.SaveSettings('starter\#' + FileName + '.ini');
+      Settings.LoadPresets;
+    end;
+end;
+
+procedure TMain.actPresetUpdate(Sender: TObject);
+begin
+  actPreset.Enabled := cbPreset.ItemIndex >= 0;
 end;
 
 procedure TMain.actRandomTexExecute(Sender: TObject);
@@ -1428,6 +1490,9 @@ begin
 
   for i := 0 to SCN.Trains.Count-1 do
   begin
+    if (frmSettingsAdv.chIgnoreIrrevelant.Checked) and (SCN.Trains[i].Irrelevant) then
+      Continue;
+
     with SCN.Trains[i] do
     begin
       Starter.Add('trainset ' + TrainName + ' ' + Track + ' ' + FloatToStr(Dist) + ' ' + FloatToStr(Vel));
@@ -1511,6 +1576,7 @@ begin
 
   RunInfo.SceneryName := SCN.Name;
   RunInfo.Vehicle     := Train.Vehicles[SelVehicle].Name;
+  RunInfo.Logo        := Train.Logo;
 
   if cbEXE.ItemIndex = 0 then
     RunInfo.EXE := PChar(Util.DIR + cbEXE.Items[cbEXE.Items.Count-1])
@@ -1659,20 +1725,32 @@ end;
 
 procedure TMain.cbKey1Change(Sender: TObject);
 begin
-  Settings.KeyParams[KeysGrid.Row-1].Key := cbKey1.Items[cbKey1.ItemIndex];
-  KeysGrid.Cells[0,KeysGrid.Row] := cbKey1.Items[cbKey1.ItemIndex];
+  if KeysGrid.RowCount > 1 then
+  begin
+    Settings.KeyParams[KeysGrid.Row-1].Key := cbKey1.Items[cbKey1.ItemIndex];
+    KeysGrid.Cells[0,KeysGrid.Row] := cbKey1.Items[cbKey1.ItemIndex];
+    ViewKeyOnKeyboard;
+  end;
 end;
 
 procedure TMain.cbKey2Change(Sender: TObject);
 begin
-  Settings.KeyParams[KeysGrid.Row-1].Key2 := cbKey2.Items[cbKey2.ItemIndex];
-  KeysGrid.Cells[1,KeysGrid.Row] := cbKey2.Items[cbKey2.ItemIndex];
+  if KeysGrid.RowCount > 1 then
+  begin
+    Settings.KeyParams[KeysGrid.Row-1].Key2 := cbKey2.Items[cbKey2.ItemIndex];
+    KeysGrid.Cells[1,KeysGrid.Row] := cbKey2.Items[cbKey2.ItemIndex];
+    ViewKeyOnKeyboard;
+  end;
 end;
 
 procedure TMain.cbKey3Change(Sender: TObject);
 begin
-  Settings.KeyParams[KeysGrid.Row-1].Key3 := cbKey3.Items[cbKey3.ItemIndex];
-  KeysGrid.Cells[2,KeysGrid.Row] := cbKey3.Items[cbKey3.ItemIndex];
+  if KeysGrid.RowCount > 1 then
+  begin
+    Settings.KeyParams[KeysGrid.Row-1].Key3 := cbKey3.Items[cbKey3.ItemIndex];
+    KeysGrid.Cells[2,KeysGrid.Row] := cbKey3.Items[cbKey3.ItemIndex];
+    ViewKeyOnKeyboard;
+  end;
 end;
 
 procedure TMain.cbLangChange(Sender: TObject);
@@ -1964,7 +2042,11 @@ begin
   end
   else
   if Pages.ActivePage = tsSettings then
+  begin
     chAngle.Visible := FileExists(Util.Dir + '\libEGL.dll') and FileExists(Util.Dir + '\libGLESv2.dll');
+    if cbPreset.Items.Count = 0 then
+      Settings.LoadPresets;
+  end;
 end;
 
 procedure TMain.LoadKeysComponents;
@@ -1984,7 +2066,9 @@ begin
     KeysGrid.Cells[2,i+1] := Settings.KeyParams[i].Key3;
     KeysGrid.Cells[3,i+1] := Settings.KeyParams[i].Desc;
   end;
-  KeysGridClick(self);
+
+  if Settings.KeyParams.Count > 0 then
+    KeysGridClick(self);
 end;
 
 procedure TMain.FormActivate(Sender: TObject);
@@ -2025,31 +2109,37 @@ var
 begin
   i := 0;
   tvSCN.Items.BeginUpdate;
+  tvSCN.Items.Clear;
 
   while i < Data.Scenarios.Count do
   begin
-    if Data.Scenarios[i].ID = '-' then
+    if (not chHideArchival.Checked) or (not Data.Scenarios[i].Old) then
     begin
-      tvSCN.Items.AddObject(nil,Data.Scenarios[i].Name,Data.Scenarios[i]);
-      Inc(i);
+      if Data.Scenarios[i].ID = '-' then
+      begin
+        tvSCN.Items.AddObject(nil,Data.Scenarios[i].Name,Data.Scenarios[i]);
+        Inc(i);
+      end
+      else
+      begin
+        Found := False;
+        for y := 0 to tvSCN.Items.Count-1 do
+        begin
+            if SameStr(tvSCN.Items[y].Text, Data.Scenarios[i].ID) then
+            begin
+              tvSCN.Items.AddChildObject(tvSCN.Items[y],Data.Scenarios[i].Name,Data.Scenarios[i]);
+              Inc(i);
+              Found := True;
+              break;
+            end;
+        end;
+
+        if not Found then
+          tvSCN.Items.Add(nil,Data.Scenarios[i].ID);
+      end;
     end
     else
-    begin
-      Found := False;
-      for y := 0 to tvSCN.Items.Count-1 do
-      begin
-          if SameStr(tvSCN.Items[y].Text, Data.Scenarios[i].ID) then
-          begin
-            tvSCN.Items.AddChildObject(tvSCN.Items[y],Data.Scenarios[i].Name,Data.Scenarios[i]);
-            Inc(i);
-            Found := True;
-            break;
-          end;
-      end;
-
-      if not Found then
-        tvSCN.Items.Add(nil,Data.Scenarios[i].ID);
-    end;
+      Inc(i);
   end;
 
   if tvSCN.Items.Count > 0 then
@@ -2070,6 +2160,7 @@ begin
       else
         if tvSCN.Items[1].Data <> nil then
           tvSCN.Select(tvSCN.Items[1]);
+
     tvSCN.SetFocus;
   end;
 
@@ -2158,6 +2249,8 @@ begin
   actAddVehicle.ShortCut := VK_INSERT;
 
   btnStart.Enabled := True;
+
+  SetFormatSettings;
 end;
 
 procedure TMain.AppDeactivate(Sender: TObject);
@@ -2268,7 +2361,6 @@ end;
 procedure TMain.LoadScenery(const aSCN:TScenario);
 var
   i : Integer;
-  Mini : TJPEGImage;
   Attachment : TButton;
 begin
   SelTrain := -1;
@@ -2292,13 +2384,8 @@ begin
     Attachment.OnClick := OpenAttachment;
   end;
 
-  if FileExists(Util.DIR + 'scenery\images\' + SCN.Image) then
-  begin
-    Mini := TJPEGImage.Create;
-    Mini.LoadFromFile(Util.DIR + 'scenery\images\' + SCN.Image);
-    imScenario.Picture.Bitmap.Assign(Mini);
-    Mini.Free;
-  end;
+  if SCN.Image.Length > 0 then
+    LoadMini(SCN.Image);
 
   meDesc.Lines.BeginUpdate;
   meDesc.Text := SCN.Desc.Text;
@@ -2481,9 +2568,23 @@ end;
 
 procedure TMain.KeysGridClick(Sender: TObject);
 begin
-  cbKey1.ItemIndex := cbKey1.Items.IndexOf(Settings.KeyParams[KeysGrid.Row-1].Key);
-  cbKey2.ItemIndex := cbKey2.Items.IndexOf(Settings.KeyParams[KeysGrid.Row-1].Key2);
-  cbKey3.ItemIndex := cbKey3.Items.IndexOf(Settings.KeyParams[KeysGrid.Row-1].Key3);
+  if KeysGrid.RowCount > 1 then
+  begin
+    cbKey1.ItemIndex := cbKey1.Items.IndexOf(Trim(Settings.KeyParams[KeysGrid.Row-1].Key));
+    cbKey2.ItemIndex := cbKey2.Items.IndexOf(Settings.KeyParams[KeysGrid.Row-1].Key2);
+    cbKey3.ItemIndex := cbKey3.Items.IndexOf(Settings.KeyParams[KeysGrid.Row-1].Key3);
+    ViewKeyOnKeyboard;
+  end;
+end;
+
+procedure TMain.ViewKeyOnKeyboard;
+var
+  Form : TForm;
+begin
+  Form := Application.FindComponent('frmKeyboard') as TForm;
+
+  if Form <> nil then
+    (Form as TfrmKeyboard).ViewKeys(cbKey1.Text,cbKey2.Text,cbKey3.Text);
 end;
 
 procedure TMain.lbVersionClick(Sender: TObject);
@@ -2565,12 +2666,30 @@ begin
 
     DrawTrain(Train);
 
+    if Train.Mini.Length > 0 then
+      LoadMini(Train.Mini)
+    else
+      LoadMini(SCN.Image);
+
     lbTrack.Caption := Train.Track;
     if Train.Vel > 0 then
       lbTrack.Caption := lbTrack.Caption + ' (' + FloatToStr(Train.Vel) + 'km/h)';
   end
   else
     ClearTrainScroll;
+end;
+
+procedure TMain.LoadMini(const Name:string);
+var
+  Mini : TJPEGImage;
+begin
+  if FileExists(Util.DIR + 'scenery\images\' + Name) then
+  begin
+    Mini := TJPEGImage.Create;
+    Mini.LoadFromFile(Util.DIR + 'scenery\images\' + Name);
+    imScenario.Picture.Bitmap.Assign(Mini);
+    Mini.Free;
+  end;
 end;
 
 procedure TMain.ClearTrainScroll;
@@ -2985,11 +3104,11 @@ end;
 
 procedure TMain.pcSettingsChange(Sender: TObject);
 begin
-  if pcSettings.ActivePage = tsGraphics then
+  {if pcSettings.ActivePage = tsGraphics then
   begin
     Settings.LoadPresets;
     cbPreset.ItemIndex := 0;
-  end;
+  end;}
 end;
 
 procedure TMain.pcSettingsResize(Sender: TObject);

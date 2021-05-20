@@ -40,6 +40,7 @@ object Main: TMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
+    ExplicitLeft = -2
   end
   object pnlMenu: TPanel
     AlignWithMargins = True
@@ -289,10 +290,10 @@ object Main: TMain
       Top = 0
       Width = 92
       Height = 50
-      Hint = '13.04.2021'
+      Hint = '20.05.2021'
       Align = alLeft
       AutoSize = False
-      Caption = '7.1.1'
+      Caption = '7.4'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -303,7 +304,6 @@ object Main: TMain
       ShowHint = True
       OnClick = lbVersionClick
       OnDblClick = actAboutExecute
-      ExplicitLeft = 551
       ExplicitTop = -3
     end
     object lbVersionCaption: TLabel
@@ -406,6 +406,7 @@ object Main: TMain
       MultiLine = True
       ParentDoubleBuffered = False
       TabOrder = 1
+      ExplicitLeft = -3
       object tsStart: TTabSheet
         Caption = 'Start'
         object Panel2: TPanel
@@ -908,7 +909,7 @@ object Main: TMain
             Left = 0
             Top = 0
             Width = 230
-            Height = 465
+            Height = 448
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -921,8 +922,17 @@ object Main: TMain
             TabOrder = 0
             OnChange = tvSCNChange
             OnCompare = tvSCNCompare
-            ExplicitLeft = 1
-            ExplicitTop = -2
+          end
+          object chHideArchival: TCheckBox
+            Left = 0
+            Top = 448
+            Width = 230
+            Height = 17
+            Action = actHideArchival
+            Align = alBottom
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
           end
         end
       end
@@ -2179,6 +2189,8 @@ object Main: TMain
           OnResize = pcSettingsResize
           object tsMain: TTabSheet
             Caption = 'Og'#243'lne'
+            ExplicitLeft = 5
+            ExplicitTop = 25
             object pnlPhysic: TPanel
               AlignWithMargins = True
               Left = 438
@@ -2193,6 +2205,8 @@ object Main: TMain
               ParentBackground = False
               ShowCaption = False
               TabOrder = 0
+              ExplicitTop = 28
+              ExplicitHeight = 365
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -2328,7 +2342,6 @@ object Main: TMain
                 ParentBackground = False
                 ShowCaption = False
                 TabOrder = 4
-                ExplicitTop = 257
                 object Label34: TLabel
                   Left = 0
                   Top = 0
@@ -2384,7 +2397,6 @@ object Main: TMain
                 Caption = 'Auto-rozwijanie drzewka scenerii'
                 TabOrder = 7
                 OnClick = cbBigThumbnailClick
-                ExplicitTop = 277
               end
             end
             object pnlGeneral: TPanel
@@ -2398,6 +2410,8 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 1
+              ExplicitTop = 28
+              ExplicitHeight = 362
               object Label15: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -2611,6 +2625,82 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 2
+              ExplicitTop = 23
+              ExplicitHeight = 368
+            end
+            object pnlRightMargin: TPanel
+              Left = 706
+              Top = 0
+              Width = 162
+              Height = 393
+              Align = alRight
+              BevelOuter = bvNone
+              TabOrder = 3
+              ExplicitTop = -2
+              object Label8: TLabel
+                Left = 0
+                Top = 241
+                Width = 162
+                Height = 16
+                Align = alBottom
+                Alignment = taCenter
+                Caption = 'Zestawy ustawie'#324
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                Layout = tlCenter
+                ExplicitTop = 0
+                ExplicitWidth = 118
+              end
+              object pnlSettingsSet: TPanel
+                Left = 0
+                Top = 257
+                Width = 162
+                Height = 136
+                Align = alBottom
+                BevelOuter = bvNone
+                Caption = 'pnlSettingsSet'
+                ShowCaption = False
+                TabOrder = 0
+                ExplicitTop = 217
+                object cbPreset: TComboBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 3
+                  Width = 156
+                  Height = 24
+                  Align = alTop
+                  Style = csDropDownList
+                  TabOrder = 0
+                  ExplicitTop = 12
+                end
+                object btnPreset: TButton
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 33
+                  Width = 156
+                  Height = 29
+                  Action = actPreset
+                  Align = alTop
+                  TabOrder = 1
+                  ExplicitLeft = 0
+                end
+                object btnPresetSave: TButton
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 75
+                  Width = 156
+                  Height = 33
+                  Margins.Top = 10
+                  Action = actPresetSave
+                  Align = alTop
+                  TabOrder = 2
+                  ExplicitLeft = 0
+                end
+              end
             end
           end
           object tsGraphics: TTabSheet
@@ -2619,9 +2709,9 @@ object Main: TMain
             object pnlGraphic: TPanel
               AlignWithMargins = True
               Left = 8
-              Top = 28
+              Top = 3
               Width = 857
-              Height = 362
+              Height = 387
               Align = alClient
               BevelOuter = bvNone
               ShowCaption = False
@@ -2631,7 +2721,7 @@ object Main: TMain
                 Left = 3
                 Top = 3
                 Width = 190
-                Height = 356
+                Height = 381
                 Align = alLeft
                 BevelOuter = bvNone
                 ParentBackground = False
@@ -2640,7 +2730,7 @@ object Main: TMain
                 object Label7: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 78
+                  Top = 130
                   Width = 184
                   Height = 16
                   Align = alTop
@@ -2651,7 +2741,7 @@ object Main: TMain
                 object Label11: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 182
+                  Top = 234
                   Width = 184
                   Height = 16
                   Align = alTop
@@ -2662,7 +2752,7 @@ object Main: TMain
                 object Label9: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 234
+                  Top = 286
                   Width = 184
                   Height = 16
                   Align = alTop
@@ -2673,25 +2763,13 @@ object Main: TMain
                 object Label5: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 286
+                  Top = 338
                   Width = 184
                   Height = 16
                   Align = alTop
                   AutoSize = False
                   Caption = 'Multisampling:'
                   ExplicitTop = 271
-                end
-                object Label10: TLabel
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 338
-                  Width = 184
-                  Height = 32
-                  Align = alTop
-                  AutoSize = False
-                  Caption = 'Cz'#281'stotliwo'#347#263' od'#347'wie'#380'ania ekran'#243'w dodatkowych:'
-                  WordWrap = True
-                  ExplicitTop = 320
                 end
                 object Label14: TLabel
                   AlignWithMargins = True
@@ -2706,7 +2784,7 @@ object Main: TMain
                 object lbMaxCabTexSize: TLabel
                   AlignWithMargins = True
                   Left = 3
-                  Top = 130
+                  Top = 182
                   Width = 184
                   Height = 16
                   Align = alTop
@@ -2714,10 +2792,21 @@ object Main: TMain
                   Caption = 'Skalowanie tekstur kabiny:'
                   ExplicitTop = 124
                 end
+                object lbBufferRes: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 78
+                  Width = 184
+                  Height = 16
+                  Align = alTop
+                  AutoSize = False
+                  Caption = 'Rozdzielczo'#347#263' bufora:'
+                  ExplicitLeft = 0
+                end
                 object cbMaxtexturesize: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 100
+                  Top = 152
                   Width = 184
                   Height = 24
                   Align = alTop
@@ -2736,7 +2825,7 @@ object Main: TMain
                 object cbSplinefidelity: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 204
+                  Top = 256
                   Width = 184
                   Height = 24
                   Align = alTop
@@ -2753,7 +2842,7 @@ object Main: TMain
                 object cbAnisotropicfiltering: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 256
+                  Top = 308
                   Width = 184
                   Height = 24
                   Align = alTop
@@ -2771,7 +2860,7 @@ object Main: TMain
                 object cbMultisampling: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 308
+                  Top = 360
                   Width = 184
                   Height = 24
                   Align = alTop
@@ -2797,24 +2886,6 @@ object Main: TMain
                   ParentDoubleBuffered = False
                   TabOrder = 1
                 end
-                object cbPyscreenrendererpriority: TComboBox
-                  AlignWithMargins = True
-                  Left = 3
-                  Top = 376
-                  Width = 184
-                  Height = 24
-                  Align = alTop
-                  Style = csDropDownList
-                  DoubleBuffered = False
-                  ParentDoubleBuffered = False
-                  TabOrder = 7
-                  Items.Strings = (
-                    'Standardowa'
-                    'Niska'
-                    'Bardzo niska'
-                    'Brak'
-                    'Wy'#322#261'czona')
-                end
                 object chFullScreenWindowed: TCheckBox
                   AlignWithMargins = True
                   Left = 3
@@ -2829,7 +2900,7 @@ object Main: TMain
                 object cbMaxcabtexturesize: TComboBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 152
+                  Top = 204
                   Width = 184
                   Height = 24
                   Align = alTop
@@ -2844,13 +2915,30 @@ object Main: TMain
                     '2048'
                     '4096')
                 end
+                object cbBuffer: TComboBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 100
+                  Width = 184
+                  Height = 24
+                  Align = alTop
+                  Style = csDropDownList
+                  DoubleBuffered = False
+                  ParentDoubleBuffered = False
+                  TabOrder = 7
+                  Items.Strings = (
+                    '720p'
+                    '1080p'
+                    '1440p'
+                    'W'#322'asne')
+                end
               end
               object Panel1: TPanel
                 AlignWithMargins = True
                 Left = 429
                 Top = 3
                 Width = 200
-                Height = 356
+                Height = 381
                 Margins.Left = 15
                 Align = alLeft
                 BevelOuter = bvNone
@@ -3042,7 +3130,7 @@ object Main: TMain
                 Left = 211
                 Top = 3
                 Width = 200
-                Height = 356
+                Height = 381
                 Margins.Left = 15
                 Align = alLeft
                 BevelOuter = bvNone
@@ -3284,7 +3372,7 @@ object Main: TMain
                 Left = 647
                 Top = 3
                 Width = 200
-                Height = 356
+                Height = 381
                 Margins.Left = 15
                 Align = alLeft
                 BevelOuter = bvNone
@@ -3306,6 +3394,19 @@ object Main: TMain
                   Font.Name = 'Tahoma'
                   Font.Style = [fsBold]
                   ParentFont = False
+                end
+                object Label10: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 71
+                  Width = 194
+                  Height = 32
+                  Align = alTop
+                  AutoSize = False
+                  Caption = 'Cz'#281'stotliwo'#347#263' od'#347'wie'#380'ania ekran'#243'w dodatkowych:'
+                  WordWrap = True
+                  ExplicitLeft = 6
+                  ExplicitTop = 126
                 end
                 object chPythonThreadedUpload: TCheckBox
                   AlignWithMargins = True
@@ -3331,66 +3432,35 @@ object Main: TMain
                   State = cbChecked
                   TabOrder = 0
                 end
-                object pnlShadowCabRange: TPanel
-                  Left = 0
-                  Top = 68
-                  Width = 200
-                  Height = 47
+                object cbPyscreenrendererpriority: TComboBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 109
+                  Width = 194
+                  Height = 24
                   Align = alTop
-                  BevelOuter = bvNone
-                  ShowCaption = False
+                  Style = csDropDownList
+                  DoubleBuffered = False
+                  ParentDoubleBuffered = False
                   TabOrder = 2
+                  Items.Strings = (
+                    'Standardowa'
+                    'Niska'
+                    'Bardzo niska'
+                    'Brak'
+                    'Wy'#322#261'czona')
                 end
               end
             end
             object pnlLeftMargin3: TPanel
               Left = 0
-              Top = 25
+              Top = 0
               Width = 5
-              Height = 368
+              Height = 393
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 1
-            end
-            object pnlSettingsSet: TPanel
-              Left = 0
-              Top = 0
-              Width = 868
-              Height = 25
-              Align = alTop
-              BevelOuter = bvNone
-              TabOrder = 2
-              Visible = False
-              object cbPreset: TComboBox
-                Left = 201
-                Top = 0
-                Width = 150
-                Height = 24
-                Align = alLeft
-                Style = csDropDownList
-                TabOrder = 0
-                Visible = False
-              end
-              object btnPreset: TButton
-                Left = 351
-                Top = 0
-                Width = 108
-                Height = 25
-                Action = actPreset
-                Align = alLeft
-                TabOrder = 1
-                Visible = False
-              end
-              object btnPresetShow: TButton
-                Left = 0
-                Top = 0
-                Width = 201
-                Height = 25
-                Action = actPresetShow
-                Align = alLeft
-                TabOrder = 2
-              end
             end
           end
           object tsSoundPhysics: TTabSheet
@@ -3811,7 +3881,7 @@ object Main: TMain
           Align = alClient
           ColCount = 4
           FixedCols = 0
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect]
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
           TabOrder = 2
           OnClick = KeysGridClick
           ColWidths = (
@@ -3938,6 +4008,16 @@ object Main: TMain
               ''
               'shift'
               'ctrl')
+          end
+          object btnKeyboard: TButton
+            AlignWithMargins = True
+            Left = 642
+            Top = 4
+            Width = 230
+            Height = 27
+            Action = actKeyboardView
+            Align = alRight
+            TabOrder = 3
           end
         end
       end
@@ -4312,11 +4392,7 @@ object Main: TMain
       Category = 'menu'
       Caption = 'Zastosuj'
       OnExecute = actPresetExecute
-    end
-    object actPresetShow: TAction
-      Category = 'menu'
-      Caption = 'Wybierz zestaw ustawie'#324
-      OnExecute = actPresetShowExecute
+      OnUpdate = actPresetUpdate
     end
     object actANGLE: TAction
       Category = 'menu'
@@ -4329,6 +4405,23 @@ object Main: TMain
       ShortCut = 16462
       OnExecute = actSetNumberExecute
       OnUpdate = actSetNumberUpdate
+    end
+    object actKeyboardView: TAction
+      Category = 'Settings'
+      Caption = 'Wizualizacja klawiatury'
+      OnExecute = actKeyboardViewExecute
+      OnUpdate = actKeyboardViewUpdate
+    end
+    object actHideArchival: TAction
+      Category = 'menu'
+      Caption = 'Ukryj scenariusze archiwalne'
+      Hint = 'Zaznacz, by ukry'#263' scenariusze przestarza'#322'e.'
+      OnExecute = actHideArchivalExecute
+    end
+    object actPresetSave: TAction
+      Category = 'Settings'
+      Caption = 'Zapisz zestaw ustawie'#324
+      OnExecute = actPresetSaveExecute
     end
   end
   object pmDepot: TPopupMenu

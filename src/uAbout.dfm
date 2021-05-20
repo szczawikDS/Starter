@@ -48,13 +48,13 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '13.04.2021'
+      Hint = '20.05.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.1.1'
+      Caption = 'Wersja: 7.4'
       ParentShowHint = False
       ShowHint = True
-      ExplicitWidth = 67
+      ExplicitWidth = 57
     end
     object Label11: TLabel
       AlignWithMargins = True
@@ -205,6 +205,31 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.4 (20.05.2021)'
+        '*zmieniona obs'#322'uga i zapis zestaw'#243'w ustawie'#324
+        '*uniezale'#380'nienie wyszukiwania od znak'#243'w '
+        'diakrytycznych'
+        '*testowa opcja pomijania sk'#322'ad'#243'w dekoracyjnych'
+        ''
+        '7.3 (17.05.2021)'
+        '*indywidualne obrazki dla sk'#322'ad'#243'w'
+        '*mo'#380'liwo'#347#263' ukrycia przestarza'#322'ych scenariuszy'
+        '*obs'#322'uga parametru wielko'#347'ci bufora'
+        '*mo'#380'liwo'#347#263' za'#322'./wy'#322'. komunikacji UART'
+        ''
+        '7.2.1 (16.05.2021)'
+        '*indywidualne ekrany logowania dla sk'#322'ad'#243'w'
+        ''
+        '7.2 (12.05.2021)'
+        '*poprawione wklejanie sk'#322'adu ze schowka'
+        '*podgl'#261'd i obs'#322'uga wizualna klawiszologii'
+        '*parametry rozdzielczo'#347'ci kopiowane do '
+        'gfx.framebuffer'
+        ''
+        '7.1.2 (25.04.2021)'
+        '*od'#347'wie'#380'anie parametr'#243'w lokalnych programu'
+        '*usprawnione wykrywanie b'#322#281'd'#243'w'
+        ''
         '7.1.1 (13.04.2021)'
         '*poprawione prze'#322'adowywanie scenerii'
         '*opcja auto-rozwijania drzewka'
@@ -233,30 +258,6 @@ object frmAbout: TfrmAbout
         '*poprawione przechodzenie pomi'#281'dzy grupami '
         'pojazd'#243'w'
         '*zapami'#281'tywanie opcji widoczno'#347'ci sk'#322'ad'#243'w'
-        ''
-        '6.6.4 (04.01.2021)'
-        '*poprawiona obs'#322'uga wpi'#243'w include w fizyce'
-        '*od'#347'wie'#380'enie parametr'#243'w poci'#261'gu po zmianie '
-        'tekstury'
-        ''
-        '6.6.3 (02.01.2021)'
-        '*sprawdzanie sprz'#281'gu wy'#322#261'czone przy wci'#347'ni'#281'tym '
-        'Ctrl'
-        '*korekty losowania pojazd'#243'w'
-        '*poprawione przewijanie listy modeli'
-        ''
-        '6.6.2 (29.12.2020)'
-        '*poprawione elementy interfejsu'
-        '*refaktoryzacja'
-        ''
-        '6.6.1 (23.12.2020)'
-        '*poprawiona obs'#322'uga wpis'#243'w include w fizyce'
-        ''
-        '6.6 (22.12.2020)'
-        '*obs'#322'uga ControlType sprz'#281'gu'
-        '*zmienione pobieranie nowszych wersji'
-        '*poprawiona obs'#322'uga pojazd'#243'w z brakami'
-        '*poprawiona obs'#322'uga schowka'
         ''
         '...')
       ReadOnly = True

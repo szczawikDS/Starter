@@ -192,6 +192,7 @@ actChangeName.Caption=Pøejmenovat...
 actAutoCoupler.Hint=Automaticky nastavit spojení
 actCurrentTime.Caption=Aktuální èas
 actRandomTex.Caption=Náhodný textury
+actKeyboardView.Caption=Vizualizace klávesnice
 imFacebook.Hint=Navštivte nás na Facebooku
 imMaszyna.Hint=Navštívit naši stránku eu07.pl
 [frmDepo]
@@ -225,6 +226,10 @@ lbSearch.Caption=Hledaná položka:
 label2.Caption=Revize od:
 label3.Caption=Revize do:
 lbExample.Caption=Pøíklad: pro hledání ET22-799 staèí napsat 799.
+[frmKeyboard]
+Vizualizace klávesnice
+gbKeys.Caption=Podívejte se na použité kombinace
+btnKeyPlain.Caption=Obvykle
 [frmAbout]
 O programu
 label11.Caption=Pro simulátor MaSzyna

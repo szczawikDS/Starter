@@ -48,7 +48,7 @@ type
     procedure ParseCoupler(var Vehicle: TVehicle);
     function GetBrakeValue(const Settings:string;Pos:Integer):string;
     procedure ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
-    function IsPhysics(const Dir:string;const Name: string):TPhysics;
+    function IsPhysics(const Dir,Name: string):TPhysics;
     procedure LoadPhysics;
     procedure FindTexture(var Vehicle:TVehicle);
     procedure ParseTextDesc(Tex: TTexture);
@@ -196,6 +196,15 @@ begin
 
       if Pos('//$r',Lexer.Token) > 0 then
         Result.TimeTable := Copy(Lexer.Token,6,Lexer.TokenLen);
+
+      if Pos('//$il',Lexer.Token) > 0 then
+        Result.Logo := Copy(Lexer.Token,7,Lexer.TokenLen);
+
+      if Pos('//$it',Lexer.Token) > 0 then
+        Result.Mini := Copy(Lexer.Token,7,Lexer.TokenLen);
+
+      if Pos('//$decor',Lexer.Token) > 0 then
+        Result.Irrelevant := True;
 
       Lexer.NextNoSpace;
     end;
@@ -657,7 +666,9 @@ begin
         else
         if Pos('$i', Lexer.Token) > 0 then Result.Image := Copy(Lexer.Token,6,Lexer.TokenLen)
         else
-        if Pos('$l', Lexer.Token) > 0 then Result.ID := Copy(Lexer.Token,6,Lexer.TokenLen);
+        if Pos('$l', Lexer.Token) > 0 then Result.ID := Copy(Lexer.Token,6,Lexer.TokenLen)
+        else
+        if Pos('$a', Lexer.Token) > 0 then Result.Old := True;
       end
       else
         if Lexer.TokenID = ptSlash then
@@ -1037,7 +1048,7 @@ begin
   end;
 end;
 
-function TParser.IsPhysics(const Dir:string;const Name:string):TPhysics;
+function TParser.IsPhysics(const Dir,Name:string):TPhysics;
 var
   i : Integer;
 begin

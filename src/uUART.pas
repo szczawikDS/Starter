@@ -18,7 +18,7 @@ type
     chLocalenable: TCheckBox;
     chUARTDebug: TCheckBox;
     Label3: TLabel;
-    Label4: TLabel;
+    chUART: TCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
@@ -37,45 +37,66 @@ procedure TfrmUART.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i : Integer;
 begin
-  for i := 0 to Main.Settings.Params.Count-1 do
+  if Length(edUART.Text) = 0 then // nie skracac warunku- wpis nie oznacza zalaczenia
+    chUART.Checked := False;
+
+  if not chUART.Checked then
+    Main.Settings.UART := edUART.Text
+  else
+  begin
+    Main.Settings.UART := EmptyStr;
+    Main.Settings.FindParameter('uart','komunikacja uart');
+  end;
+
+  i := 0;
+  while i <= Main.Settings.Params.Count-1 do
+  begin
+    if Main.Settings.Params[i].Name = 'uart' then
     begin
-      if Main.Settings.Params[i].Name = 'uart' then
+      if chUART.Checked then
         Main.Settings.Params[i].Value := edUART.Text
       else
-      if Main.Settings.Params[i].Name = 'uarttune' then
-        Main.Settings.Params[i].Value := edUARTtune.Text
-      else
-      if Main.Settings.Params[i].Name = 'uartdebug' then
       begin
-        if chUARTDebug.Checked then
+        Main.Settings.Params.Remove(Main.Settings.Params[i]);
+        Continue;
+      end;
+    end
+    else
+    if Main.Settings.Params[i].Name = 'uarttune' then
+      Main.Settings.Params[i].Value := edUARTtune.Text
+    else
+    if Main.Settings.Params[i].Name = 'uartdebug' then
+    begin
+      if chUARTDebug.Checked then
+        Main.Settings.Params[i].Value := 'yes'
+      else
+        Main.Settings.Params[i].Value := 'no';
+    end
+    else
+      if Main.Settings.Params[i].Name = 'uartfeature' then
+      begin
+        if chMainenable.Checked then
           Main.Settings.Params[i].Value := 'yes'
         else
           Main.Settings.Params[i].Value := 'no';
-      end
-      else
-        if Main.Settings.Params[i].Name = 'uartfeature' then
-        begin
-          if chMainenable.Checked then
-            Main.Settings.Params[i].Value := 'yes'
-          else
-            Main.Settings.Params[i].Value := 'no';
 
-          if chScndenable.Checked then
-            Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' yes'
-          else
-            Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' no';
+        if chScndenable.Checked then
+          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' yes'
+        else
+          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' no';
 
-          if chTrainenable.Checked then
-            Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' yes'
-          else
-            Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' no';
+        if chTrainenable.Checked then
+          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' yes'
+        else
+          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' no';
 
-          if chLocalenable.Checked then
-            Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' yes'
-          else
-            Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' no';
-        end;
-    end;
+        if chLocalenable.Checked then
+          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' yes'
+        else
+          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' no';
+      end;
+    Inc(i);
+  end;
 end;
 
 procedure TfrmUART.FormCreate(Sender: TObject);
@@ -83,10 +104,19 @@ var
   i : Integer;
   Par : TStringList;
 begin
+  if Main.Settings.UART.Length > 0 then
+  begin
+    chUART.Checked := False;
+    edUART.Text := Main.Settings.UART;
+  end;
+
   for i := 0 to Main.Settings.Params.Count-1 do
   begin
     if Main.Settings.Params[i].Name = 'uart' then
-      edUART.Text := Main.Settings.Params[i].Value
+    begin
+      chUART.Checked := True;
+      edUART.Text := Main.Settings.Params[i].Value;
+    end
     else
     if Main.Settings.Params[i].Name = 'uarttune' then
       edUARTtune.Text := Main.Settings.Params[i].Value

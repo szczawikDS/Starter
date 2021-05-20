@@ -110,7 +110,7 @@ type
 
 implementation
 
-uses uMain, strUtils, uLanguages, Clipbrd, uUtilities, uData;
+uses uMain, uLanguages, Clipbrd, uUtilities, uData;
 
 {$R *.dfm}
 
@@ -219,13 +219,13 @@ begin
   Rev := AdaptRevDate(Tex.Revision);
 
   Result := False;
-  if (not cbOperator.Checked) or (SameText(Tex.Owner,edOperator.Text)) then
-  if (not cbAuthor.Checked)   or (ContainsText(Tex.Author,edAuthor.Text)) then
-  if (not cbPhoto.Checked)    or (ContainsText(Tex.Photos,edPhoto.Text)) then
-  if (not cbTexName.Checked)  or (ContainsText(Tex.Plik,edTexName.Text)) then
-  if (not cbMini.Checked)     or (ContainsText(Tex.Models[ModelID].MiniD,edMini.Text)) then
-  if (not cbModel.Checked)    or (ContainsText(Tex.Models[ModelID].Model,edModel.Text)) then
-  if (not cbStation.Checked)  or (ContainsText(Tex.Station,edStation.Text)) then
+  if (not cbOperator.Checked) or (SameTextOmitAccents(Tex.Owner,edOperator.Text)) then
+  if (not cbAuthor.Checked)   or (ContainsOmitAccents(Tex.Author,edAuthor.Text)) then
+  if (not cbPhoto.Checked)    or (ContainsOmitAccents(Tex.Photos,edPhoto.Text)) then
+  if (not cbTexName.Checked)  or (ContainsOmitAccents(Tex.Plik,edTexName.Text)) then
+  if (not cbMini.Checked)     or (ContainsOmitAccents(Tex.Models[ModelID].MiniD,edMini.Text)) then
+  if (not cbModel.Checked)    or (ContainsOmitAccents(Tex.Models[ModelID].Model,edModel.Text)) then
+  if (not cbStation.Checked)  or (ContainsOmitAccents(Tex.Station,edStation.Text)) then
   if (not cbRevStart.Checked) or (Rev >= dtRevStart.Date) then
   if (not cbRevEnd.Checked)   or (Rev <= dtRevEnd.Date) then
     Result := True;

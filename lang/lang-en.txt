@@ -193,6 +193,7 @@ actAutoCoupler.Caption=Auto
 actAutoCoupler.Hint=Auto coupler
 actCurrentTime.Caption=Current time
 actRandomTex.Caption=Random textures
+actKeyboardView.Caption=Keyboard visualization
 imFacebook.Hint=Visit us on Facebook
 imMaszyna.Hint=Visit our page eu07.pl
 [frmDepo]
@@ -226,6 +227,10 @@ lbSearch.Caption=Searching element:
 label2.Caption=Rev. since:
 label3.Caption=Rev. to:
 lbExample.Caption=Example: searching ET22-799 just type 799.
+[frmKeyboard]
+Keyboard visualization
+gbKeys.Caption=See used combinations
+btnKeyPlain.Caption=Plain
 [frmAbout]
 About
 label11.Caption=for MaSzyna simulator

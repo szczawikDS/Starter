@@ -39,7 +39,7 @@ type
 
 implementation
 
-uses uMain, StrUtils, uLanguages, uData, uUtilities;
+uses uMain, uLanguages, uData, uUtilities;
 
 {$R *.dfm}
 
@@ -94,20 +94,20 @@ begin
     for i := 0 to Data.Textures.Count-1 do
       if (rgFilters.ItemIndex = 0) or (Data.Textures[i].Typ in VehicleType) then
         case cbSearchType.ItemIndex of
-          0: if ContainsText(Data.Textures[i].Plik,edText.Text) then
+          0: if ContainsOmitAccents(Data.Textures[i].Plik,edText.Text) then
             AddItem(Data.Textures[i]);
 
           1: for y := 0 to Data.Textures[i].Models.Count-1 do
-               if ContainsText(Data.Textures[i].Models[y].MiniD,edText.Text) then
+               if ContainsOmitAccents(Data.Textures[i].Models[y].MiniD,edText.Text) then
                  AddItem(Data.Textures[i]);
 
-          2: if SameText(Data.Textures[i].Owner,edText.Text) then
+          2: if SameTextOmitAccents(Data.Textures[i].Owner,edText.Text) then
             AddItem(Data.Textures[i]);
 
-          3: if ContainsText(Data.Textures[i].Author,edText.Text) then
+          3: if ContainsOmitAccents(Data.Textures[i].Author,edText.Text) then
             AddItem(Data.Textures[i]);
 
-          4: if ContainsText(Data.Textures[i].Photos,edText.Text) then
+          4: if ContainsOmitAccents(Data.Textures[i].Photos,edText.Text) then
             AddItem(Data.Textures[i]);
 
           5:begin
@@ -117,7 +117,7 @@ begin
             end;
 
           6: for y := 0 to Data.Textures[i].Models.Count-1 do
-               if SameText(Data.Textures[i].Models[y].Model,edText.Text) then
+               if SameTextOmitAccents(Data.Textures[i].Models[y].Model,edText.Text) then
                  AddItem(Data.Textures[i]);
         end;
   end;

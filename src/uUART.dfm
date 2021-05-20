@@ -3,8 +3,8 @@ object frmUART: TfrmUART
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'UART'
-  ClientHeight = 223
-  ClientWidth = 530
+  ClientHeight = 210
+  ClientWidth = 466
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object frmUART: TfrmUART
   TextHeight = 13
   object Label1: TLabel
     Left = 17
-    Top = 16
+    Top = 40
     Width = 31
     Height = 13
     Hint = 
@@ -32,14 +32,14 @@ object frmUART: TfrmUART
   end
   object Label2: TLabel
     Left = 17
-    Top = 80
+    Top = 104
     Width = 53
     Height = 13
     Caption = 'UARTtune:'
   end
   object Label3: TLabel
     Left = 17
-    Top = 59
+    Top = 83
     Width = 290
     Height = 13
     Caption = 'Nazwa portu / nie zmienia'#263' / cz'#281'stotliwo'#347#263' wysy'#322'ania danych'
@@ -52,39 +52,23 @@ object frmUART: TfrmUART
     ParentShowHint = False
     ShowHint = True
   end
-  object Label4: TLabel
-    Left = 17
-    Top = 120
-    Width = 500
-    Height = 13
-    AutoSize = False
-    Caption = 
-      'ham. zespolony min max/ham. dodatkowy min max/ci'#347'nienie max w zb' +
-      'iorniku g'#322'./max warto'#347#263' dla PWM'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsItalic]
-    ParentFont = False
-  end
   object edUART: TEdit
     Left = 17
-    Top = 32
+    Top = 56
     Width = 290
     Height = 21
     TabOrder = 0
   end
   object edUARTTune: TEdit
     Left = 17
-    Top = 96
+    Top = 120
     Width = 433
     Height = 21
     TabOrder = 1
   end
   object chMainenable: TCheckBox
     Left = 17
-    Top = 152
+    Top = 147
     Width = 97
     Height = 17
     Caption = 'Nastawnik'
@@ -92,7 +76,7 @@ object frmUART: TfrmUART
   end
   object chScndenable: TCheckBox
     Left = 120
-    Top = 152
+    Top = 147
     Width = 97
     Height = 17
     Caption = 'Bocznik'
@@ -100,7 +84,7 @@ object frmUART: TfrmUART
   end
   object chTrainenable: TCheckBox
     Left = 223
-    Top = 152
+    Top = 147
     Width = 97
     Height = 17
     Caption = 'Hamulec'
@@ -108,7 +92,7 @@ object frmUART: TfrmUART
   end
   object chLocalenable: TCheckBox
     Left = 326
-    Top = 152
+    Top = 147
     Width = 121
     Height = 17
     Caption = 'Hamulec lokomotywy'
@@ -116,10 +100,18 @@ object frmUART: TfrmUART
   end
   object chUARTDebug: TCheckBox
     Left = 17
-    Top = 184
+    Top = 179
     Width = 248
     Height = 17
     Caption = 'Wy'#347'wietlanie danych debugowania w konsoli'
     TabOrder = 6
+  end
+  object chUART: TCheckBox
+    Left = 17
+    Top = 8
+    Width = 160
+    Height = 17
+    Caption = 'Komunikacja UART aktywna'
+    TabOrder = 7
   end
 end

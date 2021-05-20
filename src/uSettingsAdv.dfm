@@ -3,7 +3,7 @@ object frmSettingsAdv: TfrmSettingsAdv
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Ustawienia zaawansowane'
-  ClientHeight = 208
+  ClientHeight = 227
   ClientWidth = 245
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,11 +20,10 @@ object frmSettingsAdv: TfrmSettingsAdv
     Left = 0
     Top = 0
     Width = 245
-    Height = 208
+    Height = 227
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 184
     object lbe3d: TLabel
       AlignWithMargins = True
       Left = 3
@@ -34,6 +33,22 @@ object frmSettingsAdv: TfrmSettingsAdv
       Align = alTop
       AutoSize = False
       Caption = 'Generowanie E3D:'
+    end
+    object Label1: TLabel
+      Left = 0
+      Top = 164
+      Width = 245
+      Height = 21
+      Align = alTop
+      Alignment = taCenter
+      Caption = 'Ustawienia testowe'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Layout = tlBottom
     end
     object cbConvertmodels: TComboBox
       AlignWithMargins = True
@@ -85,7 +100,6 @@ object frmSettingsAdv: TfrmSettingsAdv
       Checked = True
       State = cbChecked
       TabOrder = 3
-      ExplicitTop = 121
     end
     object chShaderGamma: TCheckBox
       AlignWithMargins = True
@@ -98,8 +112,6 @@ object frmSettingsAdv: TfrmSettingsAdv
       Checked = True
       State = cbChecked
       TabOrder = 4
-      ExplicitLeft = 6
-      ExplicitTop = 154
     end
     object chMipmaps: TCheckBox
       AlignWithMargins = True
@@ -112,8 +124,18 @@ object frmSettingsAdv: TfrmSettingsAdv
       Checked = True
       State = cbChecked
       TabOrder = 5
-      ExplicitLeft = 0
-      ExplicitTop = 167
+    end
+    object chIgnoreIrrevelant: TCheckBox
+      AlignWithMargins = True
+      Left = 3
+      Top = 188
+      Width = 239
+      Height = 17
+      Align = alTop
+      Caption = 'Nie wczytuj sk'#322'ad'#243'w-dekoracji'
+      TabOrder = 6
+      ExplicitLeft = 6
+      ExplicitTop = 231
     end
   end
 end

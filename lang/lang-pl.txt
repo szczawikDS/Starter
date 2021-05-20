@@ -193,6 +193,7 @@ actAutoCoupler.Caption=Auto
 actAutoCoupler.Hint=Automatycznie ustaw sprzêg
 actCurrentTime.Caption=Bie¿¹cy czas
 actRandomTex.Caption=Losuj tekstury
+actKeyboardView.Caption=Wizualizacja klawiatury
 imFacebook.Hint=OdwiedŸ nas na Facebooku
 imMaszyna.Hint=OdwiedŸ nasz¹ stronê eu07.pl
 [frmDepo]
@@ -226,6 +227,10 @@ lbSearch.Caption=Szukany element:
 label2.Caption=Rewizja od:
 label3.Caption=Rewizja do:
 lbExample.Caption=Przyk³ad: szukaj¹c ET22-799 wystarczy wpisaæ 799.
+[frmKeyboard]
+Wizualizacja klawiatury
+gbKeys.Caption=Zobacz wykorzystane kombinacje
+btnKeyPlain.Caption=Zwyk³e
 [frmAbout]
 O programie
 label11.Caption=dla symulatora MaSzyna

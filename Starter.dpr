@@ -19,6 +19,8 @@
 }
 program Starter;
 
+{$R *.dres}
+
 uses
   Vcl.Forms,
   uMain in 'src\uMain.pas' {Main},
@@ -42,7 +44,8 @@ uses
   uDepot in 'src\uDepot.pas',
   uLexer in 'src\uLexer.pas',
   uUtilities in 'src\uUtilities.pas',
-  uData in 'src\uData.pas';
+  uData in 'src\uData.pas',
+  uKeyboard in 'src\uKeyboard.pas' {frmKeyboard};
 
 {$R *.res}
 
