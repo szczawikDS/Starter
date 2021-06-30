@@ -410,6 +410,9 @@ type
     btnPreset: TButton;
     btnPresetSave: TButton;
     Label8: TLabel;
+    actRandomLoad: TAction;
+    Losowyadunekdlapocigu1: TMenuItem;
+    chLogExt: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -535,7 +538,6 @@ type
     procedure miSortByTrackNameClick(Sender: TObject);
     procedure actPresetExecute(Sender: TObject);
     procedure actANGLEExecute(Sender: TObject);
-    procedure pcSettingsChange(Sender: TObject);
     procedure actSetNumberExecute(Sender: TObject);
     procedure actSetNumberUpdate(Sender: TObject);
     procedure tvSCNCompare(Sender: TObject; Node1, Node2: TTreeNode;
@@ -545,6 +547,8 @@ type
     procedure actHideArchivalExecute(Sender: TObject);
     procedure actPresetSaveExecute(Sender: TObject);
     procedure actPresetUpdate(Sender: TObject);
+    procedure actRandomLoadExecute(Sender: TObject);
+    procedure lbTexStationMouseEnter(Sender: TObject);
   private
     SCN : TScenario;
 
@@ -581,7 +585,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure BitmapDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure ShapeDragDrop(Sender, Source: TObject; X, Y: Integer);
-    procedure MoveVehicle(const FromPos, ToPos: integer);
+    procedure MoveVehicle(FromPos, ToPos: integer);
     procedure RefreshTrain(const SelPos: Integer=-1);
     procedure Mark(const Image: TImage;const Color:TColor=clYellow);
     procedure LoadVehicle(const Vehicle: TVehicle);
@@ -610,6 +614,7 @@ type
     procedure BitmapMouseEnter(Sender: TObject);
     procedure ViewKeyOnKeyboard;
     procedure LoadMini(const Name: string);
+    function CheckMoveVehicle(const FromPos, ToPos: Integer): Boolean;
   public
     Settings    : TSettings;
     MiniFactor  : Integer;
@@ -2091,11 +2096,6 @@ begin
   Application.OnActivate    := AppActivate;
   Application.OnDeactivate  := AppDeactivate;
 
-  //Util.DIR := ExtractFilePath(ParamStr(0));
-  //DIR := 'G:\MaSzyna\MaSzyna2009\';
-  //Util.DIR := 'G:\MaSzyna\pctga\';
-  //DIR := 'C:\Users\damia\Desktop';
-
   RemoveOldVersion;
 
   Settings := TSettings.Create;
@@ -2264,20 +2264,21 @@ begin
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
-//var
-//  i : Integer;
+var
+  i : Integer;
 begin
-  {for i := 0 to Textures.Count-1 do
-  begin
-    if TTexError.teNoFile in Textures[i].Errors then
-      Errors.Add('Brak pliku ' + Textures[i].Dir + '\' + Textures[i].Plik);
-    if TTexError.teNoModel in Textures[i].Errors then
-      Errors.Add('Brak modelu dla tekstury ' + Textures[i].Dir + '\' + Textures[i].Plik);
-    if TTexError.teNoPhysics in Textures[i].Errors then
-      Errors.Add('Brak fizyki dla tekstury ' + Textures[i].Dir + '\' + Textures[i].Plik);
-    if TTexError.teNoMultimedia in Textures[i].Errors then
-      Errors.Add('Brak pliku mulitmediów dla tekstury ' + Textures[i].Dir + '\' + Textures[i].Plik);
-  end;}
+  if chLogExt.Checked then
+    for i := 0 to Data.Textures.Count-1 do
+    begin
+      if TTexError.teNoFile in Data.Textures[i].Errors then
+        Util.Errors.Add('Brak pliku ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+      if TTexError.teNoModel in Data.Textures[i].Errors then
+        Util.Errors.Add('Brak modelu dla tekstury ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+      if TTexError.teNoPhysics in Data.Textures[i].Errors then
+        Util.Errors.Add('Brak fizyki dla tekstury ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+      if TTexError.teNoMultimedia in Data.Textures[i].Errors then
+        Util.Errors.Add('Brak pliku mulitmediów dla tekstury ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+    end;
   if Util.Errors.Count > 0 then
       if ForceDirectories(Util.DIR + 'starter') then
         Util.Errors.SaveToFile(Util.DIR + 'starter\bledy.txt');
@@ -2338,10 +2339,25 @@ procedure TMain.BitmapDragOver(Sender, Source: TObject; X, Y: Integer;
   State: TDragState; var Accept: Boolean);
 begin
   if Source is TImage then
-    Accept := (Source as TImage).Tag <> (Sender as TImage).Tag
+    Accept := ((Source as TImage).Tag <> (Sender as TImage).Tag)
+              and (CheckMoveVehicle((Source as TImage).Tag,(Sender as TImage).Tag))
   else
   if Source is TShape then
-    Accept := (Source as TShape).Tag <> (Sender as TImage).Tag;
+    Accept := ((Source as TShape).Tag <> (Sender as TImage).Tag)
+              and (CheckMoveVehicle((Source as TShape).Tag,(Sender as TImage).Tag));
+end;
+
+function TMain.CheckMoveVehicle(const FromPos,ToPos:Integer):Boolean;
+begin
+  Result := True;
+  if FromPos < ToPos then
+    begin
+    if (ToPos > 0) and (ToPos < Train.Vehicles.Count-1) and (Train.Vehicles[ToPos].Texture.NextTexID = Train.Vehicles[ToPos+1].Texture.ID) then
+      Result := False;
+    end
+    else
+      if (ToPos > 0) and (Train.Vehicles[ToPos].Texture.PrevTexID = Train.Vehicles[ToPos-1].Texture.ID) then
+        Result := False;
 end;
 
 procedure TMain.ShapeDragDrop(Sender, Source: TObject; X, Y: Integer);
@@ -2543,10 +2559,43 @@ begin
     Image.ShowHint := False;
 end;
 
-procedure TMain.MoveVehicle(const FromPos,ToPos :integer);
+procedure TMain.MoveVehicle(FromPos,ToPos:integer);
+var
+  Units, i : Integer;
 begin
-  Train.Vehicles.Move(FromPos,ToPos);
-  RefreshTrain(ToPos);
+  try
+    {if FromPos < ToPos then
+    begin
+    if (ToPos > 0) and (ToPos < Train.Vehicles.Count-1) and (Train.Vehicles[ToPos].Texture.NextTexID = Train.Vehicles[ToPos+1].Texture.ID) then
+      Exit;
+    end
+    else
+      if (ToPos > 0) and (Train.Vehicles[ToPos].Texture.PrevTexID = Train.Vehicles[ToPos-1].Texture.ID) then
+        Exit;}
+
+    while (FromPos-1 >= 0) and (Train.Vehicles[FromPos-1].Texture.NextTexID >= Train.Vehicles[FromPos].Texture.ID) do
+      Dec(FromPos);
+
+    Units := 0;
+    if (Train.Vehicles[FromPos].Texture.NextTexID >= 0) then
+    begin
+      while (Train.Vehicles.Count > FromPos+Units+1) and (Train.Vehicles[FromPos+Units+1].Texture.PrevTexID = Train.Vehicles[FromPos+Units].Texture.ID) do
+        Inc(Units);
+
+      if ToPos > FromPos then
+      begin
+        for i := 0 to Units do
+          Train.Vehicles.Move(FromPos,ToPos);
+      end
+      else
+        for i := 0 to Units do
+          Train.Vehicles.Move(FromPos+i,ToPos+i);
+    end
+    else
+      Train.Vehicles.Move(FromPos,ToPos);
+  finally
+    RefreshTrain(ToPos);
+  end;
 end;
 
 procedure TMain.ImageMouseDown(Sender: TObject; Button: TMouseButton;
@@ -2716,6 +2765,7 @@ begin
       Inc(i);
 
   Mark              := TShape.Create(sbTrain);
+  Mark.Cursor       := crHandPoint;
   Mark.Brush.Style  := bsClear;
   Mark.Pen.Width    := 3;
   Mark.Pen.Color    := Color;
@@ -2794,6 +2844,9 @@ begin
     seLoadCount.MaxValue := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.MaxLoad
   else
     seLoadCount.MaxValue := 0;
+
+  if Vehicle.MaxLoad >= 0 then
+    seLoadCount.MaxValue := Vehicle.MaxLoad;
 
   seLoadCount.Value := Vehicle.Loadquantity;
 end;
@@ -2995,7 +3048,8 @@ begin
   begin
     for i := Train.Vehicles.Count-1 downto 0 do
     begin
-      Image := TImage.Create(self);
+      Image := TImage.Create(sbTrain);
+      Image.Cursor := crHandPoint;
       Image.Parent := sbTrain;
       Image.Align := alLeft;
       Image.Stretch := True;
@@ -3100,15 +3154,6 @@ begin
 
   if Mini then
     imMini.Picture.Bitmap := result;
-end;
-
-procedure TMain.pcSettingsChange(Sender: TObject);
-begin
-  {if pcSettings.ActivePage = tsGraphics then
-  begin
-    Settings.LoadPresets;
-    cbPreset.ItemIndex := 0;
-  end;}
 end;
 
 procedure TMain.pcSettingsResize(Sender: TObject);
@@ -3272,6 +3317,11 @@ begin
   Util.OpenFile((Sender as TButton).Hint);
 end;
 
+procedure TMain.lbTexStationMouseEnter(Sender: TObject);
+begin
+  lbTexStation.Hint := lbTexStation.Caption;
+end;
+
 procedure TMain.lbTexturesClick(Sender: TObject);
 var
   i : Integer;
@@ -3358,6 +3408,38 @@ begin
   Tex := (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
   if Tex <> nil then
     OpenDir(Util.DIR + 'dynamic\' + Tex.Dir);
+end;
+
+procedure TMain.actRandomLoadExecute(Sender: TObject);
+var
+  i : Integer;
+  Loads : TStringList;
+begin
+  for i := 0 to Train.Vehicles.Count-1 do
+  begin
+    if (Train.Vehicles[i].Texture <> nil) and (Train.Vehicles[i].Texture.Typ >= tySZYNOBUS) then
+    begin
+      if Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz <> nil then
+      begin
+        Loads := TStringList.Create;
+        Loads.Delimiter := ',';
+        Loads.DelimitedText := Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.LoadAccepted;
+
+        if Loads.Count > 0 then
+        begin
+          Train.Vehicles[i].LoadType := Loads[Random(Loads.Count-1)];
+
+          {if Train.Vehicles[i].MaxLoad >= 0 then
+            Train.Vehicles[i].Loadquantity := Random(Train.Vehicles[i].MaxLoad)
+          else
+            Train.Vehicles[i].Loadquantity := Random(Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.MaxLoad);}
+        end;
+      end;
+    end;
+  end;
+
+  seLoadCount.Value := Train.Vehicles[SelVehicle].Loadquantity;
+  LoadTrainParams;
 end;
 
 procedure TMain.miSortByTrackNameClick(Sender: TObject);

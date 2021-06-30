@@ -39,6 +39,7 @@ type
     chIgnoreIrrevelant: TCheckBox;
     Label1: TLabel;
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -50,7 +51,7 @@ var
 
 implementation
 
-uses uUtilities, uLanguages;
+uses uUtilities, uLanguages, uMain;
 
 {$R *.dfm}
 
@@ -58,6 +59,11 @@ procedure TfrmSettingsAdv.FormCreate(Sender: TObject);
 begin
   if Util.Lang <> 'pl' then
     TLanguages.ChangeLanguage(Self,Util.Lang);
+end;
+
+procedure TfrmSettingsAdv.FormShow(Sender: TObject);
+begin
+  chIgnoreIrrevelant.Checked := Main.Settings.IgnoreIrrelevant;
 end;
 
 end.

@@ -146,6 +146,7 @@ type
     Texture         : TTexture;
     ModelID         : Integer;
     Number          : Integer;
+    MaxLoad         : Integer;
   {public
     property MinDist  : Double read FMinDist write FMinDist;
     property MaxDist  : Double read FMaxDist write FMaxDist;
@@ -333,6 +334,7 @@ begin
   MyDestObj.Texture        := Self.Texture;
   MyDestObj.ThermoDynamic  := Self.ThermoDynamic;
   MyDestObj.Number         := Self.Number;
+  MyDestObj.MaxLoad        := Self.MaxLoad;
   ModelID                  := Self.ModelID;
 end;
 

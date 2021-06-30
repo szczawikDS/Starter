@@ -41,8 +41,8 @@ type
 
   TSettings = class
   private
-    DebugLogTrack : Boolean;
-    DebugLogSpeed : Boolean;
+    DebugLogTrack     : Boolean;
+    DebugLogSpeed     : Boolean;
     //////////////////////////////
 
     Lexer : TmwPasLex;
@@ -62,6 +62,7 @@ type
     KeyParams : TObjectList<TKeyParam>;
 
     UART : string;
+    IgnoreIrrelevant  : Boolean;
 
     procedure LoadPresets;
     procedure ReadOwnSettings(const FirstRun:boolean=False);
@@ -681,40 +682,34 @@ begin
   Settings := TStringList.Create;
   Settings.Add('lang=' + LowerCase(Main.cbLang.Text));
 
-  if Main.cbCloseApp.Checked then
-    Settings.Add('AutoClosingApp=yes')
-  else
+  if not Main.cbCloseApp.Checked then
     Settings.Add('AutoClosingApp=no');
 
   if Main.cbBigThumbnail.Checked then
-    Settings.Add('MiniPic=yes')
-  else
-    Settings.Add('MiniPic=no');
+    Settings.Add('MiniPic=yes');
 
-  if Main.chOnlyForDriving.Checked then
-    Settings.Add('OnlyForDriving=yes')
-  else
+  if not Main.chOnlyForDriving.Checked then
     Settings.Add('OnlyForDriving=no');
 
   if Main.chShowAI.Checked then
-    Settings.Add('ShowAI=yes')
-  else
-    Settings.Add('ShowAI=no');
+    Settings.Add('ShowAI=yes');
 
   if Main.chAutoExpandTree.Checked then
-    Settings.Add('AutoExpandTree=yes')
-  else
-    Settings.Add('AutoExpandTree=no');
+    Settings.Add('AutoExpandTree=yes');
 
   if Main.chHideArchival.Checked then
-    Settings.Add('HideArchival=yes')
-  else
-    Settings.Add('HideArchival=no');
+    Settings.Add('HideArchival=yes');
 
   if Main.miSortByVehicleName.Checked then
     Settings.Add('SortByVehicleName=yes')
   else
     Settings.Add('SortByVehicleName=no');
+
+  if frmSettingsAdv.chIgnoreIrrevelant.Checked then
+    Settings.Add('IgnoreIrrevelant=yes');
+
+  if Main.chLogExt.Checked then
+    Settings.Add('LogExt=yes');
 
   if UART.Length > 0 then
     Settings.Add('UART=' + UART);
@@ -793,7 +788,11 @@ begin
         else if SameText(ParName,'UpdateInterval') then
           Main.edUpdateInterval.Value := StrToInt(ParValue)
         else if SameText(ParName,'InitSCN') then
-          Util.InitSCN := ParValue;
+          Util.InitSCN := ParValue
+        else if SameText(ParName,'IgnoreIrrevelant') then
+          IgnoreIrrelevant := ParValue = 'yes'
+        else if SameText(ParName,'LogExt') then
+          Main.chLogExt.Checked := ParValue = 'yes';
       end;
 
       Settings.Free;

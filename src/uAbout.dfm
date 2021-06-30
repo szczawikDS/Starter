@@ -48,13 +48,13 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '20.05.2021'
+      Hint = '29.06.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.4'
+      Caption = 'Wersja: 7.5.2'
       ParentShowHint = False
       ShowHint = True
-      ExplicitWidth = 57
+      ExplicitWidth = 67
     end
     object Label11: TLabel
       AlignWithMargins = True
@@ -205,6 +205,20 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.5.2 (29.06.2021)'
+        '*przenoszenie pojazd'#243'w wielocz'#322'onowych'
+        '*blokowane przenoszenie w pojazd wielocz'#322'onowy'
+        '*poprawiona obs'#322'uga MaxLoad w trainsecie'
+        ''
+        '7.5.1 (21.06.2021)'
+        '*poprawione auto-ko'#324'czenie programu'
+        ''
+        '7.5 (20.06.2021)'
+        '*obs'#322'uga MaxLoad w trainsecie'
+        '*zapami'#281'tywanie ustawienia opcji pomijania sk'#322'ad'#243'w'
+        '*opcja zapisu rozszerzonego logu Startera'
+        '*poprawione wczytywanie mas '#322'adunk'#243'w'
+        ''
         '7.4 (20.05.2021)'
         '*zmieniona obs'#322'uga i zapis zestaw'#243'w ustawie'#324
         '*uniezale'#380'nienie wyszukiwania od znak'#243'w '
@@ -238,26 +252,6 @@ object frmAbout: TfrmAbout
         '*sortowanie listy scenerii (wg grup)'
         '*podgl'#261'd i nadawanie numeru wagonu [CTRL + N]'
         '*definiowanie startowo wybranej scenerii'
-        ''
-        '7.0 (10.03.2021)'
-        '*obs'#322'uga zestaw'#243'w ustawie'#324
-        '*obs'#322'uga wirtualnego manewrowego'
-        '*obs'#322'uga ANGLE'
-        '*usuni'#281'cie multisamplingu x16'
-        '*poprawione kopiowanie sk'#322'adu do schowka'
-        ''
-        '6.8 (06.02.2021)'
-        '*poprawione losowanie tekstur'
-        '*dodana kategoria "prototypy"'
-        '*sortowanie magazynu wg nazwy pojazdu lub '
-        'poci'#261'gu'
-        ''
-        '6.7 (30.01.2021)'
-        '*refaktoryzacja'
-        '*poprawione wyszukiwanie tekstur'
-        '*poprawione przechodzenie pomi'#281'dzy grupami '
-        'pojazd'#243'w'
-        '*zapami'#281'tywanie opcji widoczno'#347'ci sk'#322'ad'#243'w'
         ''
         '...')
       ReadOnly = True

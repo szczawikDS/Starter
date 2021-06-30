@@ -40,7 +40,6 @@ object Main: TMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
-    ExplicitLeft = -2
   end
   object pnlMenu: TPanel
     AlignWithMargins = True
@@ -290,10 +289,10 @@ object Main: TMain
       Top = 0
       Width = 92
       Height = 50
-      Hint = '20.05.2021'
+      Hint = '29.06.2021'
       Align = alLeft
       AutoSize = False
-      Caption = '7.4'
+      Caption = '7.5.2'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -406,7 +405,6 @@ object Main: TMain
       MultiLine = True
       ParentDoubleBuffered = False
       TabOrder = 1
-      ExplicitLeft = -3
       object tsStart: TTabSheet
         Caption = 'Start'
         object Panel2: TPanel
@@ -437,6 +435,7 @@ object Main: TMain
             ActivePage = tsDescription
             Align = alBottom
             MultiLine = True
+            RaggedRight = True
             TabOrder = 1
             object tsDescription: TTabSheet
               Caption = 'Opis s'#322'u'#380'by'
@@ -1023,6 +1022,7 @@ object Main: TMain
                   Top = 0
                   Width = 230
                   Height = 30
+                  Cursor = crHandPoint
                   Align = alTop
                   AutoSize = True
                   Center = True
@@ -1323,7 +1323,7 @@ object Main: TMain
                     end
                     object seLoadCount: TSpinEdit
                       Left = 3
-                      Top = 63
+                      Top = 64
                       Width = 46
                       Height = 26
                       MaxValue = 0
@@ -2001,7 +2001,10 @@ object Main: TMain
                     Height = 17
                     Align = alClient
                     Alignment = taRightJustify
+                    ParentShowHint = False
                     ShowAccelChar = False
+                    ShowHint = True
+                    OnMouseEnter = lbTexStationMouseEnter
                     ExplicitLeft = 339
                     ExplicitWidth = 4
                     ExplicitHeight = 16
@@ -2185,12 +2188,9 @@ object Main: TMain
           ActivePage = tsMain
           Align = alClient
           TabOrder = 1
-          OnChange = pcSettingsChange
           OnResize = pcSettingsResize
           object tsMain: TTabSheet
             Caption = 'Og'#243'lne'
-            ExplicitLeft = 5
-            ExplicitTop = 25
             object pnlPhysic: TPanel
               AlignWithMargins = True
               Left = 438
@@ -2205,8 +2205,6 @@ object Main: TMain
               ParentBackground = False
               ShowCaption = False
               TabOrder = 0
-              ExplicitTop = 28
-              ExplicitHeight = 365
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -2334,7 +2332,7 @@ object Main: TMain
               end
               object pnlUpdate: TPanel
                 Left = 0
-                Top = 280
+                Top = 303
                 Width = 235
                 Height = 32
                 Align = alTop
@@ -2396,7 +2394,16 @@ object Main: TMain
                 Align = alTop
                 Caption = 'Auto-rozwijanie drzewka scenerii'
                 TabOrder = 7
-                OnClick = cbBigThumbnailClick
+              end
+              object chLogExt: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 283
+                Width = 229
+                Height = 17
+                Align = alTop
+                Caption = 'Loguj braki w plikach pojazd'#243'w'
+                TabOrder = 8
               end
             end
             object pnlGeneral: TPanel
@@ -2410,8 +2417,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 1
-              ExplicitTop = 28
-              ExplicitHeight = 362
               object Label15: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -2625,8 +2630,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 2
-              ExplicitTop = 23
-              ExplicitHeight = 368
             end
             object pnlRightMargin: TPanel
               Left = 706
@@ -2636,7 +2639,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 3
-              ExplicitTop = -2
               object Label8: TLabel
                 Left = 0
                 Top = 241
@@ -2652,7 +2654,6 @@ object Main: TMain
                 Font.Style = [fsBold]
                 ParentFont = False
                 Layout = tlCenter
-                ExplicitTop = 0
                 ExplicitWidth = 118
               end
               object pnlSettingsSet: TPanel
@@ -2665,7 +2666,6 @@ object Main: TMain
                 Caption = 'pnlSettingsSet'
                 ShowCaption = False
                 TabOrder = 0
-                ExplicitTop = 217
                 object cbPreset: TComboBox
                   AlignWithMargins = True
                   Left = 3
@@ -2675,7 +2675,6 @@ object Main: TMain
                   Align = alTop
                   Style = csDropDownList
                   TabOrder = 0
-                  ExplicitTop = 12
                 end
                 object btnPreset: TButton
                   AlignWithMargins = True
@@ -2686,7 +2685,6 @@ object Main: TMain
                   Action = actPreset
                   Align = alTop
                   TabOrder = 1
-                  ExplicitLeft = 0
                 end
                 object btnPresetSave: TButton
                   AlignWithMargins = True
@@ -2698,7 +2696,6 @@ object Main: TMain
                   Action = actPresetSave
                   Align = alTop
                   TabOrder = 2
-                  ExplicitLeft = 0
                 end
               end
             end
@@ -4423,6 +4420,11 @@ object Main: TMain
       Caption = 'Zapisz zestaw ustawie'#324
       OnExecute = actPresetSaveExecute
     end
+    object actRandomLoad: TAction
+      Category = 'Load'
+      Caption = 'Losowy '#322'adunek dla poci'#261'gu'
+      OnExecute = actRandomLoadExecute
+    end
   end
   object pmDepot: TPopupMenu
     Left = 783
@@ -4491,6 +4493,9 @@ object Main: TMain
     end
     object miCopyLoad: TMenuItem
       Action = actCopyLoad
+    end
+    object Losowyadunekdlapocigu1: TMenuItem
+      Action = actRandomLoad
     end
   end
 end

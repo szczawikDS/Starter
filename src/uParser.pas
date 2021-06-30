@@ -268,7 +268,7 @@ begin
       Lexer.NextNoSpace;
       While Lexer.TokenID <> ptNull do
       begin
-        if Lexer.TokenID = ptIdentifier then
+        if Lexer.TokenID <> ptUnknown then
         begin
           Load := TLoad.Create;
           LoadName := GetToken;
@@ -386,6 +386,8 @@ begin
   try
     i := Pos('.',Vehicle.Settings);
 
+    Vehicle.MaxLoad := -1;
+
     if i = 0 then
       Vehicle.Coupler := StrToInt(Vehicle.Settings)
     else
@@ -393,10 +395,10 @@ begin
       Vehicle.Coupler := StrToInt(Copy(Vehicle.Settings,0,i-1));
 
       Inc(i);
-      Vehicle.Sway := -1;
-      Vehicle.Flatness := -1;
-      Vehicle.FlatnessRand := -1;
-      Vehicle.FlatnessProb := -1;
+      Vehicle.Sway          := -1;
+      Vehicle.Flatness      := -1;
+      Vehicle.FlatnessRand  := -1;
+      Vehicle.FlatnessProb  := -1;
 
       Brakes := False;
       Wheels := False;
@@ -418,7 +420,10 @@ begin
               Wheels := True
             else
               if (not Brakes) and (not Wheels) and (Vehicle.Settings[i] = 'T') then
-                Vehicle.ThermoDynamic := Vehicle.Settings[i+1] = 'A';
+                Vehicle.ThermoDynamic := Vehicle.Settings[i+1] = 'A'
+              else
+                if Vehicle.Settings[i] = 'L' then
+                  Vehicle.MaxLoad := GetBrakeValue(Vehicle.Settings,i+1).ToInteger;
 
         if Brakes then
         begin
@@ -904,50 +909,48 @@ begin
         else
         if Pos('!=',Plik[i]) = 1 then
         begin
-          Token := Copy(Plik[i],3,1);
-
-          if Token = '*' then
+          if Plik[i][3] = '*' then
             Grupa := tyUnknown else
-          if Token='z' then Grupa := tyEZT        else
-          if Token='e' then Grupa := tyELEKTROWOZ else
-          if Token='s' then Grupa := tySPALINOWOZ else
-          if Token='a' then Grupa := tySZYNOBUS   else
-          if Token='B' then Grupa := tyB else
-          if Token='E' then Grupa := tyE else
-          if Token='A' then Grupa := tyA else
-          if Token='S' then Grupa := tyS else
-          if Token='F' then Grupa := tyF else
-          if Token='G' then Grupa := tyG else
-          if Token='R' then Grupa := tyR else
-          if Token='U' then Grupa := tyU else
-          if Token='r' then Grupa := tyROBOCZY    else
-          if Token='W' then Grupa := tyW else
-          if Token='X' then Grupa := tyX else
-          if Token='d' then Grupa := tyDREZYNA    else
-          if Token='o' then Grupa := tySAMOCHOD   else
-          if Token='b' then Grupa := tyAUTOBUS    else
-          if Token='c' then Grupa := tyCIEZAROWKA else
-          if Token='Z' then Grupa := tyZ else
-          if Token='D' then Grupa := tyD else
-          if Token='H' then Grupa := tyH else
-          if Token='I' then Grupa := tyI else
-          if Token='L' then Grupa := tyL else
-          if Token='P' then Grupa := tyP else
-          if Token='V' then Grupa := tyV else
-          if Token='t' then Grupa := tyTRAMWAJ    else
-          if Token='h' then Grupa := tyOSOBA      else
-          if Token='f' then Grupa := tyZWIERZE    else
-          if Token='p' then Grupa := tyPAROWOZ    else
-          if Token='x' then Grupa := tyPROTOTYP   else
+          if Plik[i][3]='z' then Grupa := tyEZT        else
+          if Plik[i][3]='e' then Grupa := tyELEKTROWOZ else
+          if Plik[i][3]='s' then Grupa := tySPALINOWOZ else
+          if Plik[i][3]='a' then Grupa := tySZYNOBUS   else
+          if Plik[i][3]='B' then Grupa := tyB else
+          if Plik[i][3]='E' then Grupa := tyE else
+          if Plik[i][3]='A' then Grupa := tyA else
+          if Plik[i][3]='S' then Grupa := tyS else
+          if Plik[i][3]='F' then Grupa := tyF else
+          if Plik[i][3]='G' then Grupa := tyG else
+          if Plik[i][3]='R' then Grupa := tyR else
+          if Plik[i][3]='U' then Grupa := tyU else
+          if Plik[i][3]='r' then Grupa := tyROBOCZY    else
+          if Plik[i][3]='W' then Grupa := tyW else
+          if Plik[i][3]='X' then Grupa := tyX else
+          if Plik[i][3]='d' then Grupa := tyDREZYNA    else
+          if Plik[i][3]='o' then Grupa := tySAMOCHOD   else
+          if Plik[i][3]='b' then Grupa := tyAUTOBUS    else
+          if Plik[i][3]='c' then Grupa := tyCIEZAROWKA else
+          if Plik[i][3]='Z' then Grupa := tyZ else
+          if Plik[i][3]='D' then Grupa := tyD else
+          if Plik[i][3]='H' then Grupa := tyH else
+          if Plik[i][3]='I' then Grupa := tyI else
+          if Plik[i][3]='L' then Grupa := tyL else
+          if Plik[i][3]='P' then Grupa := tyP else
+          if Plik[i][3]='V' then Grupa := tyV else
+          if Plik[i][3]='t' then Grupa := tyTRAMWAJ    else
+          if Plik[i][3]='h' then Grupa := tyOSOBA      else
+          if Plik[i][3]='f' then Grupa := tyZWIERZE    else
+          if Plik[i][3]='p' then Grupa := tyPAROWOZ    else
+          if Plik[i][3]='x' then Grupa := tyPROTOTYP   else
           Grupa := tyINNE;
+
           Continue;
         end;
-        Token := '';
 
         if Pos('=',Plik[i]) > 0 then
         begin
-          Tex := TTexture.Create;
-          Tex.ID := Data.Textures.Count;
+          Tex           := TTexture.Create;
+          Tex.ID        := Data.Textures.Count;
           Tex.NextTexID := -1;
           Tex.PrevTexID := -1;
           if Crew > 0 then
@@ -1027,19 +1030,20 @@ var
   Par : TStringList;
 begin
   Par := TStringList.Create;
+  Par.StrictDelimiter := True;
   try
     try
       Par.Delimiter := ',';
-      Par.DelimitedText := Tex.Desc;
+      Par.DelimitedText := StringReplace(Tex.Desc,'_',' ',[rfReplaceAll]);
 
       Tex.Version   := Par[0];
       Tex.Mark      := Par[1];
-      Tex.Owner     := StringReplace(Par[2],'_',' ',[rfReplaceAll]);
-      Tex.Station   := StringReplace(Par[3],'_',' ',[rfReplaceAll]);
-      Tex.Revision  := StringReplace(Par[4],'_',' ',[rfReplaceAll]);
-      Tex.Works     := StringReplace(Par[5],'_',' ',[rfReplaceAll]);
-      Tex.Author    := StringReplace(Par[6],'_',' ',[rfReplaceAll]);
-      Tex.Photos    := StringReplace(Par[7],'_',' ',[rfReplaceAll]);
+      Tex.Owner     := Par[2];
+      Tex.Station   := Par[3];
+      Tex.Revision  := Par[4];
+      Tex.Works     := Par[5];
+      Tex.Author    := Par[6];
+      Tex.Photos    := Par[7];
     except
       Util.Errors.Add('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
     end;

@@ -14,6 +14,7 @@ object frmSettingsAdv: TfrmSettingsAdv
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object pnlMain: TPanel
@@ -38,7 +39,7 @@ object frmSettingsAdv: TfrmSettingsAdv
       Left = 0
       Top = 164
       Width = 245
-      Height = 21
+      Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Ustawienia testowe'
@@ -49,6 +50,7 @@ object frmSettingsAdv: TfrmSettingsAdv
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlBottom
+      ExplicitWidth = 111
     end
     object cbConvertmodels: TComboBox
       AlignWithMargins = True
@@ -128,14 +130,12 @@ object frmSettingsAdv: TfrmSettingsAdv
     object chIgnoreIrrevelant: TCheckBox
       AlignWithMargins = True
       Left = 3
-      Top = 188
+      Top = 180
       Width = 239
       Height = 17
       Align = alTop
       Caption = 'Nie wczytuj sk'#322'ad'#243'w-dekoracji'
       TabOrder = 6
-      ExplicitLeft = 6
-      ExplicitTop = 231
     end
   end
 end

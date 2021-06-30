@@ -43,7 +43,7 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 79;
+      AppVersion = 82;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;

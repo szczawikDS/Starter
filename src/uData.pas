@@ -47,7 +47,7 @@ function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):T
 function IncludeVehicleToMass(const Vehicle:TVehicle;const AllVehicles:Boolean):Boolean;
 procedure Connect(Train:TTrain;const LeftVehicle:Integer);
 function CheckFlag(Flag:Integer):TFlags;
-function CommonCoupler(C1,C2:Integer):Integer;
+function CommonCoupler(const C1,C2:Integer):Integer;
 
 var
   Data : TData;
@@ -59,25 +59,23 @@ uses SysUtils;
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 begin
   try
-  if Vehicle.Texture <> nil then
-  begin
-    if LeftCoupler then
+    if Vehicle.Texture <> nil then
     begin
-      if Vehicle.Dist >= 0 then
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagA
+      if LeftCoupler then
+      begin
+        if Vehicle.Dist >= 0 then
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagA
+        else
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagB;
+      end
       else
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagB;
+        if Vehicle.Dist >= 0 then
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagB
+        else
+          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagA;
     end
     else
-    begin
-      if Vehicle.Dist >= 0 then
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagB
-      else
-        Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagA;
-    end;
-  end
-  else
-    Result := 3;
+      Result := 3;
   except
     Util.Errors.Add('B³¹d sprawdzania wartoœci AllowedFlag. ' +
                     'Nale¿y sprawdziæ plik .fiz dla ' +
@@ -98,12 +96,10 @@ begin
           Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB;
       end
       else
-      begin
         if Vehicle.Dist >= 0 then
           Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB
         else
           Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA;
-      end;
     end
     else
       Result := EmptyStr;
@@ -120,8 +116,8 @@ var
 begin
   Result := -1;
 
-  for i := 0 to Data.Loads.Count-1 do
-    if SameText(LoadName,Data.Loads[i].Name) then
+  for i := 0 to Loads.Count-1 do
+    if SameText(LoadName,Loads[i].Name) then
     begin
       Result := i;
       Break;
@@ -210,6 +206,9 @@ begin
 
     if Dyn.ThermoDynamic then
       Result := Result + '.TA';
+
+    if Dyn.MaxLoad >= 0 then
+      Result := Result + '.L' + Dyn.MaxLoad.ToString;
   end
   else
     Result := Result + FloatToStr(Dyn.Vel);
@@ -326,7 +325,7 @@ begin
   until Integer(F) <= 0;
 end;
 
-function CommonCoupler(C1,C2:Integer):Integer;
+function CommonCoupler(const C1,C2:Integer):Integer;
 var
   Fs1,Fs2 : TFlags;
   f : TFlag;
