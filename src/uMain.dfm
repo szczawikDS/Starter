@@ -289,10 +289,10 @@ object Main: TMain
       Top = 0
       Width = 92
       Height = 50
-      Hint = '29.06.2021'
+      Hint = '02.07.2021'
       Align = alLeft
       AutoSize = False
-      Caption = '7.5.2'
+      Caption = '7.5.4'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

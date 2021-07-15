@@ -48,10 +48,10 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '29.06.2021'
+      Hint = '02.07.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.5.2'
+      Caption = 'Wersja: 7.5.4'
       ParentShowHint = False
       ShowHint = True
       ExplicitWidth = 67
@@ -205,6 +205,12 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.5.4 (02.07.2021)'
+        '*poprawiona obs'#322'uga eu07.ini'
+        ''
+        '7.5.3 (01.07.2021)'
+        '*poprawione dodawanie pojazd'#243'w'
+        ''
         '7.5.2 (29.06.2021)'
         '*przenoszenie pojazd'#243'w wielocz'#322'onowych'
         '*blokowane przenoszenie w pojazd wielocz'#322'onowy'
@@ -243,15 +249,6 @@ object frmAbout: TfrmAbout
         '7.1.2 (25.04.2021)'
         '*od'#347'wie'#380'anie parametr'#243'w lokalnych programu'
         '*usprawnione wykrywanie b'#322#281'd'#243'w'
-        ''
-        '7.1.1 (13.04.2021)'
-        '*poprawione prze'#322'adowywanie scenerii'
-        '*opcja auto-rozwijania drzewka'
-        ''
-        '7.1 (12.04.2021)'
-        '*sortowanie listy scenerii (wg grup)'
-        '*podgl'#261'd i nadawanie numeru wagonu [CTRL + N]'
-        '*definiowanie startowo wybranej scenerii'
         ''
         '...')
       ReadOnly = True

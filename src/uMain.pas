@@ -795,6 +795,7 @@ begin
   Vehicle.Dist     := 0;
   Vehicle.Vel      := 0;
   Vehicle.Settings := '0';
+  Vehicle.MaxLoad  := -1;
 
   TryStrToInt(edSway.Text,Vehicle.Sway);
   TryStrToInt(edFlatness.Text,Vehicle.Flatness);

@@ -1172,7 +1172,7 @@ begin
          24..31: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +       #9#9#9 + Params[i].Desc);
          32..39: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +         #9#9 + Params[i].Desc);
          40..47: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +           #9 + Params[i].Desc);
-         48..99: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + ' ' + Params[i].Desc);
+         else Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + ' ' + Params[i].Desc);
         end;
       end;
     end
