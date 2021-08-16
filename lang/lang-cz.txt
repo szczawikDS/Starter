@@ -1,7 +1,7 @@
 [Main]
 Starter
 lbVersionCaption.Caption=Verze:
-cbLang.Items.Text=PL|EN|CZ|
+cbLang.Items.Text=PL|EN|CZ
 tsStart.Caption=Start
 pnlSceneryCaption.Caption=SOUPRAVY V SCENÉRII
 tsDescription.Caption=Popis služby
@@ -134,6 +134,7 @@ Label40.Caption=Režim vykreslování:
 Label36.Caption=Rozložení stínù:
 Label43.Caption=Dosah stínù:
 Label53.Caption=Rozsah stínových zdrojù v kabinì:
+lbHDR.Caption=Zpracování obrazu:
 lbMaxCabTexSize.Caption=Zmìna mìøítka textur kabiny:
 lbReflectionsFidelity.Caption=Odrazy - zahrnuty položky:
 chFullScreenWindowed.Caption=Automatické rozlišení
@@ -189,12 +190,17 @@ actCOM.Caption=Konfigurace COM
 actRestoreWeather.Caption=Obnov výchozí poèasí
 actLoadDepoFromFile.Caption=Pøidej soupravy ze souboru...
 actChangeName.Caption=Pøejmenovat...
+actAutoCoupler.Caption=Auto
 actAutoCoupler.Hint=Automaticky nastavit spojení
 actCurrentTime.Caption=Aktuální èas
 actRandomTex.Caption=Náhodný textury
 actKeyboardView.Caption=Vizualizace klávesnice
+actHideArchival.Caption=Skrýt archivní scénáøe
+actHideArchival.Hint=Zaškrtnutím skryjete zastaralé scénáøe
+actFPS.Caption=Omezit FPS:
 imFacebook.Hint=Navštivte nás na Facebooku
 imMaszyna.Hint=Navštívit naši stránku eu07.pl
+lbBufferRes.Caption=Rozlišení vyrovnávací pamìti:
 [frmDepo]
 Základna kolejových vozidel
 cbTexName.Caption=Tekstura:
@@ -210,7 +216,6 @@ lbTypes.Items.Text=Elektrické lokomotivy|Motorové lokomotivy|Parní lokomotivy|Mo
 [frmSettingsAdv]
 Pokroèilé nastavení
 lbe3d.Caption=Generování E3D:
-cbConvertmodels.Items.Text=Vypnuté|Konverze
 chScaleSpeculars.Caption=Mìøítko zrcadlové složky
 chCompressTex.Caption=Komprese textury TGA
 chUseGLES.Caption=Use OpenGL ES

@@ -1,7 +1,7 @@
 [Main]
 Starter
 lbVersionCaption.Caption=Version:
-cbLang.Items.Text=PL|EN|CZ|
+cbLang.Items.Text=PL|EN|CZ
 tsStart.Caption=Start
 pnlSceneryCaption.Caption=TRAINS ON SCENERY
 tsDescription.Caption=Duty description
@@ -134,6 +134,7 @@ Label40.Caption=Rendering mode:
 Label36.Caption=Shadow resolution:
 Label43.Caption=Shadow range:
 Label53.Caption=Shadows sources range in cab:
+lbHDR.Caption=Image processing:
 lbMaxCabTexSize.Caption=Scaling the cabin textures:
 lbReflectionsFidelity.Caption=Reflections- included items:
 chFullScreenWindowed.Caption=Auto resolution
@@ -194,8 +195,12 @@ actAutoCoupler.Hint=Auto coupler
 actCurrentTime.Caption=Current time
 actRandomTex.Caption=Random textures
 actKeyboardView.Caption=Keyboard visualization
+actHideArchival.Caption=Hide archival scenarios
+actHideArchival.Hint=Check to hide obsolete scenarios
+actFPS.Caption=Limit FPS:
 imFacebook.Hint=Visit us on Facebook
 imMaszyna.Hint=Visit our page eu07.pl
+lbBufferRes.Caption=Buffer resolution:
 [frmDepo]
 Depo
 cbTexName.Caption=Texture:
@@ -211,7 +216,6 @@ lbTypes.Items.Text=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car
 [frmSettingsAdv]
 Advanced settings
 lbe3d.Caption=Generating E3D:
-cbConvertmodels.Items.Text=Off|Conversion
 chScaleSpeculars.Caption=Scaling of specular component
 chCompressTex.Caption=TGA texture compression
 chUseGLES.Caption=Use OpenGL ES

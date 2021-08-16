@@ -1,7 +1,7 @@
 [Main]
 Starter
 lbVersionCaption.Caption=Wersja:
-cbLang.Items.Text=PL|EN|CZ|IT
+cbLang.Items.Text=PL|EN|CZ
 tsStart.Caption=Start
 pnlSceneryCaption.Caption=SK£ADY NA SCENERII
 tsDescription.Caption=Opis s³u¿by
@@ -134,6 +134,7 @@ Label40.Caption=Tryb renderowania:
 Label36.Caption=Rozdzielczoœæ cieni:
 Label43.Caption=Zasiêg cieni:
 Label53.Caption=Zasiêg Ÿróde³ cieni w kabinie:
+lbHDR.Caption=Obróbka obrazu:
 lbMaxCabTexSize.Caption=Skalowanie tekstur kabiny:
 lbReflectionsFidelity.Caption=Odbicia- uwzglêdniane elementy:
 chFullScreenWindowed.Caption=Automatyczna rozdzielczoœæ
@@ -177,7 +178,7 @@ actOpenVehicleDir.Caption=Otwórz folder zawieraj¹cy
 actCopyToClipboard.Caption=Skopiuj poci¹g do schowka
 actPasteFromClipboard.Caption=Zast¹p sk³adem ze schowka
 actReplaceTrain.Caption=Zamieñ na sk³ad z magazynu
-actAddTrain.Caption=Po³¹cz ze sk³adem z magazynu
+actAddTrain.Caption=Do³¹cz sk³ad z magazynu
 actCopyTextureName.Caption=Skopiuj nazwê do schowka
 actReloadScenarios.Caption=Prze³aduj scenerie
 actOpenTexDir.Caption=Otwórz folder zawieraj¹cy
@@ -194,8 +195,12 @@ actAutoCoupler.Hint=Automatycznie ustaw sprzêg
 actCurrentTime.Caption=Bie¿¹cy czas
 actRandomTex.Caption=Losuj tekstury
 actKeyboardView.Caption=Wizualizacja klawiatury
+actHideArchival.Caption=Ukryj scenariusze archiwalne
+actHideArchival.Hint=Zaznacz, by ukryæ scenariusze przestarza³e.
+actFPS.Caption=Ogranicz FPS:
 imFacebook.Hint=OdwiedŸ nas na Facebooku
 imMaszyna.Hint=OdwiedŸ nasz¹ stronê eu07.pl
+lbBufferRes.Caption=Rozdzielczoœæ bufora:
 [frmDepo]
 Baza taboru
 cbTexName.Caption=Tekstura:
@@ -211,7 +216,6 @@ lbTypes.Items.Text=Elektrowozy|Spalinowozy|Parowozy|Szynobusy|EZT|Wagony A|Wagon
 [frmSettingsAdv]
 Ustawienia zaawansowane
 lbe3d.Caption=Generowanie E3D:
-cbConvertmodels.Items.Text=Wy³¹czone|Konwersja
 chScaleSpeculars.Caption=Skalowanie sk³adowej specular
 chCompressTex.Caption=Kompresja tekstur TGA
 chUseGLES.Caption=U¿yj OpenGL ES
