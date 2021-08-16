@@ -24,7 +24,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
   TfrmUART = class(TForm)
@@ -32,13 +32,14 @@ type
     Label1: TLabel;
     edUARTTune: TEdit;
     Label2: TLabel;
+    chUARTDebug: TCheckBox;
+    Label3: TLabel;
+    chUART: TCheckBox;
+    pnlInstruments: TPanel;
     chMainenable: TCheckBox;
     chScndenable: TCheckBox;
     chTrainenable: TCheckBox;
     chLocalenable: TCheckBox;
-    chUARTDebug: TCheckBox;
-    Label3: TLabel;
-    chUART: TCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private

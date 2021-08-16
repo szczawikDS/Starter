@@ -49,12 +49,12 @@ type
 
   TTexRandomizer = class
     procedure RandomTex(Trains:TObjectList<TTrain>); overload;
-    procedure RandomTex(Vehicles:TList<TVehicle>); overload;
+    procedure RandomTex(Vehicles:TObjectList<TVehicle>); overload;
   private
     TexStock : TList<TTexStock>;
     RevisionTolerance : Integer;
     RevYear : Integer;
-    procedure MultipleAssign(Vehicles:TList<TVehicle>; Index: Integer;const Tex: TTexture);
+    procedure MultipleAssign(Vehicles:TObjectList<TVehicle>; Index: Integer;const Tex: TTexture);
     function FindSimilarTex(TexFilter:TTexFilter):TList<Integer>;
     function FilterForm:Boolean;
     procedure LoadTexStock;
@@ -199,7 +199,7 @@ begin
   end;
 end;
 
-procedure TTexRandomizer.RandomTex(Vehicles:TList<TVehicle>);
+procedure TTexRandomizer.RandomTex(Vehicles:TObjectList<TVehicle>);
 var
   i, y : Integer;
   MatchTextures : TList<Integer>;
@@ -318,7 +318,7 @@ begin
         if ((Trains[i].Vehicles[y].Texture <> nil)
           and (Trains[i].Vehicles[y].Texture.Typ = tyEZT))
          or (Trains[i].Vehicles[y].CabOccupancy = coHeadDriver) then
-            Connect(Main.Train,y);
+            Connect(Main.Train.Vehicles,y);
       Inc(Main.SelTrain);
     end;
 end;
@@ -358,7 +358,7 @@ begin
   end;
 end;
 
-procedure TTexRandomizer.MultipleAssign(Vehicles:TList<TVehicle>;Index:Integer;const Tex:TTexture);
+procedure TTexRandomizer.MultipleAssign(Vehicles:TObjectList<TVehicle>;Index:Integer;const Tex:TTexture);
 begin
   try
     if (Vehicles[Index].Texture <> nil) then

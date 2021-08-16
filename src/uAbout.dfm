@@ -48,13 +48,13 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '02.07.2021'
+      Hint = '16.08.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.5.4'
+      Caption = 'Wersja: 7.6'
       ParentShowHint = False
       ShowHint = True
-      ExplicitWidth = 67
+      ExplicitWidth = 57
     end
     object Label11: TLabel
       AlignWithMargins = True
@@ -205,6 +205,20 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.6 (16.08.2021)'
+        '*rozszerzona obs'#322'uga odwracania pojazd'#243'w'
+        ''
+        '7.5.7 (09.08.2021)'
+        '*poprawione zmiany poprzedniej wersji'
+        ''
+        '7.5.6 (08.08.2021)'
+        '*mo'#380'liwo'#347#263' zmiany algorytmu HDR'
+        '*fpslimit dost'#281'pny tylko dla tryb'#243'w shaderowych'
+        ''
+        '7.5.5 (27.07.2021)'
+        '*zmieniona obs'#322'uga convertmodels'
+        '*dodana obs'#322'uga fpslimit'
+        ''
         '7.5.4 (02.07.2021)'
         '*poprawiona obs'#322'uga eu07.ini'
         ''
@@ -230,25 +244,6 @@ object frmAbout: TfrmAbout
         '*uniezale'#380'nienie wyszukiwania od znak'#243'w '
         'diakrytycznych'
         '*testowa opcja pomijania sk'#322'ad'#243'w dekoracyjnych'
-        ''
-        '7.3 (17.05.2021)'
-        '*indywidualne obrazki dla sk'#322'ad'#243'w'
-        '*mo'#380'liwo'#347#263' ukrycia przestarza'#322'ych scenariuszy'
-        '*obs'#322'uga parametru wielko'#347'ci bufora'
-        '*mo'#380'liwo'#347#263' za'#322'./wy'#322'. komunikacji UART'
-        ''
-        '7.2.1 (16.05.2021)'
-        '*indywidualne ekrany logowania dla sk'#322'ad'#243'w'
-        ''
-        '7.2 (12.05.2021)'
-        '*poprawione wklejanie sk'#322'adu ze schowka'
-        '*podgl'#261'd i obs'#322'uga wizualna klawiszologii'
-        '*parametry rozdzielczo'#347'ci kopiowane do '
-        'gfx.framebuffer'
-        ''
-        '7.1.2 (25.04.2021)'
-        '*od'#347'wie'#380'anie parametr'#243'w lokalnych programu'
-        '*usprawnione wykrywanie b'#322#281'd'#243'w'
         ''
         '...')
       ReadOnly = True

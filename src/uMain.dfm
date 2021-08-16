@@ -289,10 +289,10 @@ object Main: TMain
       Top = 0
       Width = 92
       Height = 50
-      Hint = '02.07.2021'
+      Hint = '16.08.2021'
       Align = alLeft
       AutoSize = False
-      Caption = '7.5.4'
+      Caption = '7.6'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -303,6 +303,7 @@ object Main: TMain
       ShowHint = True
       OnClick = lbVersionClick
       OnDblClick = actAboutExecute
+      ExplicitLeft = 551
       ExplicitTop = -3
     end
     object lbVersionCaption: TLabel
@@ -1266,6 +1267,7 @@ object Main: TMain
                       AutoSize = False
                       Caption = 'Obsada:'
                       Layout = tlCenter
+                      ExplicitWidth = 94
                     end
                     object Label22: TLabel
                       AlignWithMargins = True
@@ -1406,7 +1408,7 @@ object Main: TMain
                   object Panel14: TPanel
                     Left = 0
                     Top = 0
-                    Width = 119
+                    Width = 113
                     Height = 130
                     Align = alLeft
                     BevelOuter = bvNone
@@ -1416,19 +1418,20 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 3
-                      Width = 113
+                      Width = 107
                       Height = 24
                       Align = alTop
                       Alignment = taRightJustify
                       AutoSize = False
                       Caption = 'Nastawa:'
                       Layout = tlCenter
+                      ExplicitWidth = 113
                     end
                     object Label41: TLabel
                       AlignWithMargins = True
                       Left = 3
                       Top = 33
-                      Width = 113
+                      Width = 107
                       Height = 24
                       Align = alTop
                       Alignment = taRightJustify
@@ -1436,12 +1439,13 @@ object Main: TMain
                       Caption = 'Wy'#322#261'cznik:'
                       Layout = tlCenter
                       ExplicitTop = 30
+                      ExplicitWidth = 113
                     end
                     object Label42: TLabel
                       AlignWithMargins = True
                       Left = 3
                       Top = 63
-                      Width = 113
+                      Width = 107
                       Height = 24
                       Align = alTop
                       Alignment = taRightJustify
@@ -1449,12 +1453,13 @@ object Main: TMain
                       Caption = 'Dostosowanie:'
                       Layout = tlCenter
                       ExplicitTop = 57
+                      ExplicitWidth = 113
                     end
                   end
                   object Panel15: TPanel
-                    Left = 119
+                    Left = 113
                     Top = 0
-                    Width = 200
+                    Width = 206
                     Height = 130
                     Align = alClient
                     BevelOuter = bvNone
@@ -1464,7 +1469,7 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 33
-                      Width = 194
+                      Width = 200
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -1473,13 +1478,13 @@ object Main: TMain
                       Items.Strings = (
                         'N - hamulec w'#322#261'czony'
                         '0 - wy'#322#261'czony, odlu'#378'niony'
-                        '1 - wy'#322#261'czony, odlu'#378'niony z 10% prawdopodobie'#324'stwem')
+                        '1 - wy'#322'., odl. z 10% szans'#261)
                     end
                     object cbBrakeAdjust: TComboBox
                       AlignWithMargins = True
                       Left = 3
                       Top = 63
-                      Width = 194
+                      Width = 200
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -1495,7 +1500,7 @@ object Main: TMain
                       AlignWithMargins = True
                       Left = 3
                       Top = 3
-                      Width = 194
+                      Width = 200
                       Height = 24
                       Align = alTop
                       Style = csDropDownList
@@ -2161,22 +2166,22 @@ object Main: TMain
           end
           object btnKeybard: TButton
             AlignWithMargins = True
-            Left = 203
+            Left = 532
             Top = 3
             Width = 141
             Height = 35
             Action = actKeyboard
-            Align = alLeft
+            Align = alRight
             TabOrder = 2
           end
           object btnAbout: TButton
             AlignWithMargins = True
-            Left = 520
+            Left = 203
             Top = 3
             Width = 153
             Height = 35
             Action = actAbout
-            Align = alRight
+            Align = alLeft
             TabOrder = 3
           end
         end
@@ -3095,30 +3100,62 @@ object Main: TMain
                   ShowCaption = False
                   TabOrder = 9
                   object Label4: TLabel
-                    Left = 66
+                    Left = 0
                     Top = 0
-                    Width = 89
+                    Width = 105
                     Height = 27
-                    Align = alRight
-                    Alignment = taRightJustify
+                    Align = alLeft
                     AutoSize = False
                     Caption = 'K'#261't widzenia:'
                     Layout = tlCenter
-                    ExplicitLeft = -32
                   end
                   object edFieldofview: TEdit
                     Tag = 9
                     AlignWithMargins = True
-                    Left = 158
+                    Left = 108
                     Top = 3
                     Width = 33
                     Height = 21
-                    Align = alRight
+                    Align = alLeft
                     NumbersOnly = True
                     TabOrder = 0
                     Text = '1'
                     OnExit = edFieldofview2Exit
                     ExplicitHeight = 24
+                  end
+                end
+                object pnlFPS: TPanel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 324
+                  Width = 194
+                  Height = 29
+                  Align = alTop
+                  BevelOuter = bvNone
+                  ParentBackground = False
+                  ShowCaption = False
+                  TabOrder = 10
+                  object chFPSLimiter: TCheckBox
+                    Left = 0
+                    Top = 0
+                    Width = 105
+                    Height = 29
+                    Action = actFPS
+                    Align = alLeft
+                    TabOrder = 0
+                  end
+                  object seFPSLimit: TSpinEdit
+                    AlignWithMargins = True
+                    Left = 108
+                    Top = 3
+                    Width = 42
+                    Height = 26
+                    Align = alLeft
+                    Enabled = False
+                    MaxValue = 100
+                    MinValue = 1
+                    TabOrder = 1
+                    Value = 30
                   end
                 end
               end
@@ -3188,6 +3225,17 @@ object Main: TMain
                   Caption = 'Zasi'#281'g '#378'r'#243'de'#322' cieni w kabinie:'
                   ExplicitTop = 245
                 end
+                object lbHDR: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 332
+                  Width = 194
+                  Height = 16
+                  Align = alTop
+                  AutoSize = False
+                  Caption = 'Obr'#243'bka obrazu:'
+                  ExplicitLeft = 6
+                end
                 object cbReflectionsFramerate: TComboBox
                   AlignWithMargins = True
                   Left = 3
@@ -3209,7 +3257,7 @@ object Main: TMain
                 object chExtraEffects: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 355
+                  Top = 407
                   Width = 194
                   Height = 17
                   Align = alTop
@@ -3221,7 +3269,7 @@ object Main: TMain
                 object chShadowMap: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 332
+                  Top = 384
                   Width = 194
                   Height = 17
                   Align = alTop
@@ -3309,7 +3357,7 @@ object Main: TMain
                 object chChromaticAberration: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 401
+                  Top = 453
                   Width = 194
                   Height = 17
                   Align = alTop
@@ -3321,7 +3369,7 @@ object Main: TMain
                 object chMotionBlur: TCheckBox
                   AlignWithMargins = True
                   Left = 3
-                  Top = 378
+                  Top = 430
                   Width = 194
                   Height = 17
                   Align = alTop
@@ -3362,6 +3410,23 @@ object Main: TMain
                   Action = actANGLE
                   Align = alTop
                   TabOrder = 11
+                end
+                object cbHDR: TComboBox
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 354
+                  Width = 194
+                  Height = 24
+                  Align = alTop
+                  Style = csDropDownList
+                  Constraints.MaxWidth = 198
+                  DoubleBuffered = False
+                  ParentDoubleBuffered = False
+                  TabOrder = 12
+                  OnChange = cbHDRChange
+                  Items.Strings = (
+                    'Reinhard'
+                    'ACES')
                 end
               end
               object Panel22: TPanel
@@ -4370,7 +4435,7 @@ object Main: TMain
     end
     object actAddTrain: TAction
       Category = 'menu'
-      Caption = 'Po'#322#261'cz ze sk'#322'adem z magazynu'
+      Caption = 'Do'#322#261'cz sk'#322'ad z magazynu'
       OnExecute = actAddTrainExecute
       OnUpdate = actAddTrainUpdate
     end
@@ -4424,6 +4489,11 @@ object Main: TMain
       Category = 'Load'
       Caption = 'Losowy '#322'adunek dla poci'#261'gu'
       OnExecute = actRandomLoadExecute
+    end
+    object actFPS: TAction
+      Category = 'Settings'
+      Caption = 'Ogranicz FPS:'
+      OnExecute = actFPSExecute
     end
   end
   object pmDepot: TPopupMenu

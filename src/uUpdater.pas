@@ -43,7 +43,7 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 84;
+      AppVersion = 88;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -151,7 +151,8 @@ begin
 
         if TryStrToInt(Par[0],Version) then
           if Version > AppVersion then
-          IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[1], Util.DIR + '\' + Par[2]);
+            if ForceDirectories(ExtractFileDir(Util.DIR + '\' + Par[2])) then
+              IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[1], Util.DIR + '\' + Par[2]);
       end;
 
       if FileExists(Util.DIR + 'update.bat') then

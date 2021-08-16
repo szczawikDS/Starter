@@ -45,7 +45,7 @@ function PrepareTrainsetDesc(const Trainset:TTrain):string;
 function PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
 function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):TTrainParams;
 function IncludeVehicleToMass(const Vehicle:TVehicle;const AllVehicles:Boolean):Boolean;
-procedure Connect(Train:TTrain;const LeftVehicle:Integer);
+procedure Connect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
 function CheckFlag(Flag:Integer):TFlags;
 function CommonCoupler(const C1,C2:Integer):Integer;
 
@@ -282,29 +282,29 @@ begin
             or (AllVehicles));
 end;
 
-procedure Connect(Train:TTrain;const LeftVehicle:Integer);
+procedure Connect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
 var
   LeftMax, RightMax : Integer;
   ControlType1, ControlType2 : string;
 begin
-  if (LeftVehicle >= 0) and (Train.Vehicles.Count-1 > LeftVehicle) then
+  if (LeftVehicle >= 0) and (Vehicles.Count-1 > LeftVehicle) then
   begin
-    LeftMax       := GetMaxCoupler(Train.Vehicles[LeftVehicle],False);
-    ControlType1  := GetControlType(Train.Vehicles[LeftVehicle],False);
+    LeftMax       := GetMaxCoupler(Vehicles[LeftVehicle],False);
+    ControlType1  := GetControlType(Vehicles[LeftVehicle],False);
 
-    if Train.Vehicles.Count-1 > LeftVehicle then
+    if Vehicles.Count-1 > LeftVehicle then
     begin
-      RightMax      := GetMaxCoupler(Train.Vehicles[LeftVehicle+1]);
-      ControlType2  := GetControlType(Train.Vehicles[LeftVehicle+1]);
+      RightMax      := GetMaxCoupler(Vehicles[LeftVehicle+1]);
+      ControlType2  := GetControlType(Vehicles[LeftVehicle+1]);
     end
     else
       RightMax := 3;
 
-    Train.Vehicles[LeftVehicle].Coupler := CommonCoupler(LeftMax,RightMax);
+    Vehicles[LeftVehicle].Coupler := CommonCoupler(LeftMax,RightMax);
 
-    if (F4 in CheckFlag(Train.Vehicles[LeftVehicle].Coupler))
+    if (F4 in CheckFlag(Vehicles[LeftVehicle].Coupler))
       and (ControlType1 <> ControlType2) then
-        Train.Vehicles[LeftVehicle].Coupler := Train.Vehicles[LeftVehicle].Coupler - Ord(F4);
+        Vehicles[LeftVehicle].Coupler := Vehicles[LeftVehicle].Coupler - Ord(F4);
   end;
 end;
 

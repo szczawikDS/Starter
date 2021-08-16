@@ -29,21 +29,17 @@ uses
 type
   TfrmSettingsAdv = class(TForm)
     pnlMain: TPanel;
-    lbe3d: TLabel;
-    cbConvertmodels: TComboBox;
     chCompressTex: TCheckBox;
     chScaleSpeculars: TCheckBox;
     chUseGLES: TCheckBox;
     chShaderGamma: TCheckBox;
     chMipmaps: TCheckBox;
     chIgnoreIrrevelant: TCheckBox;
-    Label1: TLabel;
+    pnlConvertModels: TPanel;
+    cbConvertmodels: TComboBox;
+    lbe3d: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-  private
-    { Private declarations }
-  public
-    { Public declarations }
   end;
 
 var

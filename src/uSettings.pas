@@ -56,7 +56,6 @@ type
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
     procedure RemoveParam(const Name: String);
-
   public
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
@@ -75,6 +74,7 @@ type
     function FindKey(const Key:string):Integer;
     function FindParam(const Name: string): TParam;
     procedure FindParameter(const Name: string;const Desc:string='');
+    procedure ChangeHDR(const Reinhard:Boolean=True);
   end;
 
 implementation
@@ -499,6 +499,12 @@ begin
       if Params[i].Name = 'feedbackport' then Main.edFeedbackport.Text := Params[i].Value else
       if Params[i].Name = 'friction' then Main.edFriction.Text := Params[i].Value else
       if Params[i].Name = 'fieldofview' then Main.edFieldofview.Text := Params[i].Value else
+      if Params[i].Name = 'fpslimit' then
+      begin
+        Main.seFPSLimit.Value := StrToInt(Params[i].Value);
+        Main.chFPSLimiter.Checked := True;
+      end
+      else
       if Params[i].Name = 'sound.volume' then
         Main.tbSoundVolume.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
@@ -569,12 +575,7 @@ begin
       if Params[i].Name = 'multisampling' then Main.cbMultisampling.ItemIndex := StrToInt(Params[i].Value) else
       if Params[i].Name = 'gfx.smoke.fidelity' then Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
       if Params[i].Name = 'convertmodels' then
-      begin
-        case StrToInt(Params[i].Value) of
-          0:      frmSettingsAdv.cbConvertmodels.ItemIndex := 0;
-          1..135: frmSettingsAdv.cbConvertmodels.ItemIndex := 1;
-        end;
-      end
+        frmSettingsAdv.cbConvertmodels.Text := Params[i].Value
       else
       if Params[i].Name = 'anisotropicfiltering' then
       begin
@@ -723,6 +724,7 @@ begin
   Settings.Add('Battery=' + Main.cbBattery.ItemIndex.ToString);
   Settings.Add('LastUpdate=' + IntToStr(Main.lbVersion.Tag));
   Settings.Add('UpdateInterval=' + Main.edUpdateInterval.Text);
+  Settings.Add('HDR=' +  Main.cbHDR.ItemIndex.ToString);
   if Main.tvSCN.Selected <> nil then
     Settings.Add('InitSCN=' + Main.tvSCN.Selected.Text);
 
@@ -792,7 +794,9 @@ begin
         else if SameText(ParName,'IgnoreIrrevelant') then
           IgnoreIrrelevant := ParValue = 'yes'
         else if SameText(ParName,'LogExt') then
-          Main.chLogExt.Checked := ParValue = 'yes';
+          Main.chLogExt.Checked := ParValue = 'yes'
+        else if SameText(ParName,'HDR') then
+          Main.cbHDR.ItemIndex := StrToInt(ParValue);
       end;
 
       Settings.Free;
@@ -930,6 +934,11 @@ begin
   if not Main.chAngle.Checked then
     RemoveParam('gfx.angleplatform');
 
+  if Main.chFPSLimiter.Checked then
+    FindParameter('fpslimit','ograniczenie fps')
+  else
+    RemoveParam('fpslimit');
+
   if Main.cbBuffer.ItemIndex < 3 then
     FindParameter('gfx.framebuffer.fidelity')
   else
@@ -1025,6 +1034,7 @@ begin
     if Params[i].Name = 'feedbackport'  then Params[i].Value := Main.edFeedbackport.Text else
     if Params[i].Name = 'friction'      then Params[i].Value := Main.edFriction.Text else
     if Params[i].Name = 'fieldofview'   then Params[i].Value := Main.edFieldofview.Text else
+    if Params[i].Name = 'fpslimit'      then Params[i].Value := Main.seFPSLimit.Text else
     if Params[i].Name = 'gfxrenderer'  then
     begin
       case Main.cbGfxrenderer.ItemIndex of
@@ -1071,17 +1081,13 @@ begin
       end;
     end
     else
-    if Params[i].Name = 'multisampling'         then Params[i].Value := IntToStr(Main.cbMultisampling.ItemIndex) else
-    if Params[i].Name = 'convertmodels'         then
-    begin
-      case frmSettingsAdv.cbConvertmodels.ItemIndex of
-        0: Params[i].Value := '0';
-        1: Params[i].Value := '135';
-      end;
-    end;
-    if Params[i].Name = 'gfx.smoke.fidelity'    then Params[i].Value := IntToStr(Main.cbSmokeFidelity.ItemIndex+1)
+    if Params[i].Name = 'multisampling' then Params[i].Value := IntToStr(Main.cbMultisampling.ItemIndex) else
+    if Params[i].Name = 'convertmodels' then
+      Params[i].Value := frmSettingsAdv.cbConvertmodels.Text
     else
-    if Params[i].Name = 'anisotropicfiltering'  then
+    if Params[i].Name = 'gfx.smoke.fidelity' then Params[i].Value := IntToStr(Main.cbSmokeFidelity.ItemIndex+1)
+    else
+    if Params[i].Name = 'anisotropicfiltering' then
     begin
       case Main.cbAnisotropicfiltering.ItemIndex of
         0: Params[i].Value := '1';
@@ -1195,6 +1201,19 @@ begin
     Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
 
   Settings.SaveToFile(Util.DIR + 'eu07_input-keyboard.ini');
+end;
+
+procedure TSettings.ChangeHDR(const Reinhard:Boolean=True);
+begin
+  try
+    if Reinhard then
+      CopyFile(PChar(Util.Dir + 'starter\Reinhard.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False)
+    else
+      CopyFile(PChar(Util.Dir + 'starter\ACESFilm.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False);
+  except
+    on E: Exception do
+      ShowMessage('Wyst¹pi³ b³¹d przy próbie zmiany algorytmu. Szczegó³y b³êdu: ' + E.Message);
+  end;
 end;
 
 end.
