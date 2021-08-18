@@ -873,10 +873,18 @@ begin
     if (Train.Vehicles[SelVehicle+SkipMultiple-1].Texture <> nil)
        and (Train.Vehicles[SelVehicle+SkipMultiple].Texture <> nil) then
     begin
-      if Train.Vehicles[SelVehicle+SkipMultiple-1].Texture.ID = Train.Vehicles[SelVehicle+SkipMultiple].Texture.PrevTexID then
-        Inc(SkipMultiple)
+      if Train.Vehicles[SelVehicle+SkipMultiple-1].Dist >= 0 then
+      begin
+        if Train.Vehicles[SelVehicle+SkipMultiple-1].Texture.ID = Train.Vehicles[SelVehicle+SkipMultiple].Texture.PrevTexID then
+          Inc(SkipMultiple)
+        else
+          Break;
+      end
       else
-        Break;
+        if Train.Vehicles[SelVehicle+SkipMultiple-1].Texture.ID = Train.Vehicles[SelVehicle+SkipMultiple].Texture.NextTexID then
+          Inc(SkipMultiple)
+        else
+          Break;
     end
     else
       Break;
@@ -1511,7 +1519,7 @@ end;
 
 function TMain.PrepareTrainset(const Vehicles:TObjectList<TVehicle>):TStringList;
 var
-  i, y, Coupler : Integer;
+  i, y : Integer;
   Indexes : TList<Integer>;
 begin
   Result := TStringList.Create;
@@ -1525,11 +1533,7 @@ begin
     begin
       Indexes := GetMultiple(Vehicles,i);
 
-      Coupler := Vehicles[Indexes.First].Coupler;
-      Vehicles[Indexes.First].Coupler := Vehicles[Indexes.Last].Coupler;
-      Vehicles[Indexes.Last].Coupler  := Coupler;
-
-      for y := Indexes.Count-1 downto 0 do
+      for y := 0 to Indexes.Count-1 do
         Result.Add(PrepareNode(Vehicles[Indexes[y]]));
 
       Inc(i,Indexes.Count-1);
@@ -1992,17 +1996,28 @@ begin
       ReverseMultiple
     else
       ReverseMultiple(0);
+
+  DrawTrain(Train);
 end;
 
 procedure TMain.ReverseMultiple(const Value:Integer=-1);
 var
   Indexes : TList<Integer>;
-  i : Integer;
+  i, Coupler : Integer;
 begin
   Indexes := GetMultiple(Train.Vehicles,SelVehicle);
 
   for i := 0 to Indexes.Count-1 do
     Train.Vehicles[Indexes[i]].Dist := Value;
+
+  Indexes.Sort;
+
+  for i := 0 to (Indexes.Count div 2) - 1 do
+    Train.Vehicles.Exchange(Indexes.First+i,Indexes.Last-i);
+
+  Coupler := Train.Vehicles[Indexes.First].Coupler;
+  Train.Vehicles[Indexes.First].Coupler := Train.Vehicles[Indexes.Last].Coupler;
+  Train.Vehicles[Indexes.Last].Coupler  := Coupler;
 end;
 
 function TMain.GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
@@ -2013,23 +2028,42 @@ begin
   Result.Add(Index);
 
   if Vehicles[Index].Texture <> nil then
-  begin
-    i := 0;
-    while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
-      and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
-      begin
-        Result.Add(Index-i-1);
-        Inc(i);
-      end;
+    if Vehicles[Index].Dist >= 0 then
+    begin
+      i := 0;
+      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
+        and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
+        begin
+          Result.Add(Index-i-1);
+          Inc(i);
+        end;
 
-    i := 0;
-    while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
-      and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
-      begin
-        Result.Add(Index+i+1);
-        Inc(i);
-      end;
-  end;
+      i := 0;
+      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
+        and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
+        begin
+          Result.Add(Index+i+1);
+          Inc(i);
+        end;
+    end
+    else
+    begin
+      i := 0;
+      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
+        and (Vehicles[Index-i].Texture.NextTexID = Vehicles[Index-i-1].Texture.ID) do
+        begin
+          Result.Add(Index-i-1);
+          Inc(i);
+        end;
+
+      i := 0;
+      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
+        and (Vehicles[Index+i].Texture.PrevTexID = Vehicles[Index+i+1].Texture.ID) do
+        begin
+          Result.Add(Index+i+1);
+          Inc(i);
+        end;
+    end
 end;
 
 procedure TMain.chSoundenabledClick(Sender: TObject);
@@ -2748,7 +2782,12 @@ begin
   if Train <> nil then
   begin
     if Train.Vehicles.Count > 0 then
-      SelVehicle := 0
+    begin
+      if Train.Vehicles.Last.CabOccupancy in [coHeadDriver,coRearDriver] then
+        SelVehicle := Train.Vehicles.Count-1
+      else
+        SelVehicle := 0;
+    end
     else
       SelVehicle := -1;
 
@@ -2895,7 +2934,10 @@ begin
 
   cbDriverType.ItemIndex := Ord(Vehicle.CabOccupancy);
 
+  chReversed.OnClick := nil;
   chReversed.Checked := Vehicle.Dist = -1;
+  chReversed.OnClick := chReversedClick;
+
   chRefAmbientTemp.Checked := Vehicle.ThermoDynamic;
   cbLoadType.ItemIndex := cbLoadType.Items.IndexOf(Vehicle.LoadType);
 
@@ -3120,6 +3162,16 @@ begin
       Image.Tag := i;
       Image.Name := 'Image' + IntToStr(i);
       Image.Picture.Bitmap.Assign(PaintVehicle(Train.Vehicles[i].Texture,Train.Vehicles[i].ModelID));
+
+      if Train.Vehicles[i].Dist = -1 then
+      begin
+        Image.Canvas.Font.Name := 'Webdings';
+        Image.Canvas.Font.Size := 16;
+        Image.Canvas.Brush.Style := bsClear;
+        Image.Canvas.Font.Color := clWhite;
+        Image.Canvas.TextOut(5,5,'q');
+      end;
+
       Image.Width := Image.Picture.Bitmap.Width * MiniFactor;
       Inc(ImageWidth,Image.Width);
     end;
@@ -3142,6 +3194,7 @@ begin
   if Image <> nil then
   begin
     Image.Picture.Bitmap.Assign(PaintVehicle(Vehicle.Texture,Vehicle.ModelID));
+
     Image.Width := Image.Picture.Bitmap.Width * MiniFactor;
 
     if Vehicle.Number > 0 then

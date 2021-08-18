@@ -48,13 +48,14 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '16.08.2021'
+      Hint = '18.08.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.6'
+      Caption = 'Wersja: 7.6.1'
       ParentShowHint = False
       ShowHint = True
-      ExplicitWidth = 57
+      ExplicitLeft = 3
+      ExplicitTop = 33
     end
     object Label11: TLabel
       AlignWithMargins = True
@@ -205,6 +206,9 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.6.1 (18.08.2021)'
+        '*zmieniona obs'#322'uga odwracania pojazd'#243'w'
+        ''
         '7.6 (16.08.2021)'
         '*rozszerzona obs'#322'uga odwracania pojazd'#243'w'
         ''
@@ -238,12 +242,6 @@ object frmAbout: TfrmAbout
         '*zapami'#281'tywanie ustawienia opcji pomijania sk'#322'ad'#243'w'
         '*opcja zapisu rozszerzonego logu Startera'
         '*poprawione wczytywanie mas '#322'adunk'#243'w'
-        ''
-        '7.4 (20.05.2021)'
-        '*zmieniona obs'#322'uga i zapis zestaw'#243'w ustawie'#324
-        '*uniezale'#380'nienie wyszukiwania od znak'#243'w '
-        'diakrytycznych'
-        '*testowa opcja pomijania sk'#322'ad'#243'w dekoracyjnych'
         ''
         '...')
       ReadOnly = True
