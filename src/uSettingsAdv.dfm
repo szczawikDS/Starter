@@ -3,8 +3,8 @@ object frmSettingsAdv: TfrmSettingsAdv
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Ustawienia zaawansowane'
-  ClientHeight = 227
-  ClientWidth = 245
+  ClientHeight = 299
+  ClientWidth = 237
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,108 +21,98 @@ object frmSettingsAdv: TfrmSettingsAdv
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 239
-    Height = 221
+    Width = 231
+    Height = 293
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 0
-    ExplicitTop = 0
-    ExplicitWidth = 245
-    ExplicitHeight = 227
+    ExplicitLeft = -2
+    ExplicitTop = -2
     object chCompressTex: TCheckBox
       AlignWithMargins = True
       Left = 3
       Top = 30
-      Width = 233
+      Width = 225
       Height = 17
       Align = alTop
       Caption = 'Kompresja tekstur TGA'
       Checked = True
       State = cbChecked
       TabOrder = 0
-      ExplicitTop = 52
-      ExplicitWidth = 239
+      ExplicitWidth = 233
     end
     object chScaleSpeculars: TCheckBox
       AlignWithMargins = True
       Left = 3
       Top = 53
-      Width = 233
+      Width = 225
       Height = 17
       Align = alTop
       Caption = 'Skalowanie sk'#322'adowej specular'
       Checked = True
       State = cbChecked
       TabOrder = 1
-      ExplicitTop = 75
-      ExplicitWidth = 239
+      ExplicitWidth = 233
     end
     object chUseGLES: TCheckBox
       AlignWithMargins = True
       Left = 3
       Top = 76
-      Width = 233
+      Width = 225
       Height = 17
       Align = alTop
+      AllowGrayed = True
       Caption = 'U'#380'yj OpenGL ES'
-      Checked = True
-      State = cbChecked
+      State = cbGrayed
       TabOrder = 2
-      ExplicitTop = 98
-      ExplicitWidth = 239
+      ExplicitWidth = 233
     end
     object chShaderGamma: TCheckBox
       AlignWithMargins = True
       Left = 3
       Top = 99
-      Width = 233
+      Width = 225
       Height = 17
       Align = alTop
+      AllowGrayed = True
       Caption = 'Gamma w shaderach'
-      Checked = True
-      State = cbChecked
+      State = cbGrayed
       TabOrder = 3
-      ExplicitTop = 121
-      ExplicitWidth = 239
+      ExplicitWidth = 233
     end
     object chMipmaps: TCheckBox
       AlignWithMargins = True
       Left = 3
       Top = 122
-      Width = 233
+      Width = 225
       Height = 17
       Align = alTop
+      AllowGrayed = True
       Caption = 'Mipmapy ekran'#243'w'
-      Checked = True
-      State = cbChecked
+      State = cbGrayed
       TabOrder = 4
-      ExplicitTop = 144
-      ExplicitWidth = 239
+      ExplicitWidth = 233
     end
     object chIgnoreIrrevelant: TCheckBox
       AlignWithMargins = True
       Left = 3
       Top = 145
-      Width = 233
+      Width = 225
       Height = 17
       Align = alTop
       Caption = 'Nie wczytuj sk'#322'ad'#243'w-dekoracji'
       TabOrder = 5
-      ExplicitTop = 180
-      ExplicitWidth = 239
+      ExplicitWidth = 233
     end
     object pnlConvertModels: TPanel
       Left = 0
       Top = 0
-      Width = 239
+      Width = 231
       Height = 27
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 6
-      ExplicitLeft = -3
-      ExplicitTop = 19
-      ExplicitWidth = 245
+      ExplicitWidth = 239
       object lbe3d: TLabel
         AlignWithMargins = True
         Left = 3
@@ -147,7 +137,92 @@ object frmSettingsAdv: TfrmSettingsAdv
         Items.Strings = (
           '0'
           '143')
-        ExplicitLeft = 176
+      end
+    end
+    object pnlLegend: TPanel
+      Left = 0
+      Top = 193
+      Width = 231
+      Height = 100
+      Align = alBottom
+      BevelOuter = bvNone
+      Enabled = False
+      ShowCaption = False
+      TabOrder = 7
+      object lbLegend: TLabel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 225
+        Height = 13
+        Align = alTop
+        AutoSize = False
+        Caption = 'Legenda:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsItalic]
+        ParentFont = False
+        ExplicitLeft = 364
+        ExplicitWidth = 45
+      end
+      object CheckBox1: TCheckBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 22
+        Width = 225
+        Height = 17
+        Align = alTop
+        Caption = 'Opcja w'#322#261'czona'
+        Checked = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsItalic]
+        ParentFont = False
+        State = cbChecked
+        TabOrder = 0
+        ExplicitTop = 45
+        ExplicitWidth = 406
+      end
+      object CheckBox2: TCheckBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 45
+        Width = 225
+        Height = 17
+        Align = alTop
+        Caption = 'Opcja wy'#322#261'czona'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsItalic]
+        ParentFont = False
+        TabOrder = 1
+        ExplicitTop = 68
+        ExplicitWidth = 406
+      end
+      object CheckBox3: TCheckBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 68
+        Width = 225
+        Height = 17
+        Align = alTop
+        Caption = 'Opcja nieaktywna'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsItalic]
+        ParentFont = False
+        State = cbGrayed
+        TabOrder = 2
+        ExplicitTop = 91
+        ExplicitWidth = 406
       end
     end
   end

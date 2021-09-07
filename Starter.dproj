@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Starter.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -109,10 +109,10 @@
         <VerInfo_Locale>1045</VerInfo_Locale>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
         <VerInfo_MajorVer>7</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.6.1.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.6.3.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
         <VerInfo_MinorVer>6</VerInfo_MinorVer>
-        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Release>3</VerInfo_Release>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

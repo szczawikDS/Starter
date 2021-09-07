@@ -25,7 +25,7 @@ interface
 uses Classes, uParser;
 
 type
-  TDepot = class(TParser)
+  TDepot = class(TLexParser)
   public
     class procedure ReadDepot(const Path:string='');
     class procedure SaveDepot;

@@ -80,7 +80,7 @@ type
 implementation
 
 uses uMain, uSettingsAdv, WinTypes, uLanguages, SysUtils, Vcl.Forms,
-     Dialogs, DateUtils, uUpdater, uUtilities;
+     Dialogs, DateUtils, uUpdater, uUtilities, StdCtrls;
 
 constructor TSettings.Create;
 begin
@@ -173,6 +173,8 @@ var
   i, y : Integer;
   Resolution : string;
 begin
+  Main.cbResolution.Items.BeginUpdate;
+
   i := 0;
   while EnumDisplaySettings(nil, i, DM) do
   begin
@@ -194,6 +196,8 @@ begin
         Main.cbResolution.Items.Add(Format('%d x %d', [DM.dmPelsWidth, DM.dmPelsHeight]));
     end;
   end;
+
+  Main.cbResolution.Items.EndUpdate;
 end;
 
 procedure TSettings.ReadKeyboard;
@@ -440,6 +444,15 @@ begin
       if Params[i].Name = 'compresstex' then
         frmSettingsAdv.chCompressTex.Checked := Params[i].Value = 'yes'
       else
+      if Params[i].Name = 'gfx.usegles' then
+        frmSettingsAdv.chUseGLES.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'gfx.shadergamma' then
+        frmSettingsAdv.chShaderGamma.Checked := Params[i].Value = 'yes'
+      else
+      if Params[i].Name = 'python.mipmaps' then
+        frmSettingsAdv.chMipmaps.Checked := Params[i].Value = 'yes'
+      else
       if Params[i].Name = 'debuglog' then
       begin
         if Params[i].Value = 'yes' then ValInt := 3 else
@@ -519,6 +532,9 @@ begin
       else
       if Params[i].Name = 'sound.volume.ambient' then
         Main.tbGlobalSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
+      else
+      if Params[i].Name = 'gfx.shadow.angle.min' then
+        Main.tbShadowSize.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'gfx.reflections.framerate' then
       begin
@@ -600,6 +616,12 @@ begin
         else
         if Params[i].Value = 'off' then Main.cbPyscreenrendererpriority.ItemIndex := 4;
       end
+      else
+      if Params[i].Name = 'gfx.drawrange.factor.max' then
+        Main.cbDrawRange.ItemIndex := Round(StrToFloat(Params[i].Value))-1
+      else
+      if Params[i].Name = 'gfx.shadow.rank.cutoff' then
+        Main.cbShadowRank.ItemIndex := Round(StrToFloat(Params[i].Value))-1
       else
       if Params[i].Name = 'gfx.framebuffer.fidelity' then
         Main.cbBuffer.ItemIndex := StrToInt(Params[i].Value)-1
@@ -925,6 +947,12 @@ begin
   FindParameter('gfx.postfx.chromaticaberration.enabled','(domyslnie no) Efekt aberracji chromatycznej');
   FindParameter('compresstex','(yes) ¿¹da od sterownika kompresji ³adowanych tekstur tga');
   FindParameter('gfx.reflections.fidelity','(0) malowanie odbic. 1: +modele stat. 2:+modele stat. i pojazdy');
+  FindParameter('python.mipmaps','(yes) Tworzenie mipmap dla tekstur generowanych skryptami pythona');
+  FindParameter('gfx.usegles','');
+  FindParameter('gfx.shadergamma','');
+  FindParameter('gfx.drawrange.factor.max','');
+  FindParameter('gfx.shadow.rank.cutoff','');
+  FindParameter('gfx.shadow.angle.min','');
 
   if Main.cbMaxcabtexturesize.ItemIndex > 0 then
     FindParameter('maxcabtexturesize','skalowanie tekstur kabiny do podanego rozmiaru')
@@ -938,6 +966,18 @@ begin
     FindParameter('fpslimit','ograniczenie fps')
   else
     RemoveParam('fpslimit');
+
+  if frmSettingsAdv.chUseGLES.State = cbGrayed then
+    RemoveParam('gfx.usegles');
+
+  if frmSettingsAdv.chShaderGamma.State = cbGrayed then
+    RemoveParam('gfx.shadergamma');
+
+  if frmSettingsAdv.chMipmaps.State = cbGrayed then
+    RemoveParam('python.mipmaps');
+
+  if frmSettingsAdv.chUseGLES.State = cbGrayed then
+    RemoveParam('gfx.usegles');
 
   if Main.cbBuffer.ItemIndex < 3 then
     FindParameter('gfx.framebuffer.fidelity')
@@ -1010,6 +1050,9 @@ begin
     if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled'  then SetCheckState(Main.chChromaticAberration.Checked,i) else
     if Params[i].Name = 'gfx.skippipeline'              then SetCheckState(Main.chSkipPipeline.Checked,i) else
     if Params[i].Name = 'compresstex'                   then SetCheckState(frmSettingsAdv.chCompressTex.Checked,i) else
+    if Params[i].Name = 'gfx.usegles'                   then SetCheckState(frmSettingsAdv.chUseGLES.Checked,i) else
+    if Params[i].Name = 'gfx.shadergamma'               then SetCheckState(frmSettingsAdv.chShaderGamma.Checked,i) else
+    if Params[i].Name = 'python.mipmaps'                then SetCheckState(frmSettingsAdv.chMipmaps.Checked,i) else
     if Params[i].Name = 'mousescale' then
     begin
       if Main.chMouseInversionHorizontal.Checked then
@@ -1058,6 +1101,9 @@ begin
     else
     if Params[i].Name = 'sound.volume.ambient' then
       Params[i].Value := FloatToStr(Main.tbGlobalSounds.Position / 10)
+    else
+    if Params[i].Name = 'gfx.shadow.angle.min' then
+      Params[i].Value := FloatToStr(Main.tbShadowSize.Position / 10)
     else
     if Params[i].Name = 'maxtexturesize' then
     begin
@@ -1148,6 +1194,16 @@ begin
         3: Params[i].Value := Params[i].Value + ' 250 250 300';
         4: Params[i].Value := Params[i].Value + ' 250 400 300';
       end;
+    end
+    else
+    if Params[i].Name = 'gfx.drawrange.factor.max' then
+    begin
+      Params[i].Value := IntToStr(Main.cbDrawRange.ItemIndex+1);
+    end
+    else
+    if Params[i].Name = 'gfx.shadow.rank.cutoff' then
+    begin
+      Params[i].Value := IntToStr(Main.cbShadowRank.ItemIndex+1);
     end
     else
     if Params[i].Name = 'debuglog' then

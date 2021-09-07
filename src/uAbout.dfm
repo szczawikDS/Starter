@@ -48,14 +48,13 @@ object frmAbout: TfrmAbout
       Top = 36
       Width = 300
       Height = 13
-      Hint = '18.08.2021'
+      Hint = '08.09.2021'
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.6.1'
+      Caption = 'Wersja: 7.7'
       ParentShowHint = False
       ShowHint = True
-      ExplicitLeft = 3
-      ExplicitTop = 33
+      ExplicitWidth = 57
     end
     object Label11: TLabel
       AlignWithMargins = True
@@ -206,6 +205,16 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.7 (08.09.2021)'
+        '*reorganizacja ustawie'#324
+        ''
+        '7.6.3 (02.09.2021)'
+        '*poprawione ustawienia zaawansowane'
+        ''
+        '7.6.2 (23.08.2021)'
+        '*wyszukiwarka w klawiszologii'
+        '*odwracanie w poziomie miniaturek'
+        ''
         '7.6.1 (18.08.2021)'
         '*zmieniona obs'#322'uga odwracania pojazd'#243'w'
         ''
@@ -228,20 +237,6 @@ object frmAbout: TfrmAbout
         ''
         '7.5.3 (01.07.2021)'
         '*poprawione dodawanie pojazd'#243'w'
-        ''
-        '7.5.2 (29.06.2021)'
-        '*przenoszenie pojazd'#243'w wielocz'#322'onowych'
-        '*blokowane przenoszenie w pojazd wielocz'#322'onowy'
-        '*poprawiona obs'#322'uga MaxLoad w trainsecie'
-        ''
-        '7.5.1 (21.06.2021)'
-        '*poprawione auto-ko'#324'czenie programu'
-        ''
-        '7.5 (20.06.2021)'
-        '*obs'#322'uga MaxLoad w trainsecie'
-        '*zapami'#281'tywanie ustawienia opcji pomijania sk'#322'ad'#243'w'
-        '*opcja zapisu rozszerzonego logu Startera'
-        '*poprawione wczytywanie mas '#322'adunk'#243'w'
         ''
         '...')
       ReadOnly = True

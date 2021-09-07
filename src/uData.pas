@@ -23,7 +23,7 @@ unit uData;
 interface
 
 uses System.Generics.Collections, System.Generics.Defaults, uStructures, uParser,
-     uUtilities;
+     uUtilities, Classes;
 
 type
 
@@ -41,6 +41,9 @@ end;
 
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 function GetControlType(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):string;
+function GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
+function StaffedTrain(const Train:TTrain):Boolean;
+function PrepareTrainset(const Vehicles:TObjectList<TVehicle>):TStringList;
 function PrepareTrainsetDesc(const Trainset:TTrain):string;
 function PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
 function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):TTrainParams;
@@ -122,6 +125,84 @@ begin
       Result := i;
       Break;
     end;
+end;
+
+function GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
+var
+  i : Integer;
+begin
+  Result := TList<Integer>.Create;
+  Result.Add(Index);
+
+  if Vehicles[Index].Texture <> nil then
+    if Vehicles[Index].Dist >= 0 then
+    begin
+      i := 0;
+      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
+        and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
+        begin
+          Result.Add(Index-i-1);
+          Inc(i);
+        end;
+
+      i := 0;
+      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
+        and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
+        begin
+          Result.Add(Index+i+1);
+          Inc(i);
+        end;
+    end
+    else
+    begin
+      i := 0;
+      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
+        and (Vehicles[Index-i].Texture.NextTexID = Vehicles[Index-i-1].Texture.ID) do
+        begin
+          Result.Add(Index-i-1);
+          Inc(i);
+        end;
+
+      i := 0;
+      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
+        and (Vehicles[Index+i].Texture.PrevTexID = Vehicles[Index+i+1].Texture.ID) do
+        begin
+          Result.Add(Index+i+1);
+          Inc(i);
+        end;
+    end
+end;
+
+function StaffedTrain(const Train:TTrain):Boolean;
+begin
+  Result := (Train.Vehicles.Count > 0) and
+             ((Train.Vehicles.First.CabOccupancy in [coHeadDriver,coRearDriver])
+            or (Train.Vehicles.Last.CabOccupancy in [coHeadDriver,coRearDriver]));
+end;
+
+function PrepareTrainset(const Vehicles:TObjectList<TVehicle>):TStringList;
+var
+  i, y : Integer;
+  Indexes : TList<Integer>;
+begin
+  Result := TStringList.Create;
+
+  i := 0;
+  while i < Vehicles.Count do
+  begin
+    if Vehicles[i].Dist >= 0 then
+      Result.Add(PrepareNode(Vehicles[i]))
+    else
+    begin
+      Indexes := GetMultiple(Vehicles,i);
+
+      for y := 0 to Indexes.Count-1 do
+        Result.Add(PrepareNode(Vehicles[Indexes[y]]));
+
+      Inc(i,Indexes.Count-1);
+    end;
+    Inc(i);
+  end;
 end;
 
 function PrepareTrainsetDesc(const Trainset:TTrain):string;
@@ -238,7 +319,7 @@ end;
 class procedure TData.Load;
 begin
   Data := TData.Create;
-  TParser.LoadData;
+  TLexParser.LoadData;
 end;
 
 function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):TTrainParams;

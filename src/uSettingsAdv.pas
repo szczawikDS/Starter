@@ -38,6 +38,11 @@ type
     pnlConvertModels: TPanel;
     cbConvertmodels: TComboBox;
     lbe3d: TLabel;
+    pnlLegend: TPanel;
+    CheckBox1: TCheckBox;
+    lbLegend: TLabel;
+    CheckBox2: TCheckBox;
+    CheckBox3: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   end;

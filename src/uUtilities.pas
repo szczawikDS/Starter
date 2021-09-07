@@ -269,8 +269,8 @@ end;
 
 constructor TUtil.Create;
 begin
-  DIR := ExtractFilePath(ParamStr(0));
-  //DIR := 'G:\MaSzyna\pctga\';
+  //DIR := ExtractFilePath(ParamStr(0));
+  DIR := 'G:\MaSzyna\pctga\';
   Errors := TStringList.Create;
 
   SetFormatSettings;

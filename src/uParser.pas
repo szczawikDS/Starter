@@ -26,7 +26,7 @@ uses CastaliaPasLexTypes, uStructures, uLexer, Classes;
 
 type
 
-  TParser = class(TLexer)
+  TLexParser = class(TLexer)
   public
     class procedure LoadData;
     class function ChangeConfig(const Text:string;const Config:TConfig):string;
@@ -73,9 +73,9 @@ begin
 end;
 {$ENDIF}
 
-class procedure TParser.LoadData;
+class procedure TLexParser.LoadData;
 begin
-  with TParser.Create do
+  with TLexParser.Create do
   try
     LoadModels;
     LoadPhysics;
@@ -86,7 +86,7 @@ begin
   end;
 end;
 
-procedure TParser.LoadModels;
+procedure TLexParser.LoadModels;
 var
   SR, SR2 : TSearchRec;
   Ilosc, Ilosc2 : Integer;
@@ -119,7 +119,7 @@ begin
   end;
 end;
 
-procedure TParser.LoadSceneries;
+procedure TLexParser.LoadSceneries;
 var
   SR : TSearchRec;
   Ilosc : Integer;
@@ -140,12 +140,12 @@ begin
   end;
 end;
 
-class function TParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
+class function TLexParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
 begin
   try
-    TParser.Create;
+    TLexParser.Create;
 
-    with TParser.Create do
+    with TLexParser.Create do
     try
       Lexer.Origin := PChar(Trainset);
       Lexer.Init;
@@ -161,7 +161,7 @@ begin
   end;
 end;
 
-function TParser.ParseTrain:TTrain;
+function TLexParser.ParseTrain:TTrain;
 begin
   Result := TTrain.Create;
   try
@@ -214,7 +214,7 @@ begin
   end;
 end;
 
-procedure TParser.FindTexture(var Vehicle:TVehicle);
+procedure TLexParser.FindTexture(var Vehicle:TVehicle);
 var
   i, y : Integer;
   Found : Boolean;
@@ -250,7 +250,7 @@ begin
   end;
 end;
 
-procedure TParser.LoadWeights;
+procedure TLexParser.LoadWeights;
 var
   LoadWeights : TStringList;
   Load : TLoad;
@@ -286,7 +286,7 @@ begin
   end;
 end;
 
-function TParser.ParseVehicle(const TrainSet:Boolean=True):TVehicle;
+function TLexParser.ParseVehicle(const TrainSet:Boolean=True):TVehicle;
 var
   Position : Integer;
 begin
@@ -368,7 +368,7 @@ begin
   end;
 end;
 
-function TParser.GetBrakeValue(const Settings:string;Pos:Integer):string;
+function TLexParser.GetBrakeValue(const Settings:string;Pos:Integer):string;
 begin
   result := '';
   while (IsNumber(Settings[Pos])) and (Pos <= Settings.Length) do
@@ -378,7 +378,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseCoupler(var Vehicle : TVehicle);
+procedure TLexParser.ParseCoupler(var Vehicle : TVehicle);
 var
   i : Integer;
   Wheels, Brakes : Boolean;
@@ -463,7 +463,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseConfig(var Config: TConfig);
+procedure TLexParser.ParseConfig(var Config: TConfig);
 var
   Token : string;
 begin
@@ -513,13 +513,13 @@ begin
   end;
 end;
 
-class function TParser.ChangeConfig(const Text:string;const Config:TConfig):string;
+class function TLexParser.ChangeConfig(const Text:string;const Config:TConfig):string;
 var
   EndPointer, ConfigPos : integer;
   AtmoStr, Token : string;
 begin
   try
-    with TParser.Create do
+    with TLexParser.Create do
     try
       Lexer.Origin := PChar(Text);
       Lexer.Init;
@@ -614,7 +614,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseAtmo(var Config:TConfig);
+procedure TLexParser.ParseAtmo(var Config:TConfig);
 begin
   try
     Lexer.NextNoJunk;
@@ -643,7 +643,7 @@ begin
   end;
 end;
 
-function TParser.ScenarioName(const Path:string):TScenario;
+function TLexParser.ScenarioName(const Path:string):TScenario;
 var
   Plik : TStringList;
 begin
@@ -686,14 +686,14 @@ begin
   end;
 end;
 
-class procedure TParser.ParseScenario(SCN:TScenario);
+class procedure TLexParser.ParseScenario(SCN:TScenario);
 var
   Plik, FirstInit, IncFirstInit : TStringList;
   FirstInitPos : integer;
   IncludeStr : string;
   Config : TConfig;
 begin
-  with TParser.Create do
+  with TLexParser.Create do
   try
     try
       Plik := TStringList.Create;
@@ -784,7 +784,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseTrainset(var Scenariusz:TScenario;const TrainFile:TStringList);
+procedure TLexParser.ParseTrainset(var Scenariusz:TScenario;const TrainFile:TStringList);
 var
   Pociag : TTrain;
 begin
@@ -828,7 +828,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseTextureModels(var Tex:TTexture);
+procedure TLexParser.ParseTextureModels(var Tex:TTexture);
 var
   Sign : Char;
   Model : TModel;
@@ -880,7 +880,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseTextures(const Path:string);
+procedure TLexParser.ParseTextures(const Path:string);
 var
   Plik : TStringList;
   i, y, Crew, CrewCount : Integer;
@@ -1025,7 +1025,7 @@ begin
   end;
 end;
 
-procedure TParser.ParseTextDesc(Tex:TTexture);
+procedure TLexParser.ParseTextDesc(Tex:TTexture);
 var
   Par : TStringList;
 begin
@@ -1052,7 +1052,7 @@ begin
   end;
 end;
 
-function TParser.IsPhysics(const Dir,Name:string):TPhysics;
+function TLexParser.IsPhysics(const Dir,Name:string):TPhysics;
 var
   i : Integer;
 begin
@@ -1066,7 +1066,7 @@ begin
     end;
 end;
 
-procedure TParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
+procedure TLexParser.ParsePhysics(Physics:TPhysics;Path:string='';const aParams:TStringList=nil);
 var
   PhysicsFile : TStringList;
   Section : TPhysicsSections;
@@ -1231,7 +1231,7 @@ begin
   end;
 end;
 
-procedure TParser.LoadPhysics;
+procedure TLexParser.LoadPhysics;
 var
   i : Integer;
 begin

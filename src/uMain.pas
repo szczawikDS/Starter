@@ -84,16 +84,7 @@ type
     actCheckUpdate: TAction;
     lbVersion: TLabel;
     tsKeyboard: TTabSheet;
-    cbKey: TComboBox;
-    btnSaveKeyboard: TButton;
     actSaveKeyboard: TAction;
-    btnKeybard: TButton;
-    actKeyboard: TAction;
-    KeysGrid: TStringGrid;
-    pnlKeyEdit: TPanel;
-    cbKey1: TComboBox;
-    cbKey2: TComboBox;
-    cbKey3: TComboBox;
     pcSettings: TPageControl;
     tsMain: TTabSheet;
     tsGraphics: TTabSheet;
@@ -105,18 +96,6 @@ type
     chInactivepause: TCheckBox;
     chPause: TCheckBox;
     cbMouseScale: TComboBox;
-    pnlGraphic: TPanel;
-    pnlGraphicLeft: TPanel;
-    Label7: TLabel;
-    Label11: TLabel;
-    Label9: TLabel;
-    Label5: TLabel;
-    Label14: TLabel;
-    cbMaxtexturesize: TComboBox;
-    cbSplinefidelity: TComboBox;
-    cbAnisotropicfiltering: TComboBox;
-    cbMultisampling: TComboBox;
-    cbResolution: TComboBox;
     pcConfig: TPageControl;
     pnlConfig: TPanel;
     Panel7: TPanel;
@@ -216,34 +195,7 @@ type
     tsDepoTrains: TTabSheet;
     btnRemoveFromDepot: TButton;
     lbDepot: TListBox;
-    Panel1: TPanel;
-    Label38: TLabel;
-    chGfxresourcesweep: TCheckBox;
-    chGfxresourcemove: TCheckBox;
-    chUsevbo: TCheckBox;
-    chVsync: TCheckBox;
-    chShadows: TCheckBox;
-    chSmoke: TCheckBox;
-    cbSmokeFidelity: TComboBox;
-    chSkipRendering: TCheckBox;
-    Panel12: TPanel;
-    Label18: TLabel;
-    Label40: TLabel;
-    Label36: TLabel;
-    Label43: TLabel;
-    Label53: TLabel;
-    cbReflectionsFramerate: TComboBox;
-    chExtraEffects: TCheckBox;
-    chShadowMap: TCheckBox;
-    cbGfxrenderer: TComboBox;
-    cbShadowMapSize: TComboBox;
-    cbShadowRange: TComboBox;
-    cbShadowsCabRange: TComboBox;
-    chChromaticAberration: TCheckBox;
-    chMotionBlur: TCheckBox;
-    chEnvmap: TCheckBox;
     cbLang: TComboBox;
-    chSkipPipeline: TCheckBox;
     pnlTime: TPanel;
     dtTime: TDateTimePicker;
     Splitter: TSplitter;
@@ -324,21 +276,11 @@ type
     edUpdateInterval: TSpinEdit;
     pnlLeftMargin1: TPanel;
     pnlLeftMargin2: TPanel;
-    pnlLeftMargin3: TPanel;
-    Panel22: TPanel;
-    Label35: TLabel;
-    chPythonThreadedUpload: TCheckBox;
-    chPythonEnabled: TCheckBox;
     btnCurrentTime: TButton;
     actCurrentTime: TAction;
     chMouseInversionVertical: TCheckBox;
     chMouseInversionHorizontal: TCheckBox;
     miRemoveVehicle: TMenuItem;
-    chFullScreenWindowed: TCheckBox;
-    lbReflectionsFidelity: TLabel;
-    cbReflectionsFidelity: TComboBox;
-    lbMaxCabTexSize: TLabel;
-    cbMaxcabtexturesize: TComboBox;
     tbGlobalSounds: TTrackBar;
     tbPositionalsSounds: TTrackBar;
     tbVehiclesSounds: TTrackBar;
@@ -383,26 +325,17 @@ type
     pnlSceneryCaption: TPanel;
     btnRandomTex: TButton;
     actRandomTex: TAction;
-    Panel3: TPanel;
-    Label4: TLabel;
-    edFieldofview: TEdit;
     Sortujwedug1: TMenuItem;
     miSortByVehicleName: TMenuItem;
     miSortByTrackName: TMenuItem;
     chTrainMan: TCheckBox;
     actPreset: TAction;
-    chAngle: TCheckBox;
     actANGLE: TAction;
     actSetNumber: TAction;
     chAutoExpandTree: TCheckBox;
-    btnKeyboard: TButton;
     actKeyboardView: TAction;
     chHideArchival: TCheckBox;
     actHideArchival: TAction;
-    lbBufferRes: TLabel;
-    cbBuffer: TComboBox;
-    Label10: TLabel;
-    cbPyscreenrendererpriority: TComboBox;
     pnlRightMargin: TPanel;
     actPresetSave: TAction;
     pnlSettingsSet: TPanel;
@@ -413,12 +346,90 @@ type
     actRandomLoad: TAction;
     Losowyadunekdlapocigu1: TMenuItem;
     chLogExt: TCheckBox;
+    actFPS: TAction;
+    actSearchKey: TAction;
+    sbGraphic: TScrollBox;
+    pnlGraphic: TPanel;
+    Panel1: TPanel;
+    lbReflectionsFidelity: TLabel;
+    chShadows: TCheckBox;
+    cbReflectionsFidelity: TComboBox;
+    Panel3: TPanel;
+    Label4: TLabel;
+    edFieldofview: TEdit;
     pnlFPS: TPanel;
     chFPSLimiter: TCheckBox;
     seFPSLimit: TSpinEdit;
-    actFPS: TAction;
+    Panel12: TPanel;
+    Label40: TLabel;
     lbHDR: TLabel;
+    chExtraEffects: TCheckBox;
+    cbGfxrenderer: TComboBox;
+    chChromaticAberration: TCheckBox;
+    chMotionBlur: TCheckBox;
+    chEnvmap: TCheckBox;
+    chSkipPipeline: TCheckBox;
+    chAngle: TCheckBox;
     cbHDR: TComboBox;
+    Panel22: TPanel;
+    Label35: TLabel;
+    Label10: TLabel;
+    chPythonThreadedUpload: TCheckBox;
+    chPythonEnabled: TCheckBox;
+    cbPyscreenrendererpriority: TComboBox;
+    pnlGraphicLeft: TPanel;
+    Label7: TLabel;
+    Label11: TLabel;
+    Label9: TLabel;
+    Label5: TLabel;
+    Label14: TLabel;
+    lbMaxCabTexSize: TLabel;
+    lbBufferRes: TLabel;
+    cbMaxtexturesize: TComboBox;
+    cbSplinefidelity: TComboBox;
+    cbAnisotropicfiltering: TComboBox;
+    cbMultisampling: TComboBox;
+    cbResolution: TComboBox;
+    chFullScreenWindowed: TCheckBox;
+    cbMaxcabtexturesize: TComboBox;
+    cbBuffer: TComboBox;
+    tsControl: TTabSheet;
+    cbKey: TComboBox;
+    btnSaveKeyboard: TButton;
+    KeysGrid: TStringGrid;
+    pnlKeyEdit: TPanel;
+    cbKey1: TComboBox;
+    cbKey2: TComboBox;
+    cbKey3: TComboBox;
+    btnKeyboard: TButton;
+    pnlKeySearch: TPanel;
+    lbCaptionFind: TLabel;
+    edSearchKey: TEdit;
+    btnSearchKey: TButton;
+    lbDrawRange: TLabel;
+    cbDrawRange: TComboBox;
+    lbShadowRank: TLabel;
+    cbShadowRank: TComboBox;
+    lbShadowSize: TLabel;
+    tbShadowSize: TTrackBar;
+    chUsevbo: TCheckBox;
+    chGfxresourcesweep: TCheckBox;
+    Label18: TLabel;
+    cbReflectionsFramerate: TComboBox;
+    Label36: TLabel;
+    cbShadowMapSize: TComboBox;
+    lbShadowRange: TLabel;
+    cbShadowRange: TComboBox;
+    lbShadowsCabRange: TLabel;
+    cbShadowsCabRange: TComboBox;
+    chShadowMap: TCheckBox;
+    chGfxresourcemove: TCheckBox;
+    chVsync: TCheckBox;
+    chSmoke: TCheckBox;
+    Label38: TLabel;
+    cbSmokeFidelity: TComboBox;
+    chSkipRendering: TCheckBox;
+    lbSettingsInfo: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -456,7 +467,6 @@ type
     procedure actCheckUpdateExecute(Sender: TObject);
     procedure lbVersionClick(Sender: TObject);
     procedure actSaveKeyboardExecute(Sender: TObject);
-    procedure actKeyboardExecute(Sender: TObject);
     procedure KeysGridClick(Sender: TObject);
     procedure cbKey1Change(Sender: TObject);
     procedure cbKey2Change(Sender: TObject);
@@ -557,6 +567,10 @@ type
     procedure lbTexStationMouseEnter(Sender: TObject);
     procedure actFPSExecute(Sender: TObject);
     procedure cbHDRChange(Sender: TObject);
+    procedure actSearchKeyExecute(Sender: TObject);
+    procedure actSearchKeyUpdate(Sender: TObject);
+    procedure pcSettingsChange(Sender: TObject);
+    procedure actRandomLoadUpdate(Sender: TObject);
   private
     SCN : TScenario;
 
@@ -623,10 +637,8 @@ type
     procedure ViewKeyOnKeyboard;
     procedure LoadMini(const Name: string);
     function CheckMoveVehicle(const FromPos, ToPos: Integer): Boolean;
-    function GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer): TList<Integer>;
     procedure ReverseMultiple(const Value:Integer=-1);
-    function PrepareTrainset(const Vehicles: TObjectList<TVehicle>): TStringList;
-    function StaffedTrain(const Train: TTrain): Boolean;
+    procedure FlipBitmap(Bitmap:TBitmap;const Flip:Boolean);
   public
     Settings    : TSettings;
     MiniFactor  : Integer;
@@ -1096,6 +1108,9 @@ begin
   chMouseInversionHorizontal.Checked      := False;
   chFPSLimiter.Checked                    := False;
   frmSettingsAdv.chCompressTex.Checked    := True;
+  frmSettingsAdv.chMipmaps.State          := cbGrayed;
+  frmSettingsAdv.chUseGLES.State          := cbGrayed;
+  frmSettingsAdv.chShaderGamma.State      := cbGrayed;
 
   cbMouseScale.ItemIndex                := 0;
   cbLang.ItemIndex                      := 0;
@@ -1105,6 +1120,7 @@ begin
   tbVehiclesSounds.Position             := 10;
   tbPositionalsSounds.Position          := 10;
   tbGlobalSounds.Position               := 10;
+  tbShadowSize.Position                 := 0;
 
   cbReflectionsFidelity.ItemIndex       := 0;
 
@@ -1121,6 +1137,8 @@ begin
   cbGfxrenderer.ItemIndex               := 0;
   cbShadowMapSize.ItemIndex             := 1;
   cbShadowRange.ItemIndex               := 4;
+  cbDrawRange.ItemIndex                 := 0;
+  cbShadowRank.ItemIndex                := 2;
 
   edFriction.Text     := '1.0';
   edFieldofview.Text  := '45';
@@ -1142,13 +1160,6 @@ end;
 procedure TMain.actFPSExecute(Sender: TObject);
 begin
   seFPSLimit.Enabled := chFPSLimiter.Checked;
-end;
-
-procedure TMain.actKeyboardExecute(Sender: TObject);
-begin
-  Settings.ReadKeyboard;
-  LoadKeysComponents;
-  ChangePage(3);
 end;
 
 procedure TMain.actKeyboardViewExecute(Sender: TObject);
@@ -1217,7 +1228,7 @@ procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
 var
   ClipTrain : TTrain;
 begin
-  ClipTrain := TParser.ParseTrainFromClipBoard(Clipboard.AsText);
+  ClipTrain := TLexParser.ParseTrainFromClipBoard(Clipboard.AsText);
   if ClipTrain <> nil then
     ReplaceTrain(ClipTrain.Vehicles);
 end;
@@ -1294,7 +1305,7 @@ var
   i : Integer;
 begin
   for i := 0 to Data.Scenarios.Count-1 do
-    TParser.ParseScenario(Data.Scenarios[i]);
+    TLexParser.ParseScenario(Data.Scenarios[i]);
   if (tvSCN.Selected <> nil) and (tvSCN.Selected.Data <> nil) then
     LoadScenery(TScenario(tvSCN.Selected.Data));
 end;
@@ -1421,6 +1432,37 @@ begin
   ChangePage(0);
 end;
 
+procedure TMain.actSearchKeyExecute(Sender: TObject);
+var
+  i : Integer;
+  Found : Boolean;
+begin
+  Found := False;
+
+  if Sender <> nil then
+    i := KeysGrid.Row + 1
+  else
+    i := 1;
+
+  while i < KeysGrid.RowCount do
+    if Pos(UpperCase(edSearchKey.Text),UpperCase(KeysGrid.Cells[3,i])) > 0 then
+    begin
+      KeysGrid.Row := i;
+      Found := True;
+      Break;
+    end
+    else
+      Inc(i);
+
+  if (not Found) and (Sender <> nil) then
+    actSearchKeyExecute(nil);
+end;
+
+procedure TMain.actSearchKeyUpdate(Sender: TObject);
+begin
+  actSearchKey.Enabled := Length(edSearchKey.Text) > 1;
+end;
+
 procedure TMain.actSetMaxLoadToAllExecute(Sender: TObject);
 var
   i : Integer;
@@ -1482,7 +1524,7 @@ begin
   Config.Temperature  := tbTemperature.Position;
   Config.Time         := dtTime.Time;
   SCN.Config := Config;
-  Starter.Text := TParser.ChangeConfig(SCN.Other.Text,SCN.Config);
+  Starter.Text := TLexParser.ChangeConfig(SCN.Other.Text,SCN.Config);
 
   if cbBattery.ItemIndex = 1 then
     Train.Vel := 0
@@ -1515,31 +1557,6 @@ begin
   Starter.SaveToFile(Util.DIR + 'scenery\$' + SCN.Name + '.scn');
   Starter.Free;
   LaunchSimulator;
-end;
-
-function TMain.PrepareTrainset(const Vehicles:TObjectList<TVehicle>):TStringList;
-var
-  i, y : Integer;
-  Indexes : TList<Integer>;
-begin
-  Result := TStringList.Create;
-
-  i := 0;
-  while i < Vehicles.Count do
-  begin
-    if Vehicles[i].Dist >= 0 then
-      Result.Add(PrepareNode(Vehicles[i]))
-    else
-    begin
-      Indexes := GetMultiple(Vehicles,i);
-
-      for y := 0 to Indexes.Count-1 do
-        Result.Add(PrepareNode(Vehicles[Indexes[y]]));
-
-      Inc(i,Indexes.Count-1);
-    end;
-    Inc(i);
-  end;
 end;
 
 procedure TMain.actStartUpdate(Sender: TObject);
@@ -1724,28 +1741,37 @@ begin
 end;
 
 procedure TMain.ReloadSettingsState;
+var
+  Value : Boolean;
 begin
-  chMotionBlur.Enabled            := cbGfxrenderer.ItemIndex = 0;
-  chChromaticAberration.Enabled   := cbGfxrenderer.ItemIndex = 0;
+  Value := cbGfxrenderer.ItemIndex = 0;
+  chMotionBlur.Enabled            := Value;
+  chChromaticAberration.Enabled   := Value;
+  cbHDR.Enabled                   := Value;
+  lbHDR.Enabled                   := Value;
 
   chUsevbo.Enabled                := cbGfxrenderer.ItemIndex > 1;
   chFPSLimiter.Enabled            := cbGfxrenderer.ItemIndex > 1;
 
   chShadowMap.Enabled             := cbGfxrenderer.ItemIndex < 2;
   chExtraEffects.Enabled          := cbGfxrenderer.ItemIndex < 2;
-  cbHDR.Enabled                   := cbGfxrenderer.ItemIndex < 2;
 
   chShadows.Enabled               := cbGfxrenderer.ItemIndex = 2;
 
-  chEnvmap.Enabled                := cbGfxrenderer.ItemIndex < 3;
-  Label53.Enabled                 := cbGfxrenderer.ItemIndex < 3;
-  cbShadowsCabRange.Enabled       := cbGfxrenderer.ItemIndex < 3;
-  Label36.Enabled                 := cbGfxrenderer.ItemIndex < 3;
-  cbShadowMapSize.Enabled         := cbGfxrenderer.ItemIndex < 3;
-  Label43.Enabled                 := cbGfxrenderer.ItemIndex < 3;
-  cbShadowRange.Enabled           := cbGfxrenderer.ItemIndex < 3;
-  Label18.Enabled                 := cbGfxrenderer.ItemIndex < 3;
-  cbReflectionsFramerate.Enabled  := cbGfxrenderer.ItemIndex < 3;
+  Value := cbGfxrenderer.ItemIndex < 3;
+  chEnvmap.Enabled                := Value;
+  lbShadowsCabRange.Enabled       := Value;
+  cbShadowsCabRange.Enabled       := Value;
+  Label36.Enabled                 := Value;
+  cbShadowMapSize.Enabled         := Value;
+  lbShadowRange.Enabled           := Value;
+  cbShadowRange.Enabled           := Value;
+  Label18.Enabled                 := Value;
+  cbReflectionsFramerate.Enabled  := Value;
+  lbShadowRank.Enabled            := Value;
+  cbShadowRank.Enabled            := Value;
+  lbShadowSize.Enabled            := Value;
+  tbShadowSize.Enabled            := Value;
 
   chSkipPipeline.Checked          := cbGfxrenderer.ItemIndex = 1;
 
@@ -1991,13 +2017,16 @@ end;
 
 procedure TMain.chReversedClick(Sender: TObject);
 begin
-  if SelVehicle >= 0 then
-    if chReversed.Checked then
-      ReverseMultiple
-    else
-      ReverseMultiple(0);
+  if Train <> nil then
+  begin
+    if SelVehicle >= 0 then
+      if chReversed.Checked then
+        ReverseMultiple
+      else
+        ReverseMultiple(0);
 
-  DrawTrain(Train);
+    DrawTrain(Train);
+  end;
 end;
 
 procedure TMain.ReverseMultiple(const Value:Integer=-1);
@@ -2018,52 +2047,6 @@ begin
   Coupler := Train.Vehicles[Indexes.First].Coupler;
   Train.Vehicles[Indexes.First].Coupler := Train.Vehicles[Indexes.Last].Coupler;
   Train.Vehicles[Indexes.Last].Coupler  := Coupler;
-end;
-
-function TMain.GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
-var
-  i : Integer;
-begin
-  Result := TList<Integer>.Create;
-  Result.Add(Index);
-
-  if Vehicles[Index].Texture <> nil then
-    if Vehicles[Index].Dist >= 0 then
-    begin
-      i := 0;
-      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
-        and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
-        begin
-          Result.Add(Index-i-1);
-          Inc(i);
-        end;
-
-      i := 0;
-      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
-        and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
-        begin
-          Result.Add(Index+i+1);
-          Inc(i);
-        end;
-    end
-    else
-    begin
-      i := 0;
-      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
-        and (Vehicles[Index-i].Texture.NextTexID = Vehicles[Index-i-1].Texture.ID) do
-        begin
-          Result.Add(Index-i-1);
-          Inc(i);
-        end;
-
-      i := 0;
-      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
-        and (Vehicles[Index+i].Texture.PrevTexID = Vehicles[Index+i+1].Texture.ID) do
-        begin
-          Result.Add(Index+i+1);
-          Inc(i);
-        end;
-    end
 end;
 
 procedure TMain.chSoundenabledClick(Sender: TObject);
@@ -2158,6 +2141,8 @@ procedure TMain.LoadKeysComponents;
 var
   i : Integer;
 begin
+  KeysGrid.BeginUpdate;
+
   KeysGrid.RowCount := Settings.KeyParams.Count + 1;
   KeysGrid.Cells[0,0] := 'Przycisk 1';
   KeysGrid.Cells[1,0] := 'Przycisk 2';
@@ -2174,6 +2159,8 @@ begin
 
   if Settings.KeyParams.Count > 0 then
     KeysGridClick(self);
+
+  KeysGrid.EndUpdate;
 end;
 
 procedure TMain.FormActivate(Sender: TObject);
@@ -2484,7 +2471,7 @@ begin
   SCN := aSCN;
 
   if (SCN.Vehicles.Count = 0) and (SCN.Trains.Count = 0) then
-    TParser.ParseScenario(SCN);
+    TLexParser.ParseScenario(SCN);
 
   while sbAttachments.ControlCount > 0 do
     sbAttachments.Controls[0].Free;
@@ -2510,13 +2497,6 @@ begin
   LoadTrains(SCN.Trains);
   lbTrainsClick(self);
   LoadWeather(SCN);
-end;
-
-function TMain.StaffedTrain(const Train:TTrain):Boolean;
-begin
-  Result := (Train.Vehicles.Count > 0) and
-             ((Train.Vehicles.First.CabOccupancy in [coHeadDriver,coRearDriver])
-            or (Train.Vehicles.Last.CabOccupancy in [coHeadDriver,coRearDriver]));
 end;
 
 procedure TMain.LoadTrains(const Trains:TList<TTrain>);
@@ -3164,13 +3144,7 @@ begin
       Image.Picture.Bitmap.Assign(PaintVehicle(Train.Vehicles[i].Texture,Train.Vehicles[i].ModelID));
 
       if Train.Vehicles[i].Dist = -1 then
-      begin
-        Image.Canvas.Font.Name := 'Webdings';
-        Image.Canvas.Font.Size := 16;
-        Image.Canvas.Brush.Style := bsClear;
-        Image.Canvas.Font.Color := clWhite;
-        Image.Canvas.TextOut(5,5,'q');
-      end;
+        FlipBitmap(Image.Picture.Bitmap,Train.Vehicles[i].Texture<>nil);
 
       Image.Width := Image.Picture.Bitmap.Width * MiniFactor;
       Inc(ImageWidth,Image.Width);
@@ -3184,6 +3158,31 @@ begin
     SelectVehicle(SelImage);
 
   LoadTrainParams;
+end;
+
+procedure TMain.FlipBitmap(Bitmap:TBitmap;const Flip:Boolean);
+var
+  Width, Height : Integer;
+  SrcRect, DstRect: TRect;
+begin
+  if Flip then
+  begin
+    Width   := Bitmap.Width;
+    Height  := Bitmap.Height;
+    SrcRect := Rect(0, 0, Width, Height);
+    DstRect := Rect(Width, 0, 0, Height);
+  end;
+
+  with Bitmap do
+  begin
+    Canvas.CopyRect(DstRect,Canvas,SrcRect);
+
+    Canvas.Font.Name := 'Webdings';
+    Canvas.Font.Size := 16;
+    Canvas.Brush.Style := bsClear;
+    Canvas.Font.Color := clWhite;
+    Canvas.TextOut(5,5,'q');
+  end;
 end;
 
 procedure TMain.DrawVehicle(const Vehicle:TVehicle);
@@ -3266,6 +3265,15 @@ begin
     imMini.Picture.Bitmap := result;
 end;
 
+procedure TMain.pcSettingsChange(Sender: TObject);
+begin
+  if pcSettings.ActivePage = tsControl then
+  begin
+    Settings.ReadKeyboard;
+    LoadKeysComponents;
+  end;
+end;
+
 procedure TMain.pcSettingsResize(Sender: TObject);
 var
   Width : Integer;
@@ -3273,7 +3281,7 @@ begin
   Width := (tsMain.Width div 2) - 270;
   pnlLeftMargin1.Width := Width;
   pnlLeftMargin2.Width := Width;
-  pnlLeftMargin3.Width := tsMain.Width div 2 - 450;
+  pnlGraphic.Margins.Left := Clamp(tsGraphics.Width div 2 - 435,0,800);
 end;
 
 procedure TMain.pcTrainsChange(Sender: TObject);
@@ -3543,6 +3551,11 @@ begin
 
   seLoadCount.Value := Train.Vehicles[SelVehicle].Loadquantity;
   LoadTrainParams;
+end;
+
+procedure TMain.actRandomLoadUpdate(Sender: TObject);
+begin
+  actRandomLoad.Enabled := (SelVehicle >= 0);
 end;
 
 procedure TMain.miSortByTrackNameClick(Sender: TObject);
