@@ -290,14 +290,13 @@ procedure TfrmTextureBase.sgDepoDblClick(Sender: TObject);
 var
   i, y : Integer;
 begin
-  if sgDepo.Row > 1 then
+  if sgDepo.Row > 0 then
   begin
     for i := 0 to Data.Textures.Count-1 do
       for y := 0 to Data.Textures[i].Models.Count-1 do
         if (Data.Textures[i].Plik = sgDepo.Cells[1,sgDepo.Row])
         and (Data.Textures[i].Models[y].Model = sgDepo.Cells[4,sgDepo.Row]) then
           Main.SelectTexture(Data.Textures[i],y);
-
     Self.Close;
   end;
 end;
@@ -388,7 +387,9 @@ begin
     end;
 
     miCopy.Visible := ARow > 0;
-    Cell := sgDepo.Cells[ACol,ARow];
+
+    if ARow > 0 then
+      Cell := sgDepo.Cells[ACol,ARow];
   end;
 end;
 

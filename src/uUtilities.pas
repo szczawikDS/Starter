@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
+  Copyright (C) 2019-2022 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -37,11 +37,13 @@ type
     Dir     : string;
     Lang    : string;
     InitSCN : string;
-    Errors  : TStringList;
+    Log     : TStringList;
     constructor Create;
     procedure CheckInstallation(const EXECount:Integer);
+    procedure EmptyTextures;
     procedure OpenFile(const Path:string);
     procedure PrepareLoadingScreen(const LogoPath:string);
+    procedure LogAdd(const S:string;const ShowInfo:Boolean=False);
   end;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
@@ -66,7 +68,7 @@ var
 implementation
 
 uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, uMain,
-    uData, uStructures, StrUtils;
+    uData, uStructures, StrUtils, uSettingsAdv;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
 begin
@@ -108,7 +110,7 @@ begin
       DeleteFile(Util.DIR + 'StarterOld.exe');
   except
     on E: Exception do
-      Util.Errors.Add('Nie uda³o siê usun¹æ poprzedniej wersji Startera. Szczegó³y b³êdu: ' + E.Message);
+      Util.Log.Add('Nie uda³o siê usun¹æ poprzedniej wersji Startera. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -152,7 +154,24 @@ begin
   if Pos('\Program Files',Util.DIR) > 0 then
     Err := Err + 'Program zainstalowany w katalogu Program Files.';
 
-  Util.Errors.Add(Err);
+  if not Err.IsEmpty then
+    Util.Log.Add(Err);
+end;
+
+procedure TUtil.EmptyTextures;
+var
+  MyFile: THandle;
+begin
+  try
+    if not FileExists(Util.Dir + 'dynamic\textures.ini') then
+    begin
+      MyFile := FileCreate(Util.Dir + 'dynamic\textures.ini');
+      FileClose(MyFile);
+      Util.Log.Add('Utworzono plik dynamic\textures.ini');
+    end;
+  except
+    Util.Log.Add('Nie uda³o siê utworzyæ pliku: dynamic\textures.ini');
+  end;
 end;
 
 procedure TUtil.PrepareLoadingScreen(const LogoPath:string);
@@ -190,7 +209,7 @@ begin
       Bmp.SaveToFile(Util.DIR + 'textures\logo.bmp');
     except
       on E: Exception do
-        Util.Errors.Add('B³¹d obs³ugi logo. Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add('B³¹d obs³ugi logo. Szczegó³y b³êdu: ' + E.Message);
     end;
   finally
     JPG.Free;
@@ -269,11 +288,20 @@ end;
 
 constructor TUtil.Create;
 begin
-  //DIR := ExtractFilePath(ParamStr(0));
-  DIR := 'G:\MaSzyna\pctga\';
-  Errors := TStringList.Create;
+  DIR := ExtractFilePath(ParamStr(0));
+  //DIR := 'G:\MaSzyna\pctga\';
+  //DIR := 'G:\MaSzyna\Maszyna2104\';
+  Log := TStringList.Create;
 
   SetFormatSettings;
+end;
+
+procedure TUtil.LogAdd(const S:string;const ShowInfo:Boolean=False);
+begin
+  Log.Add(S);
+
+  if ShowInfo then
+    ShowMessage(S);
 end;
 
 end.

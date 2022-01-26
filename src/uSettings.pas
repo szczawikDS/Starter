@@ -332,9 +332,14 @@ begin
       else
       begin
         Param.Name := GetParamName;
+
         Lexer.NextNoSpace;
         Param.Value:= Trim(GetParamValue);
-        if Lexer.TokenID = ptSlashesComment then Param.Desc := Lexer.Token;
+
+        if Pos('zmq.address',Param.Name) > 0 then
+          Param.Value := Param.Value + Lexer.Token
+        else
+          if Lexer.TokenID = ptSlashesComment then Param.Desc := Lexer.Token;
       end;
 
       Lexer.NextNoSpace;
@@ -533,8 +538,14 @@ begin
       if Params[i].Name = 'sound.volume.ambient' then
         Main.tbGlobalSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
+      if Params[i].Name = 'sound.volume.paused' then
+        Main.tbVolumePaused.Position := Round(StrToFloat(Params[i].Value) * 10)
+      else
       if Params[i].Name = 'gfx.shadow.angle.min' then
         Main.tbShadowSize.Position := Round(StrToFloat(Params[i].Value) * 10)
+      else
+      if Params[i].Name = 'brakestep' then
+        Main.tbBrakeStep.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
       if Params[i].Name = 'gfx.reflections.framerate' then
       begin
@@ -679,13 +690,15 @@ begin
   except
     on E: Exception do
     begin
-      Token := 'B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10
-                                    + 'Parametr: ' + Params[i].Name + #13#10
-                                    + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10
-                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message;
+      Token := 'B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10;
+
+      if i < Params.Count-1 then
+        Token := Token + 'Parametr: ' + Params[i].Name + #13#10
+                       + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10;
+      Token := Token + 'Szczegó³y b³êdu:' + #13#10 + E.Message;
 
       ShowMessage(Token);
-      Util.Errors.Add(Token);
+      Util.Log.Add(Token);
     end;
   end;
 end;
@@ -841,7 +854,7 @@ begin
     begin
       ShowMessage('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
                                     + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
-      Util.Errors.Add('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
+      Util.Log.Add('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
                                     + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
     end;
   end;
@@ -933,6 +946,7 @@ begin
   FindParameter('sound.volume.vehicle','wzgledna glosnosc dzwiekow wydawanych przez pojazdy, gdzie X jest mnoznikiem w przedziale 0-1');
   FindParameter('sound.volume.positional','wzgledna glosnosc pozycjonowanych dzwiekow emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
   FindParameter('sound.volume.ambient','wzgledna glosnosc dzwiekow globalnych (o ujemnym zakresie) emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
+  FindParameter('sound.volume.paused','stopien wyciszenia dzwieku przy zalaczonej pauzie');
   FindParameter('maxtexturesize','(16384) skalowanie zbyt du¿ych tekstur do podanego rozmiaru');
   FindParameter('multisampling','(2) wyg³adzanie krawêdzi (poprawia obraz, ale obni¿a FPS): 0 - wy³aczone, 1 - dwukrotne, 2 - czterokrotne, 3 - oœmiokrotne');
   FindParameter('convertmodels','(135) tworzenie plików modeli binarnych E3D z T3D: 0 - wy³¹czone, +1 - nowe Opacity, +2 - z optymalizacj¹, +4 - z bananami, +128 - rozszerzony pod exe C++, niekompatybilny ze starymi');
@@ -953,6 +967,7 @@ begin
   FindParameter('gfx.drawrange.factor.max','');
   FindParameter('gfx.shadow.rank.cutoff','');
   FindParameter('gfx.shadow.angle.min','');
+  FindParameter('brakestep','prêdkoœæ przesuwania zaworu hamulca');
 
   if Main.cbMaxcabtexturesize.ItemIndex > 0 then
     FindParameter('maxcabtexturesize','skalowanie tekstur kabiny do podanego rozmiaru')
@@ -960,7 +975,9 @@ begin
     RemoveParam('maxcabtexturesize');
 
   if not Main.chAngle.Checked then
-    RemoveParam('gfx.angleplatform');
+    RemoveParam('gfx.angleplatform')
+  else
+    FindParameter('gfx.angleplatform','');
 
   if Main.chFPSLimiter.Checked then
     FindParameter('fpslimit','ograniczenie fps')
@@ -1102,8 +1119,14 @@ begin
     if Params[i].Name = 'sound.volume.ambient' then
       Params[i].Value := FloatToStr(Main.tbGlobalSounds.Position / 10)
     else
+    if Params[i].Name = 'sound.volume.paused' then
+      Params[i].Value := FloatToStr(Main.tbVolumePaused.Position / 10)
+    else
     if Params[i].Name = 'gfx.shadow.angle.min' then
       Params[i].Value := FloatToStr(Main.tbShadowSize.Position / 10)
+    else
+    if Params[i].Name = 'brakestep' then
+      Params[i].Value := FloatToStr(Main.tbBrakeStep.Position / 10)
     else
     if Params[i].Name = 'maxtexturesize' then
     begin
@@ -1196,6 +1219,11 @@ begin
       end;
     end
     else
+    if Params[i].Name = 'gfx.angleplatform' then
+    begin
+      Params[i].Value := 'vulkan';
+    end
+    else
     if Params[i].Name = 'gfx.drawrange.factor.max' then
     begin
       Params[i].Value := IntToStr(Main.cbDrawRange.ItemIndex+1);
@@ -1223,7 +1251,7 @@ begin
 
     if Pos('//',Params[i].Desc) > 0 then
     begin
-      if Params[i].Name.Length = 0 then
+      if (Params[i].Name.Length = 0) then
         Settings.Add(Params[i].Desc)
       else
       begin
@@ -1239,7 +1267,10 @@ begin
       end;
     end
     else
-      Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
+      if Params[i].Desc.IsEmpty then
+        Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value))
+      else
+        Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
   end;
 
   Settings.SaveToFile(Util.DIR + Path);

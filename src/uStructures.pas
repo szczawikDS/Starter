@@ -147,6 +147,12 @@ type
     ModelID         : Integer;
     Number          : Integer;
     MaxLoad         : Integer;
+  private
+    function GetPhysics: TPhysics;
+    function GetModel: TModel;
+  public
+    property Fiz    : TPhysics read GetPhysics;
+    property Model  : TModel read GetModel;
   {public
     property MinDist  : Double read FMinDist write FMinDist;
     property MaxDist  : Double read FMaxDist write FMaxDist;
@@ -350,5 +356,21 @@ begin
   Params.Free;
   inherited;
 end;}
+
+function TVehicle.GetModel: TModel;
+begin
+  if Self.Texture <> nil then
+    Result := Self.Texture.Models[ModelID]
+  else
+    Result := nil;
+end;
+
+function TVehicle.GetPhysics: TPhysics;
+begin
+  if Self.Texture <> nil then
+    Result := Self.Texture.Models[Self.ModelID].Fiz
+  else
+    Result := nil;
+end;
 
 end.

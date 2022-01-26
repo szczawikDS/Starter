@@ -31,7 +31,7 @@ type
     class procedure LoadData;
     class function ChangeConfig(const Text:string;const Config:TConfig):string;
     class procedure ParseScenario(SCN:TScenario);
-    class function ParseTrainFromClipBoard(const Trainset:string):TTrain;
+    class function ParseTrainFromClipBoard(Trainset:string):TTrain;
   protected
     function ParseVehicle(const TrainSet: Boolean=True): TVehicle;
   private
@@ -115,7 +115,7 @@ begin
     FindClose(SR);
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -136,17 +136,20 @@ begin
 
     FindClose(SR);
   except
-    Util.Errors.Add('B³¹d wczytywania scenerii ' + SR.Name);
+    Util.LogAdd('B³¹d wczytywania scenerii ' + SR.Name);
   end;
 end;
 
-class function TLexParser.ParseTrainFromClipBoard(const Trainset:string):TTrain;
+class function TLexParser.ParseTrainFromClipBoard(Trainset:string):TTrain;
 begin
   try
     TLexParser.Create;
 
     with TLexParser.Create do
     try
+      if not (Pos('trainset',Trainset) in [1..3]) then
+        Trainset := 'trainset rozklad start 0 0 ' + Trainset;
+
       Lexer.Origin := PChar(Trainset);
       Lexer.Init;
 
@@ -210,7 +213,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -223,8 +226,8 @@ begin
   Found := False;
 
   for i := 0 to Data.Textures.Count-1 do
-    if (CompareText(Vehicle.ReplacableSkin,Data.Textures[i].Plik)=0) and
-       (CompareText(Vehicle.Dir,Data.Textures[i].Dir)=0) then
+    if ((CompareText(Vehicle.ReplacableSkin,Data.Textures[i].Plik)=0) or (Vehicle.ReplacableSkin = 'none'))
+      and (CompareText(Vehicle.Dir,Data.Textures[i].Dir)=0) then
     begin
       for y := 0 to Data.Textures[i].Models.Count-1 do
       begin
@@ -242,11 +245,10 @@ begin
         Break;
     end;
 
-  if not Found then
+  if (not Found) and (Vehicle.ReplacableSkin <> 'none') then
   begin
-    Util.Errors.Add('');
-    Util.Errors.Add('B³¹d sparowania tekstura/model:');
-    Util.Errors.Add(PrepareNode(Vehicle,True));
+    Util.LogAdd('# B³¹d sparowania tekstura/model pojazdu: ' + Vehicle.Name
+                + ' tekstura: ' + Vehicle.ReplacableSkin + ' [' + Vehicle.TypeChk + ']');
   end;
 end;
 
@@ -281,7 +283,7 @@ begin
       end;
     end;
   except
-    Util.Errors.Add('B³¹d wczytywania wag jednostek ³adunków.');
+    Util.LogAdd('B³¹d wczytywania wag jednostek ³adunków.');
     LoadWeights.Free;
   end;
 end;
@@ -314,7 +316,7 @@ begin
     Lexer.NextID(ptIdentifier);
 
     if not SameText('dynamic',Lexer.Token) then
-      Util.Errors.Add('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
+      Util.LogAdd('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
 
     Lexer.NextID(ptIdentifier);
     Result.Dir := GetToken;
@@ -364,14 +366,15 @@ begin
     FindTexture(Result);
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
 function TLexParser.GetBrakeValue(const Settings:string;Pos:Integer):string;
 begin
   result := '';
-  while (IsNumber(Settings[Pos])) and (Pos <= Settings.Length) do
+
+  while (Settings[Pos].IsNumber) and (Pos <= Settings.Length) do
   begin
     result := result + Settings[Pos];
     Inc(Pos);
@@ -402,7 +405,7 @@ begin
 
       Brakes := False;
       Wheels := False;
-      while (i <= Vehicle.Settings.Length) or (IsNumber(Vehicle.Settings[i])) do
+      while (i <= Vehicle.Settings.Length) or (Vehicle.Settings[i].IsNumber) do
       begin
         if Vehicle.Settings[i] = '.' then
         begin
@@ -459,7 +462,8 @@ begin
       Vehicle.Coupler := Abs(Vehicle.Coupler) + 128;
 
   except
-    Util.Errors.Add('B³¹d parsowania sprzêgu ' + Vehicle.Name + ', linia ' + IntToStr(Lexer.LineNumber));
+    on E: Exception do
+      Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Vehicle.Name + ' . Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -509,7 +513,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -639,7 +643,7 @@ begin
       Config.Overcast := StrToFloat(GetToken);
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -690,9 +694,11 @@ class procedure TLexParser.ParseScenario(SCN:TScenario);
 var
   Plik, FirstInit, IncFirstInit : TStringList;
   FirstInitPos : integer;
-  IncludeStr : string;
+  IncludeStr, s : string;
   Config : TConfig;
 begin
+  Util.LogAdd('-> Parsowanie scenerii ' + SCN.Name);
+
   with TLexParser.Create do
   try
     try
@@ -777,7 +783,10 @@ begin
       Plik.Free;
     except
       on E: Exception do
-        Util.Errors.Add('B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message);
+      begin
+        s := '# B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message;
+        Util.LogAdd(s);
+      end;
     end;
   finally
     Free;
@@ -824,7 +833,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -876,7 +885,7 @@ begin
       Tex.Models.Add(Model);
     end;
   except
-    Util.Errors.Add('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik + ', linia: ' + IntToStr(Lexer.LineNumber));
+    Util.LogAdd('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik + ', linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 
@@ -1021,7 +1030,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.Errors.Add('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' + E.Message);
   end;
 end;
 
@@ -1045,7 +1054,7 @@ begin
       Tex.Author    := Par[6];
       Tex.Photos    := Par[7];
     except
-      Util.Errors.Add('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
+      Util.LogAdd('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
     end;
   finally
     Par.Free;
@@ -1227,7 +1236,7 @@ begin
 
     Params.Free;
   except
-    Util.Errors.Add('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
+    Util.LogAdd('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
 

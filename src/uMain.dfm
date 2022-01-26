@@ -40,7 +40,6 @@ object Main: TMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
-    ExplicitTop = 701
   end
   object pnlMenu: TPanel
     AlignWithMargins = True
@@ -290,10 +289,10 @@ object Main: TMain
       Top = 0
       Width = 92
       Height = 50
-      Hint = '08.09.2021'
+      Hint = '25.01.2022'
       Align = alLeft
       AutoSize = False
-      Caption = '7.7'
+      Caption = '7.9'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -366,6 +365,7 @@ object Main: TMain
       Caption = '?'
       ModalResult = 9
       ParentShowHint = False
+      PopupMenu = pmHelp
       ShowHint = True
       TabOrder = 3
       OnClick = btnHelpClick
@@ -410,7 +410,6 @@ object Main: TMain
       TabOrder = 1
       object tsStart: TTabSheet
         Caption = 'Start'
-        ExplicitHeight = 532
         object Panel2: TPanel
           Left = 230
           Top = 0
@@ -420,7 +419,6 @@ object Main: TMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 1
-          ExplicitHeight = 532
           object Splitter: TSplitter
             Left = 0
             Top = 248
@@ -442,8 +440,6 @@ object Main: TMain
             MultiLine = True
             RaggedRight = True
             TabOrder = 1
-            ExplicitLeft = 6
-            ExplicitTop = 261
             object tsDescription: TTabSheet
               Caption = 'Opis s'#322'u'#380'by'
               object meMission: TMemo
@@ -498,7 +494,7 @@ object Main: TMain
                 Left = 3
                 Top = 3
                 Width = 632
-                Height = 266
+                Height = 231
                 Align = alClient
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
@@ -510,21 +506,17 @@ object Main: TMain
                 ScrollBars = ssBoth
                 TabOrder = 0
               end
-            end
-            object tsAttachments: TTabSheet
-              Caption = 'Za'#322#261'czniki'
-              ImageIndex = 2
               object sbAttachments: TScrollBox
                 AlignWithMargins = True
                 Left = 3
-                Top = 3
+                Top = 240
                 Width = 632
-                Height = 266
-                Align = alClient
+                Height = 29
+                Align = alBottom
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BorderStyle = bsNone
-                TabOrder = 0
+                TabOrder = 1
               end
             end
             object tsWeather: TTabSheet
@@ -855,6 +847,43 @@ object Main: TMain
                 end
               end
             end
+            object tsInfo: TTabSheet
+              Caption = 'Informacje'
+              ImageIndex = 2
+              object Label43: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 632
+                Height = 16
+                Align = alTop
+                Caption = 'B'#322#281'dy w scenariuszu:'
+                ExplicitWidth = 121
+              end
+              object Splitter1: TSplitter
+                Left = 0
+                Top = 269
+                Width = 638
+                Height = 3
+                Cursor = crVSplit
+                Align = alBottom
+                ExplicitTop = 22
+                ExplicitWidth = 118
+              end
+              object meInfo: TMemo
+                AlignWithMargins = True
+                Left = 3
+                Top = 25
+                Width = 632
+                Height = 241
+                Align = alClient
+                Lines.Strings = (
+                  '')
+                ReadOnly = True
+                ScrollBars = ssVertical
+                TabOrder = 0
+              end
+            end
           end
           object lbTrains: TListBox
             AlignWithMargins = True
@@ -866,7 +895,6 @@ object Main: TMain
             PopupMenu = pmTrainsets
             TabOrder = 0
             OnClick = lbTrainsClick
-            ExplicitHeight = 194
           end
           object pnlSceneryCaption: TPanel
             Left = 0
@@ -912,7 +940,6 @@ object Main: TMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 0
-          ExplicitHeight = 532
           object tvSCN: TTreeView
             Left = 0
             Top = 0
@@ -930,7 +957,6 @@ object Main: TMain
             TabOrder = 0
             OnChange = tvSCNChange
             OnCompare = tvSCNCompare
-            ExplicitHeight = 515
           end
           object chHideArchival: TCheckBox
             Left = 0
@@ -942,14 +968,12 @@ object Main: TMain
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
-            ExplicitTop = 515
           end
         end
       end
       object tsMagazine: TTabSheet
         Caption = 'Magazyn'
         ImageIndex = 3
-        ExplicitHeight = 532
         object pnlDepot: TPanel
           Left = 0
           Top = 0
@@ -959,7 +983,6 @@ object Main: TMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 0
-          ExplicitHeight = 532
           object pnlDepotTop: TPanel
             Left = 0
             Top = 0
@@ -969,7 +992,6 @@ object Main: TMain
             Anchors = [akLeft, akTop, akRight, akBottom]
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 356
             object pnlTextures: TPanel
               AlignWithMargins = True
               Left = 3
@@ -981,7 +1003,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 0
-              ExplicitHeight = 349
               object cbModels: TComboBox
                 Left = 0
                 Top = 24
@@ -1009,7 +1030,6 @@ object Main: TMain
                 TabOrder = 3
                 OnClick = lbTexturesClick
                 OnDblClick = lbTexturesDblClick
-                ExplicitHeight = 206
               end
               object btnAddVehicle: TButton
                 AlignWithMargins = True
@@ -1020,7 +1040,6 @@ object Main: TMain
                 Action = actAddVehicle
                 Align = alBottom
                 TabOrder = 4
-                ExplicitTop = 317
               end
               object pnlMini: TPanel
                 Left = 0
@@ -1033,7 +1052,6 @@ object Main: TMain
                 ParentDoubleBuffered = False
                 ShowCaption = False
                 TabOrder = 2
-                ExplicitTop = 283
                 object imMini: TImage
                   Tag = -1
                   Left = 0
@@ -1129,10 +1147,8 @@ object Main: TMain
               MultiLine = True
               TabOrder = 1
               OnChange = pcTrainsChange
-              ExplicitHeight = 350
               object tsSCNTrains: TTabSheet
                 Caption = 'Sk'#322'ady na scenerii'
-                ExplicitHeight = 319
                 object Panel26: TPanel
                   Left = 0
                   Top = 0
@@ -1142,7 +1158,6 @@ object Main: TMain
                   BevelOuter = bvNone
                   ShowCaption = False
                   TabOrder = 0
-                  ExplicitHeight = 319
                   object lbTrains2: TListBox
                     Left = 0
                     Top = 0
@@ -1158,7 +1173,6 @@ object Main: TMain
                     ShowHint = True
                     TabOrder = 0
                     OnClick = lbTrainsClick
-                    ExplicitHeight = 274
                   end
                   object btnAddToDepo: TButton
                     Left = 0
@@ -1170,7 +1184,6 @@ object Main: TMain
                     Action = actAddToDepo
                     Align = alBottom
                     TabOrder = 2
-                    ExplicitTop = 290
                   end
                   object pnlTrainsTop: TPanel
                     Left = 0
@@ -1181,7 +1194,6 @@ object Main: TMain
                     BevelOuter = bvNone
                     ShowCaption = False
                     TabOrder = 1
-                    ExplicitTop = 274
                     DesignSize = (
                       626
                       16)
@@ -1212,7 +1224,6 @@ object Main: TMain
               object tsDepoTrains: TTabSheet
                 Caption = 'Sk'#322'ady w magazynie'
                 ImageIndex = 1
-                ExplicitHeight = 319
                 object btnRemoveFromDepot: TButton
                   Left = 0
                   Top = 312
@@ -1223,7 +1234,6 @@ object Main: TMain
                   Action = actRemoveFromDepot
                   Align = alBottom
                   TabOrder = 0
-                  ExplicitTop = 290
                 end
                 object lbDepot: TListBox
                   Left = 0
@@ -1238,7 +1248,6 @@ object Main: TMain
                   ShowHint = True
                   TabOrder = 1
                   OnClick = lbDepotClick
-                  ExplicitHeight = 290
                 end
               end
             end
@@ -1253,7 +1262,6 @@ object Main: TMain
             BevelOuter = bvNone
             ShowCaption = False
             TabOrder = 1
-            ExplicitTop = 362
             object pcConfig: TPageControl
               Left = 354
               Top = 0
@@ -1807,6 +1815,7 @@ object Main: TMain
                   AutoSize = False
                   Caption = '0'
                   ParentShowHint = False
+                  ShowAccelChar = False
                   ShowHint = True
                   OnDblClick = lbModelDblClick
                   ExplicitHeight = 39
@@ -2170,7 +2179,6 @@ object Main: TMain
           Caption = '0'
           ShowCaption = False
           TabOrder = 0
-          ExplicitTop = 491
           object btnDefaultSettings: TButton
             AlignWithMargins = True
             Left = 679
@@ -2215,7 +2223,6 @@ object Main: TMain
           OnResize = pcSettingsResize
           object tsMain: TTabSheet
             Caption = 'Og'#243'lne'
-            ExplicitHeight = 460
             object pnlPhysic: TPanel
               AlignWithMargins = True
               Left = 438
@@ -2230,7 +2237,6 @@ object Main: TMain
               ParentBackground = False
               ShowCaption = False
               TabOrder = 0
-              ExplicitHeight = 457
               object Label17: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -2443,7 +2449,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 1
-              ExplicitHeight = 454
               object Label15: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -2657,7 +2662,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 2
-              ExplicitHeight = 460
             end
             object pnlRightMargin: TPanel
               Left = 706
@@ -2667,7 +2671,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 3
-              ExplicitHeight = 460
               object Label8: TLabel
                 Left = 0
                 Top = 330
@@ -2683,7 +2686,6 @@ object Main: TMain
                 Font.Style = [fsBold]
                 ParentFont = False
                 Layout = tlCenter
-                ExplicitTop = 308
                 ExplicitWidth = 118
               end
               object pnlSettingsSet: TPanel
@@ -2696,7 +2698,6 @@ object Main: TMain
                 Caption = 'pnlSettingsSet'
                 ShowCaption = False
                 TabOrder = 0
-                ExplicitTop = 324
                 object cbPreset: TComboBox
                   AlignWithMargins = True
                   Left = 3
@@ -2760,7 +2761,8 @@ object Main: TMain
                 Font.Name = 'Tahoma'
                 Font.Style = [fsItalic]
                 ParentFont = False
-                ExplicitTop = 458
+                ExplicitTop = 476
+                ExplicitWidth = 289
               end
               object pnlGraphic: TPanel
                 AlignWithMargins = True
@@ -2776,7 +2778,6 @@ object Main: TMain
                 BevelOuter = bvNone
                 ShowCaption = False
                 TabOrder = 0
-                ExplicitHeight = 478
                 object Panel1: TPanel
                   AlignWithMargins = True
                   Left = 429
@@ -2789,11 +2790,10 @@ object Main: TMain
                   ParentBackground = False
                   ShowCaption = False
                   TabOrder = 0
-                  ExplicitTop = 6
                   object lbReflectionsFidelity: TLabel
                     AlignWithMargins = True
                     Left = 3
-                    Top = 370
+                    Top = 391
                     Width = 194
                     Height = 16
                     Align = alTop
@@ -2821,9 +2821,8 @@ object Main: TMain
                     Height = 16
                     Align = alTop
                     AutoSize = False
-                    Caption = 'Ogranicz cienie:'
+                    Caption = 'Ogranicz d'#322'ugo'#347#263' cieni:'
                     ExplicitLeft = 6
-                    ExplicitTop = 101
                   end
                   object Label18: TLabel
                     AlignWithMargins = True
@@ -2884,13 +2883,11 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 0
-                    ExplicitLeft = 6
-                    ExplicitTop = 2
                   end
                   object cbReflectionsFidelity: TComboBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 392
+                    Top = 413
                     Width = 194
                     Height = 24
                     Align = alTop
@@ -2902,12 +2899,11 @@ object Main: TMain
                       'Tylko geometria terenu'
                       '+ pobliskie modele statyczne'
                       '+ pobliskie modele statyczne i pojazdy')
-                    ExplicitTop = 238
                   end
                   object Panel3: TPanel
                     AlignWithMargins = True
                     Left = 3
-                    Top = 422
+                    Top = 443
                     Width = 194
                     Height = 27
                     Align = alTop
@@ -2915,7 +2911,6 @@ object Main: TMain
                     ParentBackground = False
                     ShowCaption = False
                     TabOrder = 2
-                    ExplicitTop = 291
                     object Label4: TLabel
                       Left = 0
                       Top = 0
@@ -2944,7 +2939,7 @@ object Main: TMain
                   object pnlFPS: TPanel
                     AlignWithMargins = True
                     Left = 3
-                    Top = 455
+                    Top = 476
                     Width = 194
                     Height = 29
                     Align = alTop
@@ -2952,7 +2947,6 @@ object Main: TMain
                     ParentBackground = False
                     ShowCaption = False
                     TabOrder = 3
-                    ExplicitTop = 324
                     object chFPSLimiter: TCheckBox
                       Left = 0
                       Top = 0
@@ -2992,19 +2986,16 @@ object Main: TMain
                       'Tylko wa'#380'ne'
                       'Ograniczone'
                       'Wszystkie')
-                    ExplicitLeft = 6
-                    ExplicitTop = 51
                   end
                   object tbShadowSize: TTrackBar
                     Left = 0
-                    Top = 328
+                    Top = 349
                     Width = 200
                     Height = 39
                     Align = alTop
                     Min = 2
                     Position = 2
                     TabOrder = 5
-                    ExplicitTop = 101
                   end
                   object cbReflectionsFramerate: TComboBox
                     AlignWithMargins = True
@@ -3023,8 +3014,6 @@ object Main: TMain
                       'Niska (3)'
                       'Wysoka (10)'
                       'Bardzo wysoka (25)')
-                    ExplicitLeft = 6
-                    ExplicitTop = -1
                   end
                   object cbShadowMapSize: TComboBox
                     AlignWithMargins = True
@@ -3043,8 +3032,6 @@ object Main: TMain
                       'Umiarkowana (2048)'
                       'Wysoka (4096)'
                       'Bardzo wysoka (8192)')
-                    ExplicitLeft = 6
-                    ExplicitTop = 55
                   end
                   object cbShadowRange: TComboBox
                     AlignWithMargins = True
@@ -3064,8 +3051,6 @@ object Main: TMain
                       'Umiarkowany (150m)'
                       'Wysoki (250m)'
                       'Bardzo wysoki (400m)')
-                    ExplicitLeft = 6
-                    ExplicitTop = 107
                   end
                   object cbShadowsCabRange: TComboBox
                     AlignWithMargins = True
@@ -3086,8 +3071,6 @@ object Main: TMain
                       'Standardowy (30m)'
                       'Wysoki (50m)'
                       'Bardzo wysoki (100m)')
-                    ExplicitLeft = 6
-                    ExplicitTop = 177
                   end
                   object chShadowMap: TCheckBox
                     AlignWithMargins = True
@@ -3100,7 +3083,42 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 10
-                    ExplicitLeft = 6
+                  end
+                  object Panel4: TPanel
+                    Left = 0
+                    Top = 328
+                    Width = 200
+                    Height = 21
+                    Align = alTop
+                    BevelOuter = bvNone
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -13
+                    Font.Name = 'Tahoma'
+                    Font.Style = [fsItalic]
+                    ParentFont = False
+                    TabOrder = 11
+                    object Label32: TLabel
+                      AlignWithMargins = True
+                      Left = 3
+                      Top = 3
+                      Width = 94
+                      Height = 15
+                      Align = alLeft
+                      AutoSize = False
+                      Caption = 'Bez ogranicze'#324
+                    end
+                    object Label33: TLabel
+                      AlignWithMargins = True
+                      Left = 120
+                      Top = 3
+                      Width = 77
+                      Height = 15
+                      Align = alRight
+                      Alignment = taRightJustify
+                      AutoSize = False
+                      Caption = 'Skr'#243'cone '
+                    end
                   end
                 end
                 object Panel12: TPanel
@@ -3115,7 +3133,6 @@ object Main: TMain
                   ParentBackground = False
                   ShowCaption = False
                   TabOrder = 1
-                  ExplicitTop = 6
                   object Label40: TLabel
                     AlignWithMargins = True
                     Left = 3
@@ -3161,8 +3178,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 3
-                    ExplicitLeft = 6
-                    ExplicitTop = 376
                   end
                   object cbGfxrenderer: TComboBox
                     AlignWithMargins = True
@@ -3194,8 +3209,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 5
-                    ExplicitLeft = 6
-                    ExplicitTop = 376
                   end
                   object chMotionBlur: TCheckBox
                     AlignWithMargins = True
@@ -3208,8 +3221,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 4
-                    ExplicitLeft = 6
-                    ExplicitTop = 389
                   end
                   object chEnvmap: TCheckBox
                     AlignWithMargins = True
@@ -3222,8 +3233,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 2
-                    ExplicitLeft = 6
-                    ExplicitTop = 435
                   end
                   object chSkipPipeline: TCheckBox
                     AlignWithMargins = True
@@ -3262,8 +3271,6 @@ object Main: TMain
                     Items.Strings = (
                       'Reinhard'
                       'ACES')
-                    ExplicitLeft = 6
-                    ExplicitTop = 298
                   end
                   object chUsevbo: TCheckBox
                     AlignWithMargins = True
@@ -3276,8 +3283,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 8
-                    ExplicitLeft = 6
-                    ExplicitTop = 436
                   end
                   object chGfxresourcesweep: TCheckBox
                     AlignWithMargins = True
@@ -3291,7 +3296,6 @@ object Main: TMain
                     State = cbChecked
                     TabOrder = 9
                     WordWrap = True
-                    ExplicitTop = 49
                   end
                   object chGfxresourcemove: TCheckBox
                     AlignWithMargins = True
@@ -3304,8 +3308,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 10
-                    ExplicitLeft = 6
-                    ExplicitTop = 322
                   end
                   object chVsync: TCheckBox
                     AlignWithMargins = True
@@ -3318,8 +3320,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 11
-                    ExplicitLeft = 6
-                    ExplicitTop = 370
                   end
                   object chSmoke: TCheckBox
                     AlignWithMargins = True
@@ -3332,8 +3332,6 @@ object Main: TMain
                     Checked = True
                     State = cbChecked
                     TabOrder = 12
-                    ExplicitLeft = 6
-                    ExplicitTop = 368
                   end
                   object cbSmokeFidelity: TComboBox
                     AlignWithMargins = True
@@ -3352,7 +3350,6 @@ object Main: TMain
                       'Niska'
                       'Wysoka'
                       'Bardzo wysoka')
-                    ExplicitTop = 186
                   end
                   object chSkipRendering: TCheckBox
                     AlignWithMargins = True
@@ -3366,7 +3363,6 @@ object Main: TMain
                     ParentShowHint = False
                     ShowHint = True
                     TabOrder = 14
-                    ExplicitTop = 433
                   end
                 end
                 object Panel22: TPanel
@@ -3705,7 +3701,6 @@ object Main: TMain
           object tsSoundPhysics: TTabSheet
             Caption = 'D'#378'wi'#281'k | Fizyka'
             ImageIndex = 2
-            ExplicitHeight = 460
             object Panel11: TPanel
               AlignWithMargins = True
               Left = 469
@@ -3717,7 +3712,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 1
-              ExplicitHeight = 454
               object Label19: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -3734,6 +3728,17 @@ object Main: TMain
                 Font.Name = 'Tahoma'
                 Font.Style = [fsBold]
                 ParentFont = False
+              end
+              object Label44: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 259
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'Czu'#322'o'#347#263' zawor'#243'w hamulcowych:'
+                ExplicitTop = 277
               end
               object chFullphysics: TCheckBox
                 AlignWithMargins = True
@@ -3866,6 +3871,57 @@ object Main: TMain
                 State = cbChecked
                 TabOrder = 8
               end
+              object tbBrakeStep: TTrackBar
+                Left = 0
+                Top = 278
+                Width = 245
+                Height = 39
+                Align = alTop
+                Max = 30
+                Min = 4
+                Frequency = 2
+                Position = 10
+                TabOrder = 9
+                ExplicitTop = 352
+              end
+              object Panel5: TPanel
+                Left = 0
+                Top = 317
+                Width = 245
+                Height = 21
+                Align = alTop
+                BevelOuter = bvNone
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsItalic]
+                ParentFont = False
+                TabOrder = 10
+                ExplicitTop = 332
+                object Label46: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 3
+                  Width = 38
+                  Height = 15
+                  Align = alLeft
+                  AutoSize = False
+                  Caption = 'Min.'
+                end
+                object Label48: TLabel
+                  AlignWithMargins = True
+                  Left = 204
+                  Top = 3
+                  Width = 38
+                  Height = 15
+                  Align = alRight
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = 'Max.'
+                  ExplicitLeft = 200
+                end
+              end
             end
             object pnlSound: TPanel
               AlignWithMargins = True
@@ -3878,7 +3934,6 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 0
-              ExplicitHeight = 454
               object Label16: TLabel
                 AlignWithMargins = True
                 Left = 3
@@ -3899,7 +3954,7 @@ object Main: TMain
               object Label6: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 48
+                Top = 69
                 Width = 239
                 Height = 16
                 Align = alTop
@@ -3910,7 +3965,7 @@ object Main: TMain
               object lbRadioVolume: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 109
+                Top = 130
                 Width = 239
                 Height = 16
                 Align = alTop
@@ -3921,7 +3976,7 @@ object Main: TMain
               object lbGlobalSounds: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 292
+                Top = 313
                 Width = 239
                 Height = 16
                 Align = alTop
@@ -3932,7 +3987,7 @@ object Main: TMain
               object lbPositionalsSounds: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 231
+                Top = 252
                 Width = 239
                 Height = 16
                 Align = alTop
@@ -3943,13 +3998,24 @@ object Main: TMain
               object lbVehiclesSounds: TLabel
                 AlignWithMargins = True
                 Left = 3
-                Top = 170
+                Top = 191
                 Width = 239
                 Height = 16
                 Align = alTop
                 AutoSize = False
                 Caption = 'G'#322'o'#347'no'#347#263' d'#378'wi'#281'k'#243'w pojazd'#243'w:'
                 ExplicitTop = 161
+              end
+              object lbVolumePaused: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 374
+                Width = 239
+                Height = 16
+                Align = alTop
+                AutoSize = False
+                Caption = 'G'#322'o'#347'no'#347#263' podczas pauzy:'
+                ExplicitTop = 371
               end
               object chSoundenabled: TCheckBox
                 AlignWithMargins = True
@@ -3966,7 +4032,7 @@ object Main: TMain
               end
               object tbGlobalSounds: TTrackBar
                 Left = 0
-                Top = 311
+                Top = 332
                 Width = 245
                 Height = 39
                 Align = alTop
@@ -3974,7 +4040,7 @@ object Main: TMain
               end
               object tbPositionalsSounds: TTrackBar
                 Left = 0
-                Top = 250
+                Top = 271
                 Width = 245
                 Height = 39
                 Align = alTop
@@ -3982,7 +4048,7 @@ object Main: TMain
               end
               object tbVehiclesSounds: TTrackBar
                 Left = 0
-                Top = 189
+                Top = 210
                 Width = 245
                 Height = 39
                 Align = alTop
@@ -3990,7 +4056,7 @@ object Main: TMain
               end
               object tbRadioVolume: TTrackBar
                 Left = 0
-                Top = 128
+                Top = 149
                 Width = 245
                 Height = 39
                 Align = alTop
@@ -3998,13 +4064,60 @@ object Main: TMain
               end
               object tbSoundVolume: TTrackBar
                 Left = 0
-                Top = 67
+                Top = 88
                 Width = 245
                 Height = 39
                 Align = alTop
                 Max = 20
                 Frequency = 2
                 TabOrder = 1
+                ExplicitLeft = 3
+                ExplicitTop = 85
+              end
+              object tbVolumePaused: TTrackBar
+                Left = 0
+                Top = 393
+                Width = 245
+                Height = 39
+                Align = alTop
+                TabOrder = 6
+              end
+              object pnlVolumeLegend: TPanel
+                Left = 0
+                Top = 45
+                Width = 245
+                Height = 21
+                Align = alTop
+                BevelOuter = bvNone
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsItalic]
+                ParentFont = False
+                TabOrder = 7
+                object Label12: TLabel
+                  AlignWithMargins = True
+                  Left = 3
+                  Top = 3
+                  Width = 38
+                  Height = 15
+                  Align = alLeft
+                  AutoSize = False
+                  Caption = 'Min.'
+                end
+                object Label31: TLabel
+                  AlignWithMargins = True
+                  Left = 204
+                  Top = 3
+                  Width = 38
+                  Height = 15
+                  Align = alRight
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = 'Max.'
+                  ExplicitLeft = 200
+                end
               end
             end
             object pnlLeftMargin1: TPanel
@@ -4016,13 +4129,11 @@ object Main: TMain
               BevelOuter = bvNone
               ShowCaption = False
               TabOrder = 2
-              ExplicitHeight = 460
             end
           end
           object tsControl: TTabSheet
             Caption = 'Sterowanie'
             ImageIndex = 3
-            ExplicitHeight = 460
             object cbKey: TComboBox
               Left = 384
               Top = 216
@@ -4113,7 +4224,6 @@ object Main: TMain
               Action = actSaveKeyboard
               Align = alBottom
               TabOrder = 1
-              ExplicitTop = 393
             end
             object KeysGrid: TStringGrid
               Left = 0
@@ -4126,7 +4236,6 @@ object Main: TMain
               Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
               TabOrder = 2
               OnClick = KeysGridClick
-              ExplicitHeight = 360
               ColWidths = (
                 98
                 73
@@ -4141,7 +4250,6 @@ object Main: TMain
               Align = alBottom
               ShowCaption = False
               TabOrder = 3
-              ExplicitTop = 425
               object cbKey1: TComboBox
                 Left = 1
                 Top = 1
@@ -4311,7 +4419,6 @@ object Main: TMain
         Caption = 'Mapowanie klawiszy'
         ImageIndex = 3
         TabVisible = False
-        ExplicitHeight = 532
       end
     end
     object pnlInfoTrain: TPanel
@@ -4323,7 +4430,6 @@ object Main: TMain
       BevelOuter = bvNone
       ShowCaption = False
       TabOrder = 0
-      ExplicitTop = 617
       object lbTrainMassCaption: TLabel
         AlignWithMargins = True
         Left = 3
@@ -4466,7 +4572,6 @@ object Main: TMain
       TabOrder = 2
       OnDragDrop = sbTrainDragDrop
       OnDragOver = sbTrainDragOver
-      ExplicitTop = 563
     end
   end
   object pmTrainsets: TPopupMenu
@@ -4732,6 +4837,7 @@ object Main: TMain
     end
   end
   object pmDepot: TPopupMenu
+    OnPopup = pmDepotPopup
     Left = 783
     Top = 313
     object miCopyToClipboard2: TMenuItem
@@ -4743,7 +4849,7 @@ object Main: TMain
     object miChangeName: TMenuItem
       Action = actChangeName
     end
-    object Sortujwedug1: TMenuItem
+    object miSortBy: TMenuItem
       Caption = 'Sortuj wed'#322'ug...'
       object miSortByVehicleName: TMenuItem
         Caption = 'Sortuj wg nazwy pojazdu'
@@ -4765,6 +4871,9 @@ object Main: TMain
     end
     object miOpenTexDir: TMenuItem
       Action = actOpenTexDir
+    end
+    object N1: TMenuItem
+      Caption = '-'
     end
     object miDepo: TMenuItem
       Action = actOpenDepo
@@ -4801,6 +4910,34 @@ object Main: TMain
     end
     object Losowyadunekdlapocigu1: TMenuItem
       Action = actRandomLoad
+    end
+  end
+  object pmHelp: TPopupMenu
+    OnPopup = pmHelpPopup
+    Left = 790
+    Top = 457
+    object miOpenHelp: TMenuItem
+      Caption = 'Otw'#243'rz plik pomocy'
+      OnClick = miOpenHelpClick
+    end
+    object miInstructions: TMenuItem
+      Caption = 'Instrukcje PKP PLK:'
+      object miIe1: TMenuItem
+        Caption = 'Instrukcja sygnalizacji (Ie-1)'
+        OnClick = miIe1Click
+      end
+      object InstrukcjaoprowadzeniuruchupocigwIr11: TMenuItem
+        Caption = 'Instrukcja o prowadzeniu ruchu poci'#261'g'#243'w (Ir-1)'
+        OnClick = InstrukcjaoprowadzeniuruchupocigwIr11Click
+      end
+      object Instrukcjaoprowadzeniuradiocznoci1: TMenuItem
+        Caption = 'Instrukcja o prowadzeniu radio'#322#261'czno'#347'ci (Ir-5)'
+        OnClick = Instrukcjaoprowadzeniuradiocznoci1Click
+      end
+      object InstrukcjaoprowadzeniumanewrwIr91: TMenuItem
+        Caption = 'Instrukcja o prowadzeniu manewr'#243'w (Ir-9)'
+        OnClick = InstrukcjaoprowadzeniumanewrwIr91Click
+      end
     end
   end
 end

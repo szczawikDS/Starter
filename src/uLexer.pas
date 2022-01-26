@@ -85,7 +85,7 @@ begin
     else
       Result := GetToken;
   except
-    Util.Errors.Add('B³¹d prztwarzania elementu fizyki. Token: ' + Lexer.Token);
+    Util.Log.Add('B³¹d prztwarzania elementu fizyki. Token: ' + Lexer.Token);
   end;
 end;
 

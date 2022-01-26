@@ -35,7 +35,7 @@ type
 	  procedure LFProc;
     procedure NullProc;
     procedure NumberProc;
-    procedure MinusProc;
+    //procedure MinusProc;
     procedure SlashProc;
     procedure SpaceProc;
     procedure SquareCloseProc;
@@ -261,11 +261,11 @@ begin
   end;
 end;
 
-procedure TmwBasePasLex.MinusProc;
+{procedure TmwBasePasLex.MinusProc;
 begin
   inc(Run);
   fTokenID := ptMinus;
-end;
+end;}
 
 procedure TmwBasePasLex.SlashProc;
 begin

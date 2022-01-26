@@ -43,8 +43,19 @@ type
     lbLegend: TLabel;
     CheckBox2: TCheckBox;
     CheckBox3: TCheckBox;
+    pnlSettingsAdv: TPanel;
+    Timer: TTimer;
+    pnlLog: TPanel;
+    meLog: TMemo;
+    lbLogCaption: TLabel;
+    btnClearLog: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
+    procedure FormHide(Sender: TObject);
+    procedure btnClearLogClick(Sender: TObject);
+  private
+    procedure RefreshLog;
   end;
 
 var
@@ -56,15 +67,47 @@ uses uUtilities, uLanguages, uMain;
 
 {$R *.dfm}
 
+procedure TfrmSettingsAdv.btnClearLogClick(Sender: TObject);
+begin
+  Util.Log.Clear;
+  Util.Log.Add('*');
+  RefreshLog;
+end;
+
 procedure TfrmSettingsAdv.FormCreate(Sender: TObject);
 begin
   if Util.Lang <> 'pl' then
     TLanguages.ChangeLanguage(Self,Util.Lang);
 end;
 
+procedure TfrmSettingsAdv.FormHide(Sender: TObject);
+begin
+  Timer.Enabled := False;
+end;
+
 procedure TfrmSettingsAdv.FormShow(Sender: TObject);
 begin
   chIgnoreIrrevelant.Checked := Main.Settings.IgnoreIrrelevant;
+
+  RefreshLog;
+  Timer.Enabled := True;
+end;
+
+procedure TfrmSettingsAdv.TimerTimer(Sender: TObject);
+begin
+  RefreshLog;
+end;
+
+procedure TfrmSettingsAdv.RefreshLog;
+begin
+  if (Util.Log.Count <> meLog.Lines.Count) then
+  begin
+    meLog.Lines.BeginUpdate;
+    meLog.Lines := Util.Log;
+    meLog.Lines.EndUpdate;
+
+    meLog.Perform(EM_LINESCROLL, 0, meLog.Lines.Count-1);
+  end;
 end;
 
 end.

@@ -43,7 +43,7 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 92;
+      AppVersion = 99;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -102,7 +102,7 @@ begin
     except
       on E: Exception do
       begin
-        Util.Errors.Add('B³¹d aktualizacji ' + E.Message);
+        Util.Log.Add('B³¹d aktualizacji ' + E.Message);
 
         if ReturnInfo then
           ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);

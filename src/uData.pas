@@ -42,6 +42,7 @@ end;
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 function GetControlType(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):string;
 function GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
+function MultipleTrain(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<TVehicle>;
 function StaffedTrain(const Train:TTrain):Boolean;
 function PrepareTrainset(const Vehicles:TObjectList<TVehicle>):TStringList;
 function PrepareTrainsetDesc(const Trainset:TTrain):string;
@@ -67,20 +68,20 @@ begin
       if LeftCoupler then
       begin
         if Vehicle.Dist >= 0 then
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagA
+          Result := Vehicle.Fiz.AllowedFlagA
         else
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagB;
+          Result := Vehicle.Fiz.AllowedFlagB;
       end
       else
         if Vehicle.Dist >= 0 then
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagB
+          Result := Vehicle.Fiz.AllowedFlagB
         else
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.AllowedFlagA;
+          Result := Vehicle.Fiz.AllowedFlagA;
     end
     else
       Result := 3;
   except
-    Util.Errors.Add('B³¹d sprawdzania wartoœci AllowedFlag. ' +
+    Util.Log.Add('B³¹d sprawdzania wartoœci AllowedFlag. ' +
                     'Nale¿y sprawdziæ plik .fiz dla ' +
                     Vehicle.Texture.Models[Vehicle.ModelID].Model);
   end;
@@ -94,20 +95,20 @@ begin
       if LeftCoupler then
       begin
         if Vehicle.Dist >= 0 then
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA
+          Result := Vehicle.Fiz.ControlTypeA
         else
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB;
+          Result := Vehicle.Fiz.ControlTypeB;
       end
       else
         if Vehicle.Dist >= 0 then
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeB
+          Result := Vehicle.Fiz.ControlTypeB
         else
-          Result := Vehicle.Texture.Models[Vehicle.ModelID].Fiz.ControlTypeA;
+          Result := Vehicle.Fiz.ControlTypeA;
     end
     else
       Result := EmptyStr;
   except
-    Util.Errors.Add('B³¹d sprawdzania wartoœci ControlType. ' +
+    Util.Log.Add('B³¹d sprawdzania wartoœci ControlType. ' +
                     'Nale¿y sprawdziæ plik .fiz dla ' +
                     Vehicle.Texture.Models[Vehicle.ModelID].Model);
   end;
@@ -171,6 +172,19 @@ begin
           Inc(i);
         end;
     end
+end;
+
+function MultipleTrain(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<TVehicle>;
+var
+  Indexes : TList<Integer>;
+  i : Integer;
+begin
+  Indexes := GetMultiple(Vehicles,Index);
+
+  Result := TList<TVehicle>.Create;
+
+  for i := 0 to Indexes.Count-1 do
+    Result.Add(Vehicles[Indexes[i]]);
 end;
 
 function StaffedTrain(const Train:TTrain):Boolean;
@@ -337,7 +351,7 @@ begin
       begin
         if IncludeVehicleToMass(Train.Vehicles[i],AllVehicles) then
         begin
-          Result.Mass := Result.Mass + Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.Mass;
+          Result.Mass := Result.Mass + Train.Vehicles[i].Fiz.Mass;
 
           LoadIndex := Data.LoadsIndex(Train.Vehicles[i].LoadType);
 
@@ -346,7 +360,8 @@ begin
           else
             Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * 1000);
         end;
-        Result.Length := Result.Length + Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.Length;
+        if Train.Vehicles[i].Fiz <> nil then
+          Result.Length := Result.Length + Train.Vehicles[i].Fiz.Length;
       end;
     end;
     Result.CountVehicles := Train.Vehicles.Count;
@@ -355,8 +370,7 @@ end;
 
 function IncludeVehicleToMass(const Vehicle:TVehicle;const AllVehicles:Boolean):Boolean;
 begin
-  Result := (Vehicle.Texture <> nil) and
-            (Vehicle.Texture.Models[Vehicle.ModelID].Fiz <> nil) and
+  Result := (Vehicle.Fiz <> nil) and
             (((Vehicle.CabOccupancy > coRearDriver)
             or (Vehicle.Texture.Typ = tyEZT)
             or (Vehicle.Texture.Typ = tySZYNOBUS))
