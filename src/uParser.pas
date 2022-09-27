@@ -241,14 +241,17 @@ begin
         end;
       end;
 
-      if Vehicle.Texture <> nil then
+      if Found then
         Break;
     end;
 
-  if (not Found) and (Vehicle.ReplacableSkin <> 'none') then
+  if (not Found) then
   begin
-    Util.LogAdd('# B³¹d sparowania tekstura/model pojazdu: ' + Vehicle.Name
-                + ' tekstura: ' + Vehicle.ReplacableSkin + ' [' + Vehicle.TypeChk + ']');
+    Vehicle.Texture := Data.Textures.First;
+
+    if (Vehicle.ReplacableSkin <> 'none') then
+      Util.LogAdd('# Braki dla pojazdu: ' + Vehicle.Name
+                  + ' tekstura: ' + Vehicle.ReplacableSkin + ' [' + Vehicle.TypeChk + ']');
   end;
 end;
 
@@ -318,8 +321,10 @@ begin
     if not SameText('dynamic',Lexer.Token) then
       Util.LogAdd('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
 
-    Lexer.NextID(ptIdentifier);
-    Result.Dir := GetToken;
+    //Lexer.NextID(ptIdentifier);
+    //NextIDs([ptIdentifier,ptInteger]);
+    Lexer.NextNoJunk;
+    Result.Dir := {GetToken([TptTokenKind.ptIdentifier,ptInteger])} GetToken;
 
     Lexer.NextNoJunk;
     Result.ReplacableSkin := ChangeFileExt(GetToken,'');
@@ -841,6 +846,7 @@ procedure TLexParser.ParseTextureModels(var Tex:TTexture);
 var
   Sign : Char;
   Model : TModel;
+  i : Integer;
 begin
   try
     while Lexer.TokenID = ptEqual do
@@ -857,23 +863,12 @@ begin
         Sign := Model.Mini[1];
         Sign := UpperCase(Sign)[1];
 
-        if Sign = 'B' then Tex.Typ := tyB else
-        if Sign = 'E' then Tex.Typ := tyE else
-        if Sign = 'A' then Tex.Typ := tyA else
-        if Sign = 'S' then Tex.Typ := tyS else
-        if Sign = 'F' then Tex.Typ := tyF else
-        if Sign = 'G' then Tex.Typ := tyG else
-        if Sign = 'R' then Tex.Typ := tyR else
-        if Sign = 'U' then Tex.Typ := tyU else
-        if Sign = 'W' then Tex.Typ := tyW else
-        if Sign = 'X' then Tex.Typ := tyX else
-        if Sign = 'Z' then Tex.Typ := tyZ else
-        if Sign = 'D' then Tex.Typ := tyD else
-        if Sign = 'H' then Tex.Typ := tyH else
-        if Sign = 'I' then Tex.Typ := tyI else
-        if Sign = 'L' then Tex.Typ := tyL else
-        if Sign = 'P' then Tex.Typ := tyP else
-        if Sign = 'V' then Tex.Typ := tyV;
+        for i := 0 to Length(Waggons) do
+          if Sign = Waggons[i].Sign then
+          begin
+            Tex.Typ := Waggons[i].Typ;
+            Break;
+          end;
       end;
 
       if Lexer.TokenID = ptComma then
@@ -918,40 +913,14 @@ begin
         else
         if Pos('!=',Plik[i]) = 1 then
         begin
-          if Plik[i][3] = '*' then
-            Grupa := tyUnknown else
-          if Plik[i][3]='z' then Grupa := tyEZT        else
-          if Plik[i][3]='e' then Grupa := tyELEKTROWOZ else
-          if Plik[i][3]='s' then Grupa := tySPALINOWOZ else
-          if Plik[i][3]='a' then Grupa := tySZYNOBUS   else
-          if Plik[i][3]='B' then Grupa := tyB else
-          if Plik[i][3]='E' then Grupa := tyE else
-          if Plik[i][3]='A' then Grupa := tyA else
-          if Plik[i][3]='S' then Grupa := tyS else
-          if Plik[i][3]='F' then Grupa := tyF else
-          if Plik[i][3]='G' then Grupa := tyG else
-          if Plik[i][3]='R' then Grupa := tyR else
-          if Plik[i][3]='U' then Grupa := tyU else
-          if Plik[i][3]='r' then Grupa := tyROBOCZY    else
-          if Plik[i][3]='W' then Grupa := tyW else
-          if Plik[i][3]='X' then Grupa := tyX else
-          if Plik[i][3]='d' then Grupa := tyDREZYNA    else
-          if Plik[i][3]='o' then Grupa := tySAMOCHOD   else
-          if Plik[i][3]='b' then Grupa := tyAUTOBUS    else
-          if Plik[i][3]='c' then Grupa := tyCIEZAROWKA else
-          if Plik[i][3]='Z' then Grupa := tyZ else
-          if Plik[i][3]='D' then Grupa := tyD else
-          if Plik[i][3]='H' then Grupa := tyH else
-          if Plik[i][3]='I' then Grupa := tyI else
-          if Plik[i][3]='L' then Grupa := tyL else
-          if Plik[i][3]='P' then Grupa := tyP else
-          if Plik[i][3]='V' then Grupa := tyV else
-          if Plik[i][3]='t' then Grupa := tyTRAMWAJ    else
-          if Plik[i][3]='h' then Grupa := tyOSOBA      else
-          if Plik[i][3]='f' then Grupa := tyZWIERZE    else
-          if Plik[i][3]='p' then Grupa := tyPAROWOZ    else
-          if Plik[i][3]='x' then Grupa := tyPROTOTYP   else
           Grupa := tyINNE;
+
+          for y := 0 to Length(Engines) do
+            if Plik[i][3] = Engines[y].Sign then
+            begin
+              Grupa := Engines[y].Typ;
+              Break;
+            end;
 
           Continue;
         end;
@@ -964,6 +933,8 @@ begin
           Tex.PrevTexID := -1;
           if Crew > 0 then
           begin
+            Tex.Crew := Crew;
+
             if (CrewCount > 0) and (CrewCount <= Crew) then
             begin
               Tex.PrevTexID := Data.Textures.Count-1;

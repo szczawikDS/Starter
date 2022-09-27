@@ -24,36 +24,53 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  System.Actions, Vcl.ActnList, Vcl.ComCtrls;
 
 type
   TfrmSettingsAdv = class(TForm)
+    pcAdv: TPageControl;
+    tsSettings: TTabSheet;
     pnlMain: TPanel;
+    pnlSettingsAdv: TPanel;
     chCompressTex: TCheckBox;
-    chScaleSpeculars: TCheckBox;
-    chUseGLES: TCheckBox;
-    chShaderGamma: TCheckBox;
-    chMipmaps: TCheckBox;
     chIgnoreIrrevelant: TCheckBox;
+    chMipmaps: TCheckBox;
+    chScaleSpeculars: TCheckBox;
+    chShaderGamma: TCheckBox;
+    chUseGLES: TCheckBox;
     pnlConvertModels: TPanel;
-    cbConvertmodels: TComboBox;
     lbe3d: TLabel;
+    cbConvertmodels: TComboBox;
     pnlLegend: TPanel;
-    CheckBox1: TCheckBox;
     lbLegend: TLabel;
+    CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
     CheckBox3: TCheckBox;
-    pnlSettingsAdv: TPanel;
-    Timer: TTimer;
     pnlLog: TPanel;
-    meLog: TMemo;
     lbLogCaption: TLabel;
+    meLog: TMemo;
     btnClearLog: TButton;
+    Timer: TTimer;
+    tsTools: TTabSheet;
+    btnRemoveAllTrains: TButton;
+    AL: TActionList;
+    actRemoveAllTrains: TAction;
+    btnAddVehiclesCategory: TButton;
+    actAddVehiclesCategory: TAction;
+    btnAddVehiclesMMD: TButton;
+    actAddVehiclesMMD: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure btnClearLogClick(Sender: TObject);
+    procedure actRemoveAllTrainsUpdate(Sender: TObject);
+    procedure actAddVehiclesCategoryExecute(Sender: TObject);
+    procedure actAddVehiclesCategoryUpdate(Sender: TObject);
+    procedure actAddVehiclesMMDExecute(Sender: TObject);
+    procedure actAddVehiclesMMDUpdate(Sender: TObject);
+    procedure actRemoveAllTrainsExecute(Sender: TObject);
   private
     procedure RefreshLog;
   end;
@@ -63,9 +80,85 @@ var
 
 implementation
 
-uses uUtilities, uLanguages, uMain;
+uses uUtilities, uLanguages, uMain, uStructures;
 
 {$R *.dfm}
+
+procedure TfrmSettingsAdv.actAddVehiclesCategoryExecute(Sender: TObject);
+var
+  i : Integer;
+begin
+  try
+    for i := 0 to Main.lbTextures.Count-1 do
+    begin
+      Main.lbTextures.ItemIndex := i;
+      Main.AddVehicle(0,nil,False,False);
+    end;
+  except
+    ShowMessage('Wyst¹pi³ b³¹d podczas operacji.');
+  end;
+end;
+
+procedure TfrmSettingsAdv.actAddVehiclesCategoryUpdate(Sender: TObject);
+begin
+  actAddVehiclesCategory.Enabled := Main.Train <> nil;
+end;
+
+procedure TfrmSettingsAdv.actAddVehiclesMMDExecute(Sender: TObject);
+var
+  i, y, z : Integer;
+  MMD : TStringList;
+  Added : Boolean;
+begin
+  try
+    try
+      MMD := TStringList.Create;
+      Main.lbTextures.ItemIndex := 0;
+      for i := 0 to Main.lbTextures.Count-1 do
+      begin
+        Main.lbTextures.ItemIndex := i;
+
+        for z := 0 to (Main.lbTextures.Items.Objects[Main.lbTextures.ItemIndex] as TTexture).Models.Count-1 do
+        begin
+          Added := False;
+          for y := 0 to MMD.Count-1 do
+            if (Main.lbTextures.Items.Objects[Main.lbTextures.ItemIndex] as TTexture).Models[z].Model = MMD[y] then
+            begin
+              Added := True;
+              Break;
+            end;
+
+          if not Added then
+          begin
+            Main.AddVehicle(0,nil,False,False);
+            MMD.Add((Main.lbTextures.Items.Objects[Main.lbTextures.ItemIndex] as TTexture).Models[z].Model);
+          end;
+        end;
+      end;
+    finally
+      MMD.Free;
+    end;
+  except
+    ShowMessage('Wyst¹pi³ b³¹d podczas operacji.');
+  end;
+end;
+
+procedure TfrmSettingsAdv.actAddVehiclesMMDUpdate(Sender: TObject);
+begin
+  actRemoveAllTrains.Enabled := Main.Train <> nil;
+end;
+
+procedure TfrmSettingsAdv.actRemoveAllTrainsExecute(Sender: TObject);
+begin
+  if Util.Ask('Usun¹æ wszystkie pojazdy na scenerii?') then
+    if not Main.RemoveAllTrains then
+      ShowMessage('Wyst¹pi³ b³¹d podczas wykonywania operacji.');
+end;
+
+procedure TfrmSettingsAdv.actRemoveAllTrainsUpdate(Sender: TObject);
+begin
+  actRemoveAllTrains.Enabled := Main.Train <> nil;
+end;
 
 procedure TfrmSettingsAdv.btnClearLogClick(Sender: TObject);
 begin

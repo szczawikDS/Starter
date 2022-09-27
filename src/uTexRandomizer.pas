@@ -216,7 +216,7 @@ begin
       TexFilter.Mini.Clear;
       TexFilter.Owner := EmptyStr;
       TexFilter.Drive := Vehicles[i].CabOccupancy in [coHeadDriver,coRearDriver];
-      if Vehicles[i].Texture <> nil then
+      if Vehicles[i].Texture.ID > 0 then
       begin
         if ((Vehicles[i].Texture.PrevTexID < 0)
           and (Vehicles[i].Texture.NextTexID < 0))
@@ -225,9 +225,9 @@ begin
             and ((Pos('ET4',Vehicles[i].Texture.Plik) > 0) or (Pos('112E',Vehicles[i].Texture.Plik) > 0)))) then
           Continue;
 
-        if (Vehicles[i].Texture <> nil) and (Pos('112E',Vehicles[i].Texture.Plik) > 0) then Continue;
+        if (Pos('112E',Vehicles[i].Texture.Plik) > 0) then Continue;
 
-        if Vehicles[i].Texture.PrevTexID >= 0 then Continue;
+        if Vehicles[i].Texture.PrevTexID > 0 then Continue;
         {TexFilter.Multiple      := Vehicles[i].Texture.NextTexID >= 0;
         if TexFilter.Multiple then
           TexFilter.Model := Vehicles[i].Texture.Models[Vehicles[i].ModelID].Model;}
@@ -262,14 +262,14 @@ begin
         end
         else
         begin
-          if (i > 0) and (Vehicles[i-1].CabOccupancy > coRearDriver) and (Vehicles[i-1].Texture <> nil) then
+          if (i > 0) and (Vehicles[i-1].CabOccupancy > coRearDriver) then
           begin
             TexFilter.Typ     := Vehicles[i-1].Texture.Typ;
             TexFilter.Mini.Add(Vehicles[i-1].Texture.Models[Vehicles[i-1].ModelID].Mini);
             TexFilter.ModelID := Vehicles[i-1].ModelID;
           end
           else
-          if (Vehicles.Count-1 > i) and (Vehicles[i+1].CabOccupancy > coRearDriver) and (Vehicles[i+1].Texture <> nil) then
+          if (Vehicles.Count-1 > i) and (Vehicles[i+1].CabOccupancy > coRearDriver) then
           begin
             TexFilter.Typ     := Vehicles[i+1].Texture.Typ;
             TexFilter.Mini.Add(Vehicles[i+1].Texture.Models[Vehicles[i+1].ModelID].Mini);
@@ -315,10 +315,9 @@ begin
     begin
       RandomTex(Trains[i].Vehicles);
       for y := 0 to Trains[i].Vehicles.Count-1 do
-        if ((Trains[i].Vehicles[y].Texture <> nil)
-          and (Trains[i].Vehicles[y].Texture.Typ = tyEZT))
+        if (Trains[i].Vehicles[y].Texture.Typ = tyEZT)
          or (Trains[i].Vehicles[y].CabOccupancy = coHeadDriver) then
-            Connect(Main.Train.Vehicles,y);
+            AutoConnect(Main.Train.Vehicles,y);
       Inc(Main.SelTrain);
     end;
 end;
@@ -361,13 +360,10 @@ end;
 procedure TTexRandomizer.MultipleAssign(Vehicles:TObjectList<TVehicle>;Index:Integer;const Tex:TTexture);
 begin
   try
-    if (Vehicles[Index].Texture <> nil) then
-    begin
-      if (Vehicles[Index].Texture = Tex) then Exit;
-      if (Vehicles[Index].Texture.Typ in [TTyp.tyELEKTROWOZ..tyEZT])
-          and ((Main.IsVehicleName(Tex.Models[Vehicles[Index].ModelID].MiniD) > 0)
-              or (Main.IsVehicleName(Tex.Plik) > 0)) then Exit;
-    end;
+    if (Vehicles[Index].Texture = Tex) then Exit;
+    if (Vehicles[Index].Texture.Typ in [TTyp.tyELEKTROWOZ..tyEZT])
+        and ((Main.IsVehicleName(Tex.Models[Vehicles[Index].ModelID].MiniD) > 0)
+            or (Main.IsVehicleName(Tex.Plik) > 0)) then Exit;
 
     Main.AssignTexToVehicle(Vehicles[Index],Tex);
 
@@ -376,18 +372,17 @@ begin
       if Vehicles.Count = Index then
         Main.AddVehicle(Index,Data.Textures[Tex.NextTexID],False,True)
       else
-        if (Vehicles[Index].Texture <> nil) then
-          if (Vehicles[Index].Texture.PrevTexID < 0) then
-            Main.AddVehicle(Index,Data.Textures[Tex.NextTexID],False,True)
-          else
-            MultipleAssign(Vehicles,Index,Data.Textures[Tex.NextTexID]);
+        if (Vehicles[Index].Texture.PrevTexID < 0) then
+          Main.AddVehicle(Index,Data.Textures[Tex.NextTexID],False,True)
+        else
+          MultipleAssign(Vehicles,Index,Data.Textures[Tex.NextTexID]);
 
     Index := 0;
     while (Vehicles.Count-1 > Index) do
     begin
-      if (Vehicles[Index].Texture <> nil) and (Vehicles[Index+1].Texture <> nil) then
-        if (Vehicles[Index].Texture.NextTexID < 0) and (Vehicles[Index+1].Texture.PrevTexID > 0)  then
-          Main.RemoveVehicles(Index+1,Vehicles);
+      if (Vehicles[Index].Texture.NextTexID < 0) and (Vehicles[Index+1].Texture.PrevTexID > 0)  then
+        Main.RemoveVehicles(Index+1,Vehicles);
+
       Inc(Index);
     end;
   except

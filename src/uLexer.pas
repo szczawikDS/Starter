@@ -34,6 +34,7 @@ type
     function GetToken: string; overload;
     function GetToken(const Params: TStringList): string; overload;
     function GetToken(const Stoppers:TptTokenKinds): string; overload;
+    procedure NextIDs(const IDs:TptTokenKinds);
     procedure SkipComment;
   end;
 
@@ -72,6 +73,16 @@ begin
     Result := Result + Lexer.Token;
     Lexer.Next;
   end;
+end;
+
+procedure TLexer.NextIDs(const IDs: TptTokenKinds);
+begin
+  repeat
+    if Lexer.TokenID = ptNull then
+      Break
+    else
+      Lexer.Next;
+  until Lexer.TokenID in IDs;
 end;
 
 function TLexer.GetToken(const Params:TStringList):string;

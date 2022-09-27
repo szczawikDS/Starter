@@ -37,6 +37,8 @@ TData = class
   constructor Create;
   class procedure Load;
   function LoadsIndex(const LoadName:string):Integer;
+  private
+    procedure TexturesEmptyElement;
 end;
 
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
@@ -49,7 +51,7 @@ function PrepareTrainsetDesc(const Trainset:TTrain):string;
 function PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
 function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):TTrainParams;
 function IncludeVehicleToMass(const Vehicle:TVehicle;const AllVehicles:Boolean):Boolean;
-procedure Connect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
+procedure AutoConnect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
 function CheckFlag(Flag:Integer):TFlags;
 function CommonCoupler(const C1,C2:Integer):Integer;
 
@@ -63,7 +65,7 @@ uses SysUtils;
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 begin
   try
-    if Vehicle.Texture <> nil then
+    if Vehicle.Fiz <> nil then
     begin
       if LeftCoupler then
       begin
@@ -90,7 +92,7 @@ end;
 function GetControlType(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):string;
 begin
   try
-    if Vehicle.Texture <> nil then
+    if Vehicle.Fiz <> nil then
     begin
       if LeftCoupler then
       begin
@@ -135,43 +137,42 @@ begin
   Result := TList<Integer>.Create;
   Result.Add(Index);
 
-  if Vehicles[Index].Texture <> nil then
-    if Vehicles[Index].Dist >= 0 then
-    begin
-      i := 0;
-      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
-        and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
-        begin
-          Result.Add(Index-i-1);
-          Inc(i);
-        end;
+  if Vehicles[Index].Dist >= 0 then
+  begin
+    i := 0;
+    while (Index-i > 0)
+      and (Vehicles[Index-i].Texture.PrevTexID = Vehicles[Index-i-1].Texture.ID) do
+      begin
+        Result.Add(Index-i-1);
+        Inc(i);
+      end;
 
-      i := 0;
-      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
-        and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
-        begin
-          Result.Add(Index+i+1);
-          Inc(i);
-        end;
-    end
-    else
-    begin
-      i := 0;
-      while (Index-i > 0) and (Vehicles[Index-i-1].Texture <> nil)
-        and (Vehicles[Index-i].Texture.NextTexID = Vehicles[Index-i-1].Texture.ID) do
-        begin
-          Result.Add(Index-i-1);
-          Inc(i);
-        end;
+    i := 0;
+    while (Vehicles.Count-1 > Index+i)
+      and (Vehicles[Index+i].Texture.NextTexID = Vehicles[Index+i+1].Texture.ID) do
+      begin
+        Result.Add(Index+i+1);
+        Inc(i);
+      end;
+  end
+  else
+  begin
+    i := 0;
+    while (Index-i > 0)
+      and (Vehicles[Index-i].Texture.NextTexID = Vehicles[Index-i-1].Texture.ID) do
+      begin
+        Result.Add(Index-i-1);
+        Inc(i);
+      end;
 
-      i := 0;
-      while (Vehicles.Count-1 > Index+i) and (Vehicles[Index+i+1].Texture <> nil)
-        and (Vehicles[Index+i].Texture.PrevTexID = Vehicles[Index+i+1].Texture.ID) do
-        begin
-          Result.Add(Index+i+1);
-          Inc(i);
-        end;
-    end
+    i := 0;
+    while (Vehicles.Count-1 > Index+i)
+      and (Vehicles[Index+i].Texture.PrevTexID = Vehicles[Index+i+1].Texture.ID) do
+      begin
+        Result.Add(Index+i+1);
+        Inc(i);
+      end;
+  end
 end;
 
 function MultipleTrain(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<TVehicle>;
@@ -225,15 +226,14 @@ var
 begin
   if Trainset.Vehicles.Count > 0 then
   begin
-    if (Trainset.Vehicles.First.Texture <> nil) and (Trainset.Vehicles.First.Texture.Typ in [tyELEKTROWOZ..tyEZT]) then
+    if Trainset.Vehicles.First.Texture.Typ in [tyELEKTROWOZ..tyEZT] then
       Result := Trainset.Vehicles.First.Name
     else
       Result := Trainset.Vehicles.First.TypeChk;
 
     c := 1;
     for i := 1 to Trainset.Vehicles.Count-1 do
-      if (Trainset.Vehicles[i].Texture <> nil) and (Trainset.Vehicles[i-1].Texture <> nil)
-        and SameText(Trainset.Vehicles[i-1].Texture.Models[Trainset.Vehicles[i-1].ModelID].Mini,
+      if SameText(Trainset.Vehicles[i-1].Texture.Models[Trainset.Vehicles[i-1].ModelID].Mini,
                      Trainset.Vehicles[i].Texture.Models[Trainset.Vehicles[i].ModelID].Mini)
         and not (Trainset.Vehicles[i].Texture.Typ in [tyELEKTROWOZ..tyPAROWOZ])  then
       begin
@@ -248,7 +248,7 @@ begin
           Result := Result + '(' + IntToStr(c) + ')';
           c := 1;
         end;
-        if (Trainset.Vehicles[i].Texture <> nil) then
+        if Trainset.Vehicles[i].Texture.ID > 0 then
           Result := Result + ' + ' + Trainset.Vehicles[i].Texture.Models[Trainset.Vehicles[i].ModelID].Mini
         else
           Result := Result + ' + ' + Trainset.Vehicles[i].TypeChk;
@@ -321,9 +321,27 @@ end;
 
 { TData }
 
+procedure TData.TexturesEmptyElement;
+var
+  Tex : TTexture;
+  Model : TModel;
+begin
+  Tex := TTexture.Create;
+  Tex.ID := 0;
+  Tex.Typ := tyUNKNOWN;
+  Tex.PrevTexID := -1;
+  Tex.NextTexID := -1;
+
+  Model := TModel.Create;
+  Model.Fiz   := nil;
+  Tex.Models.Add(Model);
+  Textures.Add(Tex);
+end;
+
 constructor TData.Create;
 begin
   Textures  := TObjectList<TTexture>.Create;
+  TexturesEmptyElement;
   Physics   := TObjectList<TPhysics>.Create;
   Scenarios := TObjectList<TScenario>.Create();
   Depot     := TObjectList<TTrain>.Create;
@@ -347,22 +365,20 @@ begin
   begin
     for i := Train.Vehicles.Count-1 downto 0 do
     begin
-      if Train.Vehicles[i].Texture <> nil then
+      if IncludeVehicleToMass(Train.Vehicles[i],AllVehicles) then
       begin
-        if IncludeVehicleToMass(Train.Vehicles[i],AllVehicles) then
-        begin
-          Result.Mass := Result.Mass + Train.Vehicles[i].Fiz.Mass;
+        Result.Mass := Result.Mass + Train.Vehicles[i].Fiz.Mass;
 
-          LoadIndex := Data.LoadsIndex(Train.Vehicles[i].LoadType);
+        LoadIndex := Data.LoadsIndex(Train.Vehicles[i].LoadType);
 
-          if LoadIndex >= 0 then
-            Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * Data.Loads[LoadIndex].Weight)
-          else
-            Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * 1000);
-        end;
-        if Train.Vehicles[i].Fiz <> nil then
-          Result.Length := Result.Length + Train.Vehicles[i].Fiz.Length;
+        if LoadIndex >= 0 then
+          Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * Data.Loads[LoadIndex].Weight)
+        else
+          Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * 1000);
       end;
+
+      if Train.Vehicles[i].Fiz <> nil then
+        Result.Length := Result.Length + Train.Vehicles[i].Fiz.Length;
     end;
     Result.CountVehicles := Train.Vehicles.Count;
   end;
@@ -377,7 +393,7 @@ begin
             or (AllVehicles));
 end;
 
-procedure Connect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
+procedure AutoConnect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
 var
   LeftMax, RightMax : Integer;
   ControlType1, ControlType2 : string;

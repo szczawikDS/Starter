@@ -1,7 +1,6 @@
 {
   Starter
   Copyright (C) 2019-2020 Damian Skrzek (szczawik)
-
   This file is part of Starter.
 
   Starter is free software: you can redistribute it and/or modify

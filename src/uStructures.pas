@@ -41,6 +41,11 @@ type
           tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
           tyPROTOTYP, tyINNE, tyUNKNOWN);
 
+  TVehicleType = record
+      Sign  : Char;
+      Typ   : TTyp;
+    end;
+
   TCabOccupancy = (coHeadDriver,coRearDriver,coPassenger,coNobody);
 
   TTexError = (teNoFile,teNoModel,teNoPhysics,teNoMultimedia);
@@ -87,7 +92,6 @@ type
     Models  : TObjectList<TModel>;
     Desc  : string;
     Dir   : string;
-    Mmd   : Boolean;
     Typ    : TTyp;
     Errors : TTexErrors;
     Version   : string;
@@ -100,8 +104,12 @@ type
     Photos    : string;
     NextTexID : Integer;
     PrevTexID : Integer;
+    Crew      : Integer;
+  private
+    function GetFirstIndex: Integer;
   public
     constructor Create;
+    property FirstIndex : Integer read GetFirstIndex;
   end;
 
   TVehicleParams = record
@@ -263,7 +271,67 @@ type
     Weight  : Integer;
   end;
 
+const
+  Waggons: array[0..16] of TVehicleType =
+  (
+    (Sign: 'B'; Typ: tyB),
+    (Sign: 'E'; Typ: tyE),
+    (Sign: 'A'; Typ: tyA),
+    (Sign: 'S'; Typ: tyS),
+    (Sign: 'F'; Typ: tyF),
+    (Sign: 'G'; Typ: tyG),
+    (Sign: 'R'; Typ: tyR),
+    (Sign: 'U'; Typ: tyU),
+    (Sign: 'W'; Typ: tyW),
+    (Sign: 'X'; Typ: tyX),
+    (Sign: 'Z'; Typ: tyZ),
+    (Sign: 'D'; Typ: tyD),
+    (Sign: 'H'; Typ: tyH),
+    (Sign: 'I'; Typ: tyI),
+    (Sign: 'L'; Typ: tyL),
+    (Sign: 'P'; Typ: tyP),
+    (Sign: 'V'; Typ: tyV)
+  );
+
+  Engines: array[0..31] of TVehicleType =
+  (
+    (Sign: '*'; Typ: tyUNKNOWN),
+    (Sign: 'z'; Typ: tyEZT),
+    (Sign: 'e'; Typ: tyELEKTROWOZ),
+    (Sign: 's'; Typ: tySPALINOWOZ),
+    (Sign: 'a'; Typ: tySZYNOBUS),
+    (Sign: 'B'; Typ: tyB),
+    (Sign: 'E'; Typ: tyE),
+    (Sign: 'A'; Typ: tyA),
+    (Sign: 'S'; Typ: tyS),
+    (Sign: 'F'; Typ: tyF),
+    (Sign: 'G'; Typ: tyG),
+    (Sign: 'R'; Typ: tyR),
+    (Sign: 'U'; Typ: tyU),
+    (Sign: 'r'; Typ: tyROBOCZY),
+    (Sign: 'W'; Typ: tyW),
+    (Sign: 'X'; Typ: tyX),
+    (Sign: 'd'; Typ: tyDREZYNA),
+    (Sign: 'o'; Typ: tySAMOCHOD),
+    (Sign: 'b'; Typ: tyAUTOBUS),
+    (Sign: 'c'; Typ: tyCIEZAROWKA),
+    (Sign: 'Z'; Typ: tyZ),
+    (Sign: 'D'; Typ: tyD),
+    (Sign: 'H'; Typ: tyH),
+    (Sign: 'I'; Typ: tyI),
+    (Sign: 'L'; Typ: tyL),
+    (Sign: 'P'; Typ: tyP),
+    (Sign: 'V'; Typ: tyV),
+    (Sign: 't'; Typ: tyTRAMWAJ),
+    (Sign: 'h'; Typ: tyOSOBA),
+    (Sign: 'f'; Typ: tyZWIERZE),
+    (Sign: 'p'; Typ: tyPAROWOZ),
+    (Sign: 'x'; Typ: tyPROTOTYP)
+  );
+
 implementation
+
+uses uData;
 
 constructor TScenario.Create;
 begin
@@ -371,6 +439,17 @@ begin
     Result := Self.Texture.Models[Self.ModelID].Fiz
   else
     Result := nil;
+end;
+
+function TTexture.GetFirstIndex: Integer;
+var
+  i : Integer;
+begin
+  i := 0;
+  while (Self.ID-i > 0)
+    and (Data.Textures[Self.ID-i-1].NextTexID = Data.Textures[Self.ID-i].ID) do
+    Inc(i);
+  Result := Self.ID - i;
 end;
 
 end.

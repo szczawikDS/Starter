@@ -11,7 +11,6 @@ object frmAbout: TfrmAbout
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -43,17 +42,17 @@ object frmAbout: TfrmAbout
       ParentFont = False
       Layout = tlCenter
     end
-    object Label10: TLabel
+    object lbVersion: TLabel
       Left = 0
       Top = 36
       Width = 300
       Height = 13
       Align = alTop
       Alignment = taCenter
-      Caption = 'Wersja: 7.9'
+      Caption = 'Wersja: 7.9.4 64-bit'
       ParentShowHint = False
       ShowHint = True
-      ExplicitWidth = 57
+      ExplicitWidth = 98
     end
     object Label11: TLabel
       AlignWithMargins = True
@@ -204,7 +203,42 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
-        '7.9 (25.01.2022)'
+        '7.11 (26.09.2022)'
+        '*wykrywanie zmian ustawie'#324' w tle'
+        ''
+        '7.10.2 (13.08.2022)'
+        '*poprawione kategorie pojazd'#243'w'
+        ''
+        '7.10.1 (12.08.2022)'
+        '*poprawione kategorie pojazd'#243'w'
+        ''
+        '7.10 (09.08.2022)'
+        '*unikalno'#347#263' nazwy sprawdzana tylko dla wybranego '
+        'pojazdu'
+        '*logowanie b'#322#281'd'#243'w '#322'adowania miniaturek pojazd'#243'w i '
+        'SCN'
+        ''
+        '7.9.4 (02.06.2022)'
+        '*katalog we wpisie dynamic mo'#380'e zaczyna'#263' si'#281' od '
+        'cyfr'
+        '*automatyczne ustawienie sprz'#281'g'#243'w podczas '
+        'odwracania pojazd'#243'w'
+        '*opcja odbi'#263' 60 FPS'
+        '*poprawione unikalne nazwy pojazd'#243'w'
+        ''
+        '7.9.3 (27.03.2022)'
+        '*poprawione unikalne nazwy pojazd'#243'w'
+        ''
+        '7.9.2.1 (13.03.2022)'
+        '*ob'#322'uga parametru czu'#322'o'#347'ci zaworu FV4a'
+        '*poprawiona obs'#322'uga pojazd'#243'w z brakami'
+        '*poprawka kategorii pojazd'#243'w'
+        ''
+        '7.9.1 (03.02.2022)'
+        '*poprawione '#322'adowanie miniaturek pojazd'#243'w'
+        ''
+        '7.9 (30.01.2022)'
+        '*automatyczna podmiana pojazd'#243'w wielocz'#322'onowych'
         '*zmiana stanu hamulca wp'#322'ywa na ca'#322'y zesp'#243#322' '
         'trakcyjny'
         '*obs'#322'uga parametru czu'#322'o'#347'ci zaworu hamulca'
@@ -217,42 +251,6 @@ object frmAbout: TfrmAbout
         '*poprawione zczytywanie sk'#322'adu ze schowka'
         '*mo'#380'liwo'#347#263' zmiany sprz'#281'gu ostatniego pojazdu'
         '*poprawiona obs'#322'uga renderera ANGLE'
-        ''
-        '7.8! (28.12.2021)'
-        '*rozszerzone logowanie b'#322#281'd'#243'w'
-        '*podgl'#261'd logu'
-        '*scalone zak'#322'adki rozk'#322'adu i dodatk'#243'w'
-        '*dodana zak'#322'adka z informacjami o b'#322#281'dach'
-        '*poprawiona unikalno'#347#263' nazw pojazd'#243'w'
-        '*refaktoryzacja'
-        ''
-        '7.7.4 (11.11.2021)'
-        '*opis opcji ograniczenia cieni'
-        '*przycisk pomocy- odno'#347'niki do instrukcji'
-        ''
-        '7.7.3 (08.11.2021)'
-        '*poprawione wy'#347'wietlanie danych pojazdu'
-        '*poprawione przechodzenie do magazynu'
-        '*ulepszone opisy parametr'#243'w d'#378'wi'#281'ku'
-        ''
-        '7.7.2 (21.10.2021)'
-        '*ka'#380'dorazowe od'#347'wie'#380'anie mini scenariusza'
-        ''
-        '7.7.1 (12.10.2021)'
-        '*poprawione nadawanie numer'#243'w pojazdom'
-        '*obs'#322'uga poziomu wyciszenia podczas pauzy'
-        ''
-        '7.7 (08.09.2021)'
-        '*reorganizacja ustawie'#324
-        '*obs'#322'uga dodatkowych parametr'#243'w cieni i '
-        'renderowania'
-        ''
-        '7.6.3 (02.09.2021)'
-        '*poprawione ustawienia zaawansowane'
-        ''
-        '7.6.2 (23.08.2021)'
-        '*wyszukiwarka w klawiszologii'
-        '*odwracanie w poziomie miniaturek'
         ''
         '...')
       ReadOnly = True

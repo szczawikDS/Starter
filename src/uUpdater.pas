@@ -1,7 +1,6 @@
 {
   Starter
   Copyright (C) 2019-2021 Damian Skrzek (szczawik)
-
   This file is part of Starter.
 
   Starter is free software: you can redistribute it and/or modify
@@ -24,10 +23,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, uIdHTTPProgress, IdIOHandler, IdIOHandlerSocket,
-  IdIOHandlerStack, Vcl.ComCtrls;
+  IdIOHandlerStack, Vcl.ComCtrls, Vcl.Controls;
 
 type
   TfrmUpdater = class(TForm)
@@ -37,13 +36,12 @@ type
     procedure FormCreate(Sender: TObject);
   private
     procedure AutoUpdate;
-    function Ask(const Text: string): Boolean;
     procedure UpdateApp(const UpdateFile: TStringList);
     procedure IdHTTPProgressOnChange(Sender : TObject);
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 99;
+      AppVersion = 110;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -54,20 +52,7 @@ uses uMain, ShellApi, System.UITypes, uUtilities;
 
 {$R *.dfm}
 
-function TfrmUpdater.Ask(const Text:string):Boolean;
-begin
-  with CreateMessageDialog(Text, mtCustom, [mbYes, mbNo], mbNo) do
-    begin
-      try
-        TButton(FindComponent('Yes')).Caption:= 'Tak';
-        TButton(FindComponent('No')).Caption:= 'Nie';
-        ShowModal;
-      finally
-        Result := ModalResult = mrYes;
-        Free;
-      end;
-    end;
-end;
+
 
 procedure TfrmUpdater.CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
 var
@@ -80,10 +65,17 @@ begin
       Show;
       Application.ProcessMessages;
 
-      if Beta then
-        UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version_beta.txt')
-      else
-        UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version.txt');
+      {$IFDEF WIN64}
+        if Beta then
+          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version64_beta.txt')
+        else
+          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version64.txt');
+      {$ELSE}
+        if Beta then
+          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version_beta.txt')
+        else
+          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version.txt');
+      {$ENDIF}
 
       if TryStrToInt(UpdateFile[0],Version) then
       begin
@@ -95,7 +87,7 @@ begin
         else
         begin
           Hide;
-          if Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
+          if Util.Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
             UpdateApp(UpdateFile);
         end;
       end;

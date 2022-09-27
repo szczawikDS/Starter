@@ -38,12 +38,32 @@ type
     Lang    : string;
     InitSCN : string;
     Log     : TStringList;
+    FileVersion : string;
+    FileDateStr : string;
+
+    LAB_CAR_NO            : string;
+    LAB_AI_TRAIN          : string;
+    LAB_KEY1              : string;
+    LAB_KEY2              : string;
+    LAB_KEY3              : string;
+    LAB_KEY_DESC          : string;
+    LAB_WRONG_CONNECTION  : string;
+    LAB_TRAIN_NAME        : string;
+    LAB_TRAIN_NAME_CHANGE : string;
+    LAB_FILE_NOT_FOUND    : string;
+    LAB_SAVE_PRESET       : string;
+    LAB_SET_PRESET_NAME   : string;
+
     constructor Create;
+    function Ask(const Text: string): Boolean;
     procedure CheckInstallation(const EXECount:Integer);
     procedure EmptyTextures;
+    function GetFileVersion(FileName: string): string;
     procedure OpenFile(const Path:string);
     procedure PrepareLoadingScreen(const LogoPath:string);
     procedure LogAdd(const S:string;const ShowInfo:Boolean=False);
+  private
+    procedure StringsLoad;
   end;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
@@ -68,7 +88,7 @@ var
 implementation
 
 uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, uMain,
-    uData, uStructures, StrUtils, uSettingsAdv;
+    uData, uStructures, StrUtils, uSettingsAdv, StdCtrls, Controls;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
 begin
@@ -112,6 +132,21 @@ begin
     on E: Exception do
       Util.Log.Add('Nie uda³o siê usun¹æ poprzedniej wersji Startera. Szczegó³y b³êdu: ' + E.Message);
   end;
+end;
+
+function TUtil.Ask(const Text:string):Boolean;
+begin
+  with CreateMessageDialog(Text, mtCustom, [mbYes, mbNo], mbNo) do
+    begin
+      try
+        TButton(FindComponent('Yes')).Caption:= 'Tak';
+        TButton(FindComponent('No')).Caption:= 'Nie';
+        ShowModal;
+      finally
+        Result := ModalResult = mrYes;
+        Free;
+      end;
+    end;
 end;
 
 procedure TUtil.CheckInstallation(const EXECount:Integer);
@@ -288,12 +323,65 @@ end;
 
 constructor TUtil.Create;
 begin
-  DIR := ExtractFilePath(ParamStr(0));
+  //DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\pctga\';
-  //DIR := 'G:\MaSzyna\Maszyna2104\';
+  DIR := 'G:\MaSzyna\Maszyna2203\';
   Log := TStringList.Create;
 
+  StringsLoad;
   SetFormatSettings;
+
+  {$IFDEF WIN64}
+    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit';
+  {$ELSE}
+    FileVersion := GetFileVersion(ParamStr(0));
+  {$ENDIF}
+
+  FileDateStr := FormatDateTime(' dd.mm.yyyy',FileDateToDateTime(FileAge(ParamStr(0))));
+end;
+
+procedure TUtil.StringsLoad;
+begin
+  LAB_TRAIN_NAME        := 'Nazwa poci¹gu';
+  LAB_TRAIN_NAME_CHANGE := 'Zmiana nazwy poci¹gu';
+  LAB_CAR_NO            := 'Numer wagonu: ';
+  LAB_AI_TRAIN          := 'Poci¹g prowadzony przez komputer.';
+  LAB_KEY1              := 'Przycisk 1';
+  LAB_KEY2              := 'Przycisk 2';
+  LAB_KEY3              := 'Przycisk 3';
+  LAB_KEY_DESC          := 'Opis funkcji';
+  LAB_WRONG_CONNECTION  := 'Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.';
+  LAB_FILE_NOT_FOUND    := 'Nie znaleziono wybranego pliku.';
+  LAB_SAVE_PRESET       := 'Zapis presetu ustawieñ';
+  LAB_SET_PRESET_NAME   := 'Nadaj nazwê zestawu ustawieñ:';
+end;
+
+function TUtil.GetFileVersion(FileName: string): string;
+var
+  iBufferSize: DWORD;
+  iDummy: DWORD;
+  pBuffer: Pointer;
+  pFileInfo: Pointer;
+  iVer: array[1..3] of word;
+begin
+  Result := '';
+
+  iBufferSize := GetFileVersionInfoSize(PChar(FileName), iDummy);
+  if (iBufferSize > 0) then
+  begin
+    Getmem(pBuffer, iBufferSize);
+    try
+      GetFileVersionInfo(PChar(FileName), 0, iBufferSize, pBuffer);
+      VerQueryValue(pBuffer, '\', pFileInfo, iDummy);
+
+      iVer[1] := HiWord(PVSFixedFileInfo(pFileInfo)^.dwFileVersionMS);
+      iVer[2] := LoWord(PVSFixedFileInfo(pFileInfo)^.dwFileVersionMS);
+      iVer[3] := HiWord(PVSFixedFileInfo(pFileInfo)^.dwFileVersionLS);
+    finally
+      Freemem(pBuffer);
+    end;
+    Result := Format('%d.%d.%d', [iVer[1], iVer[2], iVer[3]]);
+  end;
 end;
 
 procedure TUtil.LogAdd(const S:string;const ShowInfo:Boolean=False);

@@ -36,7 +36,7 @@ type
     Label8: TLabel;
     Label9: TLabel;
     Label5: TLabel;
-    Label10: TLabel;
+    lbVersion: TLabel;
     Label11: TLabel;
     pnlAbout: TPanel;
     pnlLog: TPanel;
@@ -62,6 +62,8 @@ procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
   if Util.Lang <> 'pl' then
     TLanguages.ChangeLanguage(Self,Util.Lang);
+
+  lbVersion.Caption := Util.FileVersion;
 end;
 
 end.

@@ -1,7 +1,6 @@
 {
   Starter
   Copyright (C) 2019-2021 Damian Skrzek (szczawik)
-
   This file is part of Starter.
 
   Starter is free software: you can redistribute it and/or modify
@@ -43,6 +42,7 @@ type
   private
     DebugLogTrack     : Boolean;
     DebugLogSpeed     : Boolean;
+    SettingsAge       : TDateTime;
     //////////////////////////////
 
     Lexer : TmwPasLex;
@@ -75,6 +75,7 @@ type
     function FindParam(const Name: string): TParam;
     procedure FindParameter(const Name: string;const Desc:string='');
     procedure ChangeHDR(const Reinhard:Boolean=True);
+    procedure CheckSettingsFile;
   end;
 
 implementation
@@ -307,7 +308,10 @@ begin
     if Path.IsEmpty then
     begin
       if FileExists(Util.DIR + 'eu07.ini') then
-        Settings.LoadFromFile(Util.DIR + 'eu07.ini')
+      begin
+        Settings.LoadFromFile(Util.DIR + 'eu07.ini');
+        SettingsAge := FileDateToDateTime(FileAge(Util.DIR + 'eu07.ini'));
+      end
       else
         Main.actDefaultSettingsExecute(self);
     end
@@ -547,12 +551,16 @@ begin
       if Params[i].Name = 'brakestep' then
         Main.tbBrakeStep.Position := Round(StrToFloat(Params[i].Value) * 10)
       else
+      if Params[i].Name = 'brakespeed' then
+        Main.tbBrakeSpeed.Position := Round(StrToFloat(Params[i].Value) * 10)
+      else
       if Params[i].Name = 'gfx.reflections.framerate' then
       begin
         if StrToFloat(Params[i].Value) < 2 then Main.cbReflectionsFramerate.ItemIndex := 0;
         if StrToFloat(Params[i].Value) > 1 then Main.cbReflectionsFramerate.ItemIndex := 1;
         if StrToFloat(Params[i].Value) > 4 then Main.cbReflectionsFramerate.ItemIndex := 2;
         if StrToFloat(Params[i].Value) > 14 then Main.cbReflectionsFramerate.ItemIndex := 3;
+        if StrToFloat(Params[i].Value) > 43 then Main.cbReflectionsFramerate.ItemIndex := 4;
       end
       else
       if Params[i].Name = 'gfx.shadows.cab.range' then
@@ -1128,6 +1136,9 @@ begin
     if Params[i].Name = 'brakestep' then
       Params[i].Value := FloatToStr(Main.tbBrakeStep.Position / 10)
     else
+    if Params[i].Name = 'brakespeed' then
+      Params[i].Value := FloatToStr(Main.tbBrakeSpeed.Position / 10)
+    else
     if Params[i].Name = 'maxtexturesize' then
     begin
       case Main.cbMaxtexturesize.ItemIndex of
@@ -1197,6 +1208,7 @@ begin
         1: Params[i].Value := '3';
         2: Params[i].Value := '10';
         3: Params[i].Value := '25';
+        4: Params[i].Value := '60';
       end;
     end
     else
@@ -1274,6 +1286,10 @@ begin
   end;
 
   Settings.SaveToFile(Util.DIR + Path);
+
+  if Path = 'eu07.ini' then
+    SettingsAge := FileDateToDateTime(FileAge(Util.DIR + 'eu07.ini'));
+
   Settings.Free;
 end;
 
@@ -1300,6 +1316,27 @@ begin
   except
     on E: Exception do
       ShowMessage('Wyst¹pi³ b³¹d przy próbie zmiany algorytmu. Szczegó³y b³êdu: ' + E.Message);
+  end;
+end;
+
+procedure TSettings.CheckSettingsFile;
+var
+  fileName   : string;
+  fileDate   : Integer;
+  LastChange : tdatetime;
+begin
+  fileName := Util.DIR + 'eu07.ini';
+  fileDate := FileAge(fileName);
+
+  if FileDate > 0 then
+  begin
+    LastChange := FileDateToDateTime(fileDate);
+
+    if LastChange > SettingsAge then
+      if Util.Ask('Wykryto zewnêtrzne zmiany w ustawieniach symulatora. Czy wczytaæ ustawienia ponownie?') then
+        ReadSettings()
+      else
+        SettingsAge := LastChange;
   end;
 end;
 
