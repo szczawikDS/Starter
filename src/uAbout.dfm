@@ -203,6 +203,15 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.12 (01.12.2022)'
+        '*UART- rozbudowa o nowe parametry'
+        '*obs'#322'uga UTF-8'
+        '*opcja losowania kolejno'#347'ci i obr'#243'cenia wagon'#243'w w '
+        'sk'#322'adzie'
+        '*wyszukiwanie po '#322'adunku'
+        '*obs'#322'uga komentarzy w plikach textures.txt'
+        '*poprawiona obs'#322'uga pojazd'#243'w wielocz'#322'onowych'
+        ''
         '7.11 (26.09.2022)'
         '*wykrywanie zmian ustawie'#324' w tle'
         ''
@@ -242,15 +251,6 @@ object frmAbout: TfrmAbout
         '*zmiana stanu hamulca wp'#322'ywa na ca'#322'y zesp'#243#322' '
         'trakcyjny'
         '*obs'#322'uga parametru czu'#322'o'#347'ci zaworu hamulca'
-        ''
-        '7.8.1 (17.01.2022)'
-        '*przy b'#322#281'dach scenariusza zak'#322'adka z b'#322#281'dami jako '
-        'domy'#347'lna'
-        '*baza taboru- usuni'#281'ty b'#322#261'd pustego elementu'
-        '*tworzenie textures.ini'
-        '*poprawione zczytywanie sk'#322'adu ze schowka'
-        '*mo'#380'liwo'#347#263' zmiany sprz'#281'gu ostatniego pojazdu'
-        '*poprawiona obs'#322'uga renderera ANGLE'
         ''
         '...')
       ReadOnly = True

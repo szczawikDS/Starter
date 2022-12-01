@@ -71,6 +71,8 @@ type
     procedure actAddVehiclesMMDExecute(Sender: TObject);
     procedure actAddVehiclesMMDUpdate(Sender: TObject);
     procedure actRemoveAllTrainsExecute(Sender: TObject);
+  public
+      UTF8 : Boolean;
   private
     procedure RefreshLog;
   end;

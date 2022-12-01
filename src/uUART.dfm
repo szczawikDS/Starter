@@ -3,16 +3,15 @@ object frmUART: TfrmUART
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'UART'
-  ClientHeight = 211
+  ClientHeight = 248
   ClientWidth = 466
   Color = clBtnFace
-  Constraints.MaxHeight = 250
+  Constraints.MaxHeight = 287
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
@@ -32,11 +31,15 @@ object frmUART: TfrmUART
     Margins.Bottom = 0
     Align = alTop
     Caption = 'UART:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     ParentShowHint = False
     ShowHint = False
-    ExplicitLeft = 0
-    ExplicitTop = 26
-    ExplicitWidth = 466
+    ExplicitWidth = 34
   end
   object Label2: TLabel
     AlignWithMargins = True
@@ -48,8 +51,13 @@ object frmUART: TfrmUART
     Margins.Bottom = 0
     Align = alTop
     Caption = 'UARTtune:'
-    ExplicitLeft = -2
-    ExplicitTop = 82
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    ExplicitWidth = 60
   end
   object Label3: TLabel
     AlignWithMargins = True
@@ -68,8 +76,6 @@ object frmUART: TfrmUART
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    ExplicitLeft = 17
-    ExplicitTop = 83
     ExplicitWidth = 290
   end
   object edUART: TEdit
@@ -81,9 +87,6 @@ object frmUART: TfrmUART
     Margins.Bottom = 0
     Align = alTop
     TabOrder = 0
-    ExplicitLeft = 0
-    ExplicitTop = 45
-    ExplicitWidth = 466
   end
   object edUARTTune: TEdit
     AlignWithMargins = True
@@ -93,21 +96,17 @@ object frmUART: TfrmUART
     Height = 21
     Align = alTop
     TabOrder = 1
-    ExplicitLeft = 25
-    ExplicitTop = 120
-    ExplicitWidth = 433
   end
   object chUARTDebug: TCheckBox
     AlignWithMargins = True
     Left = 3
-    Top = 177
+    Top = 223
     Width = 460
     Height = 17
     Align = alTop
     Caption = 'Wy'#347'wietlanie danych debugowania w konsoli'
     TabOrder = 2
-    ExplicitLeft = -3
-    ExplicitWidth = 466
+    ExplicitTop = 255
   end
   object chUART: TCheckBox
     AlignWithMargins = True
@@ -118,71 +117,113 @@ object frmUART: TfrmUART
     Align = alTop
     Caption = 'Komunikacja UART aktywna'
     TabOrder = 3
-    ExplicitLeft = 17
-    ExplicitTop = 8
-    ExplicitWidth = 160
   end
   object pnlInstruments: TPanel
     AlignWithMargins = True
     Left = 3
-    Top = 146
+    Top = 139
     Width = 460
-    Height = 25
-    Margins.Top = 10
+    Height = 78
     Align = alTop
     BevelOuter = bvNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     ShowCaption = False
     TabOrder = 4
-    ExplicitLeft = 0
-    ExplicitTop = 104
-    ExplicitWidth = 466
-    object chMainenable: TCheckBox
+    object Label4: TLabel
       Left = 0
       Top = 0
-      Width = 97
+      Width = 460
+      Height = 13
+      Align = alTop
+      Caption = 'UARTfeature:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ExplicitWidth = 76
+    end
+    object pnlTopInstr: TPanel
+      AlignWithMargins = True
+      Left = 3
+      Top = 16
+      Width = 454
       Height = 25
-      Align = alLeft
-      Caption = 'Nastawnik'
+      Align = alTop
+      BevelOuter = bvNone
+      ShowCaption = False
       TabOrder = 0
-      ExplicitLeft = 17
-      ExplicitTop = 8
-      ExplicitHeight = 17
+      object chMainenable: TCheckBox
+        Left = 0
+        Top = 0
+        Width = 97
+        Height = 25
+        Align = alLeft
+        Caption = 'Nastawnik'
+        TabOrder = 0
+      end
+      object chScndenable: TCheckBox
+        Left = 97
+        Top = 0
+        Width = 97
+        Height = 25
+        Align = alLeft
+        Caption = 'Bocznik'
+        TabOrder = 1
+      end
+      object chTrainenable: TCheckBox
+        Left = 194
+        Top = 0
+        Width = 97
+        Height = 25
+        Align = alLeft
+        Caption = 'Hamulec'
+        TabOrder = 2
+      end
+      object chLocalenable: TCheckBox
+        Left = 291
+        Top = 0
+        Width = 121
+        Height = 25
+        Align = alLeft
+        Caption = 'Hamulec lokomotywy'
+        TabOrder = 3
+      end
     end
-    object chScndenable: TCheckBox
-      Left = 97
-      Top = 0
-      Width = 97
+    object pnlMiddleInstr: TPanel
+      AlignWithMargins = True
+      Left = 3
+      Top = 47
+      Width = 454
       Height = 25
-      Align = alLeft
-      Caption = 'Bocznik'
+      Align = alTop
+      BevelOuter = bvNone
+      ShowCaption = False
       TabOrder = 1
-      ExplicitLeft = 120
-      ExplicitTop = 8
-      ExplicitHeight = 17
-    end
-    object chTrainenable: TCheckBox
-      Left = 194
-      Top = 0
-      Width = 97
-      Height = 25
-      Align = alLeft
-      Caption = 'Hamulec'
-      TabOrder = 2
-      ExplicitLeft = 223
-      ExplicitTop = 8
-      ExplicitHeight = 17
-    end
-    object chLocalenable: TCheckBox
-      Left = 291
-      Top = 0
-      Width = 121
-      Height = 25
-      Align = alLeft
-      Caption = 'Hamulec lokomotywy'
-      TabOrder = 3
-      ExplicitLeft = 326
-      ExplicitTop = 8
-      ExplicitHeight = 17
+      object chRadioVolume: TCheckBox
+        Left = 0
+        Top = 0
+        Width = 97
+        Height = 25
+        Align = alLeft
+        Caption = 'G'#322'o'#347'no'#347#263' radia'
+        TabOrder = 0
+      end
+      object chRadioChannel: TCheckBox
+        Left = 97
+        Top = 0
+        Width = 97
+        Height = 25
+        Align = alLeft
+        Caption = 'Kana'#322' radia'
+        TabOrder = 1
+      end
     end
   end
 end

@@ -11,7 +11,6 @@ object frmSearch: TfrmSearch
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
@@ -63,7 +62,6 @@ object frmSearch: TfrmSearch
     Align = alTop
     TabOrder = 2
     OnChange = edTextChange
-    ExplicitLeft = -2
   end
   object lbList: TListBox
     AlignWithMargins = True
@@ -115,7 +113,8 @@ object frmSearch: TfrmSearch
       'Autora tekstury'
       'Autora zdj'#281#263
       'Roku rewizji'
-      'Modelu')
+      'Modelu'
+      #321'adunku')
   end
   object pnlDate: TPanel
     AlignWithMargins = True

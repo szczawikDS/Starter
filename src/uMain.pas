@@ -81,7 +81,6 @@ type
     miPasteFromClipboard: TMenuItem;
     btnCheckUpdate: TButton;
     actCheckUpdate: TAction;
-    lbVersion: TLabel;
     tsKeyboard: TTabSheet;
     actSaveKeyboard: TAction;
     pcSettings: TPageControl;
@@ -199,7 +198,6 @@ type
     dtTime: TDateTimePicker;
     Splitter: TSplitter;
     actReplaceTrain: TAction;
-    lbVersionCaption: TLabel;
     Label20: TLabel;
     chInputgamepad: TCheckBox;
     Label13: TLabel;
@@ -456,6 +454,11 @@ type
     Label48: TLabel;
     lbBrakeSpeed: TLabel;
     tbBrakeSpeed: TTrackBar;
+    pnlVersion: TPanel;
+    lbVersionCaption: TLabel;
+    lbVersion: TLabel;
+    actTrainRandomOrder: TAction;
+    miTrainRandomOrder: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -603,12 +606,15 @@ type
     procedure pmHelpPopup(Sender: TObject);
     procedure pmDepotPopup(Sender: TObject);
     procedure lbModelCaptionDblClick(Sender: TObject);
+    procedure actTrainRandomOrderExecute(Sender: TObject);
+    procedure actTrainRandomOrderUpdate(Sender: TObject);
   private
     SCN : TScenario;
 
     SelVehicle : Integer;
 
     procedure OpenAttachment(Sender: TObject);
+    ///<summary>Maluje na nowo podgl¹d graficzny sk³adu wraz z wyœwietlanymi parametrami zachowuj¹c zaznaczenie.</summary>
     procedure DrawTrain(const Train: TTrain);
     procedure LaunchSimulator;
     procedure SelectVehicle(const Sender: TObject;const SelectTex:Boolean=True);
@@ -653,6 +659,7 @@ type
     procedure AssignBrakeActing(Vehicle: TVehicle);
     procedure AssignBrakeAdjust(Vehicle: TVehicle);
     procedure AssignBrakeState(Vehicle: TVehicle);
+    ///<summary>Prze³adowuje opis wybranego sk³adu.</summary>
     procedure TrainDesc;
     procedure NoSelection;
     procedure LoadScenery(const aSCN: TScenario);
@@ -675,6 +682,9 @@ type
     procedure FaultList(const Scenery: TScenario);
     procedure ReplaceVehicle(const Tex: TTexture; const Index: Integer);
     function FirstCarIndex(const Index: Integer): Integer;
+    ///<summary>Ustawia najwy¿sze mo¿liwe flagi sprzêgów w wybranym sk³adzie.</summary>
+    procedure AutoCoupler;
+    function RandomReverse: Integer;
 
   public
     Settings    : TSettings;
@@ -984,7 +994,7 @@ begin
     chPythonThreadedUpload.Enabled        := True;
 end;
 
-procedure TMain.actAutoCouplerExecute(Sender: TObject);
+procedure TMain.AutoCoupler;
 var
   i : Integer;
 begin
@@ -992,6 +1002,11 @@ begin
     AutoConnect(Train.Vehicles,i);
 
   SelectCoupler(Train.Vehicles[SelVehicle].Coupler);
+end;
+
+procedure TMain.actAutoCouplerExecute(Sender: TObject);
+begin
+  AutoCoupler;
 end;
 
 procedure TMain.actAutoCouplerUpdate(Sender: TObject);
@@ -1653,6 +1668,47 @@ begin
                       and (cbEXE.ItemIndex >= 0) and (tvSCN.Selected.Data <> nil);
 end;
 
+function TMain.RandomReverse:Integer;
+var
+  i : Integer;
+begin
+  i := Random(100);
+  if i mod 2 = 0 then
+    result := -1
+  else
+    result := 0;
+end;
+
+procedure TMain.actTrainRandomOrderExecute(Sender: TObject);
+var
+  i : Integer;
+  Waggons : TList<Integer>;
+begin
+  Waggons := TList<Integer>.Create;
+
+  for i := SelVehicle to Train.Vehicles.Count-1 do
+    if (Train.Vehicles[i].Texture.Typ in [tyA..tyZ]) and (Train.Vehicles[i].Texture.NextTexID < 0) then
+      Waggons.Add(i);
+
+  Randomize;
+  for i := 0 to Waggons.Count-1 do
+  begin
+    Train.Vehicles.Exchange(Waggons[Random(Waggons.Count)],Waggons[Random(Waggons.Count)]);
+    Train.Vehicles[Waggons[i]].Dist := RandomReverse;
+  end;
+
+  TrainDesc;
+  DrawTrain(Train);
+  AutoCoupler;
+
+  Waggons.Free;
+end;
+
+procedure TMain.actTrainRandomOrderUpdate(Sender: TObject);
+begin
+  actTrainRandomOrder.Enabled := SelVehicle >= 0;
+end;
+
 procedure TMain.btnCheckUpdateMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
@@ -2226,9 +2282,19 @@ end;
 
 procedure TMain.ChangePage(const PageIndex:Integer);
 begin
+  pnlInfoTrain.Visible  := PageIndex < tsSettings.PageIndex;
+  sbTrain.Visible       := PageIndex < tsSettings.PageIndex;
   Pages.ActivePageIndex := PageIndex;
-  pnlInfoTrain.Visible := Pages.ActivePage.PageIndex < tsSettings.PageIndex;
-  sbTrain.Visible := Pages.ActivePage.PageIndex < tsSettings.PageIndex;
+
+  btnScenarios.Font.Style := [];
+  btnDepot.Font.Style     := [];
+  btnSettings.Font.Style  := [];
+
+  case Pages.ActivePageIndex of
+    0: btnScenarios.Font.Style  := [TFontStyle.fsBold];
+    1: btnDepot.Font.Style      := [TFontStyle.fsBold];
+    2: btnSettings.Font.Style   := [TFontStyle.fsBold];
+  end;
 
   if Pages.ActivePage = tsStart then
   begin
@@ -2947,6 +3013,9 @@ begin
     meMission.Lines.Add(Train.Desc);
     meMission.Lines.EndUpdate;
 
+    if IsParameter('utf8') then
+      meTimetable.Lines.DefaultEncoding := TEncoding.UTF8;
+
     meTimetable.Lines.BeginUpdate;
     meTimetable.Text := '';
 
@@ -3476,7 +3545,8 @@ var
   MI : TMenuItem;
   i : Integer;
 begin
-  miRemoveVehicle.Visible := pmTrainsets.PopupComponent = nil;
+  miRemoveVehicle.Visible     := pmTrainsets.PopupComponent = nil;
+  miTrainRandomOrder.Visible  := pmTrainsets.PopupComponent = nil;
 
   if lbTrains.Count > 0 then
   begin
@@ -3540,8 +3610,10 @@ var
   BackIndex : Integer;
 begin
   BackIndex := 0; // liczymy ile pojazdow do tylu usuwamy
-  while (Train.Vehicles[Index-BackIndex].Texture.PrevTexID > 0) do
-    Inc(BackIndex);
+
+  if Train.Vehicles[Index].Dist <> -1 then
+    while (Train.Vehicles[Index-BackIndex].Texture.PrevTexID > 0) do
+      Inc(BackIndex);
 
   RemoveVehicles(Index);
 

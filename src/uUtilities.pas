@@ -69,6 +69,7 @@ type
 function Clamp(const Value, Min, Max:Integer):Integer;
 procedure OpenDir(const Path:string);
 procedure OpenURL(const URL:string);
+function IsParameter(const Name:string):Boolean;
 
 procedure RemoveOldVersion;
 
@@ -113,6 +114,17 @@ end;
 procedure OpenURL(const URL:string);
 begin
   ShellExecute(Application.Handle,'open',PChar(URL),nil,nil, SW_SHOWNORMAL);
+end;
+
+function IsParameter(const Name:string):Boolean;
+var
+  i : Integer;
+begin
+  Result := False;
+
+  for i := 1 to ParamCount do
+    if ParamStr(i) = Name then
+      Result := True;
 end;
 
 procedure TUtil.OpenFile(const Path:string);
@@ -323,18 +335,18 @@ end;
 
 constructor TUtil.Create;
 begin
-  //DIR := ExtractFilePath(ParamStr(0));
+  DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\pctga\';
-  DIR := 'G:\MaSzyna\Maszyna2203\';
+  //DIR := 'G:\MaSzyna\Maszyna2203\';
   Log := TStringList.Create;
 
   StringsLoad;
   SetFormatSettings;
 
   {$IFDEF WIN64}
-    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit';
+    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit'{ + ' beta'};
   {$ELSE}
-    FileVersion := GetFileVersion(ParamStr(0));
+    FileVersion := GetFileVersion(ParamStr(0)){ + ' beta'};
   {$ENDIF}
 
   FileDateStr := FormatDateTime(' dd.mm.yyyy',FileDateToDateTime(FileAge(ParamStr(0))));

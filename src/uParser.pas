@@ -58,7 +58,8 @@ type
 implementation
 
 uses SysUtils, uMain, uUtilities, Character, Math, System.Generics.Collections,
-    System.Generics.Defaults {$IFDEF DEBUG},System.Diagnostics{$ENDIF}, uData, uStart;
+    System.Generics.Defaults {$IFDEF DEBUG},System.Diagnostics{$ENDIF}, uData, uStart,
+    System.WideStrUtils, uSettingsAdv;
 
 {$IFDEF DEBUG}
 procedure Measure;
@@ -257,14 +258,17 @@ end;
 
 procedure TLexParser.LoadWeights;
 var
-  LoadWeights : TStringList;
+  LoadWeights : TSList;
   Load : TLoad;
   LoadName : string;
 begin
-  LoadWeights := TStringList.Create;
+  LoadWeights := TSList.Create;
   try
     if FileExists(Util.DIR + 'data\load_weights.txt') then
     begin
+      //if CheckParameter('utf8') then
+      //  LoadWeights.DefaultEncoding := TEncoding.UTF8;
+
       LoadWeights.LoadFromFile(Util.DIR + 'data\load_weights.txt');
 
       Lexer.Origin := PChar(LoadWeights.Text);
@@ -654,7 +658,7 @@ end;
 
 function TLexParser.ScenarioName(const Path:string):TScenario;
 var
-  Plik : TStringList;
+  Plik : TSList; // TStringList;
 begin
   Result := TScenario.Create;
   Result.ID := '-';
@@ -662,7 +666,9 @@ begin
   Result.Name := ExtractFileName(Path);
   Result.Name := Copy(Result.Name,0,Result.Name.Length-4);
 
-  Plik := TStringList.Create;
+  Plik := TSList.Create; //TStringList.Create;
+  //if CheckParameter('utf8') then
+  //  Plik.DefaultEncoding := TEncoding.UTF8;
   Plik.LoadFromFile(Path);
 
   Lexer.Origin := PChar(Plik.Text);
@@ -697,7 +703,7 @@ end;
 
 class procedure TLexParser.ParseScenario(SCN:TScenario);
 var
-  Plik, FirstInit, IncFirstInit : TStringList;
+  Plik, FirstInit, IncFirstInit : TSList;
   FirstInitPos : integer;
   IncludeStr, s : string;
   Config : TConfig;
@@ -707,7 +713,9 @@ begin
   with TLexParser.Create do
   try
     try
-      Plik := TStringList.Create;
+      Plik := TSList.Create;
+      //if CheckParameter('utf8') then
+      //  Plik.DefaultEncoding := TEncoding.UTF8;
       Plik.LoadFromFile(SCN.Path);
 
       FirstInitPos := Pos('FirstInit',Plik.Text);
@@ -725,7 +733,7 @@ begin
       Config.StartTime    := StrToTime('10:30');
       Config.Overcast     := 0;
 
-      FirstInit := TStringList.Create;
+      FirstInit := TSList.Create;
       FirstInit.Text := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
 
       Lexer.Origin := PChar(Plik.Text);
@@ -772,8 +780,9 @@ begin
 
               if FileExists(Util.DIR + 'scenery\' + IncludeStr) then
               begin
-                IncFirstInit := TStringList.Create;
+                IncFirstInit := TSList.Create;
                 IncFirstInit.LoadFromFile(Util.DIR + 'scenery\' + IncludeStr);
+
                 FirstInit.Add(IncFirstInit.Text);
                 IncFirstInit.Free;
               end;
@@ -886,7 +895,7 @@ end;
 
 procedure TLexParser.ParseTextures(const Path:string);
 var
-  Plik : TStringList;
+  Plik : TSList;
   i, y, Crew, CrewCount : Integer;
   Tex : TTexture;
   Physics : TPhysics;
@@ -894,7 +903,13 @@ var
   Grupa : TTyp;
 begin
   try
-    Plik := TStringList.Create;
+    Plik := TSList.Create;
+    //if Pos('406r_v1',Path) > 0 then
+    //  i := i;
+
+    //if CheckParameter('utf8') then
+    //  Plik.DefaultEncoding := TEncoding.UTF8;
+
     Plik.LoadFromFile(Path);
 
     Crew := 0;
@@ -927,6 +942,11 @@ begin
 
         if Pos('=',Plik[i]) > 0 then
         begin
+          Lexer.Origin := PChar(Plik[i]);
+          Lexer.Init;
+
+          if Lexer.TokenID = ptSlashesComment then Continue;
+
           Tex           := TTexture.Create;
           Tex.ID        := Data.Textures.Count;
           Tex.NextTexID := -1;
@@ -948,8 +968,6 @@ begin
 
           Tex.Typ := Grupa;
           Tex.Dir := ExtractFileDir(Copy(Path,Pos('dynamic',Path)+8,Length(Path)));
-          Lexer.Origin := PChar(Plik[i]);
-          Lexer.Init;
 
           Tex.Plik := GetToken([ptEqual]);
           Tex.Plik := ChangeFileExt(Tex.Plik,'');
@@ -1007,9 +1025,9 @@ end;
 
 procedure TLexParser.ParseTextDesc(Tex:TTexture);
 var
-  Par : TStringList;
+  Par : TSList;
 begin
-  Par := TStringList.Create;
+  Par := TSList.Create;
   Par.StrictDelimiter := True;
   try
     try
@@ -1061,6 +1079,10 @@ begin
       Physics.AllowedFlagB := -1;
 
     PhysicsFile := TStringList.Create;
+
+    if IsParameter('utf8') then
+      PhysicsFile.DefaultEncoding := TEncoding.UTF8;
+
     if Path.Length = 0 then
     begin
       if FileExists(Util.DIR + 'dynamic\' + Physics.Dir + '\' + Physics.Name + '.fiz') then

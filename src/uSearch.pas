@@ -139,6 +139,11 @@ begin
           6: for y := 0 to Data.Textures[i].Models.Count-1 do
                if SameTextOmitAccents(Data.Textures[i].Models[y].Model,edText.Text) then
                  AddItem(Data.Textures[i]);
+
+          7: for y := 0 to Data.Textures[i].Models.Count-1 do
+               if Data.Textures[i].Models[y].Fiz <> nil then
+                 if Pos(LowerCase(edText.Text),LowerCase(Data.Textures[i].Models[y].Fiz.LoadAccepted)) > 0 then
+                   AddItem(Data.Textures[i]);
         end;
   end;
 

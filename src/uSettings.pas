@@ -62,6 +62,7 @@ type
 
     UART : string;
     IgnoreIrrelevant  : Boolean;
+    UTF8 : Boolean;
 
     procedure LoadPresets;
     procedure ReadOwnSettings(const FirstRun:boolean=False);
@@ -771,6 +772,9 @@ begin
   if Main.tvSCN.Selected <> nil then
     Settings.Add('InitSCN=' + Main.tvSCN.Selected.Text);
 
+  if UTF8 then
+    Settings.Add('utf8=yes');
+
   if ForceDirectories(Util.DIR + 'starter') then
     Settings.SaveToFile(Util.DIR + 'starter\starter.ini');
   Settings.Free;
@@ -1321,16 +1325,16 @@ end;
 
 procedure TSettings.CheckSettingsFile;
 var
-  fileName   : string;
-  fileDate   : Integer;
-  LastChange : tdatetime;
+  FileName   : string;
+  FileDate   : Integer;
+  LastChange : TDateTime;
 begin
-  fileName := Util.DIR + 'eu07.ini';
-  fileDate := FileAge(fileName);
+  FileName := Util.DIR + 'eu07.ini';
+  FileDate := FileAge(FileName);
 
   if FileDate > 0 then
   begin
-    LastChange := FileDateToDateTime(fileDate);
+    LastChange := FileDateToDateTime(FileDate);
 
     if LastChange > SettingsAge then
       if Util.Ask('Wykryto zewnêtrzne zmiany w ustawieniach symulatora. Czy wczytaæ ustawienia ponownie?') then

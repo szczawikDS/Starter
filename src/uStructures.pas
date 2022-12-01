@@ -271,6 +271,11 @@ type
     Weight  : Integer;
   end;
 
+  TSList = class(TStringList)
+    public
+      constructor Create;// override;
+  end;
+
 const
   Waggons: array[0..16] of TVehicleType =
   (
@@ -331,7 +336,7 @@ const
 
 implementation
 
-uses uData;
+uses uData, uUtilities, SysUtils;
 
 constructor TScenario.Create;
 begin
@@ -450,6 +455,15 @@ begin
     and (Data.Textures[Self.ID-i-1].NextTexID = Data.Textures[Self.ID-i].ID) do
     Inc(i);
   Result := Self.ID - i;
+end;
+
+{ TSList }
+
+constructor TSList.Create;
+begin
+  inherited;
+  if IsParameter('utf8') then
+    Self.DefaultEncoding := TEncoding.UTF8;
 end;
 
 end.
