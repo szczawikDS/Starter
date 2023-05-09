@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Starter.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -113,7 +113,6 @@
         <UWP_DelphiLogo44>img\m.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>img\m.png</UWP_DelphiLogo150>
         <DCC_Inlining>auto</DCC_Inlining>
-        <Debugger_RunParams>utf8</Debugger_RunParams>
         <CfgDependentOn>iconoptions.optset</CfgDependentOn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
@@ -134,17 +133,17 @@
     </PropertyGroup>
     <Import Project="iconoptions.optset" Condition="'$(Cfg_2_Win32)'!='' And Exists('iconoptions.optset')"/>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.12.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.14.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
-        <VerInfo_MinorVer>12</VerInfo_MinorVer>
+        <VerInfo_MinorVer>14</VerInfo_MinorVer>
         <VerInfo_Release>0</VerInfo_Release>
         <CfgDependentOn>iconoptions.optset</CfgDependentOn>
     </PropertyGroup>
     <Import Project="iconoptions.optset" Condition="'$(Cfg_2_Win64)'!='' And Exists('iconoptions.optset')"/>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_MinorVer>12</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=7.12.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>14</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=7.14.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Release>0</VerInfo_Release>
         <CfgDependentOn>iconoptions.optset</CfgDependentOn>
     </PropertyGroup>

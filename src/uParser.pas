@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
+  Copyright (C) 2019 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -266,9 +266,6 @@ begin
   try
     if FileExists(Util.DIR + 'data\load_weights.txt') then
     begin
-      //if CheckParameter('utf8') then
-      //  LoadWeights.DefaultEncoding := TEncoding.UTF8;
-
       LoadWeights.LoadFromFile(Util.DIR + 'data\load_weights.txt');
 
       Lexer.Origin := PChar(LoadWeights.Text);
@@ -658,7 +655,7 @@ end;
 
 function TLexParser.ScenarioName(const Path:string):TScenario;
 var
-  Plik : TSList; // TStringList;
+  Plik : TSList;
 begin
   Result := TScenario.Create;
   Result.ID := '-';
@@ -666,9 +663,7 @@ begin
   Result.Name := ExtractFileName(Path);
   Result.Name := Copy(Result.Name,0,Result.Name.Length-4);
 
-  Plik := TSList.Create; //TStringList.Create;
-  //if CheckParameter('utf8') then
-  //  Plik.DefaultEncoding := TEncoding.UTF8;
+  Plik := TSList.Create;
   Plik.LoadFromFile(Path);
 
   Lexer.Origin := PChar(Plik.Text);
@@ -714,8 +709,6 @@ begin
   try
     try
       Plik := TSList.Create;
-      //if CheckParameter('utf8') then
-      //  Plik.DefaultEncoding := TEncoding.UTF8;
       Plik.LoadFromFile(SCN.Path);
 
       FirstInitPos := Pos('FirstInit',Plik.Text);
@@ -901,15 +894,10 @@ var
   Physics : TPhysics;
   Token : string;
   Grupa : TTyp;
+  Archive : Boolean;
 begin
   try
     Plik := TSList.Create;
-    //if Pos('406r_v1',Path) > 0 then
-    //  i := i;
-
-    //if CheckParameter('utf8') then
-    //  Plik.DefaultEncoding := TEncoding.UTF8;
-
     Plik.LoadFromFile(Path);
 
     Crew := 0;
@@ -920,6 +908,9 @@ begin
         if Pos('#',Plik[i]) = 1 then Continue else
         if Pos('@',Plik[i]) = 1 then Continue else
         if Pos('*',Plik[i]) = 1 then Continue else
+        if Pos('$a',Plik[i]) = 1 then
+          Archive := True
+        else
         if Pos('^',Plik[i]) = 1 then
         begin
           Crew := StrToInt(Copy(Plik[i],2,1))-1;
@@ -951,6 +942,8 @@ begin
           Tex.ID        := Data.Textures.Count;
           Tex.NextTexID := -1;
           Tex.PrevTexID := -1;
+          Tex.Archive := Archive;
+
           if Crew > 0 then
           begin
             Tex.Crew := Crew;

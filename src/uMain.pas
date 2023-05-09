@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2022 Damian Skrzek (szczawik)
+  Copyright (C) 2019 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -459,6 +459,11 @@ type
     lbVersion: TLabel;
     actTrainRandomOrder: TAction;
     miTrainRandomOrder: TMenuItem;
+    miTrainSchedule: TMenuItem;
+    actTrainRandomTurn: TAction;
+    miTrainRandomTurn: TMenuItem;
+    chHideArchivalVehicles: TCheckBox;
+    actHideArchivalVehices: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -608,6 +613,9 @@ type
     procedure lbModelCaptionDblClick(Sender: TObject);
     procedure actTrainRandomOrderExecute(Sender: TObject);
     procedure actTrainRandomOrderUpdate(Sender: TObject);
+    procedure actTrainRandomTurnUpdate(Sender: TObject);
+    procedure actTrainRandomTurnExecute(Sender: TObject);
+    procedure actHideArchivalVehicesExecute(Sender: TObject);
   private
     SCN : TScenario;
 
@@ -685,6 +693,7 @@ type
     ///<summary>Ustawia najwy¿sze mo¿liwe flagi sprzêgów w wybranym sk³adzie.</summary>
     procedure AutoCoupler;
     function RandomReverse: Integer;
+    procedure TrainRandomize(const Kind: Integer=0);
 
   public
     Settings    : TSettings;
@@ -1279,6 +1288,15 @@ begin
     ScenariosList;
 end;
 
+procedure TMain.actHideArchivalVehicesExecute(Sender: TObject);
+begin
+  actHideArchivalVehices.Checked := not actHideArchivalVehices.Checked;
+  cbTypesChange(self);
+  cbModelsClick(self);
+  if SelVehicle > -1 then
+    SelectVehicle(SelImage);
+end;
+
 procedure TMain.actOpenDepoExecute(Sender: TObject);
 var
   Form : TForm;
@@ -1679,7 +1697,7 @@ begin
     result := 0;
 end;
 
-procedure TMain.actTrainRandomOrderExecute(Sender: TObject);
+procedure TMain.TrainRandomize(const Kind:Integer=0);
 var
   i : Integer;
   Waggons : TList<Integer>;
@@ -1693,8 +1711,10 @@ begin
   Randomize;
   for i := 0 to Waggons.Count-1 do
   begin
-    Train.Vehicles.Exchange(Waggons[Random(Waggons.Count)],Waggons[Random(Waggons.Count)]);
-    Train.Vehicles[Waggons[i]].Dist := RandomReverse;
+    case Kind of
+      0: Train.Vehicles.Exchange(Waggons[Random(Waggons.Count)],Waggons[Random(Waggons.Count)]);
+      1: Train.Vehicles[Waggons[i]].Dist := RandomReverse;
+    end;
   end;
 
   TrainDesc;
@@ -1704,9 +1724,24 @@ begin
   Waggons.Free;
 end;
 
+procedure TMain.actTrainRandomOrderExecute(Sender: TObject);
+begin
+  TrainRandomize();
+end;
+
 procedure TMain.actTrainRandomOrderUpdate(Sender: TObject);
 begin
-  actTrainRandomOrder.Enabled := SelVehicle >= 0;
+  actTrainRandomOrder.Enabled := (SelVehicle >= 0) and (Train.Vehicles.Count-1 > SelVehicle);
+end;
+
+procedure TMain.actTrainRandomTurnExecute(Sender: TObject);
+begin
+  TrainRandomize(1);
+end;
+
+procedure TMain.actTrainRandomTurnUpdate(Sender: TObject);
+begin
+  actTrainRandomTurn.Enabled  := (SelVehicle >= 0) and (Train.Vehicles.Count-1 > SelVehicle);
 end;
 
 procedure TMain.btnCheckUpdateMouseDown(Sender: TObject; Button: TMouseButton;
@@ -2036,11 +2071,12 @@ begin
 
   for i := 0 to Data.Textures.Count-1 do
     for y := 0 to Data.Textures[i].Models.Count-1 do
-      if SameText(Data.Textures[i].Models[y].Mini,cbModels.Items[cbModels.ItemIndex]) then
-      begin
-        lbTextures.AddItem(Data.Textures[i].Plik,Data.Textures[i]);
-        Break;
-      end;
+      if (not chHideArchivalVehicles.Checked) or (not Data.Textures[i].Archive) then
+        if SameText(Data.Textures[i].Models[y].Mini,cbModels.Items[cbModels.ItemIndex]) then
+        begin
+          lbTextures.AddItem(Data.Textures[i].Plik,Data.Textures[i]);
+          Break;
+        end;
 
   lbTextures.Sorted := True;
   lbTextures.Items.EndUpdate;
@@ -2125,6 +2161,7 @@ begin
 
     for i := 0 to Data.Textures.Count-1 do
     begin
+      if (chHideArchivalVehicles.Checked) and (Data.Textures[i].Archive) then Continue;
       OrdType := Ord(Data.Textures[i].Typ);
 
       if Data.Textures[i].Typ = tyOSOBA then
@@ -2467,23 +2504,17 @@ begin
     lbDepot.Clear;
 
     if miSortByVehicleName.Checked then
-    begin
       Data.Depot.Sort(TComparer<TTrain>.Construct(
           function (const L, R: TTrain): integer
           begin
             result := CompareVehicleNames(L, R);
-          end
-      ));
-    end
+          end))
     else
-    begin
       Data.Depot.Sort(TComparer<TTrain>.Construct(
           function (const L, R: TTrain): integer
           begin
             result := CompareTrainNames(L, R);
-          end
-      ));
-    end;
+          end));
 
     for i := 0 to Data.Depot.Count-1 do
       if Data.Depot[i].TrainName.Length > 0 then
@@ -2510,7 +2541,10 @@ begin
 
   SetFormatSettings;
 
-  Settings.CheckSettingsFile;
+  // zapobieganie sprawdzaniu dopiero uruchamianego programu
+  if Util.StartApp > 0 then
+    if Now > IncSecond(Util.StartApp,3) then
+      Settings.CheckSettingsFile;
 end;
 
 procedure TMain.AppDeactivate(Sender: TObject);
@@ -2566,13 +2600,14 @@ begin
   pcVehicleInfo.Left := 0;
 
   Util.CheckInstallation(cbEXE.Items.Count);
+  Util.StartApp := Now;
 end;
 
 function TMain.GetSelList: TTrain;
 begin
   if SelTrain >= 0 then
     if SelList = slSCN then
-        Result := SCN.Trains[SelTrain]
+      Result := SCN.Trains[SelTrain]
     else
 	    Result := Data.Depot[SelTrain]
   else
@@ -2616,11 +2651,9 @@ function TMain.CheckMoveVehicle(const FromPos,ToPos:Integer):Boolean;
 begin
   Result := True;
   if FromPos < ToPos then
-    begin
-    if (ToPos > 0) and (ToPos < Train.Vehicles.Count-1)
-    and (Train.Vehicles[ToPos].Texture.NextTexID = Train.Vehicles[ToPos+1].Texture.ID) then
-      Result := False;
-    end
+      if (ToPos > 0) and (ToPos < Train.Vehicles.Count-1)
+      and (Train.Vehicles[ToPos].Texture.NextTexID = Train.Vehicles[ToPos+1].Texture.ID) then
+        Result := False
     else
       if (ToPos > 0) and (Train.Vehicles[ToPos].Texture.PrevTexID = Train.Vehicles[ToPos-1].Texture.ID) then
         Result := False;
@@ -2645,44 +2678,48 @@ var
   i : Integer;
   Attachment : TButton;
 begin
-  SelTrain := -1;
+  try
+    SelTrain := -1;
 
-  SCN := aSCN;
+    SCN := aSCN;
 
-  if (SCN.Vehicles.Count = 0) and (SCN.Trains.Count = 0) then
-    TLexParser.ParseScenario(SCN);
+    if (SCN.Vehicles.Count = 0) and (SCN.Trains.Count = 0) then
+      TLexParser.ParseScenario(SCN);
 
-  Util.LogAdd('-> £adowanie scenerii ' + aSCN.Name);
+    Util.LogAdd('-> £adowanie scenerii ' + aSCN.Name);
 
-  while sbAttachments.ControlCount > 0 do
-    sbAttachments.Controls[0].Free;
+    while sbAttachments.ControlCount > 0 do
+      sbAttachments.Controls[0].Free;
 
-  for i := SCN.Files.Count-1 downto 0 do
-  begin
-    Attachment := TButton.Create(self);
-    Attachment.Parent := sbAttachments;
-    Attachment.Align := alTop;
-    Attachment.Top := i;
+    for i := SCN.Files.Count-1 downto 0 do
+    begin
+      Attachment := TButton.Create(self);
+      Attachment.Parent := sbAttachments;
+      Attachment.Align := alTop;
+      Attachment.Top := i;
 
-    Attachment.Hint := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],1)+1,Pos(' ',SCN.Files[i],4)-4);
-    Attachment.Caption := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],10)+1,SCN.Files[i].Length);
-    Attachment.OnClick := OpenAttachment;
+      Attachment.Hint := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],1)+1,Pos(' ',SCN.Files[i],4)-4);
+      Attachment.Caption := Copy(SCN.Files[i] ,Pos(' ',SCN.Files[i],10)+1,SCN.Files[i].Length);
+      Attachment.OnClick := OpenAttachment;
+    end;
+
+    sbAttachments.Height := sbAttachments.ControlCount * 25;
+
+    if SCN.Image.Length > 0 then
+      LoadMini(SCN.Image)
+    else
+      imScenario.Picture.Assign(nil);
+
+    meDesc.Lines.BeginUpdate;
+    meDesc.Text := SCN.Desc.Text;
+    meDesc.Lines.EndUpdate;
+
+    LoadTrains(SCN.Trains);
+    lbTrainsClick(self);
+    LoadWeather(SCN);
+  except
+    FaultList(SCN);
   end;
-
-  sbAttachments.Height := sbAttachments.ControlCount * 25;
-
-  if SCN.Image.Length > 0 then
-    LoadMini(SCN.Image)
-  else
-    imScenario.Picture.Assign(nil);
-
-  meDesc.Lines.BeginUpdate;
-  meDesc.Text := SCN.Desc.Text;
-  meDesc.Lines.EndUpdate;
-
-  LoadTrains(SCN.Trains);
-  lbTrainsClick(self);
-  LoadWeather(SCN);
 end;
 
 procedure TMain.LoadTrains(const Trains:TList<TTrain>);
@@ -3547,6 +3584,9 @@ var
 begin
   miRemoveVehicle.Visible     := pmTrainsets.PopupComponent = nil;
   miTrainRandomOrder.Visible  := pmTrainsets.PopupComponent = nil;
+  miTrainSchedule.Visible     := (pmTrainsets.PopupComponent = nil)
+                                  and (SelVehicle >= 0)
+                                  and (Train.Vehicles.Count-1 > SelVehicle);
 
   if lbTrains.Count > 0 then
   begin

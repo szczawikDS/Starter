@@ -105,6 +105,7 @@ type
     NextTexID : Integer;
     PrevTexID : Integer;
     Crew      : Integer;
+    Archive   : Boolean;
   private
     function GetFirstIndex: Integer;
   public

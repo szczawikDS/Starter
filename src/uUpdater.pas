@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2021 Damian Skrzek (szczawik)
+  Copyright (C) 2019 Damian Skrzek (szczawik)
   This file is part of Starter.
 
   Starter is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 114;
+      AppVersion = 116;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -111,7 +111,7 @@ begin
   IdHTTPProgress := TIdHTTPProgress.Create(Self);
   IdHTTPProgress.IOHandler := SSL;
   IdHTTPProgress.Request.Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
-  IdHTTPProgress.Request.UserAgent := 'Mozilla/3.0 (compatible; Indy Library)';
+  IdHTTPProgress.Request.UserAgent := 'Mozilla/5.0';
 end;
 
 procedure TfrmUpdater.IdHTTPProgressOnChange(Sender: TObject);

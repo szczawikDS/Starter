@@ -745,6 +745,9 @@ begin
   if Main.chHideArchival.Checked then
     Settings.Add('HideArchival=yes');
 
+  if not Main.chHideArchivalVehicles.Checked then
+    Settings.Add('HideArchivalVehicles=no');
+
   if Main.miSortByVehicleName.Checked then
     Settings.Add('SortByVehicleName=yes')
   else
@@ -816,6 +819,8 @@ begin
           Main.chAutoExpandTree.Checked := ParValue = 'yes'
         else if SameText(ParName,'HideArchival') then
           Main.chHideArchival.Checked := ParValue = 'yes'
+        else if SameText(ParName,'HideArchivalVehicles') then
+          Main.chHideArchivalVehicles.Checked := ParValue <> 'no'
         else if SameText(ParName,'UART') then
           UART := ParValue
         else if SameText(ParName,'SortByVehicleName') then

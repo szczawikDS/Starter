@@ -72,7 +72,7 @@ object frmAbout: TfrmAbout
       Left = 3
       Top = 118
       Width = 294
-      Height = 29
+      Height = 19
       Hint = 'damian.skrzek@szczawik.net'
       Align = alBottom
       Alignment = taCenter
@@ -86,7 +86,6 @@ object frmAbout: TfrmAbout
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      ExplicitTop = 132
     end
     object Label4: TLabel
       AlignWithMargins = True
@@ -116,7 +115,7 @@ object frmAbout: TfrmAbout
     object Label6: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 160
+      Top = 150
       Width = 294
       Height = 13
       Margins.Top = 10
@@ -129,20 +128,20 @@ object frmAbout: TfrmAbout
     object Label7: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 275
+      Top = 265
       Width = 294
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
-      Caption = 'T'#322'umaczenie na j'#281'zyk czeski:'
+      Caption = 'T'#322'umaczenia:'
       Layout = tlBottom
-      ExplicitWidth = 137
+      ExplicitWidth = 63
     end
     object Label8: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 179
+      Top = 169
       Width = 294
       Height = 83
       Align = alBottom
@@ -155,18 +154,19 @@ object frmAbout: TfrmAbout
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+      ExplicitTop = 179
     end
     object Label9: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 294
+      Top = 284
       Width = 294
       Height = 32
-      Margins.Bottom = 10
+      Margins.Bottom = 20
       Align = alBottom
       Alignment = taCenter
       AutoSize = False
-      Caption = '@Traktor175'
+      Caption = '@Traktor175 (CZ)'#13#10'@guih48 (HU)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -203,6 +203,19 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.14 (21.03.2023)'
+        '*opcja archwalne pojazdy przeniesiona do okna '
+        'g'#322#243'wnego'
+        '*naprawa aktualizatora (uaktualnienie nag'#322#243'wka '
+        #380#261'dania)'
+        '*wykrywanie zmian ustawie'#324' tylko po pe'#322'nym '
+        'uruchomieniu programu'
+        '*t'#322'umaczenie na j'#281'zyk w'#281'gierski'
+        ''
+        '7.13 (13.01.2023)'
+        '*rozdzielenie opcji losowej kolejnosci i obr'#243'cenia'
+        '*obs'#322'uga opcji archiwalne pojazdy'
+        ''
         '7.12 (01.12.2022)'
         '*UART- rozbudowa o nowe parametry'
         '*obs'#322'uga UTF-8'
@@ -242,15 +255,6 @@ object frmAbout: TfrmAbout
         '*ob'#322'uga parametru czu'#322'o'#347'ci zaworu FV4a'
         '*poprawiona obs'#322'uga pojazd'#243'w z brakami'
         '*poprawka kategorii pojazd'#243'w'
-        ''
-        '7.9.1 (03.02.2022)'
-        '*poprawione '#322'adowanie miniaturek pojazd'#243'w'
-        ''
-        '7.9 (30.01.2022)'
-        '*automatyczna podmiana pojazd'#243'w wielocz'#322'onowych'
-        '*zmiana stanu hamulca wp'#322'ywa na ca'#322'y zesp'#243#322' '
-        'trakcyjny'
-        '*obs'#322'uga parametru czu'#322'o'#347'ci zaworu hamulca'
         ''
         '...')
       ReadOnly = True

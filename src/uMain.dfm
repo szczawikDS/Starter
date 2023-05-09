@@ -370,7 +370,8 @@ object Main: TMain
       Items.Strings = (
         'PL'
         'EN'
-        'CZ')
+        'CZ'
+        'HU')
     end
     object pnlVersion: TPanel
       Left = 497
@@ -1055,7 +1056,7 @@ object Main: TMain
               TabOrder = 0
               object cbModels: TComboBox
                 Left = 0
-                Top = 24
+                Top = 46
                 Width = 230
                 Height = 53
                 Align = alTop
@@ -1070,9 +1071,9 @@ object Main: TMain
               end
               object lbTextures: TListBox
                 Left = 0
-                Top = 77
+                Top = 99
                 Width = 230
-                Height = 228
+                Height = 206
                 Hint = 'Kliknij dwukrotnie na li'#347'cie aby podmieni'#263' tekstur'#281'.'
                 Align = alClient
                 ParentShowHint = False
@@ -1124,7 +1125,7 @@ object Main: TMain
               end
               object pnlTypes: TPanel
                 Left = 0
-                Top = 0
+                Top = 22
                 Width = 230
                 Height = 24
                 Align = alTop
@@ -1194,6 +1195,19 @@ object Main: TMain
                     'Inne')
                 end
               end
+              object chHideArchivalVehicles: TCheckBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 224
+                Height = 16
+                Action = actHideArchivalVehices
+                Align = alTop
+                ParentShowHint = False
+                ShowHint = True
+                State = cbChecked
+                TabOrder = 5
+              end
             end
             object pcTrains: TPageControl
               AlignWithMargins = True
@@ -1221,7 +1235,7 @@ object Main: TMain
                     Left = 0
                     Top = 0
                     Width = 626
-                    Height = 296
+                    Height = 290
                     Margins.Bottom = 0
                     Align = alClient
                     BevelInner = bvNone
@@ -1245,22 +1259,24 @@ object Main: TMain
                     TabOrder = 2
                   end
                   object pnlTrainsTop: TPanel
-                    Left = 0
-                    Top = 296
-                    Width = 626
+                    AlignWithMargins = True
+                    Left = 3
+                    Top = 293
+                    Width = 620
                     Height = 16
                     Align = alBottom
                     BevelOuter = bvNone
                     ShowCaption = False
                     TabOrder = 1
                     DesignSize = (
-                      626
+                      620
                       16)
                     object chOnlyForDriving: TCheckBox
-                      Left = 3
-                      Top = -1
+                      Left = 0
+                      Top = 0
                       Width = 169
-                      Height = 17
+                      Height = 16
+                      Align = alLeft
                       Caption = 'Tylko do prowadzenia'
                       Checked = True
                       State = cbChecked
@@ -1268,7 +1284,7 @@ object Main: TMain
                       OnClick = chOnlyForDrivingClick
                     end
                     object chShowAI: TCheckBox
-                      Left = 461
+                      Left = 455
                       Top = -1
                       Width = 169
                       Height = 17
@@ -1433,7 +1449,7 @@ object Main: TMain
                       Left = 3
                       Top = 33
                       Width = 200
-                      Height = 60
+                      Height = 24
                       Align = alClient
                       Style = csDropDownList
                       DoubleBuffered = True
@@ -4663,8 +4679,14 @@ object Main: TMain
     object Usuwszystkiepojazdyzeskadu1: TMenuItem
       Action = actRemoveTrain
     end
-    object miTrainRandomOrder: TMenuItem
-      Action = actTrainRandomOrder
+    object miTrainSchedule: TMenuItem
+      Caption = 'Zestawienie'
+      object miTrainRandomOrder: TMenuItem
+        Action = actTrainRandomOrder
+      end
+      object miTrainRandomTurn: TMenuItem
+        Action = actTrainRandomTurn
+      end
     end
   end
   object AL: TActionList
@@ -4909,6 +4931,18 @@ object Main: TMain
         'zdu do ko'#324'ca sk'#322'adu.'
       OnExecute = actTrainRandomOrderExecute
       OnUpdate = actTrainRandomOrderUpdate
+    end
+    object actTrainRandomTurn: TAction
+      Category = 'Vehicle'
+      Caption = 'Losowe obr'#243'cenie wagon'#243'w (od zaznaczonego)'
+      OnExecute = actTrainRandomTurnExecute
+      OnUpdate = actTrainRandomTurnUpdate
+    end
+    object actHideArchivalVehices: TAction
+      Category = 'menu'
+      Caption = 'Ukryj archiwalne pojazdy'
+      Checked = True
+      OnExecute = actHideArchivalVehicesExecute
     end
   end
   object pmDepot: TPopupMenu

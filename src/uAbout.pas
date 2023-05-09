@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2022 Damian Skrzek (szczawik)
+  Copyright (C) 2019 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 

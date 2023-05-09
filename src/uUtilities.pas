@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2022 Damian Skrzek (szczawik)
+  Copyright (C) 2019 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -40,6 +40,8 @@ type
     Log     : TStringList;
     FileVersion : string;
     FileDateStr : string;
+    StartApp : TDateTime;
+
 
     LAB_CAR_NO            : string;
     LAB_AI_TRAIN          : string;
