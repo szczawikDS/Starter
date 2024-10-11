@@ -3,7 +3,7 @@ object frmTexRandomizer: TfrmTexRandomizer
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Zmiana tekstur'
-  ClientHeight = 190
+  ClientHeight = 232
   ClientWidth = 258
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,14 +11,13 @@ object frmTexRandomizer: TfrmTexRandomizer
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 13
   object lbTestVersion: TLabel
     AlignWithMargins = True
     Left = 3
-    Top = 131
+    Top = 173
     Width = 252
     Height = 13
     Align = alBottom
@@ -30,6 +29,7 @@ object frmTexRandomizer: TfrmTexRandomizer
     Font.Name = 'Tahoma'
     Font.Style = [fsItalic]
     ParentFont = False
+    ExplicitTop = 131
     ExplicitWidth = 188
   end
   object pnlEra: TPanel
@@ -130,12 +130,28 @@ object frmTexRandomizer: TfrmTexRandomizer
   object btnOK: TButton
     AlignWithMargins = True
     Left = 3
-    Top = 150
+    Top = 192
     Width = 252
     Height = 37
     Align = alBottom
     Caption = 'Dopasuj'
     ModalResult = 1
     TabOrder = 1
+    ExplicitTop = 150
+  end
+  object chWithoutArchival: TCheckBox
+    AlignWithMargins = True
+    Left = 3
+    Top = 119
+    Width = 252
+    Height = 17
+    Align = alTop
+    Caption = 'Nie losuj tekstur oznaczonych jako archiwalne'
+    Checked = True
+    State = cbChecked
+    TabOrder = 2
+    ExplicitLeft = 72
+    ExplicitTop = 136
+    ExplicitWidth = 97
   end
 end

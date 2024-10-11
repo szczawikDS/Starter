@@ -1,6 +1,6 @@
 {
   Starter
-  Copyright (C) 2019-2022 Damian Skrzek (szczawik)
+  Copyright (C) 2019 Damian Skrzek (szczawik)
 
   This file is part of Starter.
 
@@ -46,8 +46,9 @@ type
     chRadioVolume: TCheckBox;
     chRadioChannel: TCheckBox;
     Label4: TLabel;
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    btnCloseAndSave: TButton;
     procedure FormCreate(Sender: TObject);
+    procedure btnCloseAndSaveClick(Sender: TObject);
   private
     function BoolToStr(const Value: Boolean): string;
     { Private declarations }
@@ -69,7 +70,7 @@ begin
     Result := 'no';
 end;
 
-procedure TfrmUART.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TfrmUART.btnCloseAndSaveClick(Sender: TObject);
 var
   i : Integer;
 begin
@@ -106,24 +107,27 @@ begin
     else
       if Main.Settings.Params[i].Name = 'uartfeature' then
       begin
-        Main.Settings.Params[i].Value := BoolToStr(chMainenable.Checked);
-        Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' ' + BoolToStr(chScndenable.Checked);
-        Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' ' + BoolToStr(chTrainenable.Checked);
-        Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' ' + BoolToStr(chLocalenable.Checked);
+        with Main.Settings.Params[i] do
+        begin
+          Value := EmptyStr;
 
-        if chRadioVolume.Enabled then
-          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' ' + BoolToStr(chRadioVolume.Checked);
-
-        if chRadioChannel.Enabled then
-          Main.Settings.Params[i].Value := Main.Settings.Params[i].Value +  ' ' + BoolToStr(chRadioChannel.Checked);
+          if chMainenable.Checked   then Value := Value + 'main|';
+          if chScndenable.Checked   then Value := Value + 'scnd|';
+          if chTrainenable.Checked  then Value := Value + 'train|';
+          if chLocalenable.Checked  then Value := Value + 'local|';
+          if chRadioVolume.Checked  then Value := Value + 'radiovolume|';
+          if chRadioChannel.Checked then Value := Value + 'radiochannel|';
+        end;
       end;
     Inc(i);
   end;
+
+  Main.Settings.SaveSettings();
 end;
 
 procedure TfrmUART.FormCreate(Sender: TObject);
 var
-  i : Integer;
+  i, y : Integer;
   Par : TStringList;
 begin
   if Main.Settings.UART.Length > 0 then
@@ -149,22 +153,49 @@ begin
     if Main.Settings.Params[i].Name = 'uartfeature' then
     begin
       Par := TStringList.Create;
-      ExtractStrings([' '],[],PChar(Main.Settings.Params[i].Value),Par);
+      ExtractStrings(['|'],[],PChar(Main.Settings.Params[i].Value),Par);
 
-      chMainenable.Checked    := Par[0] = 'yes';
-      chScndenable.Checked    := Par[1] = 'yes';
-      chTrainenable.Checked   := Par[2] = 'yes';
-      chLocalenable.Checked   := Par[3] = 'yes';
-
-      if Par.Count > 4 then
-        chRadioVolume.Checked   := Par[4] = 'yes'
+      if Par.Count > 1 then
+      begin
+        for y := 0 to Par.Count-1 do
+          if Par[y] = 'main' then
+            chMainenable.Checked := True
+          else
+          if Par[y] = 'scnd' then
+            chScndenable.Checked := True
+          else
+          if Par[y] = 'train' then
+            chTrainenable.Checked := True
+          else
+          if Par[y] = 'local' then
+            chLocalenable.Checked := True
+          else
+          if Par[y] = 'radiovolume' then
+            chRadioVolume.Checked := True
+          else
+          if Par[y] = 'radiochannel' then
+            chRadioChannel.Checked := True;
+      end
       else
-        chRadioVolume.Enabled := False;
+      begin
+        Par.Clear;
+        ExtractStrings([' '],[],PChar(Main.Settings.Params[i].Value),Par);
 
-      if Par.Count > 5 then
-        chRadioChannel.Checked  := Par[5] = 'yes'
-      else
-        chRadioChannel.Enabled := False;
+        chMainenable.Checked    := Par[0] = 'yes';
+        chScndenable.Checked    := Par[1] = 'yes';
+        chTrainenable.Checked   := Par[2] = 'yes';
+        chLocalenable.Checked   := Par[3] = 'yes';
+
+        if Par.Count > 4 then
+          chRadioVolume.Checked   := Par[4] = 'yes'
+        else
+          chRadioVolume.Enabled := False;
+
+        if Par.Count > 5 then
+          chRadioChannel.Checked  := Par[5] = 'yes'
+        else
+          chRadioChannel.Enabled := False;
+      end;
 
       Par.Free;
     end;

@@ -47,10 +47,6 @@ type
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
     CheckBox3: TCheckBox;
-    pnlLog: TPanel;
-    lbLogCaption: TLabel;
-    meLog: TMemo;
-    btnClearLog: TButton;
     Timer: TTimer;
     tsTools: TTabSheet;
     btnRemoveAllTrains: TButton;
@@ -60,6 +56,14 @@ type
     actAddVehiclesCategory: TAction;
     btnAddVehiclesMMD: TButton;
     actAddVehiclesMMD: TAction;
+    tsLog: TTabSheet;
+    pnlLog: TPanel;
+    lbLogCaption: TLabel;
+    meLog: TMemo;
+    btnClearLog: TButton;
+    pnlSettings2: TPanel;
+    chGfxresourcemove: TCheckBox;
+    chGfxresourcesweep: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
@@ -113,8 +117,8 @@ var
   Added : Boolean;
 begin
   try
+    MMD := TStringList.Create;
     try
-      MMD := TStringList.Create;
       Main.lbTextures.ItemIndex := 0;
       for i := 0 to Main.lbTextures.Count-1 do
       begin

@@ -87,7 +87,7 @@ object frmAbout: TfrmAbout
       ParentShowHint = False
       ShowHint = True
     end
-    object Label4: TLabel
+    object lbProgrammer: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 99
@@ -100,7 +100,7 @@ object frmAbout: TfrmAbout
       Layout = tlBottom
       ExplicitWidth = 100
     end
-    object Label5: TLabel
+    object lbLicense: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 68
@@ -112,7 +112,7 @@ object frmAbout: TfrmAbout
       WordWrap = True
       ExplicitWidth = 163
     end
-    object Label6: TLabel
+    object lbTesters: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 150
@@ -125,7 +125,7 @@ object frmAbout: TfrmAbout
       Layout = tlBottom
       ExplicitWidth = 78
     end
-    object Label7: TLabel
+    object lbTranslators: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 265
@@ -185,7 +185,7 @@ object frmAbout: TfrmAbout
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 1
-    object Label12: TLabel
+    object lbLog: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 3
@@ -203,6 +203,37 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '8.0 beta (23.07.2024)'
+        '*reorganizacja ustawie'#324' zaawansowanych'
+        '*ukrycie kolejnych cz'#322'on'#243'w pojazd'#243'w na listach'
+        '*funkcjonalno'#347#263' t'#322'umaczenia plik'#243'w klawiszologii'
+        '*wprowadzenie element'#243'w opcjonalnych'
+        '*losowanie tekstur- mo'#380'liwo'#347#263' pomijania archiwalnych'
+        ''
+        '7.17 (25.02.2024)'
+        '*baza taboru- wyszukiwanie wg stacji'
+        '*uruchamianie programu- pasek post'#281'pu'
+        '*wersje j'#281'zykowe- dodane flagi'
+        ''
+        '7.16 (03.09.2023)'
+        '*poprawiona obs'#322'uga pojazd'#243'w odwr'#243'conych'
+        '*okno UART- przycisk do zapisu zmian'
+        '*losowanie tekstur- dodane nowe regu'#322'y'
+        ''
+        '7.15 (13.06.2023)'
+        '*obs'#322'uga nowego formatu uartfeature'
+        '*dok'#322'adniejsze logowanie b'#322#281'd'#243'w konwersji typ'#243'w'
+        '*losowy obr'#243't pojazd'#243'w wielocz'#322'onowych'
+        '*optymalizacja'
+        '*przycisk START- informacja o przyczynie '
+        'wyszarzenia przycisku'
+        ''
+        '7.14.1 (16.05.2023)'
+        '*pomijanie wagi '#322'adunku nieobs'#322'ugiwanego przez '
+        'pojazd'
+        '*logowanie u'#380'ycia nieobs'#322'ugiwanego '#322'adunku'
+        '*archiwalne pojazdy- zapis ustawienia'
+        ''
         '7.14 (21.03.2023)'
         '*opcja archwalne pojazdy przeniesiona do okna '
         'g'#322#243'wnego'
@@ -239,22 +270,6 @@ object frmAbout: TfrmAbout
         'pojazdu'
         '*logowanie b'#322#281'd'#243'w '#322'adowania miniaturek pojazd'#243'w i '
         'SCN'
-        ''
-        '7.9.4 (02.06.2022)'
-        '*katalog we wpisie dynamic mo'#380'e zaczyna'#263' si'#281' od '
-        'cyfr'
-        '*automatyczne ustawienie sprz'#281'g'#243'w podczas '
-        'odwracania pojazd'#243'w'
-        '*opcja odbi'#263' 60 FPS'
-        '*poprawione unikalne nazwy pojazd'#243'w'
-        ''
-        '7.9.3 (27.03.2022)'
-        '*poprawione unikalne nazwy pojazd'#243'w'
-        ''
-        '7.9.2.1 (13.03.2022)'
-        '*ob'#322'uga parametru czu'#322'o'#347'ci zaworu FV4a'
-        '*poprawiona obs'#322'uga pojazd'#243'w z brakami'
-        '*poprawka kategorii pojazd'#243'w'
         ''
         '...')
       ReadOnly = True

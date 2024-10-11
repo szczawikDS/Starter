@@ -144,6 +144,9 @@ begin
                if Data.Textures[i].Models[y].Fiz <> nil then
                  if Pos(LowerCase(edText.Text),LowerCase(Data.Textures[i].Models[y].Fiz.LoadAccepted)) > 0 then
                    AddItem(Data.Textures[i]);
+
+          8: if ContainsOmitAccents(Data.Textures[i].Station,edText.Text) then
+               AddItem(Data.Textures[i]);
         end;
   end;
 

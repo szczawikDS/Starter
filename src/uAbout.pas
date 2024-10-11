@@ -30,18 +30,18 @@ type
   TfrmAbout = class(TForm)
     Label1: TLabel;
     Label3: TLabel;
-    Label4: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
+    lbProgrammer: TLabel;
+    lbTesters: TLabel;
+    lbTranslators: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    Label5: TLabel;
+    lbLicense: TLabel;
     lbVersion: TLabel;
     Label11: TLabel;
     pnlAbout: TPanel;
     pnlLog: TPanel;
     meLog: TMemo;
-    Label12: TLabel;
+    lbLog: TLabel;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

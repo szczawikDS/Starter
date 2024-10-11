@@ -108,9 +108,11 @@ type
     Archive   : Boolean;
   private
     function GetFirstIndex: Integer;
+    function GetLastIndex: Integer;
   public
     constructor Create;
     property FirstIndex : Integer read GetFirstIndex;
+    property LastIndex  : Integer read GetLastIndex;
   end;
 
   TVehicleParams = record
@@ -226,6 +228,12 @@ type
     Other       : string;
   end;
 
+  TInclude = class
+    Path      : string;
+    Desc      : string;
+    Default   : Boolean;
+  end;
+
   TScenario = class
   private
     FID          : string;       // $id - dla grupowania scenariuszy
@@ -235,6 +243,7 @@ type
     FDesc        : TStringList;  // $d
     FImage       : string;       // $i
     FFiles       : TStringList;  // $f
+    FIncludes    : TObjectList<TInclude>;
     FTrains      : TObjectList<TTrain>;
     FVehicles    : TObjectList<TVehicle>;
     FOther       : TStringList;
@@ -244,6 +253,7 @@ type
     procedure SetFiles(const Value: TStringList);
     procedure SetTrains(const Value: TObjectList<TTrain>);
     procedure SetVehicles(const Value: TObjectList<TVehicle>);
+    procedure SetIncludes(const Value: TObjectList<TInclude>);
     procedure SetOther(const Value: TStringList);
   public
     property ID          : string read FID write FID;
@@ -253,6 +263,7 @@ type
     property Desc        : TStringList read FDesc write SetDesc;    // $d
     property Image       : string read FImage write FImage;         // $i
     property Files       : TStringList read FFiles write SetFiles;  // $f
+    property Includes    : TObjectList<TInclude> read FIncludes write SetIncludes;
     property Trains      : TObjectList<TTrain> read FTrains write SetTrains;
     property Vehicles    : TObjectList<TVehicle> read FVehicles write SetVehicles;
     property Other       : TStringList read FOther write SetOther;
@@ -347,6 +358,7 @@ begin
 
   Trains := TObjectList<TTrain>.Create();
   Vehicles := TObjectList<TVehicle>.Create();
+  Includes  := TObjectList<TInclude>.Create();
 end;
 
 constructor TTrain.Create;
@@ -357,6 +369,11 @@ end;
 procedure TScenario.SetFiles(const Value: TStringList);
 begin
   FFiles := Value;
+end;
+
+procedure TScenario.SetIncludes(const Value: TObjectList<TInclude>);
+begin
+  FIncludes := Value;
 end;
 
 procedure TScenario.SetOther(const Value: TStringList);
@@ -456,6 +473,17 @@ begin
     and (Data.Textures[Self.ID-i-1].NextTexID = Data.Textures[Self.ID-i].ID) do
     Inc(i);
   Result := Self.ID - i;
+end;
+
+function TTexture.GetLastIndex: Integer;
+var
+  i : Integer;
+begin
+  i := 0;
+  while (Self.ID+i > Data.Textures.Count-1)
+    and (Data.Textures[Self.ID+i+1].NextTexID = Data.Textures[Self.ID+i].ID) do
+    Inc(i);
+  Result := Self.ID + i;
 end;
 
 { TSList }

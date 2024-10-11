@@ -24,22 +24,40 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.StdCtrls, Vcl.WinXCtrls;
 
 type
   TfrmStart = class(TForm)
     Image1: TImage;
+    lbProgress: TLabel;
+    pbProgress: TProgressBar;
   private
-    { Private declarations }
+    class var FInstance: TfrmStart;
   public
-    { Public declarations }
+    class function GetInstance: TfrmStart;
+    procedure UpdateLabel(aCaption: string);
   end;
-
-var
-  frmStart: TfrmStart;
 
 implementation
 
 {$R *.dfm}
+
+class function TfrmStart.GetInstance: TfrmStart;
+begin
+  if not Assigned(FInstance) then
+    FInstance := TfrmStart.Create(nil );
+  Result := FInstance;
+end;
+
+procedure TfrmStart.UpdateLabel(aCaption: string);
+begin
+  if Assigned(FInstance) then
+  begin
+    Self.lbProgress.Caption := aCaption;
+    pbProgress.StepIt;
+    Application.ProcessMessages;
+  end;
+end;
 
 end.

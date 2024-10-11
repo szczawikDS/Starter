@@ -35,7 +35,6 @@ TData = class
   Loads       : TList<TLoad>;
 
   constructor Create;
-  class procedure Load;
   function LoadsIndex(const LoadName:string):Integer;
   private
     procedure TexturesEmptyElement;
@@ -54,13 +53,16 @@ function IncludeVehicleToMass(const Vehicle:TVehicle;const AllVehicles:Boolean):
 procedure AutoConnect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
 function CheckFlag(Flag:Integer):TFlags;
 function CommonCoupler(const C1,C2:Integer):Integer;
+function CheckMoveVehicle(const Vehicles:TObjectList<TVehicle>; const FromPos,ToPos:Integer):Boolean;
+procedure RandomLoad(var Vehicles:TObjectList<TVehicle>);
+procedure ReverseMultiple(Vehicles: TObjectList<TVehicle>;const Position:Integer);
 
 var
   Data : TData;
 
 implementation
 
-uses SysUtils;
+uses SysUtils, StrUtils;
 
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 begin
@@ -137,7 +139,7 @@ begin
   Result := TList<Integer>.Create;
   Result.Add(Index);
 
-  if Vehicles[Index].Dist >= 0 then
+  if Vehicles[Index].Dist <> -1 then
   begin
     i := 0;
     while (Index-i > 0)
@@ -348,12 +350,6 @@ begin
   Loads     := TList<TLoad>.Create;
 end;
 
-class procedure TData.Load;
-begin
-  Data := TData.Create;
-  TLexParser.LoadData;
-end;
-
 function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):TTrainParams;
 var
   i, LoadIndex : Integer;
@@ -369,12 +365,18 @@ begin
       begin
         Result.Mass := Result.Mass + Train.Vehicles[i].Fiz.Mass;
 
-        LoadIndex := Data.LoadsIndex(Train.Vehicles[i].LoadType);
+        if ContainsText(Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.LoadAccepted,Train.Vehicles[i].LoadType) then
+        begin
+          LoadIndex := Data.LoadsIndex(Train.Vehicles[i].LoadType);
 
-        if LoadIndex >= 0 then
-          Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * Data.Loads[LoadIndex].Weight)
+          if LoadIndex >= 0 then
+            Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * Data.Loads[LoadIndex].Weight)
+          else
+            Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * 1000);
+        end
         else
-          Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * 1000);
+          if not Train.Vehicles[i].LoadType.IsEmpty then
+            Util.Log.Add(Train.Vehicles[i].Name + ' - zastosowany nieobs³ugiwany ³adunek przez pojazd');
       end;
 
       if Train.Vehicles[i].Fiz <> nil then
@@ -386,11 +388,15 @@ end;
 
 function IncludeVehicleToMass(const Vehicle:TVehicle;const AllVehicles:Boolean):Boolean;
 begin
-  Result := (Vehicle.Fiz <> nil) and
+  Result := (Vehicle.Fiz <> nil)
+            and
             (((Vehicle.CabOccupancy > coRearDriver)
-            or (Vehicle.Texture.Typ = tyEZT)
-            or (Vehicle.Texture.Typ = tySZYNOBUS))
-            or (AllVehicles));
+              or (Vehicle.Texture.Typ = tyEZT)
+              or (Vehicle.Texture.Typ = tySZYNOBUS))
+              or (AllVehicles))
+            //and
+            //((Vehicle.LoadType.IsEmpty) or (ContainsText(Vehicle.Texture.Models[Vehicle.ModelID].Fiz.LoadAccepted,Vehicle.LoadType)))
+            ;
 end;
 
 procedure AutoConnect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
@@ -449,6 +455,62 @@ begin
   for f in [F1,F2,F4,F8,F16,F32,F64,F128] do
     if (f in Fs1) and (f in Fs2) then
       Result := Result + Integer(f);
+end;
+
+function CheckMoveVehicle(const Vehicles:TObjectList<TVehicle>; const FromPos,ToPos:Integer):Boolean;
+begin
+  Result := True;
+  if FromPos < ToPos then
+      if (ToPos > 0) and (ToPos < Vehicles.Count-1)
+      and (Vehicles[ToPos].Texture.NextTexID = Vehicles[ToPos+1].Texture.ID) then
+        Result := False
+    else
+      if (ToPos > 0) and (Vehicles[ToPos].Texture.PrevTexID = Vehicles[ToPos-1].Texture.ID) then
+        Result := False;
+end;
+
+procedure RandomLoad(var Vehicles:TObjectList<TVehicle>);
+var
+  i : Integer;
+  Loads : TStringList;
+begin
+  for i := 0 to Vehicles.Count-1 do
+  begin
+    if (Vehicles[i].Texture.Typ >= tySZYNOBUS) then
+    begin
+      if Vehicles[i].Fiz <> nil then
+      begin
+        Loads := TStringList.Create;
+        Loads.Delimiter := ',';
+        Loads.DelimitedText := Vehicles[i].Fiz.LoadAccepted;
+
+        if Loads.Count > 0 then
+          Vehicles[i].LoadType := Loads[Random(Loads.Count-1)];
+      end;
+    end;
+  end;
+end;
+
+procedure ReverseMultiple(Vehicles: TObjectList<TVehicle>;const Position:Integer);
+var
+  Indexes : TList<Integer>;
+  i : Integer;
+begin
+  Indexes := GetMultiple(Vehicles,Position);
+
+  for i := 0 to Indexes.Count-1 do
+    if Vehicles[Indexes[i]].Dist >= 0 then
+      Vehicles[Indexes[i]].Dist := -1
+    else
+      Vehicles[Indexes[i]].Dist := 0;
+
+  Indexes.Sort;
+
+  for i := 0 to (Indexes.Count div 2) - 1 do
+    Vehicles.Exchange(Indexes.First+i,Indexes.Last-i);
+
+  for i := 0 to Indexes.Count-1 do
+    AutoConnect(Vehicles,Indexes[i]);
 end;
 
 end.

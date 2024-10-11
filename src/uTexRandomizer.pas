@@ -54,6 +54,7 @@ type
     TexStock : TList<TTexStock>;
     RevisionTolerance : Integer;
     RevYear : Integer;
+    WithoutArchival : Boolean;
     procedure MultipleAssign(Vehicles:TObjectList<TVehicle>; Index: Integer;const Tex: TTexture);
     function FindSimilarTex(TexFilter:TTexFilter):TList<Integer>;
     function FilterForm:Boolean;
@@ -73,6 +74,7 @@ type
     rbUserYear: TRadioButton;
     seYear: TSpinEdit;
     lbTestVersion: TLabel;
+    chWithoutArchival: TCheckBox;
     procedure rbUserYearClick(Sender: TObject);
     procedure chRevDiffClick(Sender: TObject);
   private
@@ -127,7 +129,8 @@ begin
   Result := TList<Integer>.Create;
     try
     for i := 0 to Data.Textures.Count-1 do
-      if (Data.Textures[i].Typ = TexFilter.Typ) and (Data.Textures[i].Errors = []) then
+      if (Data.Textures[i].Typ = TexFilter.Typ) and (Data.Textures[i].Errors = [])
+        and ((Data.Textures[i].Archive = False) or (WithoutArchival = False)) then
         Result.Add(Data.Textures[i].ID);
 
     i := 0;
@@ -348,6 +351,8 @@ begin
       end
       else
         RevisionTolerance := -1;
+
+      WithoutArchival := frmTexRandomizer.chWithoutArchival.Checked;
     end
     else
       Result := False;

@@ -22,7 +22,8 @@ unit uParser;
 
 interface
 
-uses CastaliaPasLexTypes, uStructures, uLexer, Classes;
+uses CastaliaPasLexTypes, uStructures, uLexer, Classes,
+     System.Generics.Collections, System.Generics.Defaults;
 
 type
 
@@ -53,16 +54,18 @@ type
     procedure FindTexture(var Vehicle:TVehicle);
     procedure ParseTextDesc(Tex: TTexture);
     procedure ParseTextureModels(var Tex: TTexture);
+    procedure StrToIntTry(const S: string; out Value: Integer);
+    procedure StrToFloatTry(const S: string; out Value: Double);
+    function ParseInclude(const Token:string):TInclude;
   end;
 
 implementation
 
-uses SysUtils, uMain, uUtilities, Character, Math, System.Generics.Collections,
-    System.Generics.Defaults {$IFDEF DEBUG},System.Diagnostics{$ENDIF}, uData, uStart,
-    System.WideStrUtils, uSettingsAdv;
+uses SysUtils, uMain, uUtilities, Character, Math {$IFDEF DEBUG}{,System.Diagnostics}{$ENDIF}, uData,// uStart,
+    System.WideStrUtils, uSettingsAdv, uStart;
 
 {$IFDEF DEBUG}
-procedure Measure;
+{procedure Measure;
 var
   Stopwatch: TStopwatch;
   i : Integer;
@@ -71,16 +74,20 @@ begin
   //
   i := Stopwatch.ElapsedMilliseconds;
   i := 0;
-end;
+end;}
 {$ENDIF}
 
 class procedure TLexParser.LoadData;
 begin
   with TLexParser.Create do
   try
+    TfrmStart.GetInstance.UpdateLabel('Wczytywanie taboru...');
     LoadModels;
+    TfrmStart.GetInstance.UpdateLabel('Wczytywanie fizyki...');
     LoadPhysics;
+    TfrmStart.GetInstance.UpdateLabel('Wczytywanie scenerii...');
     LoadSceneries;
+    TfrmStart.GetInstance.UpdateLabel('Wczytywanie ³adunków...');
     LoadWeights;
   finally
     Free;
@@ -176,10 +183,10 @@ begin
     Result.Track := GetToken;
 
     Lexer.NextNoJunk;
-    Result.Dist := StrToFloat(GetToken);
+    StrToFloatTry(GetToken,Result.Dist);
 
     Lexer.NextNoJunk;
-    Result.Vel := StrToFloat(GetToken);
+    StrToFloatTry(GetToken,Result.Vel);
 
     while (not SameText(Lexer.Token, 'endtrainset')) and (Lexer.TokenID <> ptNull) do
     begin
@@ -300,10 +307,10 @@ begin
     Result := TVehicle.Create;
 
     Lexer.NextNoJunk;
-    Result.MinDist := StrToFloat( GetToken );
+    StrToFloatTry(GetToken,Result.MinDist);
 
     Lexer.NextNoJunk;
-    Result.MaxDist := StrToFloat( GetToken );
+    StrToFloatTry(GetToken,Result.MaxDist);
 
     Lexer.NextNoJunk;
     Result.Name := GetToken;
@@ -322,10 +329,8 @@ begin
     if not SameText('dynamic',Lexer.Token) then
       Util.LogAdd('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
 
-    //Lexer.NextID(ptIdentifier);
-    //NextIDs([ptIdentifier,ptInteger]);
     Lexer.NextNoJunk;
-    Result.Dir := {GetToken([TptTokenKind.ptIdentifier,ptInteger])} GetToken;
+    Result.Dir := GetToken;
 
     Lexer.NextNoJunk;
     Result.ReplacableSkin := ChangeFileExt(GetToken,'');
@@ -342,7 +347,10 @@ begin
       Lexer.NextNoJunk;
     end;
 
-    Result.Dist := StrToFloat( GetToken );
+    if not TrainSet then
+      StrToFloatTry(GetToken,Result.Dist)
+    else
+      GetToken;
 
     Lexer.NextNoJunk;
     if SameText(Lexer.Token,'headdriver') then Result.CabOccupancy := coHeadDriver else
@@ -358,10 +366,10 @@ begin
       ParseCoupler(Result);
     end
     else
-      Result.Vel := StrToFloat(GetToken);
+      StrToFloatTry(GetToken,Result.Vel);
 
     Lexer.NextNoJunk;
-    Result.Loadquantity := StrToInt(GetToken);
+    StrToIntTry(GetToken,Result.Loadquantity);
 
     if Result.Loadquantity > 0 then
     begin
@@ -374,6 +382,18 @@ begin
     on E: Exception do
       Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
   end;
+end;
+
+procedure TLexParser.StrToIntTry(const S:string; out Value:Integer);
+begin
+  if not TryStrToInt(S,Value) then
+    Util.Log.Add('B³¹d podczas parsowania wyra¿enia ' + S + ' (str->int))');
+end;
+
+procedure TLexParser.StrToFloatTry(const S:string; out Value:Double);
+begin
+  if not TryStrToFloat(S,Value) then
+    Util.Log.Add('B³¹d podczas parsowania wyra¿enia ' + S + ' (str->single))');
 end;
 
 function TLexParser.GetBrakeValue(const Settings:string;Pos:Integer):string;
@@ -653,6 +673,22 @@ begin
   end;
 end;
 
+function TLexParser.ParseInclude(const Token:string):TInclude;
+var
+  Par : TStringList;
+begin
+  Result := TInclude.Create;
+  try
+    Par := TStringList.Create;
+    ExtractStrings(['|'],[],PChar(Token),Par);
+    Result.Path     := Par[1];
+    Result.Default  := Par[2] = '1';
+    Result.Desc := Par[3];
+  finally
+    Par.Free;
+  end;
+end;
+
 function TLexParser.ScenarioName(const Path:string):TScenario;
 var
   Plik : TSList;
@@ -682,6 +718,9 @@ begin
         if Pos('$i', Lexer.Token) > 0 then Result.Image := Copy(Lexer.Token,6,Lexer.TokenLen)
         else
         if Pos('$l', Lexer.Token) > 0 then Result.ID := Copy(Lexer.Token,6,Lexer.TokenLen)
+        else
+        if Pos('$o', Lexer.Token) > 0 then
+          Result.Includes.Add(ParseInclude(Lexer.Token))
         else
         if Pos('$a', Lexer.Token) > 0 then Result.Old := True;
       end
@@ -892,7 +931,6 @@ var
   i, y, Crew, CrewCount : Integer;
   Tex : TTexture;
   Physics : TPhysics;
-  Token : string;
   Grupa : TTyp;
   Archive : Boolean;
 begin
@@ -964,8 +1002,6 @@ begin
 
           Tex.Plik := GetToken([ptEqual]);
           Tex.Plik := ChangeFileExt(Tex.Plik,'');
-
-          Token := EmptyStr;
 
           ParseTextureModels(Tex);
 

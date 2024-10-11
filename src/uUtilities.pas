@@ -22,7 +22,7 @@ unit uUtilities;
 
 interface
 
-uses Classes;
+uses Classes, uStructures;
 
 type
 
@@ -60,10 +60,11 @@ type
     function Ask(const Text: string): Boolean;
     procedure CheckInstallation(const EXECount:Integer);
     procedure EmptyTextures;
-    function GetFileVersion(FileName: string): string;
+    function GetFileVersion(const FileName: string): string;
     procedure OpenFile(const Path:string);
     procedure PrepareLoadingScreen(const LogoPath:string);
     procedure LogAdd(const S:string;const ShowInfo:Boolean=False);
+    function MiniPath(const Model: TModel): string;
   private
     procedure StringsLoad;
   end;
@@ -84,6 +85,7 @@ function CompareTrainNames(const Item1, Item2: Pointer): Integer;
 function OmitAccents(const aStr: String): String;
 function ContainsOmitAccents(const S1,S2:string):Boolean;
 function SameTextOmitAccents(const S1,S2:string):Boolean;
+function RandomBoolean:Boolean;
 
 var
   Util  : TUtil;
@@ -91,7 +93,7 @@ var
 implementation
 
 uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, uMain,
-    uData, uStructures, StrUtils, uSettingsAdv, StdCtrls, Controls;
+    uData, StrUtils, uSettingsAdv, StdCtrls, Controls;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
 begin
@@ -135,6 +137,25 @@ begin
     ShellExecute(Application.Handle,'open',PChar(Util.DIR + Path),nil,nil, SW_SHOWNORMAL)
   else
     ShowMessage('Nie znaleziono pliku: ' + Path);
+end;
+
+function TUtil.MiniPath(const Model:TModel):string;
+begin
+  try
+    Result := '';
+
+    if FileExists(DIR + 'textures\mini\' + Model.MiniD + '.bmp') then
+      Result := DIR + 'textures\mini\' + Model.MiniD + '.bmp'
+    else
+      if FileExists(DIR + 'textures\mini\' + Model.Mini + '.bmp') then
+        Result := DIR + 'textures\mini\' + Model.Mini + '.bmp';
+
+    if Result.IsEmpty then
+      if FileExists(DIR + 'textures\mini\other.bmp') then
+        Result := DIR + 'textures\mini\other.bmp';
+  except
+    LogAdd('Nie uda³o siê wczytaæ miniaturki pojazdu ' + Model.Model);
+  end;
 end;
 
 procedure RemoveOldVersion;
@@ -333,22 +354,30 @@ begin
   Result := SameText(OmitAccents(S1),OmitAccents(S2));
 end;
 
+function RandomBoolean:Boolean;
+var
+  i : Integer;
+begin
+  i := Random(100);
+  Result := i mod 2 = 0;
+end;
+
 { TUtil }
 
 constructor TUtil.Create;
 begin
   DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'G:\MaSzyna\pctga\';
-  //DIR := 'G:\MaSzyna\Maszyna2203\';
+  //DIR := 'G:\MaSzyna\';
   Log := TStringList.Create;
 
   StringsLoad;
   SetFormatSettings;
 
   {$IFDEF WIN64}
-    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit'{ + ' beta'};
+    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit' + ' beta';
   {$ELSE}
-    FileVersion := GetFileVersion(ParamStr(0)){ + ' beta'};
+    FileVersion := GetFileVersion(ParamStr(0)) + ' beta';
   {$ENDIF}
 
   FileDateStr := FormatDateTime(' dd.mm.yyyy',FileDateToDateTime(FileAge(ParamStr(0))));
@@ -370,7 +399,7 @@ begin
   LAB_SET_PRESET_NAME   := 'Nadaj nazwê zestawu ustawieñ:';
 end;
 
-function TUtil.GetFileVersion(FileName: string): string;
+function TUtil.GetFileVersion(const FileName: string): string;
 var
   iBufferSize: DWORD;
   iDummy: DWORD;

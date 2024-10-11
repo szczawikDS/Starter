@@ -26,10 +26,12 @@ uses VCL.Forms;
 type
   TLanguages = class
   private
+    //class procedure ChangeIniLanguage(const Lang: string); static;
     //class procedure SaveLanguage(Form:TForm;const Lang:string); static;
   public
     class function LoadLanguages:string;
     class procedure ChangeLanguage(Form:TForm;const Lang: string); overload;
+    class procedure ChangeIniLanguage(const Lang: string);
   end;
 
 implementation
@@ -102,6 +104,43 @@ begin
         //  Value := Copy(LangFile[i],0,Pos('.',LangFile[i])-1);
         Inc(i);
       end;
+    end;
+  end;
+end;
+
+class procedure TLanguages.ChangeIniLanguage(const Lang:string);
+var
+  LangFile : TStringList;
+  Prop : string;
+  i, y : Integer;
+begin
+  if FileExists(Util.DIR + 'starter\lang-' + Lang + '.txt') then
+  begin
+    LangFile := TStringList.Create;
+    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + Lang + '.txt');
+
+    i := 0;
+    while (Pos('<' + 'eu07_input-keyboard.ini',LangFile[i]) = 0) and (i < LangFile.Count-1) do
+        Inc(i);
+
+    if Pos('<' + 'eu07_input-keyboard.ini',LangFile[i]) > 0 then
+    begin
+      Inc(i);
+
+      while (i <= LangFile.Count-1) and (Pos('=',LangFile[i]) > 0) do
+      begin
+        Prop := Copy(LangFile[i],0,Pos('=',LangFile[i])-1);
+
+        for y := 0 to Main.Settings.KeyParams.Count-1 do
+          if Main.Settings.KeyParams[y].Name = Prop then
+          begin
+            Main.Settings.KeyParams[y].Desc := Copy(LangFile[i],Pos('=',LangFile[i])+1,LangFile[i].Length);
+            Break;
+          end;
+
+        Inc(i);
+      end;
+
     end;
   end;
 end;

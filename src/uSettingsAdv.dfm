@@ -22,9 +22,56 @@ object frmSettingsAdv: TfrmSettingsAdv
     Top = 0
     Width = 673
     Height = 313
-    ActivePage = tsSettings
+    ActivePage = tsLog
     Align = alClient
     TabOrder = 0
+    object tsLog: TTabSheet
+      Caption = 'Dziennik zdarze'#324
+      ImageIndex = 2
+      object pnlLog: TPanel
+        Left = 0
+        Top = 0
+        Width = 665
+        Height = 285
+        Align = alClient
+        BevelOuter = bvNone
+        ShowCaption = False
+        TabOrder = 0
+        object lbLogCaption: TLabel
+          AlignWithMargins = True
+          Left = 3
+          Top = 3
+          Width = 659
+          Height = 13
+          Align = alTop
+          Caption = 'Podgl'#261'd logu:'
+          ExplicitWidth = 65
+        end
+        object meLog: TMemo
+          AlignWithMargins = True
+          Left = 3
+          Top = 22
+          Width = 659
+          Height = 229
+          Align = alClient
+          ReadOnly = True
+          ScrollBars = ssBoth
+          TabOrder = 0
+          WordWrap = False
+        end
+        object btnClearLog: TButton
+          AlignWithMargins = True
+          Left = 3
+          Top = 257
+          Width = 659
+          Height = 25
+          Align = alBottom
+          Caption = 'Wyczy'#347#263' log'
+          TabOrder = 1
+          OnClick = btnClearLogClick
+        end
+      end
+    end
     object tsSettings: TTabSheet
       Caption = 'Ustawienia zaawansowane'
       object pnlMain: TPanel
@@ -230,47 +277,34 @@ object frmSettingsAdv: TfrmSettingsAdv
             end
           end
         end
-        object pnlLog: TPanel
+        object pnlSettings2: TPanel
           Left = 190
           Top = 0
-          Width = 469
+          Width = 190
           Height = 279
-          Align = alClient
+          Align = alLeft
           BevelOuter = bvNone
-          ShowCaption = False
           TabOrder = 1
-          object lbLogCaption: TLabel
+          object chGfxresourcemove: TCheckBox
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 463
-            Height = 13
+            Width = 184
+            Height = 17
             Align = alTop
-            Caption = 'Podgl'#261'd logu:'
-            ExplicitWidth = 65
-          end
-          object meLog: TMemo
-            AlignWithMargins = True
-            Left = 3
-            Top = 22
-            Width = 463
-            Height = 223
-            Align = alClient
-            ReadOnly = True
-            ScrollBars = ssBoth
+            Caption = 'Tryb konserwacji pami'#281'ci'
             TabOrder = 0
-            WordWrap = False
           end
-          object btnClearLog: TButton
+          object chGfxresourcesweep: TCheckBox
             AlignWithMargins = True
             Left = 3
-            Top = 251
-            Width = 463
-            Height = 25
-            Align = alBottom
-            Caption = 'Wyczy'#347#263' log'
+            Top = 26
+            Width = 184
+            Height = 40
+            Align = alTop
+            Caption = 'Usuwaj nieu'#380'ywane tekstury z OpenGL'
             TabOrder = 1
-            OnClick = btnClearLogClick
+            WordWrap = True
           end
         end
       end

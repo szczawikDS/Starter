@@ -6,3 +6,5 @@ st43,st44,tem2,tem2s,tem2u,tem2s
 su45,su46
 en57-2000-ra,en57-akl-ra,en57-ra
 en71aks-ra,en71-ra
+B_111A,B_141A,B_Gorlitz78,Bautzen7x,Bautzen8x
+Bautzen86,Gorlitz77,Gorlitz79,Gorlitz81

@@ -114,7 +114,8 @@ object frmSearch: TfrmSearch
       'Autora zdj'#281#263
       'Roku rewizji'
       'Modelu'
-      #321'adunku')
+      #321'adunku'
+      'Stacji macierzystej')
   end
   object pnlDate: TPanel
     AlignWithMargins = True

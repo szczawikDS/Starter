@@ -45,25 +45,25 @@ uses
   uLexer in 'src\uLexer.pas',
   uUtilities in 'src\uUtilities.pas',
   uData in 'src\uData.pas',
-  uKeyboard in 'src\uKeyboard.pas' {frmKeyboard};
+  uKeyboard in 'src\uKeyboard.pas' {frmKeyboard},
+  uNews in 'src\uNews.pas' {frmNews};
 
 {$R *.res}
 
 begin
-  frmStart := TfrmStart.Create(nil);
-  frmStart.Show;
+  TStyleManager.TrySetStyle('Carbon');
+  TfrmStart.GetInstance.Show;
+  TfrmStart.GetInstance.Update;
   Application.Initialize;
-  frmStart.Update;
 
   Util := TUtil.Create;
-  TData.Load;
-
+  Data := TData.Create;
+  TLexParser.LoadData;
+  TfrmStart.GetInstance.UpdateLabel('Tworzê okno programu...');
   Application.MainFormOnTaskbar := True;
   Application.Title := 'Starter MaSzyna';
-  TStyleManager.TrySetStyle('Carbon');
+
   Application.CreateForm(TMain, Main);
   Application.CreateForm(TfrmSettingsAdv, frmSettingsAdv);
-  frmStart.Destroy;
-
   Application.Run;
 end.

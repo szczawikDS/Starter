@@ -3,7 +3,7 @@ object frmStart: TfrmStart
   Top = 0
   BorderStyle = bsNone
   Caption = 'Starter MaSzyna'
-  ClientHeight = 112
+  ClientHeight = 149
   ClientWidth = 400
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
@@ -11,7 +11,6 @@ object frmStart: TfrmStart
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   PixelsPerInch = 96
   TextHeight = 13
@@ -20,7 +19,7 @@ object frmStart: TfrmStart
     Top = 0
     Width = 400
     Height = 112
-    Align = alClient
+    Align = alTop
     Picture.Data = {
       07544269746D6170360D0200424D360D02000000000036000000280000009001
       0000700000000100180000000000000D0200130B0000130B0000000000000000
@@ -4227,5 +4226,32 @@ object frmStart: TfrmStart
       FFFF}
     Proportional = True
     Stretch = True
+  end
+  object lbProgress: TLabel
+    Left = 0
+    Top = 133
+    Width = 400
+    Height = 16
+    Align = alBottom
+    Alignment = taCenter
+    Caption = 'Uruchamiam program...'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Layout = tlCenter
+    ExplicitWidth = 149
+  end
+  object pbProgress: TProgressBar
+    Left = 0
+    Top = 116
+    Width = 400
+    Height = 17
+    Align = alBottom
+    Max = 7
+    Step = 1
+    TabOrder = 0
   end
 end

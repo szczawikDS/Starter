@@ -266,6 +266,8 @@ begin
 
     Par.Free;
   end;
+
+  TLanguages.ChangeIniLanguage('pl');
 end;
 
 procedure TSettings.LoadPresets;
@@ -383,10 +385,10 @@ begin
         Main.chFullphysics.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'gfx.resource.sweep' then
-        Main.chGfxresourcesweep.Checked := Params[i].Value = 'yes'
+        frmSettingsAdv.chGfxresourcesweep.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'gfx.resource.move' then
-        Main.chGfxresourcemove.Checked := Params[i].Value = 'yes'
+        frmSettingsAdv.chGfxresourcemove.Checked := Params[i].Value = 'yes'
       else
       if Params[i].Name = 'debugmode' then
         Main.chDebugmode.Checked := Params[i].Value = 'yes'
@@ -1061,8 +1063,8 @@ begin
     if Params[i].Name = 'vsync'                         then SetCheckState(Main.chVsync.Checked,i) else
     if Params[i].Name = 'usevbo'                        then SetCheckState(Main.chUsevbo.Checked,i) else
     if Params[i].Name = 'fullphysics'                   then SetCheckState(Main.chFullphysics.Checked,i) else
-    if Params[i].Name = 'gfx.resource.sweep'            then SetCheckState(Main.chGfxresourcesweep.Checked,i) else
-    if Params[i].Name = 'gfx.resource.move'             then SetCheckState(Main.chGfxresourcemove.Checked,i) else
+    if Params[i].Name = 'gfx.resource.sweep'            then SetCheckState(frmSettingsAdv.chGfxresourcesweep.Checked,i) else
+    if Params[i].Name = 'gfx.resource.move'             then SetCheckState(frmSettingsAdv.chGfxresourcemove.Checked,i) else
     if Params[i].Name = 'debugmode'                     then SetCheckState(Main.chDebugmode.Checked,i) else
     if Params[i].Name = 'ai.trainman'                   then SetCheckState(Main.chTrainMan.Checked,i) else
     if Params[i].Name = 'soundenabled'                  then SetCheckState(Main.chSoundenabled.Checked,i) else

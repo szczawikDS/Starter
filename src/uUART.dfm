@@ -3,17 +3,17 @@ object frmUART: TfrmUART
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'UART'
-  ClientHeight = 248
+  ClientHeight = 275
   ClientWidth = 466
   Color = clBtnFace
-  Constraints.MaxHeight = 287
+  Constraints.MaxHeight = 314
+  Constraints.MaxWidth = 482
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
   Position = poScreenCenter
-  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -106,7 +106,6 @@ object frmUART: TfrmUART
     Align = alTop
     Caption = 'Wy'#347'wietlanie danych debugowania w konsoli'
     TabOrder = 2
-    ExplicitTop = 255
   end
   object chUART: TCheckBox
     AlignWithMargins = True
@@ -225,5 +224,15 @@ object frmUART: TfrmUART
         TabOrder = 1
       end
     end
+  end
+  object btnCloseAndSave: TButton
+    Left = 325
+    Top = 246
+    Width = 138
+    Height = 25
+    Caption = 'Zapisz i zamknij'
+    ModalResult = 8
+    TabOrder = 5
+    OnClick = btnCloseAndSaveClick
   end
 end
