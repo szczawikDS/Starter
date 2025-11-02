@@ -96,7 +96,7 @@ begin
     else
       Result := GetToken;
   except
-    Util.Log.Add('B³¹d prztwarzania elementu fizyki. Token: ' + Lexer.Token);
+    Util.Log.Add(Util.LabelStr(TLabels.LOG_PHYSICS_PARSE_FAULT) + ' ' + Lexer.Token);
   end;
 end;
 

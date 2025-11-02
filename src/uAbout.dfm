@@ -13,7 +13,6 @@ object frmAbout: TfrmAbout
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlAbout: TPanel
     Left = 294
@@ -203,12 +202,29 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
-        '8.0 beta (23.07.2024)'
+        '7.19.1 (1.10.2025)'
+        '*poprawione elementy opcjonalne'
+        '*elementy opcjonalne- teren'
+        '*obs'#322'uga renderera experimental'
+        '*poprawiona obs'#322'uga modyfikatora MaxLoad'
+        '*obs'#322'uga parametr'#243'w dynamiclights oraz '
+        'async.trainThreads'
+        '*optymalizacja kodu'
+        ''
+        '7.18.1 (1.03.2025)'
+        '*usuni'#281'ty b'#322#261'd przy wchodzeniu do bazy taboru'
+        ''
+        '7.18 (27.02.2025)'
         '*reorganizacja ustawie'#324' zaawansowanych'
         '*ukrycie kolejnych cz'#322'on'#243'w pojazd'#243'w na listach'
         '*funkcjonalno'#347#263' t'#322'umaczenia plik'#243'w klawiszologii'
         '*wprowadzenie element'#243'w opcjonalnych'
-        '*losowanie tekstur- mo'#380'liwo'#347#263' pomijania archiwalnych'
+        '*losowanie tekstur- mo'#380'liwo'#347#263' pomijania pojazd'#243'w '
+        'archiwalnych'
+        '*obs'#322'uga t'#322'umacze'#324' napis'#243'w w programie'
+        '*mo'#380'liwo'#347#263' uruchomienia symulacji bez wybrania '
+        'pojazdu'
+        '*edycja regu'#322' losowania tekstur w programie'
         ''
         '7.17 (25.02.2024)'
         '*baza taboru- wyszukiwanie wg stacji'
@@ -255,21 +271,6 @@ object frmAbout: TfrmAbout
         '*wyszukiwanie po '#322'adunku'
         '*obs'#322'uga komentarzy w plikach textures.txt'
         '*poprawiona obs'#322'uga pojazd'#243'w wielocz'#322'onowych'
-        ''
-        '7.11 (26.09.2022)'
-        '*wykrywanie zmian ustawie'#324' w tle'
-        ''
-        '7.10.2 (13.08.2022)'
-        '*poprawione kategorie pojazd'#243'w'
-        ''
-        '7.10.1 (12.08.2022)'
-        '*poprawione kategorie pojazd'#243'w'
-        ''
-        '7.10 (09.08.2022)'
-        '*unikalno'#347#263' nazwy sprawdzana tylko dla wybranego '
-        'pojazdu'
-        '*logowanie b'#322#281'd'#243'w '#322'adowania miniaturek pojazd'#243'w i '
-        'SCN'
         ''
         '...')
       ReadOnly = True

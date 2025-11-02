@@ -25,7 +25,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  System.Actions, Vcl.ActnList, Vcl.ComCtrls;
+  System.Actions, Vcl.ActnList, Vcl.ComCtrls, Vcl.Samples.Spin;
 
 type
   TfrmSettingsAdv = class(TForm)
@@ -64,6 +64,9 @@ type
     pnlSettings2: TPanel;
     chGfxresourcemove: TCheckBox;
     chGfxresourcesweep: TCheckBox;
+    seThreads: TSpinEdit;
+    pnlThreads: TPanel;
+    lbThreads: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
@@ -101,7 +104,7 @@ begin
       Main.AddVehicle(0,nil,False,False);
     end;
   except
-    ShowMessage('Wyst¹pi³ b³¹d podczas operacji.');
+    ShowMessage(Util.LabelStr(CAP_OPERATION_FAULT));
   end;
 end;
 
@@ -145,7 +148,7 @@ begin
       MMD.Free;
     end;
   except
-    ShowMessage('Wyst¹pi³ b³¹d podczas operacji.');
+    ShowMessage(Util.LabelStr(CAP_OPERATION_FAULT));
   end;
 end;
 
@@ -156,9 +159,9 @@ end;
 
 procedure TfrmSettingsAdv.actRemoveAllTrainsExecute(Sender: TObject);
 begin
-  if Util.Ask('Usun¹æ wszystkie pojazdy na scenerii?') then
+  if Util.Ask(Util.LabelStr(CAP_REMOVE_ALL_VEHICLES)) then
     if not Main.RemoveAllTrains then
-      ShowMessage('Wyst¹pi³ b³¹d podczas wykonywania operacji.');
+      ShowMessage(Util.LabelStr(CAP_OPERATION_FAULT));
 end;
 
 procedure TfrmSettingsAdv.actRemoveAllTrainsUpdate(Sender: TObject);
@@ -184,9 +187,24 @@ begin
   Timer.Enabled := False;
 end;
 
+function GetNumberOfProcessors: Integer;
+var
+  SI: TSystemInfo;
+begin
+  try
+   GetSystemInfo(SI);
+   Result := SI.dwNumberOfProcessors;
+  except
+    Result := 0;
+    Util.Log.Add('Nieudane pobranie dostêpnej iloœci w¹tków komputera.');
+  end;
+end;
+
 procedure TfrmSettingsAdv.FormShow(Sender: TObject);
 begin
   chIgnoreIrrevelant.Checked := Main.Settings.IgnoreIrrelevant;
+
+  seThreads.MaxValue := GetNumberOfProcessors;
 
   RefreshLog;
   Timer.Enabled := True;

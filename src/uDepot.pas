@@ -111,7 +111,7 @@ begin
           Lexer.Next;
       end;
     except
-      Util.Log.Add('B³¹d parsowania magazynu. Linia: ' + IntToStr(Lexer.LineNumber));
+      Util.Log.Add(Util.LabelStr(LOG_DEPO_PARSE_FAULT) + ' ' + IntToStr(Lexer.LineNumber));
     end;
   finally
     Free;
@@ -138,7 +138,7 @@ begin
 
     DepotFile.SaveToFile(Util.DIR + 'starter\magazyn.ini');
   except
-    Util.Log.Add('B³¹d zapisu magazynu.');
+    Util.Log.Add(Util.LabelStr(LOG_DEPO_SAVE_FAULT));
   end;
 end;
 

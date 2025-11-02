@@ -13,7 +13,6 @@ object frmUpdater: TfrmUpdater
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object lbUpdate: TLabel
     Left = 0

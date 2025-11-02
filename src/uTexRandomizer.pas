@@ -75,8 +75,10 @@ type
     seYear: TSpinEdit;
     lbTestVersion: TLabel;
     chWithoutArchival: TCheckBox;
+    btnRules: TButton;
     procedure rbUserYearClick(Sender: TObject);
     procedure chRevDiffClick(Sender: TObject);
+    procedure btnRulesClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -85,7 +87,7 @@ type
 
 implementation
 
-uses uMain, uData, uUtilities;
+uses uMain, uData, uUtilities, uRules;
 
 {$R *.dfm}
 
@@ -393,6 +395,16 @@ begin
   except
     on E: Exception do
         Util.Log.Add('B³¹d edycji pojazdu. Szczegó³y b³êdu: ' + E.Message);
+  end;
+end;
+
+procedure TfrmTexRandomizer.btnRulesClick(Sender: TObject);
+begin
+  with TfrmRules.Create(self) do
+  try
+    ShowModal;
+  finally
+    Free;
   end;
 end;
 

@@ -36,6 +36,8 @@ type
     CountVehicles : Integer;
   end;
 
+  TIncludeType = (itDefDisabled,itDefEnabled,itTerrain);
+
   TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
           tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
           tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
@@ -231,7 +233,7 @@ type
   TInclude = class
     Path      : string;
     Desc      : string;
-    Default   : Boolean;
+    Kind      : TIncludeType;
   end;
 
   TScenario = class

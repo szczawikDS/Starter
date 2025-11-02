@@ -18,8 +18,8 @@ object Main: TMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
+  OnMouseMove = FormMouseMove
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 16
   object btnStart: TButton
     AlignWithMargins = True
@@ -37,8 +37,10 @@ object Main: TMain
     Font.Style = [fsBold]
     ParentFont = False
     ParentShowHint = False
+    PopupMenu = pmStart
     ShowHint = True
     TabOrder = 2
+    OnMouseMove = btnStartMouseMove
   end
   object pnlMenu: TPanel
     AlignWithMargins = True
@@ -1138,7 +1140,6 @@ object Main: TMain
                     'Kliknij dwukrotnie lub przeci'#261'gnij i upu'#347#263' miniaturk'#281' aby u'#380'y'#263' w' +
                     'ybran'#261' tekstur'#281'.'
                   Align = alTop
-                  AutoSize = True
                   Center = True
                   ParentShowHint = False
                   ShowHint = True
@@ -2262,20 +2263,6 @@ object Main: TMain
                 end
               end
             end
-            object lbStatic: TStaticText
-              Left = 184
-              Top = 4
-              Width = 129
-              Height = 20
-              AutoSize = False
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -13
-              Font.Name = 'Tahoma'
-              Font.Style = [fsBold]
-              ParentFont = False
-              TabOrder = 3
-            end
           end
         end
       end
@@ -2430,6 +2417,7 @@ object Main: TMain
                 Style = csDropDownList
                 Sorted = True
                 TabOrder = 0
+                OnChange = cbEXEChange
               end
               object cbBattery: TComboBox
                 AlignWithMargins = True
@@ -3452,6 +3440,48 @@ object Main: TMain
                     ParentShowHint = False
                     ShowHint = True
                     TabOrder = 12
+                  end
+                  object pnlDynamicLights: TPanel
+                    Left = 0
+                    Top = 386
+                    Width = 200
+                    Height = 41
+                    Align = alTop
+                    BevelOuter = bvNone
+                    ShowCaption = False
+                    TabOrder = 13
+                    object lbDynamicLights: TLabel
+                      AlignWithMargins = True
+                      Left = 3
+                      Top = 3
+                      Width = 143
+                      Height = 35
+                      Align = alLeft
+                      Alignment = taRightJustify
+                      AutoSize = False
+                      Caption = 'Ilo'#347#263' dynamicznych '#378'r'#243'de'#322' '#347'wiat'#322'a:'
+                      Layout = tlCenter
+                      WordWrap = True
+                      ExplicitLeft = 6
+                      ExplicitTop = 11
+                      ExplicitWidth = 194
+                      ExplicitHeight = 12
+                    end
+                    object seDynamicLights: TSpinEdit
+                      AlignWithMargins = True
+                      Left = 152
+                      Top = 3
+                      Width = 45
+                      Height = 35
+                      Align = alClient
+                      AutoSize = False
+                      Constraints.MaxHeight = 35
+                      MaxLength = 1
+                      MaxValue = 7
+                      MinValue = 1
+                      TabOrder = 0
+                      Value = 1
+                    end
                   end
                 end
                 object Panel22: TPanel
@@ -4976,6 +5006,16 @@ object Main: TMain
       Checked = True
       OnExecute = actHideArchivalVehicesExecute
     end
+    object actStartWithoutSaveSettings: TAction
+      Category = 'Start'
+      Caption = 'Uruchom bez zapisu ustawie'#324' symulatora'
+      OnExecute = actStartWithoutSaveSettingsExecute
+    end
+    object actStartFreeFly: TAction
+      Category = 'Start'
+      Caption = 'Uruchom bez pojazdu'
+      Visible = False
+    end
   end
   object pmDepot: TPopupMenu
     OnPopup = pmDepotPopup
@@ -5079,6 +5119,17 @@ object Main: TMain
         Caption = 'Instrukcja o prowadzeniu manewr'#243'w (Ir-9)'
         OnClick = InstrukcjaoprowadzeniumanewrwIr91Click
       end
+    end
+  end
+  object pmStart: TPopupMenu
+    OnPopup = pmStartPopup
+    Left = 790
+    Top = 518
+    object miStartWithoutSaveSettings: TMenuItem
+      Action = actStartWithoutSaveSettings
+    end
+    object miStartFreeFly: TMenuItem
+      Caption = 'Uruchom bez pojazdu'
     end
   end
 end

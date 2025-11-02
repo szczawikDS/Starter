@@ -67,8 +67,9 @@ type
     procedure LoadPresets;
     procedure ReadOwnSettings(const FirstRun:boolean=False);
     procedure ReadSettings(const Path:string='');
+    procedure RendererExperimental;
     procedure ReadKeyboard;
-    procedure SaveSettings(const Path:string='eu07.ini');
+    procedure SaveSettings(const Path:string='eu07.ini'; const OnlyOwnSettings:Boolean=False);
     procedure SaveKeyboardSettings;
     constructor Create;
     destructor Destroy; override;
@@ -301,6 +302,7 @@ var
   i, ValInt : Integer;
   Val : Double;
 begin
+  i := -1;
   try
     Params.Free;
     Params := TObjectList<TParam>.Create();
@@ -313,7 +315,7 @@ begin
       if FileExists(Util.DIR + 'eu07.ini') then
       begin
         Settings.LoadFromFile(Util.DIR + 'eu07.ini');
-        SettingsAge := FileDateToDateTime(FileAge(Util.DIR + 'eu07.ini'));
+        FileAge(Util.DIR + 'eu07.ini',SettingsAge);
       end
       else
         Main.actDefaultSettingsExecute(self);
@@ -524,6 +526,8 @@ begin
       if Params[i].Name = 'feedbackport' then Main.edFeedbackport.Text := Params[i].Value else
       if Params[i].Name = 'friction' then Main.edFriction.Text := Params[i].Value else
       if Params[i].Name = 'fieldofview' then Main.edFieldofview.Text := Params[i].Value else
+      if Params[i].Name = 'dynamiclights' then Main.seDynamicLights.Value := Params[i].Value.ToInteger else
+      if Params[i].Name = 'async.trainThreads' then frmSettingsAdv.seThreads.Value := Params[i].Value.ToInteger else
       if Params[i].Name = 'fpslimit' then
       begin
         Main.seFPSLimit.Value := StrToInt(Params[i].Value);
@@ -579,9 +583,10 @@ begin
       else
       if Params[i].Name = 'gfxrenderer' then
       begin
-        if Params[i].Value = 'full'   then Main.cbGfxrenderer.ItemIndex := 0 else
-        if Params[i].Value = 'legacy' then Main.cbGfxrenderer.ItemIndex := 2 else
-        if Params[i].Value = 'simple' then Main.cbGfxrenderer.ItemIndex := 3;
+        if Params[i].Value = 'full'         then Main.cbGfxrenderer.ItemIndex := 0 else
+        if Params[i].Value = 'legacy'       then Main.cbGfxrenderer.ItemIndex := 2 else
+        if Params[i].Value = 'simple'       then Main.cbGfxrenderer.ItemIndex := 3 else
+        if Params[i].Value = 'experimental' then Main.cbGfxrenderer.ItemIndex := 4;
       end
       else
       if Params[i].Name = 'maxtexturesize' then
@@ -701,12 +706,12 @@ begin
   except
     on E: Exception do
     begin
-      Token := 'B³¹d wczytywania ustawieñ (plik eu07.ini).' + #13#10;
+      Token := Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['eu07.ini']) + #13#10;
 
-      if i < Params.Count-1 then
-        Token := Token + 'Parametr: ' + Params[i].Name + #13#10
-                       + 'B³êdna wartoœæ: ' + Params[i].Value + #13#10;
-      Token := Token + 'Szczegó³y b³êdu:' + #13#10 + E.Message;
+      if (i >= 0) and (i < Params.Count-1) then
+        Token := Token + Util.LabelStr(CAP_PARAMETER) + ': ' + Params[i].Name + #13#10
+                       + Util.LabelStr(CAP_INVALID_VALUE) + ': ' + Params[i].Value + #13#10;
+      Token := Token + Util.LabelStr(CAP_FAULT_DETAIL) + ':' + #13#10 + E.Message;
 
       ShowMessage(Token);
       Util.Log.Add(Token);
@@ -785,6 +790,23 @@ begin
   Settings.Free;
 end;
 
+procedure TSettings.RendererExperimental;
+var
+  VerStr : string;
+  VerInt : Integer;
+begin
+  Main.cbGfxrenderer.Items.Delete(Main.cbGfxrenderer.Items.IndexOf('experimental'));
+
+  if FileExists(Util.DIR + Main.cbEXE.Text) then
+  begin
+    VerStr := Util.GetFileVersion(Util.DIR + Main.cbEXE.Text,'%.2d%.2d');
+
+    if TryStrToInt(VerStr,VerInt) then
+      if VerInt >= 2504 then
+        Main.cbGfxrenderer.Items.Add('experimental');
+  end;
+end;
+
 procedure TSettings.ReadOwnSettings(const FirstRun:boolean=False);
 var
   Settings : TStringList;
@@ -805,6 +827,8 @@ begin
 
         if SameText(ParName,'lang') then
         begin
+          TLanguages.FillLangLabels;
+
           Util.Lang := ParValue;
           if not ((FirstRun) and (ParValue = 'pl')) then
             TLanguages.ChangeLanguage(Main,ParValue);
@@ -868,13 +892,15 @@ begin
 
     if Main.cbEXE.ItemIndex < 0 then
       Main.cbEXE.ItemIndex := 0;
+
+    RendererExperimental;
   except
     on E: Exception do
     begin
-      ShowMessage('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
-                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
-      Util.Log.Add('B³¹d wczytywania ustawieñ (plik starter\starter.ini).' + #13#10
-                                    + 'Szczegó³y b³êdu:' + #13#10 + E.Message);
+      ShowMessage(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['starter\starter.ini']) + #13#10
+                                    + Util.LabelStr(CAP_FAULT_DETAIL) + #13#10 + E.Message);
+      Util.Log.Add(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['starter\starter.ini']) + #13#10
+                                    + Util.LabelStr(CAP_FAULT_DETAIL) + #13#10 + E.Message);
     end;
   end;
 end;
@@ -1003,6 +1029,11 @@ begin
   else
     RemoveParam('fpslimit');
 
+  if frmSettingsAdv.seThreads.Value > 0 then
+    FindParameter('async.trainThreads','(0) Iloœæ w¹tków liczenia fizyki pojazdów (0 = w g³ównym w¹tku)')
+  else
+    RemoveParam('async.trainThreads');
+
   if frmSettingsAdv.chUseGLES.State = cbGrayed then
     RemoveParam('gfx.usegles');
 
@@ -1025,7 +1056,7 @@ begin
   end;
 end;
 
-procedure TSettings.SaveSettings(const Path:string='eu07.ini');
+procedure TSettings.SaveSettings(const Path:string='eu07.ini';const OnlyOwnSettings:Boolean=False);
 var
   Settings, Par : TStringList;
   i, Value : Integer;
@@ -1109,17 +1140,20 @@ begin
         Params[i].Value := Params[i].Value + ' 0.5';
     end
     else
-    if Params[i].Name = 'feedbackmode'  then Params[i].Value := IntToStr(Main.cbFeedbackmode.ItemIndex) else
-    if Params[i].Name = 'feedbackport'  then Params[i].Value := Main.edFeedbackport.Text else
-    if Params[i].Name = 'friction'      then Params[i].Value := Main.edFriction.Text else
-    if Params[i].Name = 'fieldofview'   then Params[i].Value := Main.edFieldofview.Text else
-    if Params[i].Name = 'fpslimit'      then Params[i].Value := Main.seFPSLimit.Text else
-    if Params[i].Name = 'gfxrenderer'  then
+    if Params[i].Name = 'feedbackmode'        then Params[i].Value := IntToStr(Main.cbFeedbackmode.ItemIndex) else
+    if Params[i].Name = 'feedbackport'        then Params[i].Value := Main.edFeedbackport.Text else
+    if Params[i].Name = 'friction'            then Params[i].Value := Main.edFriction.Text else
+    if Params[i].Name = 'fieldofview'         then Params[i].Value := Main.edFieldofview.Text else
+    if Params[i].Name = 'dynamiclights'       then Params[i].Value := Main.seDynamicLights.Value.ToString else
+    if Params[i].Name = 'async.trainThreads'  then Params[i].Value := frmSettingsAdv.seThreads.Value.ToString else
+    if Params[i].Name = 'fpslimit'            then Params[i].Value := Main.seFPSLimit.Text else
+    if Params[i].Name = 'gfxrenderer'         then
     begin
       case Main.cbGfxrenderer.ItemIndex of
         0..1: Params[i].Value := 'full';
         2: Params[i].Value := 'legacy';
         3: Params[i].Value := 'simple';
+        4: Params[i].Value := 'experimental';
       end;
     end
     else
@@ -1299,7 +1333,7 @@ begin
   Settings.SaveToFile(Util.DIR + Path);
 
   if Path = 'eu07.ini' then
-    SettingsAge := FileDateToDateTime(FileAge(Util.DIR + 'eu07.ini'));
+    FileAge(Util.DIR + 'eu07.ini',SettingsAge);
 
   Settings.Free;
 end;
@@ -1326,25 +1360,22 @@ begin
       CopyFile(PChar(Util.Dir + 'starter\ACESFilm.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False);
   except
     on E: Exception do
-      ShowMessage('Wyst¹pi³ b³¹d przy próbie zmiany algorytmu. Szczegó³y b³êdu: ' + E.Message);
+      ShowMessage(Util.LabelStr(CAP_ALGORITHM_FAULT) + ' ' + E.Message);
   end;
 end;
 
 procedure TSettings.CheckSettingsFile;
 var
   FileName   : string;
-  FileDate   : Integer;
   LastChange : TDateTime;
 begin
   FileName := Util.DIR + 'eu07.ini';
-  FileDate := FileAge(FileName);
+  FileAge(FileName,LastChange);
 
-  if FileDate > 0 then
+  if LastChange > 0 then
   begin
-    LastChange := FileDateToDateTime(FileDate);
-
     if LastChange > SettingsAge then
-      if Util.Ask('Wykryto zewnêtrzne zmiany w ustawieniach symulatora. Czy wczytaæ ustawienia ponownie?') then
+      if Util.Ask(Util.LabelStr(CAP_SET_CHANGED)) then
         ReadSettings()
       else
         SettingsAge := LastChange;

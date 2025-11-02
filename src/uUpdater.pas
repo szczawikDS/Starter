@@ -41,7 +41,7 @@ type
   public
     IdHTTPProgress: TIdHTTPProgress;
     const
-      AppVersion = 121;
+      AppVersion = 125;
       procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
       class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
   end;
@@ -82,22 +82,22 @@ begin
         if Version <= AppVersion then
         begin
           if ReturnInfo then
-            ShowMessage('Posiadasz najnowsz¹ wersjê.');
+            ShowMessage(Util.LabelStr(CAP_CURRENT_VERSION));
         end
         else
         begin
           Hide;
-          if Util.Ask('Dostêpna jest nowsza wersja. Zaktualizowaæ program?') then
+          if Util.Ask(Util.LabelStr(CAP_NEWER_VERSION_ASK)) then
             UpdateApp(UpdateFile);
         end;
       end;
     except
       on E: Exception do
       begin
-        Util.Log.Add('B³¹d aktualizacji ' + E.Message);
+        Util.Log.Add(Util.LabelStr(CAP_UPDATE_FAULT) + ' ' + E.Message);
 
         if ReturnInfo then
-          ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
+          ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
       end;
     end;
   finally
@@ -130,7 +130,7 @@ begin
   Par := TStringList.Create;
   try
     try
-      lbUpdate.Caption := 'Aktualizujê...';
+      lbUpdate.Caption := Util.LabelStr(CAP_UPDATING);
       Main.Cursor := crHourGlass;
       Application.ProcessMessages;
 
@@ -150,10 +150,10 @@ begin
       if FileExists(Util.DIR + 'update.bat') then
         AutoUpdate
       else
-        ShowMessage('Program zosta³ zaktualizowany.');
+        ShowMessage(Util.LabelStr(CAP_UPDATED_PROGRAM));
     except
       on E: Exception do
-        ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
+        ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
     end;
   finally
     pbProgress.Visible := False;
@@ -179,7 +179,7 @@ begin
       ShellExecute(Main.Handle, 'open', 'update.bat', nil, nil, SW_HIDE);
   except
     on E: Exception do
-      ShowMessage('Wyst¹pi³ b³¹d podczas aktualizacji programu.' + #13#10 + 'Szczegó³y b³êdu: ' + E.Message);
+      ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
   end;
 end;
 

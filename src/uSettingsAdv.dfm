@@ -15,7 +15,6 @@ object frmSettingsAdv: TfrmSettingsAdv
   OnCreate = FormCreate
   OnHide = FormHide
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pcAdv: TPageControl
     Left = 0
@@ -305,6 +304,45 @@ object frmSettingsAdv: TfrmSettingsAdv
             Caption = 'Usuwaj nieu'#380'ywane tekstury z OpenGL'
             TabOrder = 1
             WordWrap = True
+          end
+          object pnlThreads: TPanel
+            Left = 0
+            Top = 69
+            Width = 190
+            Height = 36
+            Align = alTop
+            BevelOuter = bvNone
+            ShowCaption = False
+            TabOrder = 2
+            object lbThreads: TLabel
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
+              Width = 121
+              Height = 30
+              Align = alClient
+              Alignment = taRightJustify
+              AutoSize = False
+              Caption = 'W'#261'tki liczenia fizyki pojazd'#243'w:'
+              Layout = tlCenter
+              WordWrap = True
+              ExplicitLeft = 11
+              ExplicitTop = 6
+              ExplicitWidth = 143
+              ExplicitHeight = 18
+            end
+            object seThreads: TSpinEdit
+              AlignWithMargins = True
+              Left = 130
+              Top = 3
+              Width = 57
+              Height = 30
+              Align = alRight
+              MaxValue = 0
+              MinValue = 0
+              TabOrder = 0
+              Value = 0
+            end
           end
         end
       end

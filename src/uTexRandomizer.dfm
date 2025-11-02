@@ -12,7 +12,6 @@ object frmTexRandomizer: TfrmTexRandomizer
   Font.Name = 'Tahoma'
   Font.Style = []
   Position = poScreenCenter
-  PixelsPerInch = 96
   TextHeight = 13
   object lbTestVersion: TLabel
     AlignWithMargins = True
@@ -29,7 +28,6 @@ object frmTexRandomizer: TfrmTexRandomizer
     Font.Name = 'Tahoma'
     Font.Style = [fsItalic]
     ParentFont = False
-    ExplicitTop = 131
     ExplicitWidth = 188
   end
   object pnlEra: TPanel
@@ -46,7 +44,7 @@ object frmTexRandomizer: TfrmTexRandomizer
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 246
+      Width = 36
       Height = 13
       Align = alTop
       Alignment = taCenter
@@ -57,7 +55,6 @@ object frmTexRandomizer: TfrmTexRandomizer
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 36
     end
     object Panel1: TPanel
       AlignWithMargins = True
@@ -137,7 +134,6 @@ object frmTexRandomizer: TfrmTexRandomizer
     Caption = 'Dopasuj'
     ModalResult = 1
     TabOrder = 1
-    ExplicitTop = 150
   end
   object chWithoutArchival: TCheckBox
     AlignWithMargins = True
@@ -150,8 +146,19 @@ object frmTexRandomizer: TfrmTexRandomizer
     Checked = True
     State = cbChecked
     TabOrder = 2
-    ExplicitLeft = 72
-    ExplicitTop = 136
-    ExplicitWidth = 97
+  end
+  object btnRules: TButton
+    AlignWithMargins = True
+    Left = 3
+    Top = 142
+    Width = 252
+    Height = 25
+    Align = alBottom
+    Caption = 'Ustaw regu'#322'y losowania'
+    TabOrder = 3
+    OnClick = btnRulesClick
+    ExplicitLeft = 64
+    ExplicitTop = 144
+    ExplicitWidth = 75
   end
 end

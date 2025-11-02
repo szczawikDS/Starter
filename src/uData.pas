@@ -62,7 +62,7 @@ var
 
 implementation
 
-uses SysUtils, StrUtils;
+uses SysUtils, StrUtils, Math;
 
 function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
 begin
@@ -70,23 +70,15 @@ begin
     if Vehicle.Fiz <> nil then
     begin
       if LeftCoupler then
-      begin
-        if Vehicle.Dist >= 0 then
-          Result := Vehicle.Fiz.AllowedFlagA
-        else
-          Result := Vehicle.Fiz.AllowedFlagB;
-      end
+        Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.AllowedFlagA,Vehicle.Fiz.AllowedFlagB)
       else
-        if Vehicle.Dist >= 0 then
-          Result := Vehicle.Fiz.AllowedFlagB
-        else
-          Result := Vehicle.Fiz.AllowedFlagA;
+        Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.AllowedFlagB,Vehicle.Fiz.AllowedFlagA);
     end
     else
       Result := 3;
   except
-    Util.Log.Add('B³¹d sprawdzania wartoœci AllowedFlag. ' +
-                    'Nale¿y sprawdziæ plik .fiz dla ' +
+    Util.Log.Add(Util.LabelStr(TLabels.LOG_CHECK_VALUE_FAULT) + ' AllowedFlag. ' +
+                    Util.LabelStr(TLabels.LOG_CHECK_PHYSICS_FILE) + ' ' +
                     Vehicle.Texture.Models[Vehicle.ModelID].Model);
   end;
 end;
@@ -97,24 +89,16 @@ begin
     if Vehicle.Fiz <> nil then
     begin
       if LeftCoupler then
-      begin
-        if Vehicle.Dist >= 0 then
-          Result := Vehicle.Fiz.ControlTypeA
-        else
-          Result := Vehicle.Fiz.ControlTypeB;
-      end
+        Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.ControlTypeA,Vehicle.Fiz.ControlTypeB)
       else
-        if Vehicle.Dist >= 0 then
-          Result := Vehicle.Fiz.ControlTypeB
-        else
-          Result := Vehicle.Fiz.ControlTypeA;
+        Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.ControlTypeB,Vehicle.Fiz.ControlTypeA);
     end
     else
       Result := EmptyStr;
   except
-    Util.Log.Add('B³¹d sprawdzania wartoœci ControlType. ' +
-                    'Nale¿y sprawdziæ plik .fiz dla ' +
-                    Vehicle.Texture.Models[Vehicle.ModelID].Model);
+    Util.Log.Add(Util.LabelStr(TLabels.LOG_CHECK_VALUE_FAULT) + ' ControlType. ' +
+                 Util.LabelStr(TLabels.LOG_CHECK_PHYSICS_FILE) + ' ' +
+                 Vehicle.Texture.Models[Vehicle.ModelID].Model);
   end;
 end;
 
@@ -257,7 +241,7 @@ begin
       end;
   end
   else
-    Result := 'Wpis bez pojazdów. (Tor: ' + Trainset.Track +')';
+    Result := Format(Util.LabelStr(TLabels.CAP_NO_VEHICLES),[Trainset.Track]);
 end;
 
 function PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
@@ -303,12 +287,12 @@ begin
 
     if Dyn.ThermoDynamic then
       Result := Result + '.TA';
-
-    if Dyn.MaxLoad >= 0 then
-      Result := Result + '.L' + Dyn.MaxLoad.ToString;
   end
   else
     Result := Result + FloatToStr(Dyn.Vel);
+
+  if Dyn.MaxLoad >= 0 then
+    Result := Result + ' ' + 'L' + Dyn.MaxLoad.ToString;
 
   if Dyn.LoadType.Length > 0 then
     Result := Result + ' ' + FloatToStr(Dyn.Loadquantity)
@@ -328,13 +312,13 @@ var
   Tex : TTexture;
   Model : TModel;
 begin
-  Tex := TTexture.Create;
-  Tex.ID := 0;
-  Tex.Typ := tyUNKNOWN;
+  Tex           := TTexture.Create;
+  Tex.ID        := 0;
+  Tex.Typ       := tyUNKNOWN;
   Tex.PrevTexID := -1;
   Tex.NextTexID := -1;
 
-  Model := TModel.Create;
+  Model       := TModel.Create;
   Model.Fiz   := nil;
   Tex.Models.Add(Model);
   Textures.Add(Tex);
@@ -376,7 +360,7 @@ begin
         end
         else
           if not Train.Vehicles[i].LoadType.IsEmpty then
-            Util.Log.Add(Train.Vehicles[i].Name + ' - zastosowany nieobs³ugiwany ³adunek przez pojazd');
+            Util.Log.Add(Train.Vehicles[i].Name + ' - ' + Util.LabelStr(TLabels.LOG_UNSUPPORTED_LOAD));
       end;
 
       if Train.Vehicles[i].Fiz <> nil then
@@ -393,10 +377,7 @@ begin
             (((Vehicle.CabOccupancy > coRearDriver)
               or (Vehicle.Texture.Typ = tyEZT)
               or (Vehicle.Texture.Typ = tySZYNOBUS))
-              or (AllVehicles))
-            //and
-            //((Vehicle.LoadType.IsEmpty) or (ContainsText(Vehicle.Texture.Models[Vehicle.ModelID].Fiz.LoadAccepted,Vehicle.LoadType)))
-            ;
+              or (AllVehicles));
 end;
 
 procedure AutoConnect(Vehicles:TObjectList<TVehicle>;const LeftVehicle:Integer);
@@ -471,23 +452,27 @@ end;
 
 procedure RandomLoad(var Vehicles:TObjectList<TVehicle>);
 var
-  i : Integer;
   Loads : TStringList;
+  Vehicle : TVehicle;
 begin
-  for i := 0 to Vehicles.Count-1 do
-  begin
-    if (Vehicles[i].Texture.Typ >= tySZYNOBUS) then
+  Loads := TStringList.Create;
+  try
+    for Vehicle in Vehicles do
     begin
-      if Vehicles[i].Fiz <> nil then
+      if (Vehicle.Texture.Typ >= tySZYNOBUS) then
       begin
-        Loads := TStringList.Create;
-        Loads.Delimiter := ',';
-        Loads.DelimitedText := Vehicles[i].Fiz.LoadAccepted;
+        if Vehicle.Fiz <> nil then
+        begin
+          Loads.Delimiter := ',';
+          Loads.DelimitedText := Vehicle.Fiz.LoadAccepted;
 
-        if Loads.Count > 0 then
-          Vehicles[i].LoadType := Loads[Random(Loads.Count-1)];
+          if Loads.Count > 0 then
+            Vehicle.LoadType := Loads[Random(Loads.Count)];
+        end;
       end;
     end;
+  finally
+    Loads.Free;
   end;
 end;
 
@@ -499,10 +484,7 @@ begin
   Indexes := GetMultiple(Vehicles,Position);
 
   for i := 0 to Indexes.Count-1 do
-    if Vehicles[Indexes[i]].Dist >= 0 then
-      Vehicles[Indexes[i]].Dist := -1
-    else
-      Vehicles[Indexes[i]].Dist := 0;
+    Vehicles[Indexes[i]].Dist := IfThen(Vehicles[Indexes[i]].Dist >= 0,-1,0);
 
   Indexes.Sort;
 

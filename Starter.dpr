@@ -46,7 +46,7 @@ uses
   uUtilities in 'src\uUtilities.pas',
   uData in 'src\uData.pas',
   uKeyboard in 'src\uKeyboard.pas' {frmKeyboard},
-  uNews in 'src\uNews.pas' {frmNews};
+  uRules in 'src\uRules.pas' {frmRules};
 
 {$R *.res}
 
@@ -61,6 +61,7 @@ begin
   TLexParser.LoadData;
   TfrmStart.GetInstance.UpdateLabel('Tworzê okno programu...');
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Carbon');
   Application.Title := 'Starter MaSzyna';
 
   Application.CreateForm(TMain, Main);
