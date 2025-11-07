@@ -714,8 +714,8 @@ function TLexParser.ParseInc(const Path, Config:string):TInclude;
 var
   Par : TStringList;
 begin
+  Par := TStringList.Create;
   try
-    Par := TStringList.Create;
     ExtractStrings([',','|',';'],[' '],PChar(Config),Par);
 
     Result        := TInclude.Create;
@@ -1151,6 +1151,7 @@ begin
       if FileExists(BasePath + Path) then
         PhysicsFile.LoadFromFile(BasePath + Path);
 
+    Section := psOther;
     Lexer.Origin := PChar(PhysicsFile.Text);
 
     While Lexer.TokenID <> ptNull do
@@ -1255,17 +1256,9 @@ begin
         end;
       end
       else
-      begin
         if Lexer.Token = '#' then
-        begin
           while (Lexer.TokenID <> ptCRLF) and (Lexer.TokenID <> ptNull) do
             Lexer.Next;
-          Section := psOther;
-        end;
-
-        if Lexer.TokenID = ptCRLF then
-          Section := psOther;
-      end;
 
       Lexer.NextNoJunk;
     end;

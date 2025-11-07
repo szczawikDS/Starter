@@ -38,6 +38,11 @@ type
     Key3  : string;
   end;
 
+  TFileAge = class
+    Name  : string;
+    Age   : TDateTime;
+  end;
+
   TSettings = class
   private
     DebugLogTrack     : Boolean;
@@ -56,6 +61,10 @@ type
     procedure AddParam(const Name: String;const Desc:string);
     procedure CheckParams;
     procedure RemoveParam(const Name: String);
+    function LoadIni(const FileName:string; out aFileAge:TDateTime):TStringList; overload;
+    function LoadIni(const FileName: string): TStringList; overload;
+    function SaveIni(const FileName: string;const INIFile: TStringList): TDateTime;
+    function eu07exeVersion: Integer;
   public
     Params : TObjectList<TParam>;
     KeyParams : TObjectList<TKeyParam>;
@@ -78,6 +87,7 @@ type
     procedure FindParameter(const Name: string;const Desc:string='');
     procedure ChangeHDR(const Reinhard:Boolean=True);
     procedure CheckSettingsFile;
+    function eu07exeSelected: string;
   end;
 
 implementation
@@ -146,27 +156,56 @@ begin
   end;
 end;
 
+function CompareFileAges(const L, R: TFileAge): Integer;
+begin
+  if L.Age < R.Age then
+    Result := -1
+  else if L.Age > R.Age then
+    Result := 1
+  else
+    Result := 0;
+end;
+
 procedure TSettings.LoadEXE;
 var
   SR : TSearchRec;
-  Ilosc : Integer;
+  Ilosc, i : Integer;
+  ExeAge : TFileAge;
+  ExeAges : TList<TFileAge>;
 begin
+  ExeAges := TList<TFileAge>.Create;
+
   Main.cbEXE.Items.BeginUpdate;
   Main.cbEXE.Clear;
   Ilosc := FindFirst(Util.DIR + 'eu07*.exe',faAnyFile,SR);
   while (Ilosc = 0) do
   begin
     if FileExists(Util.DIR + SR.Name) then
-      Main.cbEXE.Items.Add(SR.Name);
+    begin
+      ExeAge := TFileAge.Create;
+      ExeAge.Name := SR.Name;
+      FileAge(Util.DIR + SR.Name,ExeAge.Age);
+      ExeAges.Add(ExeAge);
+    end;
 
     Ilosc := FindNext(SR);
   end;
   System.SysUtils.FindClose(SR);
 
+  ExeAges.Sort(TComparer<TFileAge>.Construct(
+          function (const L, R: TFileAge): Integer
+          begin
+            result := CompareFileAges(L, R);
+          end));
+
+  for i := 0 to ExeAges.Count-1 do
+    Main.cbEXE.Items.Add(ExeAges[i].Name);
+
   if Main.cbEXE.Items.Count > 0 then
-    Main.cbEXE.Items.Add('Autom.');
+    Main.cbEXE.Items.Insert(0,'Autom.');
 
   Main.cbEXE.Items.EndUpdate;
+  ExeAges.Free;
 end;
 
 procedure TSettings.ResolutionList;
@@ -203,6 +242,58 @@ begin
   Main.cbResolution.Items.EndUpdate;
 end;
 
+function TSettings.LoadIni(const FileName:string; out aFileAge:TDateTime):TStringList;
+var
+  Path : string;
+begin
+  Result := TStringList.Create;
+
+  if FileExists(Util.INIDir + FileName) then
+    Path := Util.INIDir + FileName
+  else
+    if FileExists(Util.DIR + FileName) then
+      Path := Util.DIR + FileName;
+
+  if not Path.IsEmpty then
+  begin
+    Result.LoadFromFile(Path);
+    FileAge(Path,aFileAge);
+  end
+  else
+  begin
+    aFileAge := -1;
+    Path := 'Nie znaleziono pliku ustawieñ.';
+  end;
+
+  if (FileName <> 'eu07_input-keyboard.ini') and
+     (FileName <> 'starter\starter.ini') then
+  begin
+    Main.lbSettingsPath.Caption := Path;
+    Main.lbSettingsPath.Hint    := Path;
+  end;
+end;
+
+function TSettings.LoadIni(const FileName:string):TStringList;
+var
+  D : TDateTime;
+begin
+  Result := LoadIni(FileName,D);
+end;
+
+function TSettings.SaveIni(const FileName:string;const INIFile:TStringList):TDateTime;
+begin
+  if (eu07exeVersion > 2510) and (ForceDirectories(ExtractFilePath(Util.INIDir + FileName))) then
+  begin
+    INIFile.SaveToFile(Util.INIDir + FileName);
+    FileAge(Util.INIDir + FileName,Result);
+  end
+  else
+  begin
+    INIFile.SaveToFile(Util.DIR + FileName);
+    FileAge(Util.DIR + FileName,Result);
+  end;
+end;
+
 procedure TSettings.ReadKeyboard;
 var
   Settings, Par : TStringList;
@@ -212,10 +303,7 @@ begin
   KeyParams.Free;
   KeyParams := TObjectList<TKeyParam>.Create();
 
-  Settings := TStringList.Create;
-
-  if FileExists(Util.DIR + 'eu07_input-keyboard.ini') then
-    Settings.LoadFromFile(Util.DIR + 'eu07_input-keyboard.ini');
+  Settings := LoadIni('eu07_input-keyboard.ini');
 
   for i := 0 to Settings.Count-1 do
   begin
@@ -278,7 +366,8 @@ var
 begin
   Main.cbPreset.Items.BeginUpdate;
   Main.cbPreset.Items.Clear;
-  C := FindFirst(Util.DIR + 'starter\#*.ini',faDirectory,SR);
+
+  C := FindFirst(Util.INIDir + 'starter\#*.ini',faDirectory,SR);
   while (C = 0) do
   begin
     if (SR.Name <> '.') and (SR.Name <> '..') then
@@ -307,22 +396,17 @@ begin
     Params.Free;
     Params := TObjectList<TParam>.Create();
 
-    Settings := TStringList.Create;
     ResolutionList;
 
     if Path.IsEmpty then
     begin
-      if FileExists(Util.DIR + 'eu07.ini') then
-      begin
-        Settings.LoadFromFile(Util.DIR + 'eu07.ini');
-        FileAge(Util.DIR + 'eu07.ini',SettingsAge);
-      end
-      else
+      Settings := LoadIni('eu07.ini',SettingsAge);
+
+      if SettingsAge = -1 then
         Main.actDefaultSettingsExecute(self);
     end
     else
-      if FileExists(Util.DIR + 'eu07.ini') then
-        Settings.LoadFromFile(Util.DIR + 'starter\' + Path + '.ini');
+      Settings := LoadIni('starter\' + Path + '.ini');
 
     Lexer := TmwPasLex.Create;
 
@@ -785,9 +869,29 @@ begin
   if UTF8 then
     Settings.Add('utf8=yes');
 
-  if ForceDirectories(Util.DIR + 'starter') then
-    Settings.SaveToFile(Util.DIR + 'starter\starter.ini');
+  SaveIni('starter\starter.ini',Settings);
   Settings.Free;
+end;
+
+function TSettings.eu07exeSelected:string;
+begin
+  if Main.cbEXE.ItemIndex = 0 then
+    Result := PChar(Main.cbEXE.Items[Main.cbEXE.Items.Count-1])
+  else
+    Result := PChar(Main.cbEXE.Text);
+end;
+
+function TSettings.eu07exeVersion:Integer;
+var
+  VerStr : string;
+begin
+  if FileExists(Util.DIR + eu07exeSelected) then
+  begin
+    VerStr := Util.GetFileVersion(Util.DIR + eu07exeSelected,'%.2d%.2d');
+
+    if not TryStrToInt(VerStr,Result) then
+      Result := -1;
+  end;
 end;
 
 procedure TSettings.RendererExperimental;
@@ -797,9 +901,9 @@ var
 begin
   Main.cbGfxrenderer.Items.Delete(Main.cbGfxrenderer.Items.IndexOf('experimental'));
 
-  if FileExists(Util.DIR + Main.cbEXE.Text) then
+  if FileExists(Util.DIR + eu07exeSelected) then
   begin
-    VerStr := Util.GetFileVersion(Util.DIR + Main.cbEXE.Text,'%.2d%.2d');
+    VerStr := Util.GetFileVersion(Util.DIR + eu07exeSelected,'%.2d%.2d');
 
     if TryStrToInt(VerStr,VerInt) then
       if VerInt >= 2504 then
@@ -816,69 +920,66 @@ begin
   try
     LoadEXE;
 
-    if FileExists(Util.DIR + 'starter\starter.ini') then
+    Settings := LoadIni('starter\starter.ini');
+
+    for i := 0 to Settings.Count-1 do
     begin
-      Settings := TStringList.Create;
-      Settings.LoadFromFile(Util.DIR + 'starter\starter.ini');
-      for i := 0 to Settings.Count-1 do
+      ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
+      ParValue := Copy(Settings[i],Pos('=',Settings[i])+1,Settings[i].Length);
+
+      if SameText(ParName,'lang') then
       begin
-        ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
-        ParValue := Copy(Settings[i],Pos('=',Settings[i])+1,Settings[i].Length);
+        TLanguages.FillLangLabels;
 
-        if SameText(ParName,'lang') then
-        begin
-          TLanguages.FillLangLabels;
-
-          Util.Lang := ParValue;
-          if not ((FirstRun) and (ParValue = 'pl')) then
-            TLanguages.ChangeLanguage(Main,ParValue);
-        end
-        else if SameText(ParName,'AutoClosingApp') then
-          Main.cbCloseApp.Checked := ParValue = 'yes'
-        else if SameText(ParName,'MiniPic') then
-          Main.cbBigThumbnail.Checked := ParValue = 'yes'
-        else if SameText(ParName,'OnlyForDriving') then
-          Main.chOnlyForDriving.Checked := ParValue = 'yes'
-        else if SameText(ParName,'ShowAI') then
-          Main.chShowAI.Checked := ParValue = 'yes'
-        else if SameText(ParName,'AutoExpandTree') then
-          Main.chAutoExpandTree.Checked := ParValue = 'yes'
-        else if SameText(ParName,'HideArchival') then
-          Main.chHideArchival.Checked := ParValue = 'yes'
-        else if SameText(ParName,'HideArchivalVehicles') then
-          Main.chHideArchivalVehicles.Checked := ParValue <> 'no'
-        else if SameText(ParName,'UART') then
-          UART := ParValue
-        else if SameText(ParName,'SortByVehicleName') then
-        begin
-          Main.miSortByTrackName.Checked    := ParValue = 'no';
-          Main.miSortByVehicleName.Checked  := ParValue = 'yes';
-        end
-        else if SameText(ParName,'exe') then
-          Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
-        else if SameText(Parname,'Battery') then
-          Main.cbBattery.ItemIndex := StrToInt(ParValue)
-        else
-        if SameText(ParName,'WindowMaximized') then
-         begin
-           if ParValue = 'yes' then Main.WindowState := wsMaximized;
-         end
-        else if SameText(ParName,'LastUpdate') then
-          Main.lbVersion.Tag := StrToInt(ParValue)
-        else if SameText(ParName,'UpdateInterval') then
-          Main.edUpdateInterval.Value := StrToInt(ParValue)
-        else if SameText(ParName,'InitSCN') then
-          Util.InitSCN := ParValue
-        else if SameText(ParName,'IgnoreIrrevelant') then
-          IgnoreIrrelevant := ParValue = 'yes'
-        else if SameText(ParName,'LogExt') then
-          Main.chLogExt.Checked := ParValue = 'yes'
-        else if SameText(ParName,'HDR') then
-          Main.cbHDR.ItemIndex := StrToInt(ParValue);
-      end;
-
-      Settings.Free;
+        Util.Lang := ParValue;
+        if not ((FirstRun) and (ParValue = 'pl')) then
+          TLanguages.ChangeLanguage(Main,ParValue);
+      end
+      else if SameText(ParName,'AutoClosingApp') then
+        Main.cbCloseApp.Checked := ParValue = 'yes'
+      else if SameText(ParName,'MiniPic') then
+        Main.cbBigThumbnail.Checked := ParValue = 'yes'
+      else if SameText(ParName,'OnlyForDriving') then
+        Main.chOnlyForDriving.Checked := ParValue = 'yes'
+      else if SameText(ParName,'ShowAI') then
+        Main.chShowAI.Checked := ParValue = 'yes'
+      else if SameText(ParName,'AutoExpandTree') then
+        Main.chAutoExpandTree.Checked := ParValue = 'yes'
+      else if SameText(ParName,'HideArchival') then
+        Main.chHideArchival.Checked := ParValue = 'yes'
+      else if SameText(ParName,'HideArchivalVehicles') then
+        Main.chHideArchivalVehicles.Checked := ParValue <> 'no'
+      else if SameText(ParName,'UART') then
+        UART := ParValue
+      else if SameText(ParName,'SortByVehicleName') then
+      begin
+        Main.miSortByTrackName.Checked    := ParValue = 'no';
+        Main.miSortByVehicleName.Checked  := ParValue = 'yes';
+      end
+      else if SameText(ParName,'exe') then
+        Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
+      else if SameText(Parname,'Battery') then
+        Main.cbBattery.ItemIndex := StrToInt(ParValue)
+      else
+      if SameText(ParName,'WindowMaximized') then
+       begin
+         if ParValue = 'yes' then Main.WindowState := wsMaximized;
+       end
+      else if SameText(ParName,'LastUpdate') then
+        Main.lbVersion.Tag := StrToInt(ParValue)
+      else if SameText(ParName,'UpdateInterval') then
+        Main.edUpdateInterval.Value := StrToInt(ParValue)
+      else if SameText(ParName,'InitSCN') then
+        Util.InitSCN := ParValue
+      else if SameText(ParName,'IgnoreIrrevelant') then
+        IgnoreIrrelevant := ParValue = 'yes'
+      else if SameText(ParName,'LogExt') then
+        Main.chLogExt.Checked := ParValue = 'yes'
+      else if SameText(ParName,'HDR') then
+        Main.cbHDR.ItemIndex := StrToInt(ParValue);
     end;
+
+    Settings.Free;
 
     if Main.lbVersion.Tag < DaysBetween(Now,0)- Abs(StrToInt(Main.edUpdateInterval.Text))+1 then
     begin
@@ -1330,10 +1431,10 @@ begin
         Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
   end;
 
-  Settings.SaveToFile(Util.DIR + Path);
-
   if Path = 'eu07.ini' then
-    FileAge(Util.DIR + 'eu07.ini',SettingsAge);
+    SettingsAge := SaveIni(Path,Settings)
+  else
+    SaveIni(Path,Settings);
 
   Settings.Free;
 end;
@@ -1348,7 +1449,7 @@ begin
   for i := 0 to KeyParams.Count-1 do
     Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
 
-  Settings.SaveToFile(Util.DIR + 'eu07_input-keyboard.ini');
+  SaveIni('eu07_input-keyboard.ini',Settings);
 end;
 
 procedure TSettings.ChangeHDR(const Reinhard:Boolean=True);

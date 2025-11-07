@@ -2328,7 +2328,7 @@ object Main: TMain
               Left = 438
               Top = 3
               Width = 235
-              Height = 479
+              Height = 447
               Margins.Left = 30
               Margins.Right = 30
               Margins.Bottom = 0
@@ -2415,7 +2415,6 @@ object Main: TMain
                 Height = 24
                 Align = alTop
                 Style = csDropDownList
-                Sorted = True
                 TabOrder = 0
                 OnChange = cbEXEChange
               end
@@ -2544,7 +2543,7 @@ object Main: TMain
               Left = 164
               Top = 3
               Width = 214
-              Height = 476
+              Height = 444
               Margins.Right = 30
               Align = alLeft
               BevelOuter = bvNone
@@ -2758,7 +2757,7 @@ object Main: TMain
               Left = 0
               Top = 0
               Width = 161
-              Height = 482
+              Height = 450
               Align = alLeft
               BevelOuter = bvNone
               ShowCaption = False
@@ -2768,13 +2767,13 @@ object Main: TMain
               Left = 706
               Top = 0
               Width = 162
-              Height = 482
+              Height = 450
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 3
               object lbPreset: TLabel
                 Left = 0
-                Top = 330
+                Top = 298
                 Width = 162
                 Height = 16
                 Align = alBottom
@@ -2787,11 +2786,12 @@ object Main: TMain
                 Font.Style = [fsBold]
                 ParentFont = False
                 Layout = tlCenter
+                ExplicitTop = 330
                 ExplicitWidth = 118
               end
               object pnlSettingsSet: TPanel
                 Left = 0
-                Top = 346
+                Top = 314
                 Width = 162
                 Height = 136
                 Align = alBottom
@@ -2830,6 +2830,50 @@ object Main: TMain
                   Align = alTop
                   TabOrder = 2
                 end
+              end
+            end
+            object pnlBottom: TPanel
+              Left = 0
+              Top = 450
+              Width = 868
+              Height = 32
+              Align = alBottom
+              BevelOuter = bvNone
+              ShowCaption = False
+              TabOrder = 4
+              object lbSettingsPathDesc: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 193
+                Height = 26
+                Align = alLeft
+                Caption = 'Lokalizacja wczytanych ustawie'#324':'
+                Layout = tlCenter
+                ExplicitLeft = 0
+                ExplicitTop = 0
+                ExplicitHeight = 41
+              end
+              object lbSettingsPath: TLabel
+                AlignWithMargins = True
+                Left = 202
+                Top = 3
+                Width = 663
+                Height = 26
+                Align = alClient
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Tahoma'
+                Font.Style = [fsItalic]
+                ParentFont = False
+                ParentShowHint = False
+                ShowHint = True
+                Layout = tlCenter
+                ExplicitLeft = 193
+                ExplicitTop = 0
+                ExplicitWidth = 4
+                ExplicitHeight = 16
               end
             end
           end

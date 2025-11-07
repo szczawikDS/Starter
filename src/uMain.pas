@@ -472,6 +472,9 @@ type
     pnlDynamicLights: TPanel;
     seDynamicLights: TSpinEdit;
     lbDynamicLights: TLabel;
+    pnlBottom: TPanel;
+    lbSettingsPathDesc: TLabel;
+    lbSettingsPath: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -1362,7 +1365,7 @@ end;
 
 procedure TMain.actPresetExecute(Sender: TObject);
 begin
-  if FileExists(Util.DIR + 'starter\#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini') then
+  if FileExists(Util.INIDir + 'starter\#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini') then
   begin
     Settings.ReadSettings('#' + cbPreset.Items[cbPreset.ItemIndex]);
     ReloadSettingsState;
@@ -1869,10 +1872,7 @@ begin
     RunInfo.Logo        := Train.Logo;
   end;
 
-  if cbEXE.ItemIndex = 0 then
-    RunInfo.EXE := PChar(Util.DIR + cbEXE.Items[cbEXE.Items.Count-1])
-  else
-    RunInfo.EXE := PChar(Util.DIR + cbEXE.Text);
+  RunInfo.EXE := PChar(Util.DIR + Settings.eu07exeSelected);
 
   if FileExists(RunInfo.EXE) then
   begin
@@ -3410,10 +3410,10 @@ begin
     while Data.Textures[FirstTexID].PrevTexID >= 0 do
       FirstTexID := Data.Textures[FirstTexID].PrevTexID;
 
-  cbTypes.ItemIndex := Ord({Tex}Data.Textures[FirstTexID].Typ);
+  cbTypes.ItemIndex := Ord(Data.Textures[FirstTexID].Typ);
   cbTypesChange(self);
 
-  cbModels.ItemIndex := cbModels.Items.IndexOf({Tex}Data.Textures[FirstTexID].Models[ModelID].Mini);
+  cbModels.ItemIndex := cbModels.Items.IndexOf(Data.Textures[FirstTexID].Models[ModelID].Mini);
   cbModelsClick(self);
 
   LoadModelData(Tex.Models[ModelID].Fiz);

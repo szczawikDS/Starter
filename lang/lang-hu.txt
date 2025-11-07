@@ -1,6 +1,15 @@
 [Main]
 Starter
 lbVersionCaption.Caption=Verzió:
+lbSettingsPathDesc.Caption=Beállítások elérési útja:
+lbPreset.Caption=Elõbeállítások
+actPreset.Caption=Jelentkezés
+actPresetSave.Caption=Elõbeállítás mentése
+chLogExt.Caption=Hiányzó jármûfájlok naplózása
+chHideArchivalVehicles.Caption=Archivált jármûvek elrejtése
+lbDynamicLights.Caption=Dinamikus fényforrások száma:
+lbBrakeStep.Caption=Fékszelep érzékenysége:
+lbBrakeSpeed.Caption=FV4a szelep érzékenysége:
 cbLang.Items.Text=PL|EN|CZ|HU
 tsStart.Caption=Start
 pnlSceneryCaption.Caption=VONATOK A PÁLYÁN
@@ -130,8 +139,6 @@ cbPyscreenrendererpriority.Items.Text=Standard|Alacsony|Nagyon alacsony|Tétlen|K
 cbDrawRange.Items.Text=Normál|Magas|Nagyon magas
 cbShadowRank.Items.Text=Csak fontos|Korlátozott|Összes
 Label38.Caption=Füst sûrûsége:
-chGfxresourcesweep.Caption=A nem használt textúrák törlése az OpenGL-bõl
-chGfxresourcemove.Caption=Memóriafenntartási mód
 chUsevbo.Caption=VBO rendering
 chVsync.Caption=FPS korlátozása (vSync)
 chShadows.Caption=Árnyékok
@@ -211,6 +218,7 @@ actFPS.Caption=FPS korlátozása:
 imFacebook.Hint=Látogass meg a Facebookon
 imMaszyna.Hint=Látogass el az oldalunkra: eu07.pl
 lbBufferRes.Caption=Buffer felbontása:
+lbOptional.Caption=Választható elemek:
 [frmDepo]
 Depo
 cbTexName.Caption=Textúra:
@@ -231,6 +239,8 @@ chCompressTex.Caption=TGA textúratömörítés
 chUseGLES.Caption=OpenGL ES használata
 chShaderGamma.Caption=Gamma a shadersekben
 chMipmaps.Caption=képernyõ mipmap
+chGfxresourcesweep.Caption=A nem használt textúrák törlése az OpenGL-bõl
+chGfxresourcemove.Caption=Memóriafenntartási mód
 [frmSearch]
 Search vehicle
 rgFilters.Caption=Szûrõ
@@ -248,8 +258,8 @@ btnKeyPlain.Caption=Egyszeû
 [frmAbout]
 About
 label11.Caption=MaSzyna szimulátor
-label5.Caption=Kiadva a GNU GPL v3.0 licensz alatt.
-label4.Caption=Vezetõ fejlesztõ:
-label6.Caption=Tesztelés, kérések:
-Label7.Caption=Fordítás:
-Label12.Caption=Változtatások:
+lbLicense.Caption=Kiadva a GNU GPL v3.0 licensz alatt.
+lbProgrammer.Caption=Vezetõ fejlesztõ:
+lbTesters.Caption=Tesztelés, kérések:
+lbTranslators.Caption=Fordítás:
+lbLog.Caption=Változtatások:

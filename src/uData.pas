@@ -40,7 +40,7 @@ TData = class
     procedure TexturesEmptyElement;
 end;
 
-function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
+function GetMaxCoupler(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):Integer;
 function GetControlType(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):string;
 function GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
 function MultipleTrain(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<TVehicle>;
@@ -64,8 +64,9 @@ implementation
 
 uses SysUtils, StrUtils, Math;
 
-function GetMaxCoupler(const Vehicle:TVehicle;LeftCoupler:Boolean=True):Integer;
+function GetMaxCoupler(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):Integer;
 begin
+  Result := 3;
   try
     if Vehicle.Fiz <> nil then
     begin
@@ -73,9 +74,7 @@ begin
         Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.AllowedFlagA,Vehicle.Fiz.AllowedFlagB)
       else
         Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.AllowedFlagB,Vehicle.Fiz.AllowedFlagA);
-    end
-    else
-      Result := 3;
+    end;
   except
     Util.Log.Add(Util.LabelStr(TLabels.LOG_CHECK_VALUE_FAULT) + ' AllowedFlag. ' +
                     Util.LabelStr(TLabels.LOG_CHECK_PHYSICS_FILE) + ' ' +

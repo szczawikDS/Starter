@@ -202,6 +202,11 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.20 (6.11.2025)'
+        '*poprawione wy'#347'wietlanie danych o wybranym '
+        'poje'#378'dzie z .mmd'
+        '*obs'#322'uga ustawie'#324' symulatora i startera w AppData'
+        ''
         '7.19.1 (1.10.2025)'
         '*poprawione elementy opcjonalne'
         '*elementy opcjonalne- teren'
@@ -262,15 +267,6 @@ object frmAbout: TfrmAbout
         '7.13 (13.01.2023)'
         '*rozdzielenie opcji losowej kolejnosci i obr'#243'cenia'
         '*obs'#322'uga opcji archiwalne pojazdy'
-        ''
-        '7.12 (01.12.2022)'
-        '*UART- rozbudowa o nowe parametry'
-        '*obs'#322'uga UTF-8'
-        '*opcja losowania kolejno'#347'ci i obr'#243'cenia wagon'#243'w w '
-        'sk'#322'adzie'
-        '*wyszukiwanie po '#322'adunku'
-        '*obs'#322'uga komentarzy w plikach textures.txt'
-        '*poprawiona obs'#322'uga pojazd'#243'w wielocz'#322'onowych'
         ''
         '...')
       ReadOnly = True

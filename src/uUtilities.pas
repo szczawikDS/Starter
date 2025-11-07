@@ -69,6 +69,7 @@ type
 
   TUtil = class
     Dir     : string;
+    INIDir  : string;
     Lang    : string;
     InitSCN : string;
     Log     : TStringList;
@@ -118,6 +119,16 @@ implementation
 
 uses ShellApi, Vcl.Forms, Windows, Vcl.Graphics, SysUtils, Dialogs, JPEG, uMain,
     uData, StrUtils, uSettingsAdv, StdCtrls, Controls;
+
+function INIPath:string;
+begin
+  Result := SysUtils.GetEnvironmentVariable('APPDATA');
+
+  if Result <> '' then
+    Result := IncludeTrailingPathDelimiter(Result) + 'MaSzyna\'
+  else
+    Result := Util.Dir;
+end;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
 begin
@@ -394,15 +405,16 @@ var
 begin
   DIR := ExtractFilePath(ParamStr(0));
   //DIR := 'C:\MaSzyna\';
+  INIDir := INIPath;
   Log := TStringList.Create;
 
   StringsLoad;
   SetFormatSettings;
 
   {$IFDEF WIN64}
-    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit'{ + ' beta'};
+    FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit' + ' beta';
   {$ELSE}
-    FileVersion := GetFileVersion(ParamStr(0)) {+ ' beta'};
+    FileVersion := GetFileVersion(ParamStr(0)) + ' beta';
   {$ENDIF}
 
   FileAge(ParamStr(0),FileDate);

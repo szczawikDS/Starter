@@ -1,6 +1,15 @@
 [Main]
 Starter
 lbVersionCaption.Caption=Version:
+lbSettingsPathDesc.Caption=Settings path:
+lbPreset.Caption=Presets
+actPreset.Caption=Apply
+actPresetSave.Caption=Save preset
+chLogExt.Caption=Log missing vehicle files
+chHideArchivalVehicles.Caption=Hide archived vehicles
+lbDynamicLights.Caption=Number of dynamic light sources:
+lbBrakeStep.Caption=Brake valve sensitivity:
+lbBrakeSpeed.Caption=FV4a valve sensitivity:
 cbLang.Items.Text=PL|EN|CZ|HU
 tsStart.Caption=Start
 pnlSceneryCaption.Caption=TRAINS ON SCENERY
@@ -130,8 +139,6 @@ cbPyscreenrendererpriority.Items.Text=Standard|Low|Very low|Idle|Off|
 cbDrawRange.Items.Text=Normal|High|Very high
 cbShadowRank.Items.Text=Only important|Limited|All
 Label38.Caption=Smoke density:
-chGfxresourcesweep.Caption=Delete unused textures from OpenGL
-chGfxresourcemove.Caption=Memory preservation mode
 chUsevbo.Caption=VBO rendering
 chVsync.Caption=Limit FPS (vSync)
 chShadows.Caption=Shadows
@@ -211,6 +218,7 @@ actFPS.Caption=Limit FPS:
 imFacebook.Hint=Visit us on Facebook
 imMaszyna.Hint=Visit our page eu07.pl
 lbBufferRes.Caption=Buffer resolution:
+lbOptional.Caption=Optional items:
 [frmDepo]
 Depo
 cbTexName.Caption=Texture:
@@ -231,6 +239,8 @@ chCompressTex.Caption=TGA texture compression
 chUseGLES.Caption=Use OpenGL ES
 chShaderGamma.Caption=Gamma in shaders
 chMipmaps.Caption=Screen mipmaps
+chGfxresourcesweep.Caption=Delete unused textures from OpenGL
+chGfxresourcemove.Caption=Memory preservation mode
 [frmSearch]
 Search vehicle
 rgFilters.Caption=Filter
@@ -248,8 +258,8 @@ btnKeyPlain.Caption=Plain
 [frmAbout]
 About
 label11.Caption=for MaSzyna simulator
-label5.Caption=Released on GNU GPL v3.0.
-label4.Caption=Lead developer:
-label6.Caption=Tests, suggestions:
-Label7.Caption=Descriptions:
-Label12.Caption=Changelog:
+lbLicense.Caption=Released on GNU GPL v3.0.
+lbProgrammer.Caption=Lead developer:
+lbTesters.Caption=Tests, suggestions:
+lbTranslators.Caption=Descriptions:
+lbLog.Caption=Changelog:
